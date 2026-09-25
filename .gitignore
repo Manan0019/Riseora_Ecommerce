@@ -6,6 +6,7 @@ server/node_modules/
 # Build
 client/dist/
 dist/
+server/dist/
 
 # Environment variables
 .env
@@ -23,3 +24,6 @@ Thumbs.db
 # IDE
 .vscode/
 .idea/
+
+# Prisma generated client
+server/generated/
