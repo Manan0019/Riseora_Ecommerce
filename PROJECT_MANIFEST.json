@@ -1,0 +1,11 @@
+{
+  "project": "Riseora E-Commerce",
+  "generated": "2026-09-25",
+  "notes": [
+    "No real secrets are included.",
+    "No payment gateway credentials or implementation is included.",
+    "No real Riseora product data or images are invented.",
+    "Preserve server/.env and existing Prisma migration history when merging with an existing database."
+  ],
+  "file_count": 66
+}

@@ -1,0 +1,1 @@
+If your existing database already has Prisma migrations, preserve/copy your existing migration folders into this directory before running migrate commands.

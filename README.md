@@ -1,247 +1,229 @@
 # 🌿 Riseora E-Commerce
 
-Official full-stack e-commerce platform for **Riseora Herbals**.
+Standalone full-stack e-commerce platform for **Riseora Herbals**.
 
-The platform is being developed to allow customers to browse Riseora products, place orders online, make payments, manage their accounts, and track their purchases.
+This repository is intentionally independent from the Riseora ERP. The storefront, customer accounts, orders and catalogue are developed here first. ERP synchronization can be added later through a controlled API/sync layer.
 
-The e-commerce application is currently being developed as an **independent system**. Integration with the Riseora ERP will be implemented after the core e-commerce platform is completed and stabilized.
+## Current scope
 
----
+- Responsive React storefront
+- Product categories, products, variants and images
+- Product search and category filters
+- Persistent shopping cart
+- Customer registration/login
+- Guest or signed-in checkout
+- COD order creation with transactional stock reduction
+- Customer order history
+- Admin API + basic admin screen for catalogue/order operations
+- PostgreSQL + Prisma 7
+- Public-repository-safe environment templates
 
-## 🚧 Project Status
+Online payment gateway, image upload/cloud storage, shipping-provider integration and ERP sync are intentionally left as later integrations because they require real provider credentials and business rules.
 
-**Currently under active development.**
+## Stack
 
-The first stage focuses on building the complete standalone e-commerce platform.
+| Layer | Technology |
+| --- | --- |
+| Frontend | React + Vite |
+| Routing | React Router |
+| Backend | Node.js + Express + TypeScript |
+| Validation | Zod |
+| Database | PostgreSQL |
+| ORM | Prisma 7 + `@prisma/adapter-pg` |
+| Authentication | JWT + bcrypt |
 
-ERP integration will be introduced in a later phase.
-
----
-
-## ✨ Planned Features
-
-| Area            | Features                                                         |
-| --------------- | ---------------------------------------------------------------- |
-| Storefront      | Responsive homepage, product catalogue and product details       |
-| Products        | Categories, variants, pricing and product images                 |
-| Search          | Product search and filtering                                     |
-| Cart            | Shopping cart and quantity management                            |
-| Checkout        | Address selection and order summary                              |
-| Customers       | Registration, login and customer profile                         |
-| Orders          | Order placement, order history and order tracking                |
-| Payments        | Cash on Delivery and online payment integration                  |
-| Admin           | Product, inventory, customer and order management                |
-| Inventory       | Product stock tracking                                           |
-| Notifications   | Order confirmation and status notifications                      |
-| ERP Integration | Product, stock and online-order synchronization with Riseora ERP |
-
----
-
-## 🛠️ Tech Stack
-
-| Layer              | Technology |
-| ------------------ | ---------- |
-| Frontend           | React      |
-| Build Tool         | Vite       |
-| Backend            | Node.js    |
-| API                | Express.js |
-| Database           | PostgreSQL |
-| ORM                | Prisma     |
-| Authentication     | JWT        |
-| Version Control    | Git        |
-| Repository Hosting | GitHub     |
-
-Additional infrastructure such as payment gateways, cloud storage, email services and production hosting will be added during later development stages.
-
----
-
-## 🏗️ Project Architecture
+## Project structure
 
 ```text
-Riseora-Ecommerce/
-│
+riseora_ecommerce/
 ├── client/
-│   ├── public/
 │   ├── src/
+│   ├── .env.example
 │   └── package.json
-│
 ├── server/
-│   ├── src/
 │   ├── prisma/
+│   │   ├── schema.prisma
+│   │   └── seed.ts
+│   ├── src/
+│   ├── .env.example
+│   ├── prisma.config.ts
 │   └── package.json
-│
 ├── .gitignore
-├── README.md
-└── LICENSE
+├── package.json
+└── README.md
 ```
 
-The frontend and backend are maintained in the same repository while remaining logically separated.
+## Important before replacing your current project
 
----
-
-## 🔄 Future ERP Integration
-
-The e-commerce platform is intentionally being developed separately from the existing Riseora ERP.
-
-After the website is production-ready, a controlled synchronization layer will connect the two systems.
+If you already created the PostgreSQL database and ran Prisma migrations, **back up these items first**:
 
 ```text
-Riseora ERP
-     │
-     │ Product / Stock Sync
-     ▼
-E-Commerce Platform
-     │
-     │ Online Orders
-     ▼
-Riseora ERP
+server/.env
+server/prisma/migrations/
 ```
 
-Products will use shared identifiers such as SKUs so both systems can reliably identify the same inventory item.
+Do not publish `server/.env`. It contains credentials.
 
-Example:
+This ZIP deliberately does **not** include a migrations folder, so extracting/copying it over your existing project will not overwrite your current migration history. If you are creating a fresh database, Prisma will create migrations when you run `npm run db:migrate`.
 
-```text
-SKU: RISE-HO-100ML
+## Windows setup
+
+From the project root:
+
+```powershell
+npm install
 ```
 
-Direct public access to the ERP database will not be used.
+Create the server environment file:
 
----
+```powershell
+Copy-Item server\.env.example server\.env
+```
 
-## 🔐 Environment Variables
+Create the client environment file:
 
-Sensitive configuration must be stored in environment variables.
+```powershell
+Copy-Item client\.env.example client\.env
+```
 
-Example:
+Edit `server/.env` and set your real local values. Example:
 
 ```env
-DATABASE_URL=
-JWT_SECRET=
-PORT=
+PORT=5000
+CLIENT_URL=http://localhost:5173
+DATABASE_URL=postgresql://riseora_app:YOUR_PASSWORD@127.0.0.1:5432/riseora_ecommerce_dev
+JWT_SECRET=replace-with-a-long-random-secret-at-least-32-characters
+JWT_EXPIRES_IN=7d
+ADMIN_EMAIL=admin@example.com
+ADMIN_PASSWORD=replace-with-a-strong-admin-password
 ```
 
-The real `.env` file is excluded from Git and must never be committed.
+Never commit the real `.env` file.
 
-A `.env.example` file will be provided for required variable names without containing secret values.
+## Database
 
----
+Make sure PostgreSQL is running first. Then generate Prisma Client:
 
-## 💻 Local Development
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/Riseora-Ecommerce.git
+```powershell
+npm run db:generate
 ```
 
-Enter the project:
+If your existing Riseora e-commerce database already has the current schema and migration history, keep its migration folder and use the appropriate Prisma migration workflow.
 
-```bash
-cd Riseora-Ecommerce
+For a fresh development database:
+
+```powershell
+npm run db:migrate -- --name initial_ecommerce_schema
 ```
 
-Install frontend dependencies:
+Create/update the admin user configured in `server/.env`:
 
-```bash
-cd client
-npm install
+```powershell
+npm run db:seed
 ```
 
-Install backend dependencies:
+Open Prisma Studio if needed:
 
-```bash
-cd ../server
-npm install
+```powershell
+npm run db:studio
 ```
 
-Development commands will be documented as the frontend and backend setup is completed.
+## Run development
 
----
+Start both API and frontend from the root:
 
-## 🗄️ Database
+```powershell
+npm run dev
+```
 
-Riseora E-Commerce uses **PostgreSQL** as its primary database.
-
-PostgreSQL was selected because the application contains highly relational business data including:
+Defaults:
 
 ```text
-Customers
-Products
-Product Variants
-Inventory
-Orders
-Order Items
-Payments
-Addresses
-Shipments
+Frontend: http://localhost:5173
+API:      http://localhost:5000
+Health:   http://localhost:5000/api/health
 ```
 
-Database schema management and migrations are handled using **Prisma ORM**.
+## Build
 
----
+```powershell
+npm run build
+```
 
-## 🌿 About Riseora Herbals
+Run the compiled API:
 
-Riseora Herbals is focused on herbal and wellness products with an emphasis on quality, transparency and customer experience.
+```powershell
+npm run start --workspace server
+```
 
-This platform is being developed to provide Riseora customers with a modern online shopping experience while eventually connecting online commerce with the company's internal ERP operations.
+Preview the production frontend build:
 
----
+```powershell
+npm run preview --workspace client
+```
 
-## 🗺️ Development Roadmap
+## Main API routes
 
 ```text
-Phase 1
-Project foundation and design system
-
-Phase 2
-Storefront and product catalogue
-
-Phase 3
-Cart and checkout
-
-Phase 4
-Customer authentication
-
-Phase 5
-Order management
-
-Phase 6
-Admin dashboard
-
-Phase 7
-Payment integration
-
-Phase 8
-Deployment and production hardening
-
-Phase 9
-Riseora ERP integration
+GET    /api/health
+POST   /api/auth/register
+POST   /api/auth/login
+GET    /api/auth/me
+GET    /api/categories
+GET    /api/products
+GET    /api/products/:slug
+POST   /api/orders
+GET    /api/orders/my
+GET    /api/admin/orders
+PATCH  /api/admin/orders/:id/status
+POST   /api/admin/categories
+POST   /api/admin/products
 ```
 
----
+Admin routes require a JWT belonging to a user whose role is `ADMIN`.
 
-## 🔒 Security
-
-Sensitive credentials and production configuration are never stored in the repository.
-
-Files such as the following are excluded from version control:
+## Product data model
 
 ```text
-.env
-.env.local
-node_modules/
-dist/
-logs/
+Category
+  └─ Product
+       ├─ ProductImage
+       └─ ProductVariant
+            ├─ SKU
+            ├─ Size / Unit
+            ├─ MRP
+            ├─ Selling Price
+            └─ Stock Quantity
 ```
 
-Production credentials must be configured directly through the deployment environment.
+Orders snapshot product name, SKU, variant and selling price so historical invoices do not change when the catalogue changes later.
+
+## Public repository security
+
+Do not commit:
+
+- database passwords
+- JWT secrets
+- admin passwords
+- payment gateway keys
+- SMTP credentials
+- production customer/order exports
+- cloud-storage secrets
+
+This repository does not include an open-source license. Public visibility does not by itself grant permission to reuse or redistribute the source code.
+
+## Future phases
+
+1. Real Riseora catalogue and product photography
+2. Cloud image upload/storage
+3. Online payment gateway
+4. Shipping/fulfilment integration
+5. Customer address book
+6. Coupons and offers
+7. Email/WhatsApp notifications
+8. Production deployment and domain setup
+9. Riseora ERP product/stock/order synchronization
 
 ---
 
-## 📄 License
-
-Copyright © Riseora Herbals.
-
-Licensing information will be finalized before the production release.
+Copyright © Riseora Herbals. All rights reserved.
