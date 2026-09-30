@@ -374,3 +374,8 @@ Phase 14 adds a customer-controlled Routine Builder, a slide-in mini cart, autom
 ## Phase 15 — Mobile Sticky Navigation & Conversion Polish
 
 The storefront now has a persistent safe-area mobile bottom dock, mobile filter sheet, sticky cart checkout action, route scroll reset, cart cross-sells, and a compact five-item mobile Admin dock with a More sheet. No database migration is required. See `PHASE15_MOBILE_STICKY_NAV_POLISH.md` for runtime checks.
+
+## Phase 16 — Predictive Search & Product Quick View
+
+Phase 16 adds live product/category suggestions in the global search, recent-search and recently-viewed discovery, and a responsive product Quick View (desktop modal / mobile bottom sheet) with fresh variant, stock, gallery, wishlist and Add-to-Cart controls. No database migration is required. See `PHASE16_PREDICTIVE_SEARCH_QUICK_VIEW.md` for runtime checks.
+

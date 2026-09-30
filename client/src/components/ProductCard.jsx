@@ -4,12 +4,14 @@ import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
+import ProductQuickView from "./ProductQuickView";
 
 export default function ProductCard({ product, compact = false }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const [activeImage, setActiveImage] = useState(0);
   const [hovering, setHovering] = useState(false);
+  const [quickOpen, setQuickOpen] = useState(false);
 
   const images = useMemo(() => {
     const source = Array.isArray(product.images) ? product.images.filter((item) => item?.url) : [];
@@ -21,6 +23,7 @@ export default function ProductCard({ product, compact = false }) {
   useEffect(() => {
     setActiveImage(0);
     setHovering(false);
+    setQuickOpen(false);
   }, [product.id]);
 
   useEffect(() => {
@@ -56,8 +59,8 @@ export default function ProductCard({ product, compact = false }) {
   const discount = mrp > sellingPrice && mrp > 0 ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
   const wished = has(product.id);
 
-  return (
-    <article className={`product-card mc-product-card ${compact ? "compact" : ""}`} onMouseEnter={beginSlideshow} onMouseLeave={stopSlideshow}>
+  return <>
+    <article className={`product-card mc-product-card phase16-product-card ${compact ? "compact" : ""}`} onMouseEnter={beginSlideshow} onMouseLeave={stopSlideshow}>
       <div className="product-image-shell">
         <Link to={`/product/${product.slug}`} className="product-image-wrap" aria-label={product.name}>
           <div className="product-badge-stack">
@@ -88,6 +91,9 @@ export default function ProductCard({ product, compact = false }) {
         <button className={wished ? "wishlist-button active" : "wishlist-button"} onClick={() => toggle(product)} aria-label={wished ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}>
           <Icon name="heart" size={18} />
         </button>
+        <button className="phase16-quick-trigger" type="button" onClick={() => setQuickOpen(true)} aria-label={`Quick view ${product.name}`} title="Quick view">
+          <Icon name="eye" size={18} /> <span>QUICK VIEW</span>
+        </button>
       </div>
       <div className="product-card-body">
         <div className="product-meta-line">
@@ -104,5 +110,6 @@ export default function ProductCard({ product, compact = false }) {
         ) : <p className="muted product-unavailable">No active variant</p>}
       </div>
     </article>
-  );
+    <ProductQuickView product={product} open={quickOpen} onClose={() => setQuickOpen(false)} />
+  </>;
 }

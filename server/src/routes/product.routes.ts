@@ -80,6 +80,61 @@ router.get(
 );
 
 router.get(
+  "/search/suggestions",
+  asyncHandler(async (req, res) => {
+    const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    const limit = Math.min(8, Math.max(3, Number(req.query.limit || 6)));
+    if (query.length < 2) return res.json({ success: true, data: { products: [], categories: [] } });
+
+    const [products, categories] = await Promise.all([
+      prisma.product.findMany({
+        where: {
+          isActive: true,
+          OR: [
+            { name: { contains: query, mode: "insensitive" } },
+            { shortDescription: { contains: query, mode: "insensitive" } },
+            { benefits: { contains: query, mode: "insensitive" } },
+            { ingredients: { contains: query, mode: "insensitive" } },
+            { category: { name: { contains: query, mode: "insensitive" } } },
+            { variants: { some: { sku: { contains: query, mode: "insensitive" } } } },
+          ],
+        },
+        include: {
+          category: { select: { id: true, name: true, slug: true } },
+          images: { orderBy: { sortOrder: "asc" }, take: 2 },
+          variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" }, take: 1 },
+        },
+        orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+        take: limit,
+      }),
+      prisma.category.findMany({
+        where: { isActive: true, name: { contains: query, mode: "insensitive" } },
+        select: { id: true, name: true, slug: true, imageUrl: true },
+        orderBy: { name: "asc" },
+        take: 4,
+      }),
+    ]);
+
+    res.json({
+      success: true,
+      data: {
+        products: products.map((product) => ({
+          id: product.id,
+          slug: product.slug,
+          name: product.name,
+          shortDescription: product.shortDescription,
+          badge: product.badge,
+          category: product.category,
+          images: product.images,
+          variants: product.variants,
+        })),
+        categories,
+      },
+    });
+  }),
+);
+
+router.get(
   "/:slug/recommendations",
   asyncHandler(async (req, res) => {
     const current = await prisma.product.findUnique({

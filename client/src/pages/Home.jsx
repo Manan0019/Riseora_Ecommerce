@@ -18,6 +18,13 @@ const fallbackBanner = {
   textColor: "#11251c",
 };
 
+function readRecentProducts() {
+  try {
+    const value = JSON.parse(localStorage.getItem("riseora_recent_products") || "[]");
+    return Array.isArray(value) ? value.slice(0, 8) : [];
+  } catch { return []; }
+}
+
 export default function Home() {
   const { store } = useStore();
   const [products, setProducts] = useState([]);
@@ -25,9 +32,11 @@ export default function Home() {
   const [offers, setOffers] = useState([]);
   const [banners, setBanners] = useState([]);
   const [deals, setDeals] = useState([]);
+  const [recent, setRecent] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
+    setRecent(readRecentProducts());
     Promise.allSettled([apiFetch("/products"), apiFetch("/categories"), apiFetch("/promotions/offers"), apiFetch("/promotions/banners?placement=HOME_HERO"), apiFetch("/promotions/deals?featured=true")]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult]) => {
       if (productResult.status === "fulfilled") setProducts(productResult.value.data); else setError(productResult.reason?.message || "Unable to load products");
       if (categoryResult.status === "fulfilled") setCategories(categoryResult.value.data);
@@ -57,6 +66,7 @@ export default function Home() {
     <ProductShelf title="Bestsellers" eyebrow="CUSTOMER FAVOURITES" products={featured.length ? featured : trending} empty={error} />
     <ProductShelf title="Trending now" eyebrow="WHAT'S HOT" products={trending} />
     <ProductShelf title="New & noteworthy" eyebrow="FRESH PICKS" products={newest} />
+    {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
 
     <section className="container phase14-routine-cta"><div><p className="phase3-eyebrow">MAKE IT YOURS</p><h2>Build your Riseora routine</h2><p>Choose up to four products, pick the sizes you prefer and add your full routine to the bag in one tap.</p><Link className="button" to="/routine-builder">BUILD MY ROUTINE <Icon name="arrow" size={17} /></Link></div><div className="phase14-routine-cta-steps"><span><b>01</b>Pick products</span><span><b>02</b>Choose sizes</span><span><b>03</b>Add together</span></div></section>
 
