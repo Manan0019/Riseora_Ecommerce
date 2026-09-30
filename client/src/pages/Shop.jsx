@@ -60,13 +60,17 @@ export default function Shop() {
 
       <div className="filter-chip-row" aria-label="Product categories"><button className={!category ? "filter-chip active" : "filter-chip"} onClick={() => setCategory("")}>All</button>{categories.map((item) => <button key={item.id} className={category === item.slug ? "filter-chip active" : "filter-chip"} onClick={() => setCategory(item.slug)}>{item.name}</button>)}</div>
 
-      {filtersOpen && <section className="phase9-filter-panel">
-        <label>Min price ₹<input type="number" min="0" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0" /></label>
-        <label>Max price ₹<input type="number" min="0" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="2000" /></label>
-        <label>Merchandising<select value={badge} onChange={(e) => setBadge(e.target.value)}><option value="">All products</option><option value="BEST SELLER">Best seller</option><option value="NEW">New</option><option value="TRENDING">Trending</option></select></label>
-        <label className="checkbox-row phase9-stock-check"><input type="checkbox" checked={inStock} onChange={(e) => setInStock(e.target.checked)} /> In stock only</label>
-        <button className="link-button" onClick={clearFilters}>Clear all filters</button>
-      </section>}
+      {filtersOpen && <>
+        <button className="phase15-filter-backdrop" type="button" onClick={() => setFiltersOpen(false)} aria-label="Close filters" />
+        <section className="phase9-filter-panel phase15-filter-sheet" role="dialog" aria-modal="true" aria-label="Shop filters">
+          <div className="phase15-filter-sheet-head"><div><small>REFINE PRODUCTS</small><strong>Filters</strong></div><button type="button" onClick={() => setFiltersOpen(false)} aria-label="Close filters"><Icon name="close" size={20} /></button></div>
+          <label>Min price ₹<input type="number" min="0" value={minPrice} onChange={(e) => setMinPrice(e.target.value)} placeholder="0" /></label>
+          <label>Max price ₹<input type="number" min="0" value={maxPrice} onChange={(e) => setMaxPrice(e.target.value)} placeholder="2000" /></label>
+          <label>Merchandising<select value={badge} onChange={(e) => setBadge(e.target.value)}><option value="">All products</option><option value="BEST SELLER">Best seller</option><option value="NEW">New</option><option value="TRENDING">Trending</option></select></label>
+          <label className="checkbox-row phase9-stock-check"><input type="checkbox" checked={inStock} onChange={(e) => setInStock(e.target.checked)} /> In stock only</label>
+          <div className="phase15-filter-sheet-actions"><button className="link-button" onClick={clearFilters}>Clear all</button><button className="button" type="button" onClick={() => setFiltersOpen(false)}>VIEW {products.length} {products.length === 1 ? "PRODUCT" : "PRODUCTS"}</button></div>
+        </section>
+      </>}
 
       <div className="shop-result-row"><strong>{loading ? "Loading…" : `${products.length} ${products.length === 1 ? "product" : "products"}`}</strong>{activeFilterCount > 0 && <button className="link-button muted" onClick={clearFilters}>Reset</button>}</div>
       {error && <p className="alert error">{error}</p>}

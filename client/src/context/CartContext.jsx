@@ -35,6 +35,7 @@ export function CartProvider({ children }) {
         ...current,
         {
           variantId: variant.id,
+          productId: product.id,
           productSlug: product.slug,
           productName: product.name,
           variantName: variant.name,
@@ -77,7 +78,7 @@ export function CartProvider({ children }) {
         } else {
           const primary = product.images?.find((item) => item.isPrimary) || product.images?.[0];
           next.push({
-            variantId: variant.id, productSlug: product.slug, productName: product.name, variantName: variant.name, sku: variant.sku,
+            variantId: variant.id, productId: product.id, productSlug: product.slug, productName: product.name, variantName: variant.name, sku: variant.sku,
             price: Number(variant.sellingPrice), mrp: Number(variant.mrp), stockQuantity: max, imageUrl: primary?.url || "",
             quantity: Math.min(max, addition.quantity),
           });

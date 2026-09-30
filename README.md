@@ -369,3 +369,8 @@ See `PHASE13_BRAND_MERCHANDISING.md` for the exact logo filenames and runtime ch
 
 Phase 14 adds a customer-controlled Routine Builder, a slide-in mini cart, automatic-offer progress messaging, and a Frequently Bought Together experience backed by delivered-order co-purchase history with a same-category fallback for new stores. No database migration is required for this phase.
 
+
+
+## Phase 15 — Mobile Sticky Navigation & Conversion Polish
+
+The storefront now has a persistent safe-area mobile bottom dock, mobile filter sheet, sticky cart checkout action, route scroll reset, cart cross-sells, and a compact five-item mobile Admin dock with a More sheet. No database migration is required. See `PHASE15_MOBILE_STICKY_NAV_POLISH.md` for runtime checks.
