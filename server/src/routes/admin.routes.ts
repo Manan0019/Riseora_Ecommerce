@@ -153,4 +153,117 @@ router.patch(
   }),
 );
 
+
+
+const couponSchema = z.object({
+  code: z.string().trim().min(3).max(40),
+  description: z.string().trim().optional().or(z.literal("")),
+  discountType: z.enum(["PERCENTAGE", "FIXED"]),
+  discountValue: z.number().positive(),
+  minOrderAmount: z.number().nonnegative().optional(),
+  maxDiscountAmount: z.number().nonnegative().optional(),
+  usageLimit: z.number().int().positive().optional(),
+  startsAt: z.string().datetime().optional(),
+  endsAt: z.string().datetime().optional(),
+});
+
+router.get(
+  "/coupons",
+  asyncHandler(async (_req, res) => {
+    const coupons = await prisma.coupon.findMany({ orderBy: { createdAt: "desc" } });
+    res.json({ success: true, data: coupons });
+  }),
+);
+
+router.post(
+  "/coupons",
+  asyncHandler(async (req, res) => {
+    const parsed = couponSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon", errors: parsed.error.flatten() });
+    if (parsed.data.discountType === "PERCENTAGE" && parsed.data.discountValue > 100) return res.status(400).json({ success: false, message: "Percentage discount cannot exceed 100%" });
+    const startsAt = parsed.data.startsAt ? new Date(parsed.data.startsAt) : null;
+    const endsAt = parsed.data.endsAt ? new Date(parsed.data.endsAt) : null;
+    if (startsAt && endsAt && endsAt <= startsAt) return res.status(400).json({ success: false, message: "Coupon end date must be after the start date" });
+
+    const coupon = await prisma.coupon.create({
+      data: {
+        code: parsed.data.code.toUpperCase(),
+        description: parsed.data.description || null,
+        discountType: parsed.data.discountType,
+        discountValue: parsed.data.discountValue,
+        minOrderAmount: parsed.data.minOrderAmount ?? null,
+        maxDiscountAmount: parsed.data.maxDiscountAmount ?? null,
+        usageLimit: parsed.data.usageLimit ?? null,
+        startsAt,
+        endsAt,
+      },
+    });
+    res.status(201).json({ success: true, data: coupon });
+  }),
+);
+
+router.patch(
+  "/coupons/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon update" });
+    const coupon = await prisma.coupon.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    res.json({ success: true, data: coupon });
+  }),
+);
+
+const offerSchema = z.object({
+  title: z.string().trim().min(2).max(140),
+  description: z.string().trim().optional().or(z.literal("")),
+  badge: z.string().trim().max(60).optional().or(z.literal("")),
+  ctaText: z.string().trim().max(60).optional().or(z.literal("")),
+  ctaLink: z.string().trim().max(200).optional().or(z.literal("")),
+  startsAt: z.string().datetime().optional(),
+  endsAt: z.string().datetime().optional(),
+  priority: z.number().int().min(0).max(1000).optional(),
+});
+
+router.get(
+  "/offers",
+  asyncHandler(async (_req, res) => {
+    const offers = await prisma.offer.findMany({ orderBy: [{ priority: "desc" }, { createdAt: "desc" }] });
+    res.json({ success: true, data: offers });
+  }),
+);
+
+router.post(
+  "/offers",
+  asyncHandler(async (req, res) => {
+    const parsed = offerSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid offer", errors: parsed.error.flatten() });
+    const startsAt = parsed.data.startsAt ? new Date(parsed.data.startsAt) : null;
+    const endsAt = parsed.data.endsAt ? new Date(parsed.data.endsAt) : null;
+    if (startsAt && endsAt && endsAt <= startsAt) return res.status(400).json({ success: false, message: "Offer end date must be after the start date" });
+    const offer = await prisma.offer.create({
+      data: {
+        title: parsed.data.title,
+        description: parsed.data.description || null,
+        badge: parsed.data.badge || null,
+        ctaText: parsed.data.ctaText || null,
+        ctaLink: parsed.data.ctaLink || null,
+        startsAt,
+        endsAt,
+        priority: parsed.data.priority ?? 0,
+      },
+    });
+    res.status(201).json({ success: true, data: offer });
+  }),
+);
+
+router.patch(
+  "/offers/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid offer update" });
+    const offer = await prisma.offer.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    res.json({ success: true, data: offer });
+  }),
+);
+
 export default router;
+

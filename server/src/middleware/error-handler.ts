@@ -23,6 +23,13 @@ export function errorHandler(
     });
   }
 
+  if (error instanceof Error && error.message === "COUPON_LIMIT_REACHED") {
+    return res.status(409).json({
+      success: false,
+      message: "This coupon has reached its usage limit",
+    });
+  }
+
   res.status(500).json({
     success: false,
     message: "Something went wrong on the server",
