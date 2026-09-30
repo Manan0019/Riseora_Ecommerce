@@ -52,6 +52,11 @@ const productSchema = z.object({
   slug: z.string().trim().optional(),
   shortDescription: z.string().trim().optional().or(z.literal("")),
   description: z.string().trim().optional().or(z.literal("")),
+  benefits: z.string().trim().max(5000).optional().or(z.literal("")),
+  ingredients: z.string().trim().max(8000).optional().or(z.literal("")),
+  howToUse: z.string().trim().max(5000).optional().or(z.literal("")),
+  suitableFor: z.string().trim().max(2000).optional().or(z.literal("")),
+  faq: z.array(z.object({ question: z.string().trim().min(2).max(300), answer: z.string().trim().min(2).max(3000) })).max(20).default([]),
   isFeatured: z.boolean().default(false),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   images: z
@@ -111,6 +116,11 @@ router.post(
         slug: slugify(parsed.data.slug || parsed.data.name),
         shortDescription: parsed.data.shortDescription || null,
         description: parsed.data.description || null,
+        benefits: parsed.data.benefits || null,
+        ingredients: parsed.data.ingredients || null,
+        howToUse: parsed.data.howToUse || null,
+        suitableFor: parsed.data.suitableFor || null,
+        faq: parsed.data.faq as any,
         isFeatured: parsed.data.isFeatured,
         badge: parsed.data.badge || null,
         images: {
@@ -771,6 +781,11 @@ router.put(
           slug: slugify(parsed.data.slug || parsed.data.name),
           shortDescription: parsed.data.shortDescription || null,
           description: parsed.data.description || null,
+          benefits: parsed.data.benefits || null,
+          ingredients: parsed.data.ingredients || null,
+          howToUse: parsed.data.howToUse || null,
+          suitableFor: parsed.data.suitableFor || null,
+          faq: parsed.data.faq as any,
           isFeatured: parsed.data.isFeatured,
           isActive: parsed.data.isActive,
           badge: parsed.data.badge || null,
@@ -788,6 +803,56 @@ router.put(
     });
 
     res.json({ success: true, data: product });
+  }),
+);
+
+
+router.get(
+  "/reviews",
+  asyncHandler(async (req, res) => {
+    const status = typeof req.query.status === "string" ? req.query.status : "";
+    const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+    const where: any = {};
+    if (status === "pending") where.isApproved = false;
+    if (status === "approved") where.isApproved = true;
+    if (search) where.OR = [
+      { title: { contains: search, mode: "insensitive" } },
+      { comment: { contains: search, mode: "insensitive" } },
+      { user: { email: { contains: search, mode: "insensitive" } } },
+      { product: { name: { contains: search, mode: "insensitive" } } },
+    ];
+    const data = await prisma.review.findMany({
+      where,
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, email: true } },
+        product: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    });
+    res.json({ success: true, data });
+  }),
+);
+
+router.patch(
+  "/reviews/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ isApproved: z.boolean() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid review update" });
+    const data = await prisma.review.update({
+      where: { id: req.params.id },
+      data: { isApproved: parsed.data.isApproved },
+      include: { user: { select: { firstName: true, lastName: true, email: true } }, product: { select: { name: true, slug: true } } },
+    });
+    res.json({ success: true, data });
+  }),
+);
+
+router.delete(
+  "/reviews/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.review.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
   }),
 );
 

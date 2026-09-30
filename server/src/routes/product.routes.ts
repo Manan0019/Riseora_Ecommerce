@@ -18,19 +18,38 @@ router.get(
   asyncHandler(async (req, res) => {
     const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
     const category = typeof req.query.category === "string" ? req.query.category.trim() : "";
+    const badge = typeof req.query.badge === "string" ? req.query.badge.trim() : "";
     const featured = req.query.featured === "true";
+    const inStock = req.query.inStock === "true";
+    const sort = typeof req.query.sort === "string" ? req.query.sort : "featured";
+    const minPrice = typeof req.query.minPrice === "string" && req.query.minPrice !== "" ? Number(req.query.minPrice) : null;
+    const maxPrice = typeof req.query.maxPrice === "string" && req.query.maxPrice !== "" ? Number(req.query.maxPrice) : null;
+    const limit = Math.min(60, Math.max(1, Number(req.query.limit || 60)));
+
+    const variantFilter: any = { isActive: true };
+    if (inStock) variantFilter.stockQuantity = { gt: 0 };
+    if (minPrice !== null || maxPrice !== null) {
+      variantFilter.sellingPrice = {};
+      if (minPrice !== null && Number.isFinite(minPrice)) variantFilter.sellingPrice.gte = minPrice;
+      if (maxPrice !== null && Number.isFinite(maxPrice)) variantFilter.sellingPrice.lte = maxPrice;
+    }
 
     const products = await prisma.product.findMany({
       where: {
         isActive: true,
         ...(featured ? { isFeatured: true } : {}),
         ...(category ? { category: { slug: category, isActive: true } } : {}),
+        ...(badge ? { badge: { equals: badge, mode: "insensitive" } } : {}),
+        ...(inStock || minPrice !== null || maxPrice !== null ? { variants: { some: variantFilter } } : {}),
         ...(search
           ? {
               OR: [
                 { name: { contains: search, mode: "insensitive" } },
                 { shortDescription: { contains: search, mode: "insensitive" } },
                 { description: { contains: search, mode: "insensitive" } },
+                { benefits: { contains: search, mode: "insensitive" } },
+                { ingredients: { contains: search, mode: "insensitive" } },
+                { variants: { some: { sku: { contains: search, mode: "insensitive" } } } },
               ],
             }
           : {}),
@@ -38,13 +57,25 @@ router.get(
       include: {
         category: true,
         images: { orderBy: { sortOrder: "asc" } },
-        variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
+        variants: { where: variantFilter, orderBy: { sellingPrice: "asc" } },
         reviews: { where: { isApproved: true }, select: { rating: true } },
       },
-      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      orderBy: sort === "name" ? { name: "asc" } : [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      take: limit,
     });
 
-    res.json({ success: true, data: products.map(withRating) });
+    const enriched = products.map(withRating);
+    enriched.sort((a: any, b: any) => {
+      const ap = Number(a.variants?.[0]?.sellingPrice || 0);
+      const bp = Number(b.variants?.[0]?.sellingPrice || 0);
+      if (sort === "price_asc") return ap - bp;
+      if (sort === "price_desc") return bp - ap;
+      if (sort === "rating") return Number(b.ratingAverage || 0) - Number(a.ratingAverage || 0);
+      if (sort === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      return 0;
+    });
+
+    res.json({ success: true, data: enriched });
   }),
 );
 
@@ -105,18 +136,19 @@ router.post(
         title: parsed.data.title || null,
         comment: parsed.data.comment,
         verifiedPurchase: Boolean(purchased),
+        isApproved: false,
       },
       update: {
         rating: parsed.data.rating,
         title: parsed.data.title || null,
         comment: parsed.data.comment,
         verifiedPurchase: Boolean(purchased),
-        isApproved: true,
+        isApproved: false,
       },
       include: { user: { select: { firstName: true } } },
     });
 
-    res.status(201).json({ success: true, data: review });
+    res.status(201).json({ success: true, data: review, message: "Thanks — your review was submitted for moderation." });
   }),
 );
 

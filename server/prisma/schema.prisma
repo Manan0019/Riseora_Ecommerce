@@ -86,6 +86,13 @@ enum ContactMessageStatus {
   SPAM
 }
 
+enum CartRecoveryStatus {
+  ACTIVE
+  CONVERTED
+  DISMISSED
+  EXPIRED
+}
+
 
 model User {
   id           String   @id @default(uuid()) @db.Uuid
@@ -155,6 +162,11 @@ model Product {
   slug             String  @unique
   shortDescription String?
   description      String?
+  benefits         String?
+  ingredients      String?
+  howToUse         String?
+  suitableFor      String?
+  faq              Json?
   isActive         Boolean @default(true)
   isFeatured       Boolean @default(false)
   badge            String?
@@ -596,7 +608,7 @@ model Review {
   rating           Int
   title            String?
   comment          String
-  isApproved       Boolean @default(true)
+  isApproved       Boolean @default(false)
   verifiedPurchase Boolean @default(false)
 
   createdAt DateTime @default(now())
@@ -632,6 +644,29 @@ model Banner {
   @@index([startsAt, endsAt])
 }
 
+
+model CartRecoverySession {
+  id String @id @default(uuid()) @db.Uuid
+
+  cartToken String @unique @default(uuid())
+  userId String? @db.Uuid
+  email  String
+  name   String?
+  phone  String?
+  items  Json
+  subtotal Decimal @default(0) @db.Decimal(12, 2)
+  status CartRecoveryStatus @default(ACTIVE)
+  orderNumber String?
+  lastSeenAt DateTime @default(now())
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, lastSeenAt])
+  @@index([email])
+  @@index([userId])
+}
 
 model ContactMessage {
   id String @id @default(uuid()) @db.Uuid

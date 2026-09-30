@@ -53,4 +53,14 @@ router.patch("/newsletter/:id", asyncHandler(async (req, res) => {
   res.json({ success: true, data });
 }));
 
+
+router.get("/cart-recoveries", asyncHandler(async (req, res) => {
+  const status = typeof req.query.status === "string" ? req.query.status : "ACTIVE";
+  const where: any = {};
+  if (["ACTIVE", "CONVERTED", "DISMISSED", "EXPIRED"].includes(status)) where.status = status;
+  if (status === "ACTIVE") where.expiresAt = { gt: new Date() };
+  const data = await prisma.cartRecoverySession.findMany({ where, orderBy: { lastSeenAt: "desc" }, take: 300 });
+  res.json({ success: true, data });
+}));
+
 export default router;

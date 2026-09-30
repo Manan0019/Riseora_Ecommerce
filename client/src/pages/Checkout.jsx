@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
 
+const RECOVERY_KEY = "riseora_cart_recovery_token";
 let razorpayScriptPromise;
 function loadRazorpayScript() {
   if (window.Razorpay) return Promise.resolve(true);
@@ -59,6 +60,24 @@ export default function Checkout() {
       if (preferred) selectSavedAddress(preferred);
     }).catch(() => {});
   }, [user]);
+
+  useEffect(() => {
+    const email = form.customerEmail.trim();
+    if (!items.length || !/^\S+@\S+\.\S+$/.test(email)) return;
+    const timer = setTimeout(() => {
+      let cartToken;
+      try { cartToken = localStorage.getItem(RECOVERY_KEY) || undefined; } catch { cartToken = undefined; }
+      apiFetch("/cart-recovery", {
+        method: "POST",
+        body: JSON.stringify({
+          ...(cartToken ? { cartToken } : {}),
+          email, name: form.customerName, phone: form.customerPhone, subtotal,
+          items: items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName || "", sku: item.sku, quantity: item.quantity, price: Number(item.price), imageUrl: item.imageUrl || "" })),
+        }),
+      }).then((response) => { try { localStorage.setItem(RECOVERY_KEY, response.data.cartToken); } catch {} }).catch(() => {});
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [form.customerEmail, form.customerName, form.customerPhone, items, subtotal]);
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
@@ -134,6 +153,13 @@ export default function Checkout() {
         const response = await apiFetch("/orders", { method: "POST", body: JSON.stringify({ ...checkoutPayload(), paymentMethod: "COD" }) });
         order = response.data;
       }
+      try {
+        const cartToken = localStorage.getItem(RECOVERY_KEY);
+        if (cartToken) {
+          await apiFetch("/cart-recovery/converted", { method: "POST", body: JSON.stringify({ cartToken, orderNumber: order.orderNumber }) });
+          localStorage.removeItem(RECOVERY_KEY);
+        }
+      } catch { /* recovery tracking must never block a completed order */ }
       clearCart();
       navigate(`/order-success/${order.orderNumber}`, { replace: true });
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }

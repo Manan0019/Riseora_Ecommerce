@@ -3,7 +3,7 @@ import { apiFetch, mediaUrl } from "../../api/http";
 import { Icon } from "../../components/Icons";
 
 const newVariant = () => ({ id: "", name: "", sku: "", size: "", unit: "ml", mrp: "", sellingPrice: "", costPrice: "", stockQuantity: "0", lowStockThreshold: "5", weightGrams: "", hsnCode: "", gstRate: "0", isActive: true });
-const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", isFeatured: false, isActive: true, badge: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
+const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", benefits: "", ingredients: "", howToUse: "", suitableFor: "", faq: [{ question: "", answer: "" }], isFeatured: false, isActive: true, badge: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
 
 export default function AdminCatalog() {
   const [categories, setCategories] = useState([]);
@@ -41,6 +41,9 @@ export default function AdminCatalog() {
   function addVariant() { setProduct((current) => ({ ...current, variants: [...current.variants, newVariant()] })); }
   function removeVariant(index) { setProduct((current) => ({ ...current, variants: current.variants.filter((_, i) => i !== index) })); }
   function addImage() { setProduct((current) => ({ ...current, images: [...current.images, { url: "", altText: "", isPrimary: false }] })); }
+  function addFaq() { setProduct((current) => ({ ...current, faq: [...current.faq, { question: "", answer: "" }] })); }
+  function updateFaq(index, field, value) { setProduct((current) => ({ ...current, faq: current.faq.map((item, i) => i === index ? { ...item, [field]: value } : item) })); }
+  function removeFaq(index) { setProduct((current) => ({ ...current, faq: current.faq.filter((_, i) => i !== index) })); }
   function removeImage(index) { setProduct((current) => ({ ...current, images: current.images.filter((_, i) => i !== index) })); }
   function makePrimary(index) { setProduct((current) => ({ ...current, images: current.images.map((image, i) => ({ ...image, isPrimary: i === index })) })); }
   async function uploadImages(files) {
@@ -66,6 +69,11 @@ export default function AdminCatalog() {
       name: item.name,
       shortDescription: item.shortDescription || "",
       description: item.description || "",
+      benefits: item.benefits || "",
+      ingredients: item.ingredients || "",
+      howToUse: item.howToUse || "",
+      suitableFor: item.suitableFor || "",
+      faq: Array.isArray(item.faq) && item.faq.length ? item.faq.map((faq) => ({ question: faq.question || "", answer: faq.answer || "" })) : [{ question: "", answer: "" }],
       isFeatured: item.isFeatured,
       isActive: item.isActive,
       badge: item.badge || "",
@@ -86,6 +94,11 @@ export default function AdminCatalog() {
       name: product.name,
       shortDescription: product.shortDescription,
       description: product.description,
+      benefits: product.benefits,
+      ingredients: product.ingredients,
+      howToUse: product.howToUse,
+      suitableFor: product.suitableFor,
+      faq: product.faq.filter((item) => item.question.trim() && item.answer.trim()).map((item) => ({ question: item.question.trim(), answer: item.answer.trim() })),
       isFeatured: product.isFeatured,
       isActive: product.isActive,
       badge: product.badge,
@@ -134,6 +147,10 @@ export default function AdminCatalog() {
         <div className="admin-field-grid two"><label>Badge<input name="badge" value={product.badge} onChange={updateProductField} placeholder="BEST SELLER / NEW / TRENDING" /></label><div className="admin-check-row"><label className="checkbox-row"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={updateProductField} /> Featured</label>{editing && <label className="checkbox-row"><input type="checkbox" name="isActive" checked={product.isActive} onChange={updateProductField} /> Active</label>}</div></div>
         <label>Short description<input name="shortDescription" value={product.shortDescription} onChange={updateProductField} placeholder="Short product card copy" /></label>
         <label>Full description<textarea name="description" value={product.description} onChange={updateProductField} placeholder="Benefits, usage and product story" /></label>
+        <div className="admin-field-grid two phase9-content-grid"><label>Key benefits<textarea name="benefits" value={product.benefits} onChange={updateProductField} placeholder="One benefit per line works well on mobile" /></label><label>Suitable for<textarea name="suitableFor" value={product.suitableFor} onChange={updateProductField} placeholder="Hair types, skin types, use cases…" /></label></div>
+        <div className="admin-field-grid two phase9-content-grid"><label>Ingredients<textarea name="ingredients" value={product.ingredients} onChange={updateProductField} placeholder="Full ingredient list or key ingredients" /></label><label>How to use<textarea name="howToUse" value={product.howToUse} onChange={updateProductField} placeholder="Step-by-step usage instructions" /></label></div>
+        <div className="editor-section-head"><div><strong>Product FAQ</strong><small>Shown as collapsible questions on the product page.</small></div><button type="button" className="state-toggle active" onClick={addFaq}>+ FAQ</button></div>
+        <div className="phase9-faq-editor">{product.faq.map((item, index) => <div className="phase9-faq-row" key={index}><input value={item.question} onChange={(e) => updateFaq(index, "question", e.target.value)} placeholder="Question" /><textarea value={item.answer} onChange={(e) => updateFaq(index, "answer", e.target.value)} placeholder="Answer" />{product.faq.length > 1 && <button type="button" className="mini-danger" onClick={() => removeFaq(index)}>×</button>}</div>)}</div>
 
         <div className="editor-section-head"><div><strong>Product images</strong><small>Upload JPG, PNG or WEBP (max 5 MB each), or paste an HTTPS image URL.</small></div><div className="image-editor-actions"><label className={uploadingImages ? "state-toggle disabled" : "state-toggle active"}>{uploadingImages ? "Uploading…" : "Upload images"}<input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled={uploadingImages} onChange={(e) => uploadImages(e.target.files)} /></label><button type="button" className="state-toggle" onClick={addImage}>+ URL</button></div></div>
         <div className="admin-image-editor">{product.images.map((image, index) => <div className="admin-image-row phase5-image-row" key={index}>{image.url && <div className="admin-image-preview"><img src={mediaUrl(image.url)} alt="" /></div>}<input type="text" value={image.url} onChange={(e) => updateImage(index, "url", e.target.value)} placeholder="https://... or uploaded image" /><input value={image.altText} onChange={(e) => updateImage(index, "altText", e.target.value)} placeholder="Alt text" /><button type="button" className={image.isPrimary ? "state-toggle active" : "state-toggle"} onClick={() => makePrimary(index)}>{image.isPrimary ? "Primary" : "Make primary"}</button>{product.images.length > 1 && <button type="button" className="mini-danger" onClick={() => removeImage(index)}>×</button>}</div>)}</div>

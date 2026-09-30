@@ -5,7 +5,24 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "../components/Icons";
+import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
+
+const RECENT_KEY = "riseora_recent_products";
+
+function readRecent() {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch { return []; }
+}
+function rememberProduct(product) {
+  try {
+    const snapshot = {
+      id: product.id, slug: product.slug, name: product.name, shortDescription: product.shortDescription, badge: product.badge,
+      category: product.category, images: product.images, variants: product.variants, ratingAverage: product.ratingAverage, reviewCount: product.reviewCount,
+    };
+    const next = [snapshot, ...readRecent().filter((item) => item.id !== product.id)].slice(0, 8);
+    localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+  } catch { /* recently viewed is optional */ }
+}
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -15,60 +32,96 @@ export default function ProductDetails() {
   const [product, setProduct] = useState(null);
   const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
+  const [activeImage, setActiveImage] = useState(0);
   const [error, setError] = useState("");
   const [review, setReview] = useState({ rating: 5, title: "", comment: "" });
   const [reviewMessage, setReviewMessage] = useState("");
+  const [related, setRelated] = useState([]);
+  const [recent, setRecent] = useState([]);
 
   function loadProduct() {
     return apiFetch(`/products/${slug}`).then((response) => {
       setProduct(response.data);
-      setVariantId((current) => current || response.data.variants?.[0]?.id || "");
+      setVariantId(response.data.variants?.[0]?.id || "");
+      setActiveImage(0);
+      setRecent(readRecent().filter((item) => item.id !== response.data.id).slice(0, 6));
+      rememberProduct(response.data);
+      if (response.data.category?.slug) {
+        apiFetch(`/products?category=${encodeURIComponent(response.data.category.slug)}&limit=8`)
+          .then((relatedResponse) => setRelated(relatedResponse.data.filter((item) => item.id !== response.data.id).slice(0, 6)))
+          .catch(() => setRelated([]));
+      }
     });
   }
-  useEffect(() => { loadProduct().catch((err) => setError(err.message)); }, [slug]);
+  useEffect(() => { setError(""); loadProduct().catch((err) => setError(err.message)); }, [slug]);
 
   const variant = useMemo(() => product?.variants?.find((item) => item.id === variantId), [product, variantId]);
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
   if (!product) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
-  const image = mediaUrl(product.images?.[0]?.url);
+  const imageItem = product.images?.[activeImage] || product.images?.[0];
+  const image = mediaUrl(imageItem?.url);
   const inStock = variant && Number(variant.stockQuantity) > 0;
-  const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, variant.stockQuantity));
+  const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, Number(variant.stockQuantity)));
   const wished = has(product.id);
+  const faq = Array.isArray(product.faq) ? product.faq : [];
 
   async function submitReview(event) {
     event.preventDefault(); setReviewMessage("");
     try {
-      await apiFetch(`/products/${product.id}/reviews`, { method: "POST", body: JSON.stringify({ rating: Number(review.rating), title: review.title, comment: review.comment }) });
-      setReview({ rating: 5, title: "", comment: "" }); setReviewMessage("Thanks! Your review is now visible."); await loadProduct();
+      const response = await apiFetch(`/products/${product.id}/reviews`, { method: "POST", body: JSON.stringify({ rating: Number(review.rating), title: review.title, comment: review.comment }) });
+      setReview({ rating: 5, title: "", comment: "" });
+      setReviewMessage(response.message || "Thanks — your review was submitted for moderation.");
     } catch (err) { setReviewMessage(err.message); }
   }
 
   const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || product.description || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
-  return <><Seo title={product.name} description={product.shortDescription || product.description} image={image} type="product" jsonLd={productJson} /><div className="product-detail-page phase3-detail">
-    <div className="container product-detail">
-      <div className="detail-media phase3-media">
-        <div className="detail-image-frame">{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img src={image} alt={product.images?.[0]?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}</div>
+
+  return <><Seo title={product.name} description={product.shortDescription || product.description} image={image} type="product" jsonLd={productJson} />
+    <div className="product-detail-page phase3-detail phase9-detail-page">
+      <div className="container product-detail">
+        <div className="detail-media phase3-media phase9-product-gallery">
+          <div className="detail-image-frame">{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img src={image} alt={imageItem?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}</div>
+          {product.images?.length > 1 && <div className="phase9-gallery-thumbs">{product.images.map((item, index) => <button key={item.id || index} className={activeImage === index ? "active" : ""} onClick={() => setActiveImage(index)}><img src={mediaUrl(item.url)} alt={item.altText || `${product.name} ${index + 1}`} /></button>)}</div>}
+        </div>
+        <div className="detail-content phase3-detail-content">
+          <Link className="detail-category" to={`/shop?category=${product.category?.slug || ""}`}>{product.category?.name}</Link>
+          <h1>{product.name}</h1>
+          {product.reviewCount > 0 && <a className="detail-rating" href="#reviews">★ {product.ratingAverage} <span>{product.reviewCount} review{product.reviewCount === 1 ? "" : "s"}</span></a>}
+          <p className="lead">{product.shortDescription || "Thoughtful herbal care for your everyday routine."}</p>
+          {variant && <div className="detail-price"><strong>₹{Number(variant.sellingPrice).toFixed(0)}</strong>{Number(variant.mrp) > Number(variant.sellingPrice) && <del>₹{Number(variant.mrp).toFixed(0)}</del>}{Number(variant.mrp) > Number(variant.sellingPrice) && <span className="detail-saving">Save ₹{(Number(variant.mrp)-Number(variant.sellingPrice)).toFixed(0)}</span>}</div>}
+          <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} disabled={Number(item.stockQuantity) <= 0} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
+          <div className="desktop-buy-block"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><button className="button wide phase3-add" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
+          <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="truck" size={19} /><b>India delivery</b><small>Track your order</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>
+        </div>
       </div>
-      <div className="detail-content phase3-detail-content">
-        <Link className="detail-category" to={`/shop?category=${product.category?.slug || ""}`}>{product.category?.name}</Link>
-        <h1>{product.name}</h1>
-        {product.reviewCount > 0 && <a className="detail-rating" href="#reviews">★ {product.ratingAverage} <span>{product.reviewCount} review{product.reviewCount === 1 ? "" : "s"}</span></a>}
-        <p className="lead">{product.shortDescription || "Thoughtful herbal care for your everyday routine."}</p>
-        {variant && <div className="detail-price"><strong>₹{Number(variant.sellingPrice).toFixed(0)}</strong>{Number(variant.mrp) > Number(variant.sellingPrice) && <del>₹{Number(variant.mrp).toFixed(0)}</del>}{Number(variant.mrp) > Number(variant.sellingPrice) && <span className="detail-saving">Save ₹{(Number(variant.mrp)-Number(variant.sellingPrice)).toFixed(0)}</span>}</div>}
-        <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} disabled={Number(item.stockQuantity) <= 0} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
-        <div className="desktop-buy-block"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><button className="button wide phase3-add" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
-        <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="truck" size={19} /><b>India delivery</b><small>Track your order</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>
-        <div className="rich-copy phase3-rich"><h3>Product details</h3><p>{product.description || "Full product information can be added from the Riseora Admin dashboard."}</p></div>
-      </div>
+
+      <section className="container phase9-product-story phase3-section">
+        <div className="phase9-story-intro"><p className="phase3-eyebrow">KNOW YOUR PRODUCT</p><h2>Everything you need to know</h2><p>{product.description || "Full product information can be added from the Riseora Admin dashboard."}</p></div>
+        <div className="phase9-info-grid">
+          {product.benefits && <article><span>01</span><h3>Key benefits</h3><p>{product.benefits}</p></article>}
+          {product.ingredients && <article><span>02</span><h3>Ingredients</h3><p>{product.ingredients}</p></article>}
+          {product.howToUse && <article><span>03</span><h3>How to use</h3><p>{product.howToUse}</p></article>}
+          {product.suitableFor && <article><span>04</span><h3>Suitable for</h3><p>{product.suitableFor}</p></article>}
+        </div>
+      </section>
+
+      {faq.length > 0 && <section className="container phase3-section phase9-faq-section"><div className="section-title-row"><div><p className="phase3-eyebrow">QUESTIONS, ANSWERED</p><h2>Product FAQ</h2></div></div><div className="phase9-faq-list">{faq.map((item, index) => <details key={`${item.question}-${index}`}><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div></section>}
+
+      {related.length > 0 && <ProductShelf title="You may also like" eyebrow="PAIR IT WITH" products={related} />}
+      {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
+
+      <section id="reviews" className="container review-section phase3-section">
+        <div className="section-title-row"><div><p className="phase3-eyebrow">REAL EXPERIENCES</p><h2>Customer reviews</h2></div>{product.reviewCount > 0 && <span className="review-summary">★ {product.ratingAverage} / 5</span>}</div>
+        <div className="reviews-layout"><div className="review-list">{product.reviews?.length ? product.reviews.map((item) => <article className="review-card" key={item.id}><div><span className="review-stars">{"★".repeat(item.rating)}{"☆".repeat(5-item.rating)}</span>{item.verifiedPurchase && <b>Verified purchase</b>}</div><h3>{item.title || "Customer review"}</h3><p>{item.comment}</p><small>{item.user?.firstName || "Customer"}</small></article>) : <div className="empty-review">No approved reviews yet. Be the first to share your experience.</div>}</div>
+        <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews are checked by Riseora before publishing.</p><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><button className="black-button" type="submit">SUBMIT REVIEW</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div></div>
+      </section>
+
+      <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div><button className="button" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
     </div>
+  </>;
+}
 
-    <section id="reviews" className="container review-section phase3-section">
-      <div className="section-title-row"><div><p className="phase3-eyebrow">REAL EXPERIENCES</p><h2>Customer reviews</h2></div>{product.reviewCount > 0 && <span className="review-summary">★ {product.ratingAverage} / 5</span>}</div>
-      <div className="reviews-layout"><div className="review-list">{product.reviews?.length ? product.reviews.map((item) => <article className="review-card" key={item.id}><div><span className="review-stars">{"★".repeat(item.rating)}{"☆".repeat(5-item.rating)}</span>{item.verifiedPurchase && <b>Verified purchase</b>}</div><h3>{item.title || "Customer review"}</h3><p>{item.comment}</p><small>{item.user?.firstName || "Customer"}</small></article>) : <div className="empty-review">No reviews yet. Be the first to share your experience.</div>}</div>
-      <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><button className="black-button" type="submit">SUBMIT REVIEW</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div></div>
-    </section>
-
-    <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div><button className="button" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
-  </div></>;
+function ProductShelf({ title, eyebrow, products }) {
+  return <section className="container phase3-section"><div className="section-title-row"><div><p className="phase3-eyebrow">{eyebrow}</p><h2>{title}</h2></div></div><div className="phase3-product-rail">{products.map((product) => <ProductCard key={product.id} product={product} compact />)}</div></section>;
 }

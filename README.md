@@ -8,17 +8,17 @@ This repository is intentionally independent from the Riseora ERP. The storefron
 
 - Responsive React storefront
 - Product categories, products, variants and images
-- Product search and category filters
+- Advanced product search, category/price/stock filters and sorting
 - Persistent shopping cart
 - Customer registration/login
 - Guest or signed-in checkout
-- COD order creation with transactional stock reduction
+- COD plus optional Razorpay checkout with transactional stock reservation/reduction
 - Customer order history, detail timeline and guest order tracking
-- Admin dashboard for catalogue, inventory, customers, promotions and order fulfilment
+- Admin dashboard for catalogue, product content, inventory, customers, promotions, reviews, returns, audience and order fulfilment
 - PostgreSQL + Prisma 7
 - Public-repository-safe environment templates
 
-Online payment gateway, persistent cloud image storage, courier API integration and ERP sync remain later integrations because they require real provider credentials and business rules. Phase 5 includes local development image upload plus manual carrier/tracking management.
+Razorpay payments, Cloudinary image storage and Resend email are optional integrations controlled by environment credentials. Local image upload and COD continue to work without those providers. Direct courier API automation and ERP synchronization remain later integrations.
 
 ## Stack
 
@@ -215,6 +215,16 @@ Do not commit:
 - cloud-storage secrets
 
 This repository does not include an open-source license. Public visibility does not by itself grant permission to reuse or redistribute the source code.
+
+## Phase 9 additions
+
+- Advanced storefront filtering and sorting
+- Related and recently viewed products
+- Product benefits, ingredients, usage, suitability and FAQs
+- Review moderation workflow
+- Cart recovery signal foundation (no automatic recovery email yet)
+
+See `PHASE9_DISCOVERY_CONTENT_RECOVERY.md` for the migration and runtime checklist.
 
 ## Next production phases
 
