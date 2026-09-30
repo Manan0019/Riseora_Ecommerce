@@ -8,7 +8,7 @@ export default function Shop() {
   const [params] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(params.get("search") || "");
   const [category, setCategory] = useState(params.get("category") || "");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -19,6 +19,7 @@ export default function Shop() {
 
   useEffect(() => {
     setCategory(params.get("category") || "");
+    setSearch(params.get("search") || "");
   }, [params]);
 
   const query = useMemo(() => {

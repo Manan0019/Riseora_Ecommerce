@@ -1,135 +1,62 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 
+const fallbackBanner = {
+  eyebrow: "RISEORA HERBALS",
+  title: "Herbal care that looks as good as it feels.",
+  description: "Thoughtfully made everyday care with a fresh, modern shopping experience.",
+  ctaText: "SHOP NOW",
+  ctaLink: "/shop",
+  background: "#d8a693",
+  textColor: "#11251c",
+};
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [offers, setOffers] = useState([]);
+  const [banners, setBanners] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.allSettled([
-      apiFetch("/products?featured=true"),
-      apiFetch("/categories"),
-      apiFetch("/promotions/offers"),
-    ]).then(([productResult, categoryResult, offerResult]) => {
-      if (productResult.status === "fulfilled") setProducts(productResult.value.data);
-      else setError(productResult.reason?.message || "Unable to load products");
+    Promise.allSettled([apiFetch("/products"), apiFetch("/categories"), apiFetch("/promotions/offers"), apiFetch("/promotions/banners?placement=HOME_HERO")]).then(([productResult, categoryResult, offerResult, bannerResult]) => {
+      if (productResult.status === "fulfilled") setProducts(productResult.value.data); else setError(productResult.reason?.message || "Unable to load products");
       if (categoryResult.status === "fulfilled") setCategories(categoryResult.value.data);
       if (offerResult.status === "fulfilled") setOffers(offerResult.value.data);
+      if (bannerResult.status === "fulfilled") setBanners(bannerResult.value.data);
     });
   }, []);
 
-  return (
-    <>
-      <section className="hero">
-        <div className="container hero-grid">
-          <div className="hero-content">
-            <span className="hero-pill"><Icon name="leaf" size={16} /> RISEORA HERBALS</span>
-            <h1>Care that feels <em>closer to nature.</em></h1>
-            <p className="hero-copy">Thoughtfully presented herbal products for simple, everyday routines.</p>
-            <div className="hero-actions">
-              <Link className="button hero-primary" to="/shop">Shop now <Icon name="arrow" size={18} /></Link>
-              <Link className="text-link" to="/offers">Explore offers <span>→</span></Link>
-            </div>
-            <div className="hero-trust">
-              <span><Icon name="shield" size={17} /> Secure checkout</span>
-              <span><Icon name="truck" size={17} /> Delivery across India</span>
-            </div>
-          </div>
+  const hero = banners[0] || fallbackBanner;
+  const featured = useMemo(() => products.filter((item) => item.isFeatured).slice(0, 8), [products]);
+  const trending = useMemo(() => [...products].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)).slice(0, 8), [products]);
+  const newest = products.slice(0, 8);
 
-          <div className="hero-visual" aria-label="Riseora brand visual">
-            <div className="hero-glow hero-glow-one" />
-            <div className="hero-glow hero-glow-two" />
-            <div className="hero-leaf hero-leaf-one">⌁</div>
-            <div className="hero-leaf hero-leaf-two">⌁</div>
-            <div className="hero-bottle">
-              <div className="bottle-cap" />
-              <div className="bottle-label">
-                <span className="bottle-r">R</span>
-                <strong>RISEORA</strong>
-                <small>HERBALS</small>
-              </div>
-            </div>
-            <div className="hero-visual-copy">
-              <span>Everyday ritual</span>
-              <strong>Herbal care, beautifully simple.</strong>
-            </div>
-          </div>
-        </div>
-      </section>
+  return <>
+    <section className="campaign-hero" style={{ "--hero-bg": hero.background || "#d8a693", "--hero-color": hero.textColor || "#11251c" }}>
+      <div className="container campaign-hero-grid">
+        <div className="campaign-copy"><p className="hero-kicker">{hero.eyebrow || "RISEORA HERBALS"}</p><h1>{hero.title}</h1><p>{hero.description}</p><div className="campaign-actions"><Link className="black-button" to={hero.ctaLink || "/shop"}>{hero.ctaText || "SHOP NOW"}</Link><Link className="underlined-link" to="/offers">VIEW OFFERS</Link></div><div className="micro-trust"><span>✓ Secure checkout</span><span>✓ Delivery across India</span></div></div>
+        <div className="campaign-visual">{hero.imageUrl ? <picture>{hero.mobileImageUrl && <source media="(max-width: 639px)" srcSet={hero.mobileImageUrl} />}<img src={hero.imageUrl} alt={hero.title} /></picture> : <div className="campaign-placeholder"><span>R</span><strong>RISEORA</strong><small>HERBALS</small><i>your campaign image</i></div>}</div>
+      </div>
+    </section>
 
-      <section className="container trust-strip" aria-label="Store benefits">
-        <div><Icon name="leaf" /><span><strong>Herbal-first</strong><small>Thoughtful product range</small></span></div>
-        <div><Icon name="shield" /><span><strong>Secure</strong><small>Protected account & checkout</small></span></div>
-        <div><Icon name="truck" /><span><strong>Order ready</strong><small>Track purchases easily</small></span></div>
-      </section>
+    <section className="quick-value-strip"><div className="container"><span><Icon name="truck" size={18} /> Free shipping above ₹599</span><span><Icon name="shield" size={18} /> Secure checkout</span><span><Icon name="leaf" size={18} /> Herbal-first care</span></div></section>
 
-      {categories.length > 0 && (
-        <section className="container section-block category-section">
-          <div className="section-heading mobile-heading">
-            <div><p className="eyebrow">SHOP BY CATEGORY</p><h2>Find your ritual</h2></div>
-            <Link className="section-link" to="/shop">View all</Link>
-          </div>
-          <div className="category-scroller">
-            {categories.slice(0, 8).map((category, index) => (
-              <Link key={category.id} className={`category-card category-tone-${(index % 4) + 1}`} to={`/shop?category=${category.slug}`}>
-                <div className="category-art">{category.imageUrl ? <img src={category.imageUrl} alt="" /> : <span>{category.name.charAt(0)}</span>}</div>
-                <strong>{category.name}</strong>
-                <small>Explore</small>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+    {categories.length > 0 && <section className="container phase3-section category-section"><div className="section-title-row"><div><p className="phase3-eyebrow">SHOP BY CATEGORY</p><h2>Pick your routine</h2></div><Link to="/shop">VIEW ALL</Link></div><div className="round-category-row">{categories.slice(0, 8).map((category) => <Link key={category.id} to={`/shop?category=${category.slug}`}><div className="round-category-art">{category.imageUrl ? <img src={category.imageUrl} alt="" /> : <span>{category.name.charAt(0)}</span>}</div><strong>{category.name}</strong></Link>)}</div></section>}
 
-      {offers.length > 0 && (
-        <section className="container section-block">
-          <div className="offer-banner">
-            <div>
-              <p className="eyebrow light">LIMITED OFFER</p>
-              <h2>{offers[0].title}</h2>
-              {offers[0].description && <p>{offers[0].description}</p>}
-            </div>
-            <Link className="button button-light" to={offers[0].ctaLink || "/shop"}>{offers[0].ctaText || "Shop now"}</Link>
-          </div>
-        </section>
-      )}
+    {offers.length > 0 && <section className="container phase3-section promo-card-row">{offers.slice(0, 3).map((offer, index) => <Link key={offer.id} to={offer.ctaLink || "/shop"} className={`promo-tile promo-tone-${(index % 3) + 1}`}><span>{offer.badge || "SPECIAL OFFER"}</span><h3>{offer.title}</h3><p>{offer.description}</p><strong>{offer.ctaText || "SHOP NOW"} →</strong></Link>)}</section>}
 
-      <section className="container section-block featured-section">
-        <div className="section-heading mobile-heading">
-          <div><p className="eyebrow">FEATURED</p><h2>Made for your routine</h2></div>
-          <Link className="section-link" to="/shop">See all</Link>
-        </div>
-        {error && <p className="alert error">{error}</p>}
-        {!error && products.length === 0 ? (
-          <div className="empty-state premium-empty"><span className="empty-icon"><Icon name="sparkles" /></span><h3>Your catalogue is ready for products</h3><p>Add products from the Admin dashboard and featured items will appear here automatically.</p></div>
-        ) : (
-          <div className="featured-scroller product-grid">{products.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>
-        )}
-      </section>
+    <ProductShelf title="Bestsellers" eyebrow="CUSTOMER FAVOURITES" products={featured.length ? featured : trending} empty={error} />
+    <ProductShelf title="Trending now" eyebrow="WHAT'S HOT" products={trending} />
+    <ProductShelf title="New & noteworthy" eyebrow="FRESH PICKS" products={newest} />
 
-      <section className="story-section section-block">
-        <div className="container story-grid">
-          <div className="story-art">
-            <div className="story-circle">R</div>
-            <span className="story-note">A calmer way to shop herbal care</span>
-          </div>
-          <div className="story-copy">
-            <p className="eyebrow">WHY RISEORA</p>
-            <h2>Simple choices. Clear information. Easy ordering.</h2>
-            <p>Browse products, choose the right size, review pricing and place your order from a fast mobile-first experience.</p>
-            <Link className="button button-secondary" to="/shop">Explore the collection</Link>
-          </div>
-        </div>
-      </section>
+    <section className="brand-manifesto"><div className="container brand-manifesto-grid"><div><p className="phase3-eyebrow light">WHY RISEORA</p><h2>Herbal roots. Modern rituals.</h2><p>Riseora blends a grounded herbal identity with a clean shopping experience built for the way customers browse on mobile today.</p><Link className="white-outline-button" to="/shop">DISCOVER THE RANGE</Link></div><div className="manifesto-points"><span><b>01</b><strong>Clear choices</strong><small>Sizes, pricing and benefits that are easy to understand.</small></span><span><b>02</b><strong>Built for mobile</strong><small>Fast, thumb-friendly shopping from discovery to checkout.</small></span><span><b>03</b><strong>Order confidence</strong><small>Secure account, coupons and order tracking.</small></span></div></div></section>
+  </>;
+}
 
-      <section className="container section-block app-note">
-        <div><Icon name="heart" size={26} /><span><strong>Built mobile first</strong><small>Fast navigation, thumb-friendly controls and a clean checkout flow.</small></span></div>
-      </section>
-    </>
-  );
+function ProductShelf({ title, eyebrow, products, empty }) {
+  return <section className="container phase3-section"><div className="section-title-row"><div><p className="phase3-eyebrow">{eyebrow}</p><h2>{title}</h2></div><Link to="/shop">VIEW ALL</Link></div>{empty && <p className="alert error">{empty}</p>}{!empty && products.length === 0 ? <div className="empty-state phase3-empty"><span>R</span><h3>Products will appear here</h3><p>Add products from Admin and the storefront fills automatically.</p></div> : <div className="phase3-product-rail">{products.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>}</section>;
 }

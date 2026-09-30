@@ -25,6 +25,27 @@ router.get(
   }),
 );
 
+
+router.get(
+  "/banners",
+  asyncHandler(async (req, res) => {
+    const now = new Date();
+    const placement = req.query.placement === "HOME_STRIP" ? "HOME_STRIP" : "HOME_HERO";
+    const banners = await prisma.banner.findMany({
+      where: {
+        placement,
+        isActive: true,
+        AND: [
+          { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
+          { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
+        ],
+      },
+      orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
+    });
+    res.json({ success: true, data: banners });
+  }),
+);
+
 const validateCouponSchema = z.object({
   code: z.string().trim().min(3).max(40),
   subtotal: z.number().nonnegative(),

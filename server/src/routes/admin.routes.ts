@@ -43,6 +43,7 @@ const productSchema = z.object({
   shortDescription: z.string().trim().optional().or(z.literal("")),
   description: z.string().trim().optional().or(z.literal("")),
   isFeatured: z.boolean().default(false),
+  badge: z.string().trim().max(40).optional().or(z.literal("")),
   images: z
     .array(
       z.object({
@@ -70,6 +71,17 @@ const productSchema = z.object({
     .min(1),
 });
 
+router.get(
+  "/products",
+  asyncHandler(async (_req, res) => {
+    const products = await prisma.product.findMany({
+      include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { orderBy: { createdAt: "asc" } } },
+      orderBy: { createdAt: "desc" },
+    });
+    res.json({ success: true, data: products });
+  }),
+);
+
 router.post(
   "/products",
   asyncHandler(async (req, res) => {
@@ -86,6 +98,7 @@ router.post(
         shortDescription: parsed.data.shortDescription || null,
         description: parsed.data.description || null,
         isFeatured: parsed.data.isFeatured,
+        badge: parsed.data.badge || null,
         images: {
           create: parsed.data.images.map((image, index) => ({
             url: image.url,
@@ -113,6 +126,21 @@ router.post(
     });
 
     res.status(201).json({ success: true, data: product });
+  }),
+);
+
+
+router.patch(
+  "/products/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      isActive: z.boolean().optional(),
+      isFeatured: z.boolean().optional(),
+      badge: z.string().trim().max(40).nullable().optional(),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product update" });
+    const product = await prisma.product.update({ where: { id: req.params.id }, data: parsed.data });
+    res.json({ success: true, data: product });
   }),
 );
 
@@ -262,6 +290,70 @@ router.patch(
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid offer update" });
     const offer = await prisma.offer.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
     res.json({ success: true, data: offer });
+  }),
+);
+
+
+const bannerSchema = z.object({
+  placement: z.enum(["HOME_HERO", "HOME_STRIP"]).default("HOME_HERO"),
+  eyebrow: z.string().trim().max(80).optional().or(z.literal("")),
+  title: z.string().trim().min(2).max(180),
+  description: z.string().trim().max(500).optional().or(z.literal("")),
+  imageUrl: z.string().url().optional().or(z.literal("")),
+  mobileImageUrl: z.string().url().optional().or(z.literal("")),
+  ctaText: z.string().trim().max(60).optional().or(z.literal("")),
+  ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
+  background: z.string().trim().max(40).optional().or(z.literal("")),
+  textColor: z.string().trim().max(40).optional().or(z.literal("")),
+  priority: z.number().int().min(0).max(1000).optional(),
+  startsAt: z.string().datetime().optional(),
+  endsAt: z.string().datetime().optional(),
+});
+
+router.get(
+  "/banners",
+  asyncHandler(async (_req, res) => {
+    const banners = await prisma.banner.findMany({ orderBy: [{ priority: "desc" }, { createdAt: "desc" }] });
+    res.json({ success: true, data: banners });
+  }),
+);
+
+router.post(
+  "/banners",
+  asyncHandler(async (req, res) => {
+    const parsed = bannerSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid banner", errors: parsed.error.flatten() });
+    const startsAt = parsed.data.startsAt ? new Date(parsed.data.startsAt) : null;
+    const endsAt = parsed.data.endsAt ? new Date(parsed.data.endsAt) : null;
+    if (startsAt && endsAt && endsAt <= startsAt) return res.status(400).json({ success: false, message: "Banner end date must be after the start date" });
+    const banner = await prisma.banner.create({
+      data: {
+        placement: parsed.data.placement,
+        eyebrow: parsed.data.eyebrow || null,
+        title: parsed.data.title,
+        description: parsed.data.description || null,
+        imageUrl: parsed.data.imageUrl || null,
+        mobileImageUrl: parsed.data.mobileImageUrl || null,
+        ctaText: parsed.data.ctaText || null,
+        ctaLink: parsed.data.ctaLink || null,
+        background: parsed.data.background || null,
+        textColor: parsed.data.textColor || null,
+        priority: parsed.data.priority ?? 0,
+        startsAt,
+        endsAt,
+      },
+    });
+    res.status(201).json({ success: true, data: banner });
+  }),
+);
+
+router.patch(
+  "/banners/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid banner update" });
+    const banner = await prisma.banner.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    res.json({ success: true, data: banner });
   }),
 );
 

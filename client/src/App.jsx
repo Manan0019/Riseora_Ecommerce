@@ -13,6 +13,7 @@ import Orders from "./pages/Orders";
 import ProductDetails from "./pages/ProductDetails";
 import Register from "./pages/Register";
 import Shop from "./pages/Shop";
+import Wishlist from "./pages/Wishlist";
 import AdminCatalog from "./pages/admin/AdminCatalog";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/offers" element={<Offers />} />
         <Route path="/product/:slug" element={<ProductDetails />} />
         <Route path="/cart" element={<Cart />} />
+        <Route path="/wishlist" element={<Wishlist />} />
         <Route path="/checkout" element={<Checkout />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
