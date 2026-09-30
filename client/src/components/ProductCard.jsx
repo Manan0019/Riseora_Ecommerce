@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
@@ -7,7 +8,7 @@ export default function ProductCard({ product, compact = false }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const variant = product.variants?.[0];
-  const image = product.images?.[0]?.url;
+  const image = mediaUrl(product.images?.[0]?.url);
   const inStock = variant && Number(variant.stockQuantity) > 0;
   const sellingPrice = Number(variant?.sellingPrice || 0);
   const mrp = Number(variant?.mrp || 0);

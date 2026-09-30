@@ -96,8 +96,9 @@ router.post(
           totalAmount,
           items: { create: computedItems.map((item) => ({ variantId: item.variant.id, productName: item.variant.product.name, variantName: item.variant.name, sku: item.variant.sku, quantity: item.quantity, unitPrice: item.unitPrice, lineTotal: item.lineTotal })) },
           payment: { create: { method: "COD", status: "PENDING", amount: totalAmount } },
+          statusHistory: { create: { status: "PENDING", note: "Order placed", source: req.user ? "CUSTOMER" : "GUEST" } },
         },
-        include: { items: true, payment: true },
+        include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
       });
     });
 
@@ -109,8 +110,37 @@ router.get(
   "/my",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const orders = await prisma.order.findMany({ where: { userId: req.user!.id }, include: { items: true, payment: true }, orderBy: { createdAt: "desc" } });
+    const orders = await prisma.order.findMany({ where: { userId: req.user!.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } }, orderBy: { createdAt: "desc" } });
     res.json({ success: true, data: orders });
+  }),
+);
+
+router.get(
+  "/my/:orderNumber",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const order = await prisma.order.findFirst({
+      where: { orderNumber: req.params.orderNumber, userId: req.user!.id },
+      include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
+    });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    res.json({ success: true, data: order });
+  }),
+);
+
+router.get(
+  "/track",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ orderNumber: z.string().trim().min(6), phone: z.string().trim().min(8).max(20) }).safeParse(req.query);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid order number and phone number" });
+
+    const order = await prisma.order.findFirst({
+      where: { orderNumber: parsed.data.orderNumber.toUpperCase(), customerPhone: parsed.data.phone },
+      include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
+    });
+    if (!order) return res.status(404).json({ success: false, message: "We could not find an order matching those details" });
+
+    res.json({ success: true, data: order });
   }),
 );
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { apiFetch } from "../api/http";
+import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -30,7 +30,7 @@ export default function ProductDetails() {
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
   if (!product) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
-  const image = product.images?.[0]?.url;
+  const image = mediaUrl(product.images?.[0]?.url);
   const inStock = variant && Number(variant.stockQuantity) > 0;
   const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, variant.stockQuantity));
   const wished = has(product.id);

@@ -17,11 +17,12 @@ export default function Footer() {
           <Link to="/shop">Shop all</Link>
           <Link to="/offers">Offers</Link>
           <Link to="/orders">My orders</Link>
+          <Link to="/track-order">Track order</Link>
         </div>
         <div>
           <h3>Customer care</h3>
           <span>Secure checkout</span>
-          <span>Order tracking</span>
+          <Link to="/track-order">Order tracking</Link>
           <span>India-wide delivery</span>
         </div>
         <div className="footer-promise">

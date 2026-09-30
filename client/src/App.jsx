@@ -11,6 +11,8 @@ import NotFound from "./pages/NotFound";
 import Offers from "./pages/Offers";
 import OrderSuccess from "./pages/OrderSuccess";
 import Orders from "./pages/Orders";
+import OrderDetail from "./pages/OrderDetail";
+import TrackOrder from "./pages/TrackOrder";
 import ProductDetails from "./pages/ProductDetails";
 import Register from "./pages/Register";
 import Shop from "./pages/Shop";
@@ -20,6 +22,7 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminInventory from "./pages/admin/AdminInventory";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
+import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 
 export default function App() {
@@ -37,6 +40,8 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
         <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+        <Route path="/orders/:orderNumber" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
+        <Route path="/track-order" element={<TrackOrder />} />
         <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Route>
@@ -47,6 +52,7 @@ export default function App() {
         <Route path="inventory" element={<AdminInventory />} />
         <Route path="customers" element={<AdminCustomers />} />
         <Route path="orders" element={<AdminOrders />} />
+        <Route path="orders/:id" element={<AdminOrderDetail />} />
         <Route path="promotions" element={<AdminPromotions />} />
       </Route>
     </Routes>

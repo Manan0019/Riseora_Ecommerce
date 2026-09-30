@@ -1,3 +1,4 @@
+import { mediaUrl } from "../api/http";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
@@ -16,7 +17,7 @@ export default function Cart() {
         <div className="cart-list">
           {items.map((item) => (
             <div className="cart-item" key={item.variantId}>
-              {item.imageUrl ? <img src={item.imageUrl} alt={item.productName} /> : <div className="mini-placeholder">R</div>}
+              {item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt={item.productName} /> : <div className="mini-placeholder">R</div>}
               <div className="cart-item-main">
                 <Link to={`/product/${item.productSlug}`}><strong>{item.productName}</strong></Link>
                 <p>{item.variantName}</p>

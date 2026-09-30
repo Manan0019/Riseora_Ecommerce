@@ -55,7 +55,7 @@ const productSchema = z.object({
   images: z
     .array(
       z.object({
-        url: z.string().url(),
+        url: z.string().trim().min(1).refine((value) => value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid image URL"),
         altText: z.string().trim().optional().or(z.literal("")),
         isPrimary: z.boolean().default(false),
       }),
@@ -64,6 +64,7 @@ const productSchema = z.object({
   variants: z
     .array(
       z.object({
+        id: z.string().uuid().optional(),
         name: z.string().trim().min(1),
         sku: z.string().trim().min(2).max(80),
         size: z.string().trim().optional().or(z.literal("")),
@@ -74,6 +75,7 @@ const productSchema = z.object({
         stockQuantity: z.number().int().nonnegative().default(0),
         lowStockThreshold: z.number().int().nonnegative().default(5),
         weightGrams: z.number().positive().optional(),
+        isActive: z.boolean().default(true),
       }),
     )
     .min(1),
@@ -83,7 +85,7 @@ router.get(
   "/products",
   asyncHandler(async (_req, res) => {
     const products = await prisma.product.findMany({
-      include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { orderBy: { createdAt: "asc" } } },
+      include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { isActive: true }, orderBy: { createdAt: "asc" } } },
       orderBy: { createdAt: "desc" },
     });
     res.json({ success: true, data: products });
@@ -127,6 +129,7 @@ router.post(
             stockQuantity: variant.stockQuantity,
             lowStockThreshold: variant.lowStockThreshold,
             weightGrams: variant.weightGrams ?? null,
+            isActive: variant.isActive,
           })),
         },
       },
@@ -160,6 +163,8 @@ router.get(
         user: { select: { id: true, firstName: true, lastName: true, email: true } },
         items: true,
         payment: true,
+        shipment: true,
+        statusHistory: { orderBy: { createdAt: "asc" } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -167,28 +172,164 @@ router.get(
   }),
 );
 
-const statusSchema = z.object({
-  status: z.enum(["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"]),
-});
-
-router.patch(
-  "/orders/:id/status",
+router.get(
+  "/orders/:id",
   asyncHandler(async (req, res) => {
-    const parsed = statusSchema.safeParse(req.body);
-    if (!parsed.success) {
-      return res.status(400).json({ success: false, message: "Invalid order status" });
-    }
-
-    const order = await prisma.order.update({
+    const order = await prisma.order.findUnique({
       where: { id: req.params.id },
-      data: { status: parsed.data.status },
-      include: { items: true, payment: true },
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        items: true,
+        payment: true,
+        shipment: true,
+        statusHistory: { orderBy: { createdAt: "asc" } },
+      },
     });
-
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     res.json({ success: true, data: order });
   }),
 );
 
+const orderStatuses = ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED", "DELIVERED", "CANCELLED"] as const;
+const fulfilmentSchema = z.object({
+  status: z.enum(orderStatuses),
+  note: z.string().trim().max(500).optional().or(z.literal("")),
+  carrier: z.string().trim().max(80).optional().or(z.literal("")),
+  trackingNumber: z.string().trim().max(120).optional().or(z.literal("")),
+  trackingUrl: z.string().trim().url().optional().or(z.literal("")),
+});
+
+const allowedTransitions: Record<(typeof orderStatuses)[number], (typeof orderStatuses)[number][]> = {
+  PENDING: ["CONFIRMED", "CANCELLED"],
+  CONFIRMED: ["PROCESSING", "CANCELLED"],
+  PROCESSING: ["SHIPPED", "CANCELLED"],
+  SHIPPED: ["DELIVERED"],
+  DELIVERED: [],
+  CANCELLED: [],
+};
+
+async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilmentSchema>) {
+  return prisma.$transaction(async (tx) => {
+    const order = await tx.order.findUnique({
+      where: { id: orderId },
+      include: { items: true, payment: true, shipment: true },
+    });
+    if (!order) throw new Error("ORDER_NOT_FOUND");
+
+    const isSameStatus = order.status === payload.status;
+    if (!isSameStatus && !allowedTransitions[order.status].includes(payload.status)) {
+      throw new Error(`INVALID_TRANSITION:${order.status}:${payload.status}`);
+    }
+
+    if (payload.status === "SHIPPED" && (!payload.carrier || !payload.trackingNumber)) {
+      throw new Error("SHIPMENT_DETAILS_REQUIRED");
+    }
+
+    if (!isSameStatus && payload.status === "CANCELLED") {
+      for (const item of order.items) {
+        if (item.variantId) {
+          await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
+        }
+      }
+      if (order.couponCode) {
+        await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
+      }
+      if (order.payment?.status === "PENDING") {
+        await tx.payment.update({ where: { orderId: order.id }, data: { status: "CANCELLED" } });
+      }
+    }
+
+    if (payload.status === "SHIPPED") {
+      await tx.shipment.upsert({
+        where: { orderId: order.id },
+        create: {
+          orderId: order.id,
+          carrier: payload.carrier || null,
+          trackingNumber: payload.trackingNumber || null,
+          trackingUrl: payload.trackingUrl || null,
+          shippedAt: new Date(),
+        },
+        update: {
+          carrier: payload.carrier || null,
+          trackingNumber: payload.trackingNumber || null,
+          trackingUrl: payload.trackingUrl || null,
+          shippedAt: order.shipment?.shippedAt ?? new Date(),
+        },
+      });
+    } else if (order.shipment && (payload.carrier || payload.trackingNumber || payload.trackingUrl)) {
+      await tx.shipment.update({
+        where: { orderId: order.id },
+        data: {
+          ...(payload.carrier ? { carrier: payload.carrier } : {}),
+          ...(payload.trackingNumber ? { trackingNumber: payload.trackingNumber } : {}),
+          ...(payload.trackingUrl ? { trackingUrl: payload.trackingUrl } : {}),
+        },
+      });
+    }
+
+    if (!isSameStatus && payload.status === "DELIVERED") {
+      await tx.shipment.upsert({
+        where: { orderId: order.id },
+        create: { orderId: order.id, deliveredAt: new Date() },
+        update: { deliveredAt: new Date() },
+      });
+      if (order.paymentMethod === "COD" && order.payment) {
+        await tx.payment.update({ where: { orderId: order.id }, data: { status: "PAID", paidAt: new Date() } });
+      }
+    }
+
+    if (!isSameStatus) {
+      await tx.order.update({ where: { id: order.id }, data: { status: payload.status } });
+    }
+
+    if (!isSameStatus || payload.note) {
+      await tx.orderStatusHistory.create({
+        data: { orderId: order.id, status: payload.status, note: payload.note || null, source: "ADMIN" },
+      });
+    }
+
+    return tx.order.findUnique({
+      where: { id: order.id },
+      include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
+    });
+  });
+}
+
+router.patch(
+  "/orders/:id/fulfilment",
+  asyncHandler(async (req, res) => {
+    const parsed = fulfilmentSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid fulfilment update", errors: parsed.error.flatten() });
+    try {
+      const order = await updateFulfilment(req.params.id, parsed.data);
+      res.json({ success: true, data: order });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Carrier and tracking number are required before marking an order shipped" });
+      if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
+      throw error;
+    }
+  }),
+);
+
+router.patch(
+  "/orders/:id/status",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ status: z.enum(orderStatuses) }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid order status" });
+    try {
+      const order = await updateFulfilment(req.params.id, { status: parsed.data.status });
+      res.json({ success: true, data: order });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
+      if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Use order details to add shipping information before marking this order shipped" });
+      if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      throw error;
+    }
+  }),
+);
 
 
 const couponSchema = z.object({
@@ -541,7 +682,32 @@ router.put(
       if (!existing) throw new Error("PRODUCT_NOT_FOUND");
 
       await tx.productImage.deleteMany({ where: { productId: existing.id } });
-      await tx.productVariant.deleteMany({ where: { productId: existing.id } });
+
+      const existingVariants = await tx.productVariant.findMany({ where: { productId: existing.id }, select: { id: true } });
+      const existingIds = new Set(existingVariants.map((variant) => variant.id));
+      const submittedIds = new Set(parsed.data.variants.flatMap((variant) => variant.id ? [variant.id] : []));
+      if ([...submittedIds].some((id) => !existingIds.has(id))) throw new Error("INVALID_VARIANT_ID");
+
+      const removedIds = [...existingIds].filter((id) => !submittedIds.has(id));
+      if (removedIds.length) await tx.productVariant.updateMany({ where: { id: { in: removedIds } }, data: { isActive: false } });
+
+      for (const variant of parsed.data.variants) {
+        const data = {
+          name: variant.name,
+          sku: variant.sku,
+          size: variant.size || null,
+          unit: variant.unit || null,
+          mrp: variant.mrp,
+          sellingPrice: variant.sellingPrice,
+          costPrice: variant.costPrice ?? null,
+          stockQuantity: variant.stockQuantity,
+          lowStockThreshold: variant.lowStockThreshold,
+          weightGrams: variant.weightGrams ?? null,
+          isActive: variant.isActive,
+        };
+        if (variant.id) await tx.productVariant.update({ where: { id: variant.id }, data });
+        else await tx.productVariant.create({ data: { ...data, productId: existing.id } });
+      }
 
       return tx.product.update({
         where: { id: existing.id },
@@ -562,22 +728,8 @@ router.put(
               sortOrder: index,
             })),
           },
-          variants: {
-            create: parsed.data.variants.map((variant) => ({
-              name: variant.name,
-              sku: variant.sku,
-              size: variant.size || null,
-              unit: variant.unit || null,
-              mrp: variant.mrp,
-              sellingPrice: variant.sellingPrice,
-              costPrice: variant.costPrice ?? null,
-              stockQuantity: variant.stockQuantity,
-              lowStockThreshold: variant.lowStockThreshold,
-              weightGrams: variant.weightGrams ?? null,
-            })),
-          },
         },
-        include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: true },
+        include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { isActive: true }, orderBy: { createdAt: "asc" } } },
       });
     });
 
