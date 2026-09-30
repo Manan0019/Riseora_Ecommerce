@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import AuthBrand from "../components/AuthBrand";
 
 export default function Login() {
   const { login } = useAuth();
@@ -20,7 +21,7 @@ export default function Login() {
     } catch (err) { setError(err.message); } finally { setLoading(false); }
   }
 
-  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}>
+  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}><AuthBrand />
     <p className="eyebrow">WELCOME BACK</p><h1>Login</h1>
     {location.state?.passwordReset && <p className="alert success">Password updated. Sign in with your new password.</p>}
     {error && <p className="alert error">{error}</p>}

@@ -119,3 +119,31 @@ export const ContactMessageStatus = {
 } as const
 
 export type ContactMessageStatus = (typeof ContactMessageStatus)[keyof typeof ContactMessageStatus]
+
+
+export const CartRecoveryStatus = {
+  ACTIVE: 'ACTIVE',
+  CONVERTED: 'CONVERTED',
+  DISMISSED: 'DISMISSED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type CartRecoveryStatus = (typeof CartRecoveryStatus)[keyof typeof CartRecoveryStatus]
+
+
+export const StockAlertStatus = {
+  PENDING: 'PENDING',
+  NOTIFIED: 'NOTIFIED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type StockAlertStatus = (typeof StockAlertStatus)[keyof typeof StockAlertStatus]
+
+
+export const MerchandisingDealType = {
+  BUNDLE_DISCOUNT: 'BUNDLE_DISCOUNT',
+  BUY_X_GET_Y: 'BUY_X_GET_Y',
+  GIFT_WITH_PURCHASE: 'GIFT_WITH_PURCHASE'
+} as const
+
+export type MerchandisingDealType = (typeof MerchandisingDealType)[keyof typeof MerchandisingDealType]

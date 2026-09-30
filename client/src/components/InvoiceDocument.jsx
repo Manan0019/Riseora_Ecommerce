@@ -13,6 +13,7 @@ export default function InvoiceDocument({ data, admin = false }) {
   if (!data) return null;
   const { invoice, order } = data;
   const lines = Array.isArray(invoice.lines) ? invoice.lines : [];
+  const orderItemsById = new Map((order.items || []).map((item) => [item.id, item]));
   return (
     <div className="invoice-page-wrap">
       <div className="invoice-actions no-print">
@@ -33,7 +34,7 @@ export default function InvoiceDocument({ data, admin = false }) {
         <div className="invoice-table-wrap">
           <table className="invoice-table">
             <thead><tr><th>Item</th><th>HSN</th><th>Qty</th><th>Taxable</th><th>GST</th><th>Tax</th><th>Total</th></tr></thead>
-            <tbody>{lines.map((line) => <tr key={line.orderItemId}><td><strong>{line.productName}</strong><small>{line.variantName || line.sku}</small></td><td>{line.hsnCode || "—"}</td><td>{line.quantity}</td><td>{money(line.taxableAmount)}</td><td>{Number(line.gstRate || 0).toFixed(2)}%</td><td>{money(line.taxAmount)}</td><td>{money(line.lineTotal)}</td></tr>)}</tbody>
+            <tbody>{lines.map((line) => { const orderItem = orderItemsById.get(line.orderItemId); return <tr key={line.orderItemId}><td><strong>{line.productName}</strong><small>{line.variantName || line.sku}{orderItem?.isComplimentary ? ` • FREE • ${orderItem.promotionLabel || "Offer"}` : ""}</small></td><td>{line.hsnCode || "—"}</td><td>{line.quantity}</td><td>{money(line.taxableAmount)}</td><td>{Number(line.gstRate || 0).toFixed(2)}%</td><td>{money(line.taxAmount)}</td><td>{orderItem?.isComplimentary ? "FREE" : money(line.lineTotal)}</td></tr>; })}</tbody>
           </table>
         </div>
 

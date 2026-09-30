@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
 import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
+import { prepareCheckout } from "../services/checkout.service";
 
 const router = Router();
 
@@ -43,6 +44,44 @@ router.get(
       orderBy: [{ priority: "desc" }, { createdAt: "desc" }],
     });
     res.json({ success: true, data: banners });
+  }),
+);
+
+
+const cartPreviewSchema = z.object({
+  paymentMethod: z.enum(["COD", "ONLINE"]).default("COD"),
+  couponCode: z.string().trim().max(40).optional().or(z.literal("")),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(20) })).min(1),
+});
+
+router.post(
+  "/cart-preview",
+  asyncHandler(async (req, res) => {
+    const parsed = cartPreviewSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart" });
+    try {
+      const prepared = await prepareCheckout({
+        customerName: "Preview", customerEmail: "", customerPhone: "00000000", couponCode: parsed.data.couponCode || "",
+        shippingAddress: { line1: "Preview", city: "Preview", state: "Gujarat", postalCode: "0000", country: "India" },
+        items: parsed.data.items,
+      }, parsed.data.paymentMethod);
+      res.json({
+        success: true,
+        data: {
+          subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount,
+          couponDiscountAmount: prepared.couponDiscountAmount, automaticDiscountAmount: prepared.automaticDiscountAmount,
+          automaticPromotionName: prepared.automaticPromotionName, automaticPromotionType: prepared.automaticPromotionType,
+          promotionValue: prepared.promotionValue, totalAmount: prepared.totalAmount,
+          freeItems: prepared.items.filter((item) => item.isComplimentary),
+        },
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "PREVIEW_FAILED";
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(400).json({ success: false, message: "One or more products are unavailable" });
+      if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
+      if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
+      throw error;
+    }
   }),
 );
 

@@ -398,6 +398,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  PasswordResetToken: 'PasswordResetToken',
   Address: 'Address',
   Category: 'Category',
   Product: 'Product',
@@ -417,10 +418,13 @@ export const ModelName = {
   ReturnRequestItem: 'ReturnRequestItem',
   Coupon: 'Coupon',
   Offer: 'Offer',
+  MerchandisingDeal: 'MerchandisingDeal',
   Review: 'Review',
   Banner: 'Banner',
+  CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
-  NewsletterSubscriber: 'NewsletterSubscriber'
+  NewsletterSubscriber: 'NewsletterSubscriber',
+  StockAlert: 'StockAlert'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -436,7 +440,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "offer" | "review" | "banner" | "contactMessage" | "newsletterSubscriber"
+    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "offer" | "merchandisingDeal" | "review" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -511,6 +515,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    PasswordResetToken: {
+      payload: Prisma.$PasswordResetTokenPayload<ExtArgs>
+      fields: Prisma.PasswordResetTokenFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PasswordResetTokenFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PasswordResetTokenFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findFirst: {
+          args: Prisma.PasswordResetTokenFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PasswordResetTokenFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        findMany: {
+          args: Prisma.PasswordResetTokenFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        create: {
+          args: Prisma.PasswordResetTokenCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        createMany: {
+          args: Prisma.PasswordResetTokenCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PasswordResetTokenCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        delete: {
+          args: Prisma.PasswordResetTokenDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        update: {
+          args: Prisma.PasswordResetTokenUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        deleteMany: {
+          args: Prisma.PasswordResetTokenDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PasswordResetTokenUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PasswordResetTokenUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>[]
+        }
+        upsert: {
+          args: Prisma.PasswordResetTokenUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PasswordResetTokenPayload>
+        }
+        aggregate: {
+          args: Prisma.PasswordResetTokenAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePasswordResetToken>
+        }
+        groupBy: {
+          args: Prisma.PasswordResetTokenGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PasswordResetTokenCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PasswordResetTokenCountAggregateOutputType> | number
         }
       }
     }
@@ -1920,6 +1998,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MerchandisingDeal: {
+      payload: Prisma.$MerchandisingDealPayload<ExtArgs>
+      fields: Prisma.MerchandisingDealFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MerchandisingDealFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MerchandisingDealFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        findFirst: {
+          args: Prisma.MerchandisingDealFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MerchandisingDealFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        findMany: {
+          args: Prisma.MerchandisingDealFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>[]
+        }
+        create: {
+          args: Prisma.MerchandisingDealCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        createMany: {
+          args: Prisma.MerchandisingDealCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MerchandisingDealCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>[]
+        }
+        delete: {
+          args: Prisma.MerchandisingDealDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        update: {
+          args: Prisma.MerchandisingDealUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        deleteMany: {
+          args: Prisma.MerchandisingDealDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MerchandisingDealUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MerchandisingDealUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>[]
+        }
+        upsert: {
+          args: Prisma.MerchandisingDealUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MerchandisingDealPayload>
+        }
+        aggregate: {
+          args: Prisma.MerchandisingDealAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMerchandisingDeal>
+        }
+        groupBy: {
+          args: Prisma.MerchandisingDealGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MerchandisingDealGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MerchandisingDealCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MerchandisingDealCountAggregateOutputType> | number
+        }
+      }
+    }
     Review: {
       payload: Prisma.$ReviewPayload<ExtArgs>
       fields: Prisma.ReviewFieldRefs
@@ -2065,6 +2217,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.BannerCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.BannerCountAggregateOutputType> | number
+        }
+      }
+    }
+    CartRecoverySession: {
+      payload: Prisma.$CartRecoverySessionPayload<ExtArgs>
+      fields: Prisma.CartRecoverySessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CartRecoverySessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CartRecoverySessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        findFirst: {
+          args: Prisma.CartRecoverySessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CartRecoverySessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        findMany: {
+          args: Prisma.CartRecoverySessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>[]
+        }
+        create: {
+          args: Prisma.CartRecoverySessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        createMany: {
+          args: Prisma.CartRecoverySessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CartRecoverySessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>[]
+        }
+        delete: {
+          args: Prisma.CartRecoverySessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        update: {
+          args: Prisma.CartRecoverySessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.CartRecoverySessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CartRecoverySessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CartRecoverySessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.CartRecoverySessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CartRecoverySessionPayload>
+        }
+        aggregate: {
+          args: Prisma.CartRecoverySessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCartRecoverySession>
+        }
+        groupBy: {
+          args: Prisma.CartRecoverySessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CartRecoverySessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CartRecoverySessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CartRecoverySessionCountAggregateOutputType> | number
         }
       }
     }
@@ -2216,6 +2442,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    StockAlert: {
+      payload: Prisma.$StockAlertPayload<ExtArgs>
+      fields: Prisma.StockAlertFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.StockAlertFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.StockAlertFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        findFirst: {
+          args: Prisma.StockAlertFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.StockAlertFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        findMany: {
+          args: Prisma.StockAlertFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>[]
+        }
+        create: {
+          args: Prisma.StockAlertCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        createMany: {
+          args: Prisma.StockAlertCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.StockAlertCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>[]
+        }
+        delete: {
+          args: Prisma.StockAlertDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        update: {
+          args: Prisma.StockAlertUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        deleteMany: {
+          args: Prisma.StockAlertDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.StockAlertUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.StockAlertUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>[]
+        }
+        upsert: {
+          args: Prisma.StockAlertUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$StockAlertPayload>
+        }
+        aggregate: {
+          args: Prisma.StockAlertAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStockAlert>
+        }
+        groupBy: {
+          args: Prisma.StockAlertGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StockAlertGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.StockAlertCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StockAlertCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -2264,11 +2564,24 @@ export const UserScalarFieldEnum = {
   passwordHash: 'passwordHash',
   role: 'role',
   isActive: 'isActive',
+  tokenVersion: 'tokenVersion',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const PasswordResetTokenScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenHash: 'tokenHash',
+  expiresAt: 'expiresAt',
+  usedAt: 'usedAt',
+  createdAt: 'createdAt'
+} as const
+
+export type PasswordResetTokenScalarFieldEnum = (typeof PasswordResetTokenScalarFieldEnum)[keyof typeof PasswordResetTokenScalarFieldEnum]
 
 
 export const AddressScalarFieldEnum = {
@@ -2313,6 +2626,11 @@ export const ProductScalarFieldEnum = {
   slug: 'slug',
   shortDescription: 'shortDescription',
   description: 'description',
+  benefits: 'benefits',
+  ingredients: 'ingredients',
+  howToUse: 'howToUse',
+  suitableFor: 'suitableFor',
+  faq: 'faq',
   isActive: 'isActive',
   isFeatured: 'isFeatured',
   badge: 'badge',
@@ -2370,6 +2688,8 @@ export const OrderScalarFieldEnum = {
   status: 'status',
   paymentMethod: 'paymentMethod',
   couponCode: 'couponCode',
+  automaticPromotionName: 'automaticPromotionName',
+  automaticDiscountAmount: 'automaticDiscountAmount',
   subtotal: 'subtotal',
   shippingFee: 'shippingFee',
   discountAmount: 'discountAmount',
@@ -2420,6 +2740,8 @@ export const OrderItemScalarFieldEnum = {
   lineTotal: 'lineTotal',
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
+  promotionLabel: 'promotionLabel',
+  isComplimentary: 'isComplimentary',
   createdAt: 'createdAt'
 } as const
 
@@ -2455,6 +2777,8 @@ export const CheckoutSessionScalarFieldEnum = {
   customerPhone: 'customerPhone',
   shippingAddress: 'shippingAddress',
   couponCode: 'couponCode',
+  automaticPromotionName: 'automaticPromotionName',
+  automaticDiscountAmount: 'automaticDiscountAmount',
   subtotal: 'subtotal',
   shippingFee: 'shippingFee',
   discountAmount: 'discountAmount',
@@ -2513,6 +2837,9 @@ export const StoreSettingScalarFieldEnum = {
   privacyPolicy: 'privacyPolicy',
   termsPolicy: 'termsPolicy',
   brandTagline: 'brandTagline',
+  logoUrl: 'logoUrl',
+  logoMarkUrl: 'logoMarkUrl',
+  logoAlt: 'logoAlt',
   announcementText: 'announcementText',
   announcementSecondary: 'announcementSecondary',
   siteUrl: 'siteUrl',
@@ -2649,6 +2976,33 @@ export const OfferScalarFieldEnum = {
 export type OfferScalarFieldEnum = (typeof OfferScalarFieldEnum)[keyof typeof OfferScalarFieldEnum]
 
 
+export const MerchandisingDealScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  slug: 'slug',
+  type: 'type',
+  description: 'description',
+  badge: 'badge',
+  imageUrl: 'imageUrl',
+  discountPercent: 'discountPercent',
+  bundleItems: 'bundleItems',
+  buyVariantId: 'buyVariantId',
+  giftVariantId: 'giftVariantId',
+  buyQuantity: 'buyQuantity',
+  giftQuantity: 'giftQuantity',
+  minOrderAmount: 'minOrderAmount',
+  isFeatured: 'isFeatured',
+  isActive: 'isActive',
+  priority: 'priority',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MerchandisingDealScalarFieldEnum = (typeof MerchandisingDealScalarFieldEnum)[keyof typeof MerchandisingDealScalarFieldEnum]
+
+
 export const ReviewScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -2688,6 +3042,29 @@ export const BannerScalarFieldEnum = {
 export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof BannerScalarFieldEnum]
 
 
+export const CartRecoverySessionScalarFieldEnum = {
+  id: 'id',
+  cartToken: 'cartToken',
+  userId: 'userId',
+  email: 'email',
+  name: 'name',
+  phone: 'phone',
+  items: 'items',
+  subtotal: 'subtotal',
+  recoveryOptIn: 'recoveryOptIn',
+  reminderCount: 'reminderCount',
+  lastReminderAt: 'lastReminderAt',
+  status: 'status',
+  orderNumber: 'orderNumber',
+  lastSeenAt: 'lastSeenAt',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CartRecoverySessionScalarFieldEnum = (typeof CartRecoverySessionScalarFieldEnum)[keyof typeof CartRecoverySessionScalarFieldEnum]
+
+
 export const ContactMessageScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -2719,12 +3096,35 @@ export const NewsletterSubscriberScalarFieldEnum = {
 export type NewsletterSubscriberScalarFieldEnum = (typeof NewsletterSubscriberScalarFieldEnum)[keyof typeof NewsletterSubscriberScalarFieldEnum]
 
 
+export const StockAlertScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  email: 'email',
+  name: 'name',
+  status: 'status',
+  subscribedAt: 'subscribedAt',
+  notifiedAt: 'notifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StockAlertScalarFieldEnum = (typeof StockAlertScalarFieldEnum)[keyof typeof StockAlertScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: DbNull,
+  JsonNull: JsonNull
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const JsonNullValueInput = {
@@ -2801,6 +3201,20 @@ export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
+ * Reference to a field of type 'Int'
+ */
+export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
+    
+
+
+/**
+ * Reference to a field of type 'Int[]'
+ */
+export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
  * Reference to a field of type 'DateTime'
  */
 export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime'>
@@ -2829,34 +3243,6 @@ export type ListEnumAddressTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
- * Reference to a field of type 'Decimal'
- */
-export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
-    
-
-
-/**
- * Reference to a field of type 'Decimal[]'
- */
-export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
-    
-
-
-/**
- * Reference to a field of type 'Int'
- */
-export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int'>
-    
-
-
-/**
- * Reference to a field of type 'Int[]'
- */
-export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
-    
-
-
-/**
  * Reference to a field of type 'Json'
  */
 export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -2867,6 +3253,20 @@ export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'J
  * Reference to a field of type 'QueryMode'
  */
 export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal'
+ */
+export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal'>
+    
+
+
+/**
+ * Reference to a field of type 'Decimal[]'
+ */
+export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
     
 
 
@@ -2969,6 +3369,20 @@ export type ListEnumCouponDiscountTypeFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
+ * Reference to a field of type 'MerchandisingDealType'
+ */
+export type EnumMerchandisingDealTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MerchandisingDealType'>
+    
+
+
+/**
+ * Reference to a field of type 'MerchandisingDealType[]'
+ */
+export type ListEnumMerchandisingDealTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MerchandisingDealType[]'>
+    
+
+
+/**
  * Reference to a field of type 'BannerPlacement'
  */
 export type EnumBannerPlacementFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BannerPlacement'>
@@ -2983,6 +3397,20 @@ export type ListEnumBannerPlacementFieldRefInput<$PrismaModel> = FieldRefInputTy
 
 
 /**
+ * Reference to a field of type 'CartRecoveryStatus'
+ */
+export type EnumCartRecoveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CartRecoveryStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'CartRecoveryStatus[]'
+ */
+export type ListEnumCartRecoveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CartRecoveryStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'ContactMessageStatus'
  */
 export type EnumContactMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactMessageStatus'>
@@ -2993,6 +3421,20 @@ export type EnumContactMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputT
  * Reference to a field of type 'ContactMessageStatus[]'
  */
 export type ListEnumContactMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactMessageStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'StockAlertStatus'
+ */
+export type EnumStockAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockAlertStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'StockAlertStatus[]'
+ */
+export type ListEnumStockAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockAlertStatus[]'>
     
 
 
@@ -3161,6 +3603,7 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  passwordResetToken?: Prisma.PasswordResetTokenOmit
   address?: Prisma.AddressOmit
   category?: Prisma.CategoryOmit
   product?: Prisma.ProductOmit
@@ -3180,10 +3623,13 @@ export type GlobalOmitConfig = {
   returnRequestItem?: Prisma.ReturnRequestItemOmit
   coupon?: Prisma.CouponOmit
   offer?: Prisma.OfferOmit
+  merchandisingDeal?: Prisma.MerchandisingDealOmit
   review?: Prisma.ReviewOmit
   banner?: Prisma.BannerOmit
+  cartRecoverySession?: Prisma.CartRecoverySessionOmit
   contactMessage?: Prisma.ContactMessageOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
+  stockAlert?: Prisma.StockAlertOmit
 }
 
 /* Types for Logging */

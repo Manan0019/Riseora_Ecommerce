@@ -12,10 +12,9 @@ export function StoreProvider({ children }) {
   }, []);
   useEffect(() => {
     const icon = store.logoMarkUrl || store.logoUrl;
-    if (!icon) return;
     let link = document.querySelector('link[rel~="icon"]');
     if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
-    link.href = mediaUrl(icon);
+    link.href = icon ? mediaUrl(icon) : "/brand/riseora-Logo-Vertical.png";
   }, [store.logoMarkUrl, store.logoUrl]);
   const value = useMemo(() => ({ store, loading }), [store, loading]);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;

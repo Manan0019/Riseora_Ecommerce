@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../api/http";
+import AuthBrand from "../components/AuthBrand";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -18,7 +19,7 @@ export default function ForgotPassword() {
     finally { setLoading(false); }
   }
 
-  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}>
+  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}><AuthBrand />
     <p className="eyebrow">ACCOUNT RECOVERY</p><h1>Forgot password?</h1>
     <p className="auth-copy">Enter the email used for your Riseora account. If it is registered, we’ll prepare a secure reset link.</p>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}

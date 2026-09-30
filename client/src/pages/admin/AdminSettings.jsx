@@ -114,17 +114,17 @@ export default function AdminSettings() {
       <div className="editor-section-head"><div><strong>Storefront, SEO & social</strong><small>Used by mobile navigation, search previews and customer pages.</small></div></div>
       <section className="phase12-brand-settings">
         <div className="phase12-brand-upload-card">
-          <div className="phase12-brand-preview full">{settings.logoUrl ? <img src={mediaUrl(settings.logoUrl)} alt={settings.logoAlt || "Riseora logo"} /> : <span>RISEORA</span>}</div>
-          <div><strong>Primary logo</strong><small>Transparent PNG or WEBP works best. Used in the storefront header, footer and invoices.</small></div>
+          <div className="phase12-brand-preview full"><img src={settings.logoUrl ? mediaUrl(settings.logoUrl) : "/brand/riseora-logo-Horizontal.png"} alt={settings.logoAlt || "Riseora logo"} onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
+          <div><strong>Horizontal logo</strong><small>Used in the navbar, footer and invoices. If blank, Riseora uses client/src/assets/riseora-logo-Horizontal.png.</small></div>
           <label className={uploadingBrand === "logoUrl" ? "state-toggle disabled" : "state-toggle active"}>{uploadingBrand === "logoUrl" ? "Uploading…" : "Upload logo"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingBrand)} onChange={(e) => uploadBrand(e.target.files?.[0], "logoUrl")} /></label>
         </div>
         <div className="phase12-brand-upload-card">
-          <div className="phase12-brand-preview mark">{settings.logoMarkUrl ? <img src={mediaUrl(settings.logoMarkUrl)} alt="Riseora mark" /> : <span>R</span>}</div>
-          <div><strong>Compact brand mark</strong><small>Optional square/circular mark for compact admin/mobile spaces.</small></div>
-          <label className={uploadingBrand === "logoMarkUrl" ? "state-toggle disabled" : "state-toggle active"}>{uploadingBrand === "logoMarkUrl" ? "Uploading…" : "Upload mark"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingBrand)} onChange={(e) => uploadBrand(e.target.files?.[0], "logoMarkUrl")} /></label>
+          <div className="phase12-brand-preview mark"><img src={settings.logoMarkUrl ? mediaUrl(settings.logoMarkUrl) : "/brand/riseora-Logo-Vertical.png"} alt="Riseora vertical logo" onError={(e) => { e.currentTarget.style.display = "none"; }} /></div>
+          <div><strong>Vertical logo / compact mark</strong><small>Used on login, loading and compact admin spaces. If blank, Riseora uses client/src/assets/riseora-Logo-Vertical.png.</small></div>
+          <label className={uploadingBrand === "logoMarkUrl" ? "state-toggle disabled" : "state-toggle active"}>{uploadingBrand === "logoMarkUrl" ? "Uploading…" : "Upload vertical logo"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingBrand)} onChange={(e) => uploadBrand(e.target.files?.[0], "logoMarkUrl")} /></label>
         </div>
       </section>
-      <div className="admin-field-grid two"><label>Primary logo URL<input name="logoUrl" value={settings.logoUrl || ""} onChange={update} placeholder="Uploaded automatically or https://..." /></label><label>Compact logo mark URL<input name="logoMarkUrl" value={settings.logoMarkUrl || ""} onChange={update} placeholder="Optional" /></label></div>
+      <div className="admin-field-grid two"><label>Primary logo URL<input name="logoUrl" value={settings.logoUrl || ""} onChange={update} placeholder="Uploaded automatically or https://..." /></label><label>Vertical logo / mark URL<input name="logoMarkUrl" value={settings.logoMarkUrl || ""} onChange={update} placeholder="Optional" /></label></div>
       <div className="admin-field-grid two"><label>Logo alt text<input name="logoAlt" value={settings.logoAlt || ""} onChange={update} placeholder="Riseora Herbals" /></label><label>Brand tagline<input name="brandTagline" value={settings.brandTagline || ""} onChange={update} placeholder="Everyday herbal care, thoughtfully made." /></label></div>
       <label>Public site URL<input name="siteUrl" value={settings.siteUrl || ""} onChange={update} placeholder="https://www.riseora.com" /></label>
       <div className="admin-field-grid two"><label>Announcement line 1<input name="announcementText" value={settings.announcementText || ""} onChange={update} /></label><label>Announcement line 2<input name="announcementSecondary" value={settings.announcementSecondary || ""} onChange={update} /></label></div>

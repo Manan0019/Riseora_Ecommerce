@@ -52,6 +52,8 @@ export type OrderItemMinAggregateOutputType = {
   lineTotal: runtime.Decimal | null
   hsnCode: string | null
   gstRate: runtime.Decimal | null
+  promotionLabel: string | null
+  isComplimentary: boolean | null
   createdAt: Date | null
 }
 
@@ -67,6 +69,8 @@ export type OrderItemMaxAggregateOutputType = {
   lineTotal: runtime.Decimal | null
   hsnCode: string | null
   gstRate: runtime.Decimal | null
+  promotionLabel: string | null
+  isComplimentary: boolean | null
   createdAt: Date | null
 }
 
@@ -82,6 +86,8 @@ export type OrderItemCountAggregateOutputType = {
   lineTotal: number
   hsnCode: number
   gstRate: number
+  promotionLabel: number
+  isComplimentary: number
   createdAt: number
   _all: number
 }
@@ -113,6 +119,8 @@ export type OrderItemMinAggregateInputType = {
   lineTotal?: true
   hsnCode?: true
   gstRate?: true
+  promotionLabel?: true
+  isComplimentary?: true
   createdAt?: true
 }
 
@@ -128,6 +136,8 @@ export type OrderItemMaxAggregateInputType = {
   lineTotal?: true
   hsnCode?: true
   gstRate?: true
+  promotionLabel?: true
+  isComplimentary?: true
   createdAt?: true
 }
 
@@ -143,6 +153,8 @@ export type OrderItemCountAggregateInputType = {
   lineTotal?: true
   hsnCode?: true
   gstRate?: true
+  promotionLabel?: true
+  isComplimentary?: true
   createdAt?: true
   _all?: true
 }
@@ -245,6 +257,8 @@ export type OrderItemGroupByOutputType = {
   lineTotal: runtime.Decimal
   hsnCode: string | null
   gstRate: runtime.Decimal
+  promotionLabel: string | null
+  isComplimentary: boolean
   createdAt: Date
   _count: OrderItemCountAggregateOutputType | null
   _avg: OrderItemAvgAggregateOutputType | null
@@ -283,6 +297,8 @@ export type OrderItemWhereInput = {
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  isComplimentary?: Prisma.BoolFilter<"OrderItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   variant?: Prisma.XOR<Prisma.ProductVariantNullableScalarRelationFilter, Prisma.ProductVariantWhereInput> | null
@@ -301,6 +317,8 @@ export type OrderItemOrderByWithRelationInput = {
   lineTotal?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
+  promotionLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  isComplimentary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
   variant?: Prisma.ProductVariantOrderByWithRelationInput
@@ -322,6 +340,8 @@ export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  isComplimentary?: Prisma.BoolFilter<"OrderItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   variant?: Prisma.XOR<Prisma.ProductVariantNullableScalarRelationFilter, Prisma.ProductVariantWhereInput> | null
@@ -340,6 +360,8 @@ export type OrderItemOrderByWithAggregationInput = {
   lineTotal?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
+  promotionLabel?: Prisma.SortOrderInput | Prisma.SortOrder
+  isComplimentary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.OrderItemCountOrderByAggregateInput
   _avg?: Prisma.OrderItemAvgOrderByAggregateInput
@@ -363,6 +385,8 @@ export type OrderItemScalarWhereWithAggregatesInput = {
   lineTotal?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
+  isComplimentary?: Prisma.BoolWithAggregatesFilter<"OrderItem"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OrderItem"> | Date | string
 }
 
@@ -376,6 +400,8 @@ export type OrderItemCreateInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutItemsInput
   variant?: Prisma.ProductVariantCreateNestedOneWithoutOrderItemsInput
@@ -394,6 +420,8 @@ export type OrderItemUncheckedCreateInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedCreateNestedManyWithoutOrderItemInput
 }
@@ -408,6 +436,8 @@ export type OrderItemUpdateInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutItemsNestedInput
   variant?: Prisma.ProductVariantUpdateOneWithoutOrderItemsNestedInput
@@ -426,6 +456,8 @@ export type OrderItemUncheckedUpdateInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedUpdateManyWithoutOrderItemNestedInput
 }
@@ -442,6 +474,8 @@ export type OrderItemCreateManyInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
 }
 
@@ -455,6 +489,8 @@ export type OrderItemUpdateManyMutationInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -470,6 +506,8 @@ export type OrderItemUncheckedUpdateManyInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -495,6 +533,8 @@ export type OrderItemCountOrderByAggregateInput = {
   lineTotal?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
+  promotionLabel?: Prisma.SortOrder
+  isComplimentary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -517,6 +557,8 @@ export type OrderItemMaxOrderByAggregateInput = {
   lineTotal?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
+  promotionLabel?: Prisma.SortOrder
+  isComplimentary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -532,6 +574,8 @@ export type OrderItemMinOrderByAggregateInput = {
   lineTotal?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
+  promotionLabel?: Prisma.SortOrder
+  isComplimentary?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -655,6 +699,8 @@ export type OrderItemCreateWithoutVariantInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutItemsInput
   returnItems?: Prisma.ReturnRequestItemCreateNestedManyWithoutOrderItemInput
@@ -671,6 +717,8 @@ export type OrderItemUncheckedCreateWithoutVariantInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedCreateNestedManyWithoutOrderItemInput
 }
@@ -716,6 +764,8 @@ export type OrderItemScalarWhereInput = {
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
+  isComplimentary?: Prisma.BoolFilter<"OrderItem"> | boolean
   createdAt?: Prisma.DateTimeFilter<"OrderItem"> | Date | string
 }
 
@@ -729,6 +779,8 @@ export type OrderItemCreateWithoutOrderInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   variant?: Prisma.ProductVariantCreateNestedOneWithoutOrderItemsInput
   returnItems?: Prisma.ReturnRequestItemCreateNestedManyWithoutOrderItemInput
@@ -745,6 +797,8 @@ export type OrderItemUncheckedCreateWithoutOrderInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedCreateNestedManyWithoutOrderItemInput
 }
@@ -785,6 +839,8 @@ export type OrderItemCreateWithoutReturnItemsInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutItemsInput
   variant?: Prisma.ProductVariantCreateNestedOneWithoutOrderItemsInput
@@ -802,6 +858,8 @@ export type OrderItemUncheckedCreateWithoutReturnItemsInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
 }
 
@@ -831,6 +889,8 @@ export type OrderItemUpdateWithoutReturnItemsInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutItemsNestedInput
   variant?: Prisma.ProductVariantUpdateOneWithoutOrderItemsNestedInput
@@ -848,6 +908,8 @@ export type OrderItemUncheckedUpdateWithoutReturnItemsInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -862,6 +924,8 @@ export type OrderItemCreateManyVariantInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
 }
 
@@ -875,6 +939,8 @@ export type OrderItemUpdateWithoutVariantInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutItemsNestedInput
   returnItems?: Prisma.ReturnRequestItemUpdateManyWithoutOrderItemNestedInput
@@ -891,6 +957,8 @@ export type OrderItemUncheckedUpdateWithoutVariantInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedUpdateManyWithoutOrderItemNestedInput
 }
@@ -906,6 +974,8 @@ export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -920,6 +990,8 @@ export type OrderItemCreateManyOrderInput = {
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: string | null
+  isComplimentary?: boolean
   createdAt?: Date | string
 }
 
@@ -933,6 +1005,8 @@ export type OrderItemUpdateWithoutOrderInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variant?: Prisma.ProductVariantUpdateOneWithoutOrderItemsNestedInput
   returnItems?: Prisma.ReturnRequestItemUpdateManyWithoutOrderItemNestedInput
@@ -949,6 +1023,8 @@ export type OrderItemUncheckedUpdateWithoutOrderInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   returnItems?: Prisma.ReturnRequestItemUncheckedUpdateManyWithoutOrderItemNestedInput
 }
@@ -964,6 +1040,8 @@ export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isComplimentary?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -1010,6 +1088,8 @@ export type OrderItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   lineTotal?: boolean
   hsnCode?: boolean
   gstRate?: boolean
+  promotionLabel?: boolean
+  isComplimentary?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1029,6 +1109,8 @@ export type OrderItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   lineTotal?: boolean
   hsnCode?: boolean
   gstRate?: boolean
+  promotionLabel?: boolean
+  isComplimentary?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1046,6 +1128,8 @@ export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   lineTotal?: boolean
   hsnCode?: boolean
   gstRate?: boolean
+  promotionLabel?: boolean
+  isComplimentary?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1063,10 +1147,12 @@ export type OrderItemSelectScalar = {
   lineTotal?: boolean
   hsnCode?: boolean
   gstRate?: boolean
+  promotionLabel?: boolean
+  isComplimentary?: boolean
   createdAt?: boolean
 }
 
-export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "productName" | "variantName" | "sku" | "quantity" | "unitPrice" | "lineTotal" | "hsnCode" | "gstRate" | "createdAt", ExtArgs["result"]["orderItem"]>
+export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "productName" | "variantName" | "sku" | "quantity" | "unitPrice" | "lineTotal" | "hsnCode" | "gstRate" | "promotionLabel" | "isComplimentary" | "createdAt", ExtArgs["result"]["orderItem"]>
 export type OrderItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1101,6 +1187,8 @@ export type $OrderItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     lineTotal: runtime.Decimal
     hsnCode: string | null
     gstRate: runtime.Decimal
+    promotionLabel: string | null
+    isComplimentary: boolean
     createdAt: Date
   }, ExtArgs["result"]["orderItem"]>
   composites: {}
@@ -1539,6 +1627,8 @@ export interface OrderItemFieldRefs {
   readonly lineTotal: Prisma.FieldRef<"OrderItem", 'Decimal'>
   readonly hsnCode: Prisma.FieldRef<"OrderItem", 'String'>
   readonly gstRate: Prisma.FieldRef<"OrderItem", 'Decimal'>
+  readonly promotionLabel: Prisma.FieldRef<"OrderItem", 'String'>
+  readonly isComplimentary: Prisma.FieldRef<"OrderItem", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"OrderItem", 'DateTime'>
 }
     

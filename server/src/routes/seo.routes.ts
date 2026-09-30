@@ -13,7 +13,7 @@ router.get("/robots.txt", (_req, res) => {
 
 router.get("/sitemap.xml", asyncHandler(async (_req, res) => {
   const [products] = await Promise.all([prisma.product.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } })]);
-  const staticPaths = ["/", "/shop", "/offers", "/about", "/contact", "/track-order", "/policies/shipping", "/policies/returns", "/policies/privacy", "/policies/terms"];
+  const staticPaths = ["/", "/shop", "/routine-builder", "/offers", "/about", "/contact", "/track-order", "/policies/shipping", "/policies/returns", "/policies/privacy", "/policies/terms"];
   const urls = [
     ...staticPaths.map((path) => ({ loc: `${base()}${path}`, lastmod: null })),
     ...products.map((product) => ({ loc: `${base()}/product/${encodeURIComponent(product.slug)}`, lastmod: product.updatedAt.toISOString() })),

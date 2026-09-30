@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
+import AuthBrand from "../components/AuthBrand";
 
 export default function ResetPassword() {
   const [params] = useSearchParams();
@@ -24,7 +25,7 @@ export default function ResetPassword() {
     finally { setLoading(false); }
   }
 
-  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}>
+  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}><AuthBrand />
     <p className="eyebrow">SECURE ACCOUNT</p><h1>Set a new password</h1>
     {error && <p className="alert error">{error}</p>}
     <label>New password<input type="password" required minLength="8" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" /></label>

@@ -350,3 +350,22 @@ npm run build
 ```
 
 See `PHASE12_BRAND_MEDIA_SLIDESHOW.md` for the runtime checklist.
+
+## Phase 13 — Default logos & automatic merchandising
+
+Phase 13 makes the two Riseora PNG files in `client/src/assets` the default brand identity while preserving Admin-uploaded overrides. It also introduces server-validated combo discounts, Buy-X-Get-Y, and gift-with-purchase merchandising through the new Admin → Merchandising workspace.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase13_brand_merchandising
+npm run db:generate
+npm run build
+```
+
+See `PHASE13_BRAND_MERCHANDISING.md` for the exact logo filenames and runtime checklist.
+
+## Phase 14 — Routine Discovery & Mini Cart
+
+Phase 14 adds a customer-controlled Routine Builder, a slide-in mini cart, automatic-offer progress messaging, and a Frequently Bought Together experience backed by delivered-order co-purchase history with a same-category fallback for new stores. No database migration is required for this phase.
+

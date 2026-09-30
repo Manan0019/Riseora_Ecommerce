@@ -40,7 +40,9 @@ export default function ProductDetails() {
   const [stockAlertMessage, setStockAlertMessage] = useState("");
   const [stockAlertBusy, setStockAlertBusy] = useState(false);
   const [related, setRelated] = useState([]);
+  const [frequentlyBought, setFrequentlyBought] = useState([]);
   const [recent, setRecent] = useState([]);
+  const [fbtSelected, setFbtSelected] = useState([]);
   const galleryTouchStart = useRef(null);
 
   function loadProduct() {
@@ -51,6 +53,9 @@ export default function ProductDetails() {
       setActiveImage(primaryImageIndex >= 0 ? primaryImageIndex : 0);
       setRecent(readRecent().filter((item) => item.id !== response.data.id).slice(0, 6));
       rememberProduct(response.data);
+      apiFetch(`/products/${encodeURIComponent(response.data.slug)}/recommendations`)
+        .then((recommendationResponse) => setFrequentlyBought(recommendationResponse.data || []))
+        .catch(() => setFrequentlyBought([]));
       if (response.data.category?.slug) {
         apiFetch(`/products?category=${encodeURIComponent(response.data.category.slug)}&limit=8`)
           .then((relatedResponse) => setRelated(relatedResponse.data.filter((item) => item.id !== response.data.id).slice(0, 6)))
@@ -61,6 +66,10 @@ export default function ProductDetails() {
   useEffect(() => { setError(""); loadProduct().catch((err) => setError(err.message)); }, [slug]);
   useEffect(() => { if (user?.email) setStockEmail(user.email); }, [user?.email]);
   useEffect(() => { setStockAlertMessage(""); }, [variantId]);
+  useEffect(() => {
+    const ids = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2).map((item) => item.id);
+    setFbtSelected(ids);
+  }, [frequentlyBought]);
 
   const variant = useMemo(() => product?.variants?.find((item) => item.id === variantId), [product, variantId]);
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
@@ -84,6 +93,13 @@ export default function ProductDetails() {
   const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, Number(variant.stockQuantity)));
   const wished = has(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
+  const fbtProducts = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2);
+  const fbtChosen = fbtProducts.filter((item) => fbtSelected.includes(item.id));
+  const fbtTotal = Number(variant?.sellingPrice || 0) + fbtChosen.reduce((sum, item) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); return sum + Number(v?.sellingPrice || 0); }, 0);
+  function addFrequentlyBought() {
+    if (inStock && variant) addItem(product, variant, 1);
+    for (const item of fbtChosen) { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); if (v) addItem(item, v, 1); }
+  }
 
   async function submitReview(event) {
     event.preventDefault(); setReviewMessage("");
@@ -139,6 +155,8 @@ export default function ProductDetails() {
 
       {faq.length > 0 && <section className="container phase3-section phase9-faq-section"><div className="section-title-row"><div><p className="phase3-eyebrow">QUESTIONS, ANSWERED</p><h2>Product FAQ</h2></div></div><div className="phase9-faq-list">{faq.map((item, index) => <details key={`${item.question}-${index}`}><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div></section>}
 
+      {inStock && fbtProducts.length > 0 && <section className="container phase3-section phase14-fbt"><div className="section-title-row"><div><p className="phase3-eyebrow">COMPLETE THE ROUTINE</p><h2>Frequently bought together</h2></div><Link to="/routine-builder">BUILD A ROUTINE</Link></div><div className="phase14-fbt-box"><div className="phase14-fbt-products"><FbtItem product={product} variant={variant} checked locked /><span className="phase14-fbt-plus">+</span>{fbtProducts.map((item, index) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); const checked = fbtSelected.includes(item.id); return <div className="phase14-fbt-fragment" key={item.id}><FbtItem product={item} variant={v} checked={checked} onChange={() => setFbtSelected((current) => checked ? current.filter((id) => id !== item.id) : [...current, item.id])} />{index < fbtProducts.length - 1 && <span className="phase14-fbt-plus">+</span>}</div>; })}</div><div className="phase14-fbt-summary"><small>{1 + fbtChosen.length} item{fbtChosen.length ? "s" : ""} selected</small><strong>₹{fbtTotal.toFixed(0)}</strong><button className="button" onClick={addFrequentlyBought}>ADD TOGETHER <Icon name="plus" size={16} /></button></div></div></section>}
+
       {related.length > 0 && <ProductShelf title="You may also like" eyebrow="PAIR IT WITH" products={related} />}
       {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
 
@@ -151,6 +169,11 @@ export default function ProductDetails() {
       <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <button className="button" onClick={addCurrent}>ADD TO CART</button> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>
     </div>
   </>;
+}
+
+function FbtItem({ product, variant, checked, locked = false, onChange }) {
+  const imageItem = product.images?.find((item) => item.isPrimary) || product.images?.[0];
+  return <article className={checked ? "phase14-fbt-item selected" : "phase14-fbt-item"}><div className="phase14-fbt-thumb">{imageItem?.url ? <img src={mediaUrl(imageItem.url)} alt={product.name} /> : <span>R</span>}<label><input type="checkbox" checked={checked} disabled={locked} onChange={onChange} /><span>{locked ? "MAIN" : checked ? "✓" : "+"}</span></label></div><Link to={`/product/${product.slug}`}><strong>{product.name}</strong></Link><small>{variant?.name}</small><b>₹{Number(variant?.sellingPrice || 0).toFixed(0)}</b></article>;
 }
 
 function ProductShelf({ title, eyebrow, products }) {

@@ -2,6 +2,7 @@ import { mediaUrl } from "../api/http";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
+import OfferProgress from "../components/OfferProgress";
 
 export default function Cart() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
@@ -27,7 +28,7 @@ export default function Cart() {
             </div>
           ))}
         </div>
-        <aside className="summary-card"><h2>Order summary</h2><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link><Link className="continue-link" to="/shop">Continue shopping</Link></aside>
+        <aside className="summary-card"><h2>Order summary</h2><OfferProgress /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link><Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
       </div>
     </div>
   );

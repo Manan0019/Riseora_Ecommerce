@@ -80,6 +80,59 @@ router.get(
 );
 
 router.get(
+  "/:slug/recommendations",
+  asyncHandler(async (req, res) => {
+    const current = await prisma.product.findUnique({
+      where: { slug: req.params.slug },
+      select: { id: true, categoryId: true, isActive: true },
+    });
+    if (!current?.isActive) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const recentOrders = await prisma.order.findMany({
+      where: {
+        status: "DELIVERED",
+        items: { some: { variant: { productId: current.id } } },
+      },
+      select: { items: { select: { variant: { select: { productId: true } } } } },
+      orderBy: { createdAt: "desc" },
+      take: 160,
+    });
+
+    const counts = new Map<string, number>();
+    for (const order of recentOrders) {
+      const seen = new Set<string>();
+      for (const item of order.items) {
+        const productId = item.variant?.productId;
+        if (!productId || productId === current.id || seen.has(productId)) continue;
+        seen.add(productId);
+        counts.set(productId, (counts.get(productId) || 0) + 1);
+      }
+    }
+    const rankedIds = [...counts.entries()].sort((a, b) => b[1] - a[1]).map(([id]) => id).slice(0, 6);
+
+    const include = {
+      category: true,
+      images: { orderBy: { sortOrder: "asc" as const } },
+      variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" as const } },
+      reviews: { where: { isApproved: true }, select: { rating: true } },
+    };
+    const coPurchased = rankedIds.length ? await prisma.product.findMany({ where: { id: { in: rankedIds }, isActive: true }, include }) : [];
+    const coMap = new Map(coPurchased.map((product) => [product.id, product]));
+    const ordered = rankedIds.map((id) => coMap.get(id)).filter(Boolean) as typeof coPurchased;
+
+    const missing = Math.max(0, 4 - ordered.length);
+    const fallback = missing ? await prisma.product.findMany({
+      where: { id: { notIn: [current.id, ...ordered.map((product) => product.id)] }, categoryId: current.categoryId, isActive: true },
+      include,
+      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      take: missing,
+    }) : [];
+
+    res.json({ success: true, data: [...ordered, ...fallback].map(withRating), source: ordered.length ? "orders" : "category" });
+  }),
+);
+
+router.get(
   "/:slug",
   asyncHandler(async (req, res) => {
     const product = await prisma.product.findUnique({

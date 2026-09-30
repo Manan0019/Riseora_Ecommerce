@@ -4,6 +4,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
+import DealCard from "../components/DealCard";
 import Seo from "../components/Seo";
 import { useStore } from "../context/StoreContext";
 
@@ -23,14 +24,16 @@ export default function Home() {
   const [categories, setCategories] = useState([]);
   const [offers, setOffers] = useState([]);
   const [banners, setBanners] = useState([]);
+  const [deals, setDeals] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
-    Promise.allSettled([apiFetch("/products"), apiFetch("/categories"), apiFetch("/promotions/offers"), apiFetch("/promotions/banners?placement=HOME_HERO")]).then(([productResult, categoryResult, offerResult, bannerResult]) => {
+    Promise.allSettled([apiFetch("/products"), apiFetch("/categories"), apiFetch("/promotions/offers"), apiFetch("/promotions/banners?placement=HOME_HERO"), apiFetch("/promotions/deals?featured=true")]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult]) => {
       if (productResult.status === "fulfilled") setProducts(productResult.value.data); else setError(productResult.reason?.message || "Unable to load products");
       if (categoryResult.status === "fulfilled") setCategories(categoryResult.value.data);
       if (offerResult.status === "fulfilled") setOffers(offerResult.value.data);
       if (bannerResult.status === "fulfilled") setBanners(bannerResult.value.data);
+      if (dealResult.status === "fulfilled") setDeals(dealResult.value.data);
     });
   }, []);
 
@@ -49,9 +52,13 @@ export default function Home() {
 
     {offers.length > 0 && <section className="container phase3-section promo-card-row">{offers.slice(0, 3).map((offer, index) => <Link key={offer.id} to={offer.ctaLink || "/shop"} className={`promo-tile promo-tone-${(index % 3) + 1}`}><span>{offer.badge || "SPECIAL OFFER"}</span><h3>{offer.title}</h3><p>{offer.description}</p><strong>{offer.ctaText || "SHOP NOW"} →</strong></Link>)}</section>}
 
+    {deals.length > 0 && <section className="container phase3-section phase13-deals-section"><div className="section-title-row"><div><p className="phase3-eyebrow">BUILD YOUR ROUTINE</p><h2>Combos & automatic offers</h2></div><Link to="/offers">VIEW ALL</Link></div><div className="phase13-deal-rail">{deals.slice(0, 4).map((deal) => <DealCard key={deal.id} deal={deal} compact />)}</div></section>}
+
     <ProductShelf title="Bestsellers" eyebrow="CUSTOMER FAVOURITES" products={featured.length ? featured : trending} empty={error} />
     <ProductShelf title="Trending now" eyebrow="WHAT'S HOT" products={trending} />
     <ProductShelf title="New & noteworthy" eyebrow="FRESH PICKS" products={newest} />
+
+    <section className="container phase14-routine-cta"><div><p className="phase3-eyebrow">MAKE IT YOURS</p><h2>Build your Riseora routine</h2><p>Choose up to four products, pick the sizes you prefer and add your full routine to the bag in one tap.</p><Link className="button" to="/routine-builder">BUILD MY ROUTINE <Icon name="arrow" size={17} /></Link></div><div className="phase14-routine-cta-steps"><span><b>01</b>Pick products</span><span><b>02</b>Choose sizes</span><span><b>03</b>Add together</span></div></section>
 
     <section className="brand-manifesto"><div className="container brand-manifesto-grid"><div><p className="phase3-eyebrow light">WHY RISEORA</p><h2>Herbal roots. Modern rituals.</h2><p>Riseora blends a grounded herbal identity with a clean shopping experience built for the way customers browse on mobile today.</p><Link className="white-outline-button" to="/shop">DISCOVER THE RANGE</Link></div><div className="manifesto-points"><span><b>01</b><strong>Clear choices</strong><small>Sizes, pricing and benefits that are easy to understand.</small></span><span><b>02</b><strong>Built for mobile</strong><small>Fast, thumb-friendly shopping from discovery to checkout.</small></span><span><b>03</b><strong>Order confidence</strong><small>Secure account, coupons and order tracking.</small></span></div></div></section>
   </>;

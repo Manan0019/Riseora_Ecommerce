@@ -9,7 +9,7 @@ import { useStore } from "../context/StoreContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
-  const { count } = useCart();
+  const { count, openCart } = useCart();
   const { count: wishlistCount } = useWishlist();
   const { store } = useStore();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -39,7 +39,7 @@ export default function Header() {
             <BrandLogo />
           </Link>
           <nav className="main-nav" aria-label="Primary navigation">
-            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
+            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/routine-builder">Routine</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
           </nav>
           <div className="nav-actions">
             <button className="icon-action" onClick={() => setSearchOpen(true)} aria-label="Search"><Icon name="search" size={21} /></button>
@@ -47,7 +47,7 @@ export default function Header() {
             {user?.role === "ADMIN" && <Link className="admin-shortcut" to="/admin">Admin</Link>}
             <Link className="icon-action account-action" to={user ? "/account" : "/login"} aria-label={user ? "My account" : "Login"}><Icon name="user" size={20} /><span>{user ? user.firstName : "Login"}</span></Link>
             {user && <button className="icon-action logout-action" onClick={logout} aria-label="Logout"><Icon name="logout" size={19} /></button>}
-            <Link className="icon-action cart-action" to="/cart" aria-label={`Cart with ${count} items`}><Icon name="cart" size={21} /><span className="desktop-cart-label">Cart</span>{count > 0 && <b>{count > 99 ? "99+" : count}</b>}</Link>
+            <button className="icon-action cart-action" type="button" onClick={openCart} aria-label={`Open cart with ${count} items`}><Icon name="cart" size={21} /><span className="desktop-cart-label">Cart</span>{count > 0 && <b>{count > 99 ? "99+" : count}</b>}</button>
           </div>
         </div>
       </header>

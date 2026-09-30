@@ -47,6 +47,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model PasswordResetToken
+ * 
+ */
+export type PasswordResetToken = Prisma.PasswordResetTokenModel
+/**
  * Model Address
  * 
  */
@@ -142,6 +147,11 @@ export type Coupon = Prisma.CouponModel
  */
 export type Offer = Prisma.OfferModel
 /**
+ * Model MerchandisingDeal
+ * 
+ */
+export type MerchandisingDeal = Prisma.MerchandisingDealModel
+/**
  * Model Review
  * 
  */
@@ -152,6 +162,11 @@ export type Review = Prisma.ReviewModel
  */
 export type Banner = Prisma.BannerModel
 /**
+ * Model CartRecoverySession
+ * 
+ */
+export type CartRecoverySession = Prisma.CartRecoverySessionModel
+/**
  * Model ContactMessage
  * 
  */
@@ -161,3 +176,8 @@ export type ContactMessage = Prisma.ContactMessageModel
  * 
  */
 export type NewsletterSubscriber = Prisma.NewsletterSubscriberModel
+/**
+ * Model StockAlert
+ * 
+ */
+export type StockAlert = Prisma.StockAlertModel

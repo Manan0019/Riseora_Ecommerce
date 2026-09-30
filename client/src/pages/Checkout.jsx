@@ -39,6 +39,7 @@ export default function Checkout() {
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
   const [recoveryOptIn, setRecoveryOptIn] = useState(false);
   const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0 });
+  const [pricing, setPricing] = useState(null);
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
@@ -80,6 +81,18 @@ export default function Checkout() {
     return () => clearTimeout(timer);
   }, [form.customerEmail, form.customerName, form.customerPhone, items, subtotal, recoveryOptIn]);
 
+  useEffect(() => {
+    if (!items.length) { setPricing(null); return; }
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      apiFetch("/promotions/cart-preview", {
+        method: "POST",
+        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+      }).then((response) => { if (!cancelled) setPricing(response.data); }).catch(() => { if (!cancelled) setPricing(null); });
+    }, 180);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [items, paymentMethod, appliedCoupon]);
+
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
     setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: item.postalCode || "" }));
@@ -94,8 +107,8 @@ export default function Checkout() {
     if (!code) return;
     setCouponError(""); setCouponMessage("");
     try {
-      const response = await apiFetch("/promotions/coupons/validate", { method: "POST", body: JSON.stringify({ code, subtotal }) });
-      setAppliedCoupon(response.data.code); setDiscountAmount(Number(response.data.discountAmount)); setCouponMessage(`Coupon ${response.data.code} applied.`);
+      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
+      setAppliedCoupon(code); setDiscountAmount(Number(response.data.couponDiscountAmount || 0)); setPricing(response.data); setCouponMessage(`Coupon ${code} applied.`);
     } catch (err) { setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message); }
   }
 
@@ -166,12 +179,16 @@ export default function Checkout() {
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
   }
 
-  const merchandiseAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const displaySubtotal = Number(pricing?.subtotal ?? subtotal);
+  const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0);
+  const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount);
+  const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount);
   const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold);
   const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0);
   const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0;
-  const shippingFee = baseShipping + codFee;
-  const total = Math.max(0, merchandiseAfterDiscount + shippingFee);
+  const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee;
+  const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee);
+  const freeItems = pricing?.freeItems || [];
 
   return (
     <div className="container page-space checkout-page">
@@ -203,9 +220,12 @@ export default function Checkout() {
           <h2>Order summary</h2>
           <div className="checkout-items">{items.map((item) => <div className="checkout-item" key={item.variantId}><div className="checkout-item-image">{item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt="" /> : "R"}<b>{item.quantity}</b></div><div><strong>{item.productName}</strong><span>{item.variantName}</span></div><strong>₹{(item.price * item.quantity).toFixed(0)}</strong></div>)}</div>
           <div className="coupon-box"><label>Coupon code</label><div><input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Enter code" /><button type="button" onClick={applyCoupon}>Apply</button></div>{couponMessage && <small className="coupon-success">{couponMessage}</small>}{couponError && <small className="coupon-error">{couponError}</small>}</div>
-          <div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div>
-          {discountAmount > 0 && <div className="summary-row discount-row"><span>Coupon {appliedCoupon}</span><strong>−₹{discountAmount.toFixed(0)}</strong></div>}
-          <div className="summary-row"><span>Shipping{codFee > 0 ? " + COD fee" : ""}</span><span>{shippingFee > 0 ? `₹${shippingFee.toFixed(0)}` : "FREE"}</span></div>
+          {pricing?.automaticPromotionName && <div className="phase13-auto-offer"><span>✨</span><div><strong>{pricing.automaticPromotionName}</strong><small>{automaticDiscountAmount > 0 ? `Automatic saving ₹${automaticDiscountAmount.toFixed(0)}` : freeItems.length ? "Free gift unlocked automatically" : "Automatic offer applied"}</small></div></div>}
+          {freeItems.length > 0 && <div className="phase13-free-items">{freeItems.map((item) => <div key={`${item.variantId}-${item.promotionLabel}`}><span>FREE</span><strong>{item.productName}</strong><small>{item.variantName} × {item.quantity}</small></div>)}</div>}
+          <div className="summary-row"><span>Subtotal</span><strong>₹{displaySubtotal.toFixed(0)}</strong></div>
+          {automaticDiscountAmount > 0 && <div className="summary-row discount-row"><span>Automatic deal</span><strong>−₹{automaticDiscountAmount.toFixed(0)}</strong></div>}
+          {couponDiscountAmount > 0 && <div className="summary-row discount-row"><span>Coupon {appliedCoupon}</span><strong>−₹{couponDiscountAmount.toFixed(0)}</strong></div>}
+          <div className="summary-row"><span>Shipping{paymentMethod === "COD" && Number(storeConfig.codFee || 0) > 0 ? " + COD fee" : ""}</span><span>{shippingFee > 0 ? `₹${shippingFee.toFixed(0)}` : "FREE"}</span></div>
           <div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div>
         </aside>
       </div>
