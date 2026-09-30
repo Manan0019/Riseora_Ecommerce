@@ -56,6 +56,7 @@ const cartRecoverySchema = z.object({
   email: z.string().trim().email().max(200),
   name: z.string().trim().max(160).optional().or(z.literal("")),
   phone: z.string().trim().max(30).optional().or(z.literal("")),
+  recoveryOptIn: z.boolean().default(false),
   subtotal: z.number().nonnegative().max(10000000),
   items: z.array(z.object({
     variantId: z.string().uuid(),
@@ -96,6 +97,44 @@ router.post("/stock-alerts", publicWriteLimit, asyncHandler(async (req, res) => 
   res.json({ success: true, message: `We'll email you when ${variant.product.name} (${variant.name}) is available again.` });
 }));
 
+router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (req, res) => {
+  const parsed = z.string().uuid().safeParse(req.params.cartToken);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid recovery link" });
+
+  const session = await prisma.cartRecoverySession.findFirst({
+    where: { cartToken: parsed.data, status: "ACTIVE", expiresAt: { gt: new Date() } },
+  });
+  if (!session) return res.status(404).json({ success: false, message: "This recovery link has expired or is no longer active." });
+
+  const storedItems = Array.isArray(session.items) ? session.items as Array<{ variantId?: string; quantity?: number }> : [];
+  const variantIds = storedItems.map((item) => item.variantId).filter((value): value is string => Boolean(value));
+  const variants = await prisma.productVariant.findMany({
+    where: { id: { in: variantIds }, isActive: true, product: { isActive: true } },
+    include: { product: { include: { images: { orderBy: { sortOrder: "asc" } } } } },
+  });
+  const byId = new Map(variants.map((variant) => [variant.id, variant]));
+  let unavailableCount = 0;
+  const items = storedItems.flatMap((stored) => {
+    const variant = stored.variantId ? byId.get(stored.variantId) : null;
+    if (!variant || variant.stockQuantity <= 0) { unavailableCount += 1; return []; }
+    const quantity = Math.max(1, Math.min(variant.stockQuantity, Number(stored.quantity || 1)));
+    return [{
+      variantId: variant.id,
+      productSlug: variant.product.slug,
+      productName: variant.product.name,
+      variantName: variant.name,
+      sku: variant.sku,
+      price: Number(variant.sellingPrice),
+      mrp: Number(variant.mrp),
+      stockQuantity: variant.stockQuantity,
+      imageUrl: variant.product.images[0]?.url || "",
+      quantity,
+    }];
+  });
+
+  res.json({ success: true, data: { cartToken: session.cartToken, items, unavailableCount, expiresAt: session.expiresAt } });
+}));
+
 router.post("/cart-recovery", cartRecoveryLimit, asyncHandler(async (req, res) => {
   const parsed = cartRecoverySchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart recovery snapshot" });
@@ -105,15 +144,15 @@ router.post("/cart-recovery", cartRecoveryLimit, asyncHandler(async (req, res) =
         where: { cartToken: parsed.data.cartToken },
         create: {
           cartToken: parsed.data.cartToken, email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
-          items: parsed.data.items as any, subtotal: parsed.data.subtotal, expiresAt, lastSeenAt: new Date(),
+          items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt, lastSeenAt: new Date(),
         },
         update: {
           email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
-          items: parsed.data.items as any, subtotal: parsed.data.subtotal, expiresAt, lastSeenAt: new Date(), status: "ACTIVE", orderNumber: null,
+          items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt, lastSeenAt: new Date(), status: "ACTIVE", orderNumber: null,
         },
       })
     : await prisma.cartRecoverySession.create({
-        data: { email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null, items: parsed.data.items as any, subtotal: parsed.data.subtotal, expiresAt },
+        data: { email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null, items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt },
       });
   res.json({ success: true, data: { cartToken: data.cartToken } });
 }));

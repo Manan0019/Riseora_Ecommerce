@@ -8,16 +8,21 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const expire = () => setUser(null);
+    window.addEventListener("riseora-auth-expired", expire);
+
     const token = localStorage.getItem("riseora_token");
     if (!token) {
       setLoading(false);
-      return;
+      return () => window.removeEventListener("riseora-auth-expired", expire);
     }
 
     apiFetch("/auth/me")
       .then((response) => setUser(response.data))
       .catch(() => localStorage.removeItem("riseora_token"))
       .finally(() => setLoading(false));
+
+    return () => window.removeEventListener("riseora-auth-expired", expire);
   }, []);
 
   async function login(email, password) {
@@ -44,12 +49,16 @@ export function AuthProvider({ children }) {
     setUser((current) => ({ ...(current || {}), ...nextUser }));
   }
 
+  function replaceToken(token) {
+    localStorage.setItem("riseora_token", token);
+  }
+
   function logout() {
     localStorage.removeItem("riseora_token");
     setUser(null);
   }
 
-  const value = useMemo(() => ({ user, loading, login, register, updateUser, logout }), [user, loading]);
+  const value = useMemo(() => ({ user, loading, login, register, updateUser, replaceToken, logout }), [user, loading]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

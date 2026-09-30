@@ -24,6 +24,7 @@ import audienceRoutes from "./routes/audience.routes";
 import seoRoutes from "./routes/seo.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
 import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
+import { processCartRecoveryReminders } from "./services/cart-recovery.service";
 
 const app = express();
 if (env.TRUST_PROXY) app.set("trust proxy", 1);
@@ -93,6 +94,7 @@ app.use(errorHandler);
 const server = app.listen(env.PORT, () => {
   console.log(`Riseora API running on http://localhost:${env.PORT}`);
   void releaseExpiredCheckoutSessions().catch((error) => console.error("Checkout cleanup failed", error));
+  void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
 });
 
 const checkoutCleanupTimer = setInterval(() => {
@@ -100,9 +102,15 @@ const checkoutCleanupTimer = setInterval(() => {
 }, 5 * 60 * 1000);
 checkoutCleanupTimer.unref();
 
+const cartRecoveryTimer = setInterval(() => {
+  void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
+}, 10 * 60 * 1000);
+cartRecoveryTimer.unref();
+
 async function shutdown(signal: string) {
   console.log(`${signal} received. Shutting down...`);
   clearInterval(checkoutCleanupTimer);
+  clearInterval(cartRecoveryTimer);
   server.close(async () => {
     await prisma.$disconnect();
     process.exit(0);

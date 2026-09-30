@@ -321,3 +321,18 @@ npm run build
 ```
 
 See `PHASE10_REPORTS_STOCK_ALERTS.md` for the runtime checklist.
+
+
+## Phase 11 — Account security & consent-based cart recovery
+
+Phase 11 adds secure forgot/reset-password flows, customer password change with older-session invalidation, single-use reset tokens, recoverable cart links using current stock/pricing, explicit recovery-email consent, admin manual reminder controls, and optional two-step automated abandoned-cart reminders.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase11_account_security_cart_recovery
+npm run db:generate
+npm run build
+```
+
+See `PHASE11_ACCOUNT_SECURITY_CART_RECOVERY.md` for configuration and runtime tests.

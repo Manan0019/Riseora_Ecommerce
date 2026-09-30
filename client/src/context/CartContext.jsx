@@ -68,11 +68,21 @@ export function CartProvider({ children }) {
     setItems([]);
   }
 
+  function replaceCart(nextItems) {
+    const safe = Array.isArray(nextItems) ? nextItems
+      .filter((item) => item?.variantId && Number(item?.stockQuantity || 0) > 0)
+      .map((item) => ({
+        ...item,
+        quantity: Math.max(1, Math.min(Number(item.stockQuantity || 0), Number(item.quantity || 1))),
+      })) : [];
+    setItems(safe);
+  }
+
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, addItem, updateQuantity, removeItem, clearCart }),
+    () => ({ items, count, subtotal, addItem, updateQuantity, removeItem, clearCart, replaceCart }),
     [items, count, subtotal],
   );
 

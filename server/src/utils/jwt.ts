@@ -5,6 +5,7 @@ export type AuthTokenPayload = {
   sub: string;
   email: string;
   role: "CUSTOMER" | "ADMIN";
+  ver: number;
 };
 
 export function signAuthToken(payload: AuthTokenPayload): string {

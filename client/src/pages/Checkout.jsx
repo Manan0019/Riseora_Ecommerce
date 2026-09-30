@@ -37,6 +37,7 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
+  const [recoveryOptIn, setRecoveryOptIn] = useState(false);
   const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0 });
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
@@ -71,13 +72,13 @@ export default function Checkout() {
         method: "POST",
         body: JSON.stringify({
           ...(cartToken ? { cartToken } : {}),
-          email, name: form.customerName, phone: form.customerPhone, subtotal,
+          email, name: form.customerName, phone: form.customerPhone, subtotal, recoveryOptIn,
           items: items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName || "", sku: item.sku, quantity: item.quantity, price: Number(item.price), imageUrl: item.imageUrl || "" })),
         }),
       }).then((response) => { try { localStorage.setItem(RECOVERY_KEY, response.data.cartToken); } catch {} }).catch(() => {});
     }, 1200);
     return () => clearTimeout(timer);
-  }, [form.customerEmail, form.customerName, form.customerPhone, items, subtotal]);
+  }, [form.customerEmail, form.customerName, form.customerPhone, items, subtotal, recoveryOptIn]);
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
@@ -181,6 +182,7 @@ export default function Checkout() {
           {error && <p className="alert error">{error}</p>}
           <div className="form-grid two"><label>Full name<input required name="customerName" value={form.customerName} onChange={update} autoComplete="name" /></label><label>Phone<input required name="customerPhone" value={form.customerPhone} onChange={update} inputMode="tel" autoComplete="tel" /></label></div>
           <label>Email<input type="email" name="customerEmail" value={form.customerEmail} onChange={update} autoComplete="email" /></label>
+          <label className="checkbox-row checkout-recovery-consent"><input type="checkbox" checked={recoveryOptIn} onChange={(e) => setRecoveryOptIn(e.target.checked)} /> <span><strong>Remind me if I leave checkout</strong><small>Riseora may send up to two cart reminder emails. You can still shop without enabling this.</small></span></label>
 
           <div className="form-section-title form-section-gap"><span>2</span><div><h2>Delivery address</h2><p>Where should we send your order?</p></div></div>
           {savedAddresses.length > 0 && <div className="checkout-saved-addresses">{savedAddresses.map((item) => <button type="button" key={item.id} className={selectedAddressId === item.id ? "checkout-address-chip active" : "checkout-address-chip"} onClick={() => selectSavedAddress(item)}><span>{item.type}{item.isDefault ? " • DEFAULT" : ""}</span><strong>{item.name}</strong><small>{item.line1}, {item.city} {item.postalCode}</small></button>)}</div>}

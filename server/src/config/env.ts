@@ -30,6 +30,9 @@ const schema = z.object({
   RESEND_API_KEY: optionalString,
   EMAIL_FROM: optionalString,
   ADMIN_NOTIFICATION_EMAIL: optionalEmail,
+  CART_RECOVERY_ENABLED: envBoolean.default(false),
+  CART_RECOVERY_FIRST_DELAY_MINUTES: z.coerce.number().int().min(15).max(10080).default(120),
+  CART_RECOVERY_SECOND_DELAY_MINUTES: z.coerce.number().int().min(60).max(20160).default(1440),
 });
 
 export const env = schema.parse(process.env);

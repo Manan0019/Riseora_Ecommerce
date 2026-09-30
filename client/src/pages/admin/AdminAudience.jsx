@@ -7,6 +7,8 @@ export default function AdminAudience() {
   const [recoveries, setRecoveries] = useState([]);
   const [stockAlerts, setStockAlerts] = useState([]);
   const [stockEmailConfigured, setStockEmailConfigured] = useState(false);
+  const [recoveryEmailConfigured, setRecoveryEmailConfigured] = useState(false);
+  const [recoveryAutomationEnabled, setRecoveryAutomationEnabled] = useState(false);
   const [tab, setTab] = useState("messages");
   const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
@@ -20,7 +22,7 @@ export default function AdminAudience() {
       apiFetch("/admin/cart-recoveries?status=ACTIVE"),
       apiFetch("/admin/stock-alerts"),
     ]);
-    setMessages(m.data); setSubscribers(n.data); setRecoveries(r.data); setStockAlerts(s.data); setStockEmailConfigured(Boolean(s.emailConfigured));
+    setMessages(m.data); setSubscribers(n.data); setRecoveries(r.data); setStockAlerts(s.data); setStockEmailConfigured(Boolean(s.emailConfigured)); setRecoveryEmailConfigured(Boolean(r.emailConfigured)); setRecoveryAutomationEnabled(Boolean(r.automationEnabled));
   }
   useEffect(() => { load().catch((e) => setError(e.message)); }, [status]);
 
@@ -37,6 +39,16 @@ export default function AdminAudience() {
     try { const response = await apiFetch("/admin/stock-alerts/notify-ready", { method: "POST" }); setMessage(response.message); await load(); }
     catch (e) { setError(e.message); }
   }
+  async function sendRecovery(item) {
+    setMessage(""); setError("");
+    try { const response = await apiFetch(`/admin/cart-recoveries/${item.id}/send`, { method: "POST" }); setMessage(response.message); await load(); }
+    catch (e) { setError(e.message); }
+  }
+  async function dismissRecovery(item) {
+    setMessage(""); setError("");
+    try { await apiFetch(`/admin/cart-recoveries/${item.id}`, { method: "PATCH", body: JSON.stringify({ status: "DISMISSED" }) }); setMessage("Cart recovery dismissed."); await load(); }
+    catch (e) { setError(e.message); }
+  }
   function exportSubscribers() { const active = subscribers.filter((item) => item.isActive); const csv = ["email,name,source,subscribedAt", ...active.map((item) => [item.email, item.name || "", item.source || "", item.subscribedAt].map((v) => `"${String(v).replaceAll('"','""')}"`).join(","))].join("\n"); const blob = new Blob([csv], { type: "text/csv" }); const url = URL.createObjectURL(blob); const a = document.createElement("a"); a.href = url; a.download = "riseora-newsletter-subscribers.csv"; a.click(); URL.revokeObjectURL(url); }
 
   const pendingStock = stockAlerts.filter((item) => item.status === "PENDING").length;
@@ -50,7 +62,7 @@ export default function AdminAudience() {
 
     {tab === "newsletter" && <section className="admin-panel"><div className="admin-panel-head"><div><h2>Newsletter audience</h2><p>Consent-based storefront email list.</p></div><button className="button button-secondary" onClick={exportSubscribers}>Export active CSV</button></div><div className="subscriber-list">{filteredSubscribers.map((item) => <div key={item.id}><span><strong>{item.email}</strong><small>{item.source || "storefront"} · {new Date(item.subscribedAt).toLocaleDateString()}</small></span><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => toggleSubscriber(item)}>{item.isActive ? "Subscribed" : "Unsubscribed"}</button></div>)}{!filteredSubscribers.length && <div className="admin-empty">No subscribers found.</div>}</div></section>}
 
-    {tab === "recovery" && <section className="admin-panel"><div className="admin-panel-head"><div><h2>Active checkout carts</h2><p>Customers who entered an email during checkout but have not completed the order yet. No recovery email is sent automatically.</p></div></div><div className="phase9-recovery-list">{filteredRecoveries.map((item) => { const cartItems = Array.isArray(item.items) ? item.items : []; return <article className="phase9-recovery-card" key={item.id}><div><strong>{item.name || "Checkout visitor"}</strong><a href={`mailto:${item.email}`}>{item.email}</a>{item.phone && <small>{item.phone}</small>}</div><div><b>₹{Number(item.subtotal).toFixed(0)} cart</b><p>{cartItems.slice(0, 3).map((line) => `${line.productName} × ${line.quantity}`).join(" · ")}{cartItems.length > 3 ? ` +${cartItems.length - 3} more` : ""}</p><small>Last active {new Date(item.lastSeenAt).toLocaleString()}</small></div></article>; })}{!filteredRecoveries.length && <div className="admin-empty">No active recoverable carts.</div>}</div></section>}
+    {tab === "recovery" && <section className="admin-panel"><div className="admin-panel-head"><div><h2>Active checkout carts</h2><p>{recoveryEmailConfigured ? (recoveryAutomationEnabled ? "Consent-based recovery email automation is enabled." : "Email is configured. Automatic recovery is disabled, but opted-in carts can be reminded manually.") : "Email delivery is not configured. Cart signals are still stored for admin visibility."}</p></div></div><div className="phase9-recovery-list">{filteredRecoveries.map((item) => { const cartItems = Array.isArray(item.items) ? item.items : []; return <article className="phase9-recovery-card phase11-recovery-card" key={item.id}><div><strong>{item.name || "Checkout visitor"}</strong><a href={`mailto:${item.email}`}>{item.email}</a>{item.phone && <small>{item.phone}</small>}<small>{item.recoveryOptIn ? "Recovery email consent: YES" : "Recovery email consent: NO"}</small></div><div><b>₹{Number(item.subtotal).toFixed(0)} cart</b><p>{cartItems.slice(0, 3).map((line) => `${line.productName} × ${line.quantity}`).join(" · ")}{cartItems.length > 3 ? ` +${cartItems.length - 3} more` : ""}</p><small>Last active {new Date(item.lastSeenAt).toLocaleString()} · reminders {item.reminderCount || 0}/2</small></div><div className="phase11-recovery-actions"><button className="button button-secondary" disabled={!item.recoveryOptIn || !recoveryEmailConfigured || Number(item.reminderCount || 0) >= 2} onClick={() => sendRecovery(item)}>Send reminder</button><button className="state-toggle" onClick={() => dismissRecovery(item)}>Dismiss</button></div></article>; })}{!filteredRecoveries.length && <div className="admin-empty">No active recoverable carts.</div>}</div></section>}
 
     {tab === "stock" && <section className="admin-panel"><div className="admin-panel-head"><div><h2>Back-in-stock demand</h2><p>{stockEmailConfigured ? "Email delivery is configured. Restocking from Inventory also attempts notifications automatically." : "Email delivery is not configured yet. Alerts will remain pending until Resend is configured."}</p></div><button className="button button-secondary" onClick={notifyReady}>Notify ready stock</button></div><div className="phase10-stock-admin-list">{filteredStockAlerts.map((item) => <article key={item.id}><span><strong>{item.variant?.product?.name || "Product"}</strong><small>{item.variant?.name} · stock {item.variant?.stockQuantity}</small></span><span><a href={`mailto:${item.email}`}>{item.email}</a><small>{new Date(item.subscribedAt).toLocaleString()}</small></span><b className={`phase10-alert-status ${item.status.toLowerCase()}`}>{item.status}</b>{item.status !== "NOTIFIED" && <button className="state-toggle" onClick={() => cancelStockAlert(item)}>{item.status === "CANCELLED" ? "Reactivate" : "Cancel"}</button>}</article>)}{!filteredStockAlerts.length && <div className="admin-empty">No back-in-stock requests yet.</div>}</div></section>}
   </>;

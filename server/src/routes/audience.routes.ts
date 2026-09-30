@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { notifyReadyStockAlerts } from "../services/stock-alert.service";
+import { sendCartRecoveryReminder } from "../services/cart-recovery.service";
 import { env } from "../config/env";
 
 const router = Router();
@@ -62,6 +63,27 @@ router.get("/cart-recoveries", asyncHandler(async (req, res) => {
   if (["ACTIVE", "CONVERTED", "DISMISSED", "EXPIRED"].includes(status)) where.status = status;
   if (status === "ACTIVE") where.expiresAt = { gt: new Date() };
   const data = await prisma.cartRecoverySession.findMany({ where, orderBy: { lastSeenAt: "desc" }, take: 300 });
+  res.json({
+    success: true,
+    data,
+    emailConfigured: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM),
+    automationEnabled: Boolean(env.CART_RECOVERY_ENABLED),
+  });
+}));
+
+router.post("/cart-recoveries/:id/send", asyncHandler(async (req, res) => {
+  const result = await sendCartRecoveryReminder(req.params.id, true);
+  if (!result.sent) return res.status(400).json({ success: false, message: result.reason || "Recovery reminder was not sent" });
+  res.json({ success: true, data: result, message: `Recovery reminder ${result.reminderNumber} sent.` });
+}));
+
+router.patch("/cart-recoveries/:id", asyncHandler(async (req, res) => {
+  const parsed = z.object({ status: z.enum(["ACTIVE", "DISMISSED"]) }).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart recovery update" });
+  const data = await prisma.cartRecoverySession.update({
+    where: { id: req.params.id },
+    data: { status: parsed.data.status, ...(parsed.data.status === "ACTIVE" ? { expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } : {}) },
+  });
   res.json({ success: true, data });
 }));
 

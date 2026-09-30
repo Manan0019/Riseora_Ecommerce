@@ -20,5 +20,14 @@ export default function Login() {
     } catch (err) { setError(err.message); } finally { setLoading(false); }
   }
 
-  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}><p className="eyebrow">WELCOME BACK</p><h1>Login</h1>{error && <p className="alert error">{error}</p>}<label>Email<input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} /></label><label>Password<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} /></label><button className="button wide" disabled={loading}>{loading ? "Signing in..." : "Login"}</button><p>New to Riseora? <Link to="/register">Create an account</Link></p></form></div>;
+  return <div className="auth-wrap"><form className="auth-card" onSubmit={submit}>
+    <p className="eyebrow">WELCOME BACK</p><h1>Login</h1>
+    {location.state?.passwordReset && <p className="alert success">Password updated. Sign in with your new password.</p>}
+    {error && <p className="alert error">{error}</p>}
+    <label>Email<input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" /></label>
+    <label>Password<input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" /></label>
+    <div className="auth-inline-link"><Link to="/forgot-password">Forgot password?</Link></div>
+    <button className="button wide" disabled={loading}>{loading ? "Signing in..." : "Login"}</button>
+    <p>New to Riseora? <Link to="/register">Create an account</Link></p>
+  </form></div>;
 }

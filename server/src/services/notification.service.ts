@@ -117,3 +117,35 @@ export async function sendBackInStockNotification(input: {
   });
   return true;
 }
+
+export async function sendPasswordResetEmail(input: { email: string; firstName?: string | null; resetUrl: string }) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  await send({
+    to: input.email,
+    subject: "Reset your Riseora password",
+    idempotencyKey: `password-reset/${input.email}/${input.resetUrl.slice(-24)}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Reset your password</h2><p>${input.firstName ? `${escapeHtml(input.firstName)}, ` : ""}we received a request to reset your Riseora account password.</p><p><a href="${escapeHtml(input.resetUrl)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Reset password</a></p><p style="color:#68776e;font-size:13px">This link expires in 60 minutes. If you did not request a reset, you can ignore this email.</p></div>`,
+  });
+  return true;
+}
+
+export async function sendCartRecoveryEmail(input: {
+  email: string;
+  name?: string | null;
+  cartToken: string;
+  subtotal: unknown;
+  reminderNumber: number;
+  items: Array<{ productName?: string; variantName?: string; quantity?: number }>;
+}) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
+  const recoveryUrl = `${base}/recover-cart/${encodeURIComponent(input.cartToken)}`;
+  const lines = input.items.slice(0, 4).map((item) => `<li>${escapeHtml(item.productName || "Riseora product")}${item.variantName ? ` · ${escapeHtml(item.variantName)}` : ""} × ${Number(item.quantity || 1)}</li>`).join("");
+  await send({
+    to: input.email,
+    subject: input.reminderNumber > 1 ? "Your Riseora cart is still waiting" : "You left something in your Riseora cart",
+    idempotencyKey: `cart-recovery/${input.cartToken}/${input.reminderNumber}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>${input.name ? `${escapeHtml(input.name)}, your` : "Your"} cart is waiting.</h2><p>You asked Riseora to remind you if you left checkout before finishing.</p><ul style="padding-left:20px">${lines}</ul><p><strong>Cart value:</strong> ${money(input.subtotal)}</p><p><a href="${escapeHtml(recoveryUrl)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Return to cart</a></p><p style="color:#68776e;font-size:13px">Prices and stock are checked again when you return. This reminder does not reserve products.</p></div>`,
+  });
+  return true;
+}

@@ -21,6 +21,10 @@ export async function apiFetch(path, options = {}) {
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    if (response.status === 401 && token) {
+      localStorage.removeItem("riseora_token");
+      window.dispatchEvent(new Event("riseora-auth-expired"));
+    }
     throw new Error(payload.message || "Request failed");
   }
 

@@ -19,7 +19,7 @@ const emptyAddress = {
 };
 
 export default function Account() {
-  const { user, logout, updateUser } = useAuth();
+  const { user, logout, updateUser, replaceToken } = useAuth();
   const [profile, setProfile] = useState({ firstName: user?.firstName || "", lastName: user?.lastName || "", phone: user?.phone || "" });
   const [addresses, setAddresses] = useState([]);
   const [address, setAddress] = useState(emptyAddress);
@@ -27,6 +27,7 @@ export default function Account() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
 
   async function refreshAddresses() {
     const response = await apiFetch("/account/addresses");
@@ -62,6 +63,24 @@ export default function Account() {
       setShowAddressForm(false);
       setMessage("Address saved.");
       await refreshAddresses();
+    } catch (e) { setError(e.message); } finally { setSaving(false); }
+  }
+
+
+  async function changePassword(event) {
+    event.preventDefault();
+    setError(""); setMessage("");
+    if (passwordForm.newPassword.length < 8) return setError("New password must be at least 8 characters.");
+    if (passwordForm.newPassword !== passwordForm.confirmPassword) return setError("New passwords do not match.");
+    setSaving(true);
+    try {
+      const response = await apiFetch("/account/change-password", {
+        method: "POST",
+        body: JSON.stringify({ currentPassword: passwordForm.currentPassword, newPassword: passwordForm.newPassword }),
+      });
+      replaceToken(response.data.token);
+      setPasswordForm({ currentPassword: "", newPassword: "", confirmPassword: "" });
+      setMessage(response.message || "Password changed successfully.");
     } catch (e) { setError(e.message); } finally { setSaving(false); }
   }
 
@@ -117,6 +136,13 @@ export default function Account() {
           </form>}
         </section>
       </div>
+
+      <form className="account-card account-security-card" onSubmit={changePassword}>
+        <div className="account-card-head"><div><p className="eyebrow">SECURITY</p><h2>Change password</h2></div></div>
+        <div className="form-grid three"><label>Current password<input type="password" required value={passwordForm.currentPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, currentPassword: e.target.value }))} autoComplete="current-password" /></label><label>New password<input type="password" required minLength="8" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, newPassword: e.target.value }))} autoComplete="new-password" /></label><label>Confirm new password<input type="password" required minLength="8" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, confirmPassword: e.target.value }))} autoComplete="new-password" /></label></div>
+        <p className="account-security-note">Changing your password invalidates older Riseora login sessions.</p>
+        <button className="button" disabled={saving}>Update password</button>
+      </form>
 
       <button className="account-logout" onClick={logout}><Icon name="logout" size={18} /> Sign out</button>
     </div>

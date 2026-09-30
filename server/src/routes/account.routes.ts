@@ -1,8 +1,10 @@
 import { Router } from "express";
+import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
+import { signAuthToken } from "../utils/jwt";
 
 const router = Router();
 router.use(requireAuth);
@@ -46,6 +48,36 @@ router.patch(
       select: { id: true, firstName: true, lastName: true, email: true, phone: true, role: true },
     });
     res.json({ success: true, data: user });
+  }),
+);
+
+
+router.post(
+  "/change-password",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      currentPassword: z.string().min(1).max(100),
+      newPassword: z.string().min(8).max(100),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter your current password and a new password of at least 8 characters" });
+
+    const user = await prisma.user.findUnique({ where: { id: req.user!.id } });
+    if (!user || !(await bcrypt.compare(parsed.data.currentPassword, user.passwordHash))) {
+      return res.status(400).json({ success: false, message: "Current password is incorrect" });
+    }
+    if (await bcrypt.compare(parsed.data.newPassword, user.passwordHash)) {
+      return res.status(400).json({ success: false, message: "Choose a new password different from your current password" });
+    }
+
+    const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
+    const updated = await prisma.user.update({
+      where: { id: user.id },
+      data: { passwordHash, tokenVersion: { increment: 1 } },
+      select: { id: true, email: true, role: true, tokenVersion: true },
+    });
+    await prisma.passwordResetToken.deleteMany({ where: { userId: user.id, usedAt: null } });
+    const token = signAuthToken({ sub: updated.id, email: updated.email, role: updated.role, ver: updated.tokenVersion });
+    res.json({ success: true, data: { token }, message: "Password changed successfully." });
   }),
 );
 
