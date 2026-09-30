@@ -1132,3 +1132,123 @@ textarea { min-height: 105px; resize: vertical; }
 .phase11-recovery-actions .button, .phase11-recovery-actions .state-toggle { white-space: nowrap; }
 @media (max-width: 900px) { .phase11-recovery-card { grid-template-columns: 1fr; } .phase11-recovery-actions { justify-content: flex-start; } }
 @media (max-width: 640px) { .account-security-card .form-grid.three { grid-template-columns: 1fr; } .recovery-state { margin-top: 12px; padding: 22px 16px; } .phase11-recovery-actions { display: grid !important; grid-template-columns: 1fr 1fr; } }
+
+/* Phase 12 — brand media, campaign slideshow and product image experience */
+.brand-logo-image-shell { display: inline-flex; align-items: center; justify-content: flex-start; min-width: 0; }
+.brand-logo-image-shell.full { max-width: 152px; height: 42px; }
+.brand-logo-image-shell.compact { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; overflow: hidden; background: #f3f0e7; }
+.brand-logo-image { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; }
+.brand-logo-image-shell.compact .brand-logo-image { width: 100%; height: 100%; object-fit: contain; }
+.footer-brand .brand-logo-image-shell.full { max-width: 190px; height: 56px; }
+.admin-brand .brand-logo-image-shell.compact { width: 38px; height: 38px; flex-basis: 38px; background: #f2f0e6; }
+.invoice-brand-logo { margin-bottom: 12px; }
+.invoice-brand-logo .brand-logo-image-shell.full { max-width: 180px; height: 54px; }
+.invoice-brand-logo .brand-mark { width: 44px; height: 44px; }
+
+/* Hero slideshow: stacked grid keeps the tallest slide in normal layout while allowing a true crossfade. */
+.campaign-carousel { position: relative; overflow: hidden; background: #eee9df; }
+.campaign-carousel-stage { display: grid; }
+.campaign-carousel-slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; pointer-events: none; transform: translate3d(1.5%,0,0) scale(1.005); transition: opacity .72s cubic-bezier(.22,.61,.36,1), transform .85s cubic-bezier(.22,.61,.36,1), visibility 0s linear .72s; }
+.campaign-carousel-slide.active { z-index: 1; opacity: 1; visibility: visible; pointer-events: auto; transform: translate3d(0,0,0) scale(1); transition-delay: 0s; }
+.campaign-carousel-slide .campaign-visual img { transform: scale(1.025); transition: transform 5.5s ease; }
+.campaign-carousel-slide.active .campaign-visual img { transform: scale(1); }
+.campaign-carousel-controls { position: absolute; z-index: 6; left: 50%; bottom: 12px; transform: translateX(-50%); display: flex; align-items: center; gap: 9px; padding: 5px 8px; border: 1px solid rgba(255,255,255,.36); border-radius: 999px; background: rgba(17,21,18,.54); color: white; backdrop-filter: blur(12px); }
+.campaign-carousel-controls > button { width: 32px; height: 32px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: inherit; }
+.campaign-carousel-controls > button:hover { background: rgba(255,255,255,.14); }
+.carousel-prev-icon { display: grid; transform: rotate(180deg); }
+.campaign-carousel-dots { display: flex; gap: 5px; align-items: center; }
+.campaign-carousel-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: rgba(255,255,255,.46); transition: width .22s ease, border-radius .22s ease, background .22s ease; }
+.campaign-carousel-dots button.active { width: 22px; border-radius: 999px; background: #fff; }
+.campaign-carousel-progress { position: absolute; z-index: 5; left: 0; right: 0; bottom: 0; height: 3px; overflow: hidden; background: rgba(255,255,255,.18); }
+.campaign-carousel-progress span { display: block; width: 100%; height: 100%; transform-origin: left; background: rgba(255,255,255,.88); animation: phase12HeroProgress 5.2s linear forwards; }
+.campaign-carousel-progress span.paused { animation-play-state: paused; }
+@keyframes phase12HeroProgress { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+/* Product card hover slideshow. Only pointer devices trigger rotation; phones keep the stable primary image. */
+.product-image-transition { animation: phase12ImageFade .38s ease both; }
+@keyframes phase12ImageFade { from { opacity: .28; transform: scale(1.018); } to { opacity: 1; transform: scale(1); } }
+.product-card:hover .product-image-transition { transform: scale(1.018); }
+.product-image-dots { position: absolute; z-index: 3; left: 50%; bottom: 8px; transform: translateX(-50%); display: flex; gap: 4px; padding: 4px 6px; border-radius: 999px; background: rgba(255,255,255,.78); backdrop-filter: blur(8px); }
+.product-image-dots span { width: 5px; height: 5px; border-radius: 50%; background: #b8bdb9; transition: width .18s ease, background .18s ease; }
+.product-image-dots span.active { width: 12px; border-radius: 999px; background: #18291f; }
+.product-image-count { position: absolute; z-index: 3; right: 8px; bottom: 8px; padding: 4px 6px; border-radius: 999px; background: rgba(17,22,19,.66); color: white; font-size: 7px; font-weight: 850; letter-spacing: .04em; opacity: 0; transition: opacity .2s ease; }
+.product-card:hover .product-image-count { opacity: 1; }
+
+/* Product detail gallery */
+.phase12-detail-image-frame { position: relative; touch-action: pan-y; }
+.phase12-detail-main-image { animation: phase12DetailImage .34s ease both; }
+@keyframes phase12DetailImage { from { opacity: .32; transform: scale(.992); } to { opacity: 1; transform: scale(1); } }
+.phase12-gallery-arrow { position: absolute; z-index: 5; top: 50%; width: 42px; height: 42px; margin-top: -21px; display: grid; place-items: center; border: 1px solid rgba(20,28,23,.12); border-radius: 50%; background: rgba(255,255,255,.9); color: #111; box-shadow: 0 7px 20px rgba(20,30,24,.08); }
+.phase12-gallery-arrow.prev { left: 10px; }
+.phase12-gallery-arrow.next { right: 10px; }
+.phase12-gallery-arrow.prev span { display: grid; transform: rotate(180deg); }
+.phase12-gallery-counter { position: absolute; z-index: 5; left: 50%; bottom: 10px; transform: translateX(-50%); padding: 5px 9px; border-radius: 999px; background: rgba(17,22,19,.68); color: white; font-size: 8px; font-weight: 850; }
+
+/* Admin product image ordering */
+.phase12-sortable-image { cursor: grab; transition: opacity .16s ease, transform .16s ease, border-color .16s ease; }
+.phase12-sortable-image.dragging { opacity: .48; transform: scale(.992); border-color: var(--green-700); }
+.phase12-image-order { display: flex; align-items: center; gap: 5px; }
+.phase12-image-order b { min-width: 20px; font-size: 10px; color: var(--muted); }
+.phase12-image-order button { width: 28px; height: 28px; padding: 0; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--ink); }
+.phase12-image-order button:disabled { opacity: .3; }
+.phase12-drag-handle { color: #7d8880; font-weight: 900; letter-spacing: -3px; cursor: grab; }
+
+/* Brand identity settings */
+.phase12-brand-settings { display: grid; gap: 10px; margin: 12px 0; }
+.phase12-brand-upload-card { padding: 12px; display: grid; grid-template-columns: 82px minmax(0,1fr) auto; gap: 12px; align-items: center; border: 1px solid var(--line); border-radius: 14px; background: #fbfaf6; }
+.phase12-brand-upload-card > div:nth-child(2) { display: grid; gap: 3px; }
+.phase12-brand-upload-card small { color: var(--muted); line-height: 1.4; }
+.phase12-brand-preview { height: 58px; display: grid; place-items: center; overflow: hidden; border: 1px solid #e1e4dd; border-radius: 10px; background: white; color: var(--green-900); font-weight: 900; }
+.phase12-brand-preview.full { width: 82px; }
+.phase12-brand-preview.mark { width: 58px; border-radius: 50%; }
+.phase12-brand-preview img { width: 100%; height: 100%; object-fit: contain; }
+
+/* Campaign media manager */
+.phase12-campaign-form { grid-column: 1 / -1; }
+.phase12-campaign-upload-grid { display: grid; gap: 10px; }
+.phase12-campaign-upload { display: grid; gap: 7px; padding: 11px; border: 1px solid var(--line); border-radius: 14px; background: #fbfaf6; }
+.phase12-campaign-preview { aspect-ratio: 16 / 7; display: grid; place-items: center; overflow: hidden; border-radius: 10px; background: #e9ece5; color: var(--muted); font-size: 10px; }
+.phase12-campaign-preview img { width: 100%; height: 100%; object-fit: cover; }
+.phase12-upload-actions { display: flex; gap: 7px; }
+.phase12-banner-manager { grid-column: 1 / -1; }
+.phase12-banner-list { display: grid; }
+.phase12-banner-row { padding: 10px 0; display: grid; grid-template-columns: 72px minmax(0,1fr); gap: 10px; border-top: 1px solid #eceee8; }
+.phase12-banner-row:first-child { border-top: 0; }
+.phase12-banner-thumb { width: 72px; height: 52px; overflow: hidden; display: grid; place-items: center; border-radius: 8px; background: #edf0e9; }
+.phase12-banner-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.phase12-banner-info { min-width: 0; display: grid; gap: 3px; align-content: center; }
+.phase12-banner-info strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phase12-banner-info span { color: var(--muted); font-size: 9px; }
+.phase12-banner-actions { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+
+@media (min-width: 640px) {
+  .phase12-brand-settings { grid-template-columns: 1fr 1fr; }
+  .phase12-campaign-upload-grid { grid-template-columns: 1fr 1fr; }
+  .phase12-banner-row { grid-template-columns: 90px minmax(0,1fr) auto; align-items: center; }
+  .phase12-banner-thumb { width: 90px; height: 62px; }
+  .phase12-banner-actions { grid-column: auto; justify-content: flex-end; }
+}
+
+@media (min-width: 852px) {
+  .admin-image-row.phase12-sortable-image { grid-template-columns: auto 58px minmax(220px,1.4fr) minmax(150px,1fr) auto auto; align-items: center; }
+}
+
+@media (min-width: 900px) {
+  .brand-logo-image-shell.full { max-width: 184px; height: 48px; }
+  .campaign-carousel-controls { bottom: 18px; }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .product-image-count { opacity: .72; }
+  .product-card:hover .product-image-transition { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-carousel-slide, .campaign-carousel-slide .campaign-visual img, .product-image-transition, .phase12-detail-main-image { transition: none !important; animation: none !important; transform: none !important; }
+  .campaign-carousel-progress { display: none; }
+}
+
+@media print {
+  .invoice-brand-logo .brand-logo-image-shell.full { max-width: 150px; height: 45px; }
+}
+.campaign-carousel-controls .campaign-pause-button { font-size: 10px; font-weight: 900; letter-spacing: -1px; }

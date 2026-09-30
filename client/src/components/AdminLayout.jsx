@@ -1,6 +1,7 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Icon } from "./Icons";
+import BrandLogo from "./BrandLogo";
 
 const nav = [
   { to: "/admin", label: "Dashboard", icon: "dashboard", end: true },
@@ -23,7 +24,7 @@ export default function AdminLayout() {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <div className="admin-brand">
-          <span className="brand-mark">R</span>
+          <BrandLogo compact admin />
           <div><strong>RISEORA</strong><small>ADMIN</small></div>
         </div>
         <nav className="admin-nav">

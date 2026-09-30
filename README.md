@@ -336,3 +336,17 @@ npm run build
 ```
 
 See `PHASE11_ACCOUNT_SECURITY_CART_RECOVERY.md` for configuration and runtime tests.
+
+## Phase 12 — Brand media & image merchandising
+
+Phase 12 adds owner-managed Riseora logo assets, a multi-slide mobile/desktop homepage campaign carousel, direct campaign image upload, slideshow reordering/editing, product multi-image reordering, desktop hover image slideshows and a smoother swipeable product gallery.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase12_brand_media_slideshow
+npm run db:generate
+npm run build
+```
+
+See `PHASE12_BRAND_MEDIA_SLIDESHOW.md` for the runtime checklist.

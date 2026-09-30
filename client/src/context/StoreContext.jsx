@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { apiFetch } from "../api/http";
+import { apiFetch, mediaUrl } from "../api/http";
 
 const StoreContext = createContext(null);
 const fallback = { storeName: "Riseora Herbals", brandTagline: "Everyday herbal care, thoughtfully made.", freeShippingThreshold: 599 };
@@ -10,6 +10,13 @@ export function StoreProvider({ children }) {
   useEffect(() => {
     apiFetch("/store/config").then((response) => setStore({ ...fallback, ...response.data })).catch(() => {}).finally(() => setLoading(false));
   }, []);
+  useEffect(() => {
+    const icon = store.logoMarkUrl || store.logoUrl;
+    if (!icon) return;
+    let link = document.querySelector('link[rel~="icon"]');
+    if (!link) { link = document.createElement("link"); link.rel = "icon"; document.head.appendChild(link); }
+    link.href = mediaUrl(icon);
+  }, [store.logoMarkUrl, store.logoUrl]);
   const value = useMemo(() => ({ store, loading }), [store, loading]);
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

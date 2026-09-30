@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { apiFetch } from "../../api/http";
+import { apiFetch, mediaUrl } from "../../api/http";
 
 const emptyPartner = { name: "", code: "", trackingUrlTemplate: "", sortOrder: 0 };
 
@@ -14,6 +14,7 @@ export default function AdminSettings() {
   const [partner, setPartner] = useState(emptyPartner);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [uploadingBrand, setUploadingBrand] = useState("");
 
   async function load() {
     const [settingResponse, partnerResponse] = await Promise.all([apiFetch("/admin/settings"), apiFetch("/admin/shipping-partners")]);
@@ -28,6 +29,19 @@ export default function AdminSettings() {
     setSettings((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
   }
 
+  async function uploadBrand(file, field) {
+    if (!file) return;
+    setError(""); setMessage(""); setUploadingBrand(field);
+    try {
+      const body = new FormData();
+      body.append("image", file);
+      const response = await apiFetch("/admin/uploads/brand", { method: "POST", body });
+      setSettings((current) => ({ ...current, [field]: response.data.url }));
+      setMessage(field === "logoUrl" ? "Logo uploaded. Save store settings to publish it." : "Logo mark uploaded. Save store settings to publish it.");
+    } catch (e) { setError(e.message); }
+    finally { setUploadingBrand(""); }
+  }
+
   async function save(event) {
     event.preventDefault(); setMessage(""); setError("");
     try {
@@ -39,7 +53,11 @@ export default function AdminSettings() {
         addressLine1: settings.addressLine1?.trim() || null, addressLine2: settings.addressLine2?.trim() || null,
         city: settings.city?.trim() || null, state: settings.state?.trim() || null, postalCode: settings.postalCode?.trim() || null,
         returnPolicy: settings.returnPolicy?.trim() || null, shippingPolicy: settings.shippingPolicy?.trim() || null, privacyPolicy: settings.privacyPolicy?.trim() || null, termsPolicy: settings.termsPolicy?.trim() || null,
-        brandTagline: settings.brandTagline?.trim() || null, announcementText: settings.announcementText?.trim() || null, announcementSecondary: settings.announcementSecondary?.trim() || null,
+        brandTagline: settings.brandTagline?.trim() || null,
+        logoUrl: settings.logoUrl?.trim() || null,
+        logoMarkUrl: settings.logoMarkUrl?.trim() || null,
+        logoAlt: settings.logoAlt?.trim() || null,
+        announcementText: settings.announcementText?.trim() || null, announcementSecondary: settings.announcementSecondary?.trim() || null,
         siteUrl: settings.siteUrl?.trim() || null, seoTitle: settings.seoTitle?.trim() || null, seoDescription: settings.seoDescription?.trim() || null,
         aboutTitle: settings.aboutTitle?.trim() || null, aboutBody: settings.aboutBody?.trim() || null, contactIntro: settings.contactIntro?.trim() || null,
         instagramUrl: settings.instagramUrl?.trim() || null, facebookUrl: settings.facebookUrl?.trim() || null, youtubeUrl: settings.youtubeUrl?.trim() || null, whatsappNumber: settings.whatsappNumber?.trim() || null,
@@ -94,7 +112,21 @@ export default function AdminSettings() {
       <div className="admin-field-grid two"><label>Shipping policy<textarea name="shippingPolicy" value={settings.shippingPolicy || ""} onChange={update} /></label><label>Return policy<textarea name="returnPolicy" value={settings.returnPolicy || ""} onChange={update} /></label></div>
       <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div>
       <div className="editor-section-head"><div><strong>Storefront, SEO & social</strong><small>Used by mobile navigation, search previews and customer pages.</small></div></div>
-      <div className="admin-field-grid two"><label>Brand tagline<input name="brandTagline" value={settings.brandTagline || ""} onChange={update} placeholder="Everyday herbal care, thoughtfully made." /></label><label>Public site URL<input name="siteUrl" value={settings.siteUrl || ""} onChange={update} placeholder="https://www.riseora.com" /></label></div>
+      <section className="phase12-brand-settings">
+        <div className="phase12-brand-upload-card">
+          <div className="phase12-brand-preview full">{settings.logoUrl ? <img src={mediaUrl(settings.logoUrl)} alt={settings.logoAlt || "Riseora logo"} /> : <span>RISEORA</span>}</div>
+          <div><strong>Primary logo</strong><small>Transparent PNG or WEBP works best. Used in the storefront header, footer and invoices.</small></div>
+          <label className={uploadingBrand === "logoUrl" ? "state-toggle disabled" : "state-toggle active"}>{uploadingBrand === "logoUrl" ? "Uploading…" : "Upload logo"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingBrand)} onChange={(e) => uploadBrand(e.target.files?.[0], "logoUrl")} /></label>
+        </div>
+        <div className="phase12-brand-upload-card">
+          <div className="phase12-brand-preview mark">{settings.logoMarkUrl ? <img src={mediaUrl(settings.logoMarkUrl)} alt="Riseora mark" /> : <span>R</span>}</div>
+          <div><strong>Compact brand mark</strong><small>Optional square/circular mark for compact admin/mobile spaces.</small></div>
+          <label className={uploadingBrand === "logoMarkUrl" ? "state-toggle disabled" : "state-toggle active"}>{uploadingBrand === "logoMarkUrl" ? "Uploading…" : "Upload mark"}<input hidden type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingBrand)} onChange={(e) => uploadBrand(e.target.files?.[0], "logoMarkUrl")} /></label>
+        </div>
+      </section>
+      <div className="admin-field-grid two"><label>Primary logo URL<input name="logoUrl" value={settings.logoUrl || ""} onChange={update} placeholder="Uploaded automatically or https://..." /></label><label>Compact logo mark URL<input name="logoMarkUrl" value={settings.logoMarkUrl || ""} onChange={update} placeholder="Optional" /></label></div>
+      <div className="admin-field-grid two"><label>Logo alt text<input name="logoAlt" value={settings.logoAlt || ""} onChange={update} placeholder="Riseora Herbals" /></label><label>Brand tagline<input name="brandTagline" value={settings.brandTagline || ""} onChange={update} placeholder="Everyday herbal care, thoughtfully made." /></label></div>
+      <label>Public site URL<input name="siteUrl" value={settings.siteUrl || ""} onChange={update} placeholder="https://www.riseora.com" /></label>
       <div className="admin-field-grid two"><label>Announcement line 1<input name="announcementText" value={settings.announcementText || ""} onChange={update} /></label><label>Announcement line 2<input name="announcementSecondary" value={settings.announcementSecondary || ""} onChange={update} /></label></div>
       <div className="admin-field-grid two"><label>SEO title<input name="seoTitle" value={settings.seoTitle || ""} onChange={update} placeholder="Riseora Herbals | Herbal Care" /></label><label>SEO description<textarea name="seoDescription" value={settings.seoDescription || ""} onChange={update} /></label></div>
       <div className="admin-field-grid two"><label>About page title<input name="aboutTitle" value={settings.aboutTitle || ""} onChange={update} /></label><label>Contact page introduction<textarea name="contactIntro" value={settings.contactIntro || ""} onChange={update} /></label></div>

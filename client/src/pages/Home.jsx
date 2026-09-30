@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
+import HeroCarousel from "../components/HeroCarousel";
 import Seo from "../components/Seo";
 import { useStore } from "../context/StoreContext";
 
@@ -33,19 +34,14 @@ export default function Home() {
     });
   }, []);
 
-  const hero = banners[0] || fallbackBanner;
+  const heroSlides = banners.length ? banners : [fallbackBanner];
   const featured = useMemo(() => products.filter((item) => item.isFeatured).slice(0, 8), [products]);
   const trending = useMemo(() => [...products].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)).slice(0, 8), [products]);
   const newest = products.slice(0, 8);
 
-  const organizationJson = { "@context": "https://schema.org", "@type": "Organization", name: store.storeName || "Riseora Herbals", url: store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin, email: store.supportEmail || undefined };
+  const organizationJson = { "@context": "https://schema.org", "@type": "Organization", name: store.storeName || "Riseora Herbals", url: store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin, logo: store.logoUrl ? mediaUrl(store.logoUrl) : undefined, email: store.supportEmail || undefined };
   return <><Seo description={store.seoDescription || store.brandTagline} jsonLd={organizationJson} />
-    <section className="campaign-hero" style={{ "--hero-bg": hero.background || "#d8a693", "--hero-color": hero.textColor || "#11251c" }}>
-      <div className="container campaign-hero-grid">
-        <div className="campaign-copy"><p className="hero-kicker">{hero.eyebrow || "RISEORA HERBALS"}</p><h1>{hero.title}</h1><p>{hero.description}</p><div className="campaign-actions"><Link className="black-button" to={hero.ctaLink || "/shop"}>{hero.ctaText || "SHOP NOW"}</Link><Link className="underlined-link" to="/offers">VIEW OFFERS</Link></div><div className="micro-trust"><span>✓ Secure checkout</span><span>✓ Delivery across India</span></div></div>
-        <div className="campaign-visual">{hero.imageUrl ? <picture>{hero.mobileImageUrl && <source media="(max-width: 639px)" srcSet={mediaUrl(hero.mobileImageUrl)} />}<img src={mediaUrl(hero.imageUrl)} alt={hero.title} /></picture> : <div className="campaign-placeholder"><span>R</span><strong>RISEORA</strong><small>HERBALS</small><i>your campaign image</i></div>}</div>
-      </div>
-    </section>
+    <HeroCarousel banners={heroSlides} />
 
     <section className="quick-value-strip"><div className="container"><span><Icon name="truck" size={18} /> {store.freeShippingThreshold ? `Free shipping above ₹${Number(store.freeShippingThreshold).toFixed(0)}` : "Delivery across India"}</span><span><Icon name="shield" size={18} /> Secure checkout</span><span><Icon name="leaf" size={18} /> Herbal-first care</span></div></section>
 

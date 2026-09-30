@@ -457,7 +457,10 @@ model StoreSetting {
   termsPolicy      String?
 
   brandTagline          String?
-  announcementText     String?
+  logoUrl               String?
+  logoMarkUrl           String?
+  logoAlt               String?
+  announcementText      String?
   announcementSecondary String?
   siteUrl               String?
   seoTitle              String?

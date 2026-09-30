@@ -91,6 +91,17 @@ const productSchema = z.object({
     .min(1),
 });
 
+function normalizedProductImages(images: Array<{ url: string; altText?: string; isPrimary?: boolean }>, productName: string) {
+  const requestedPrimary = images.findIndex((image) => image.isPrimary);
+  const primaryIndex = requestedPrimary >= 0 ? requestedPrimary : 0;
+  return images.map((image, index) => ({
+    url: image.url,
+    altText: image.altText || productName,
+    isPrimary: index === primaryIndex,
+    sortOrder: index,
+  }));
+}
+
 router.get(
   "/products",
   asyncHandler(async (_req, res) => {
@@ -125,12 +136,7 @@ router.post(
         isFeatured: parsed.data.isFeatured,
         badge: parsed.data.badge || null,
         images: {
-          create: parsed.data.images.map((image, index) => ({
-            url: image.url,
-            altText: image.altText || parsed.data.name,
-            isPrimary: image.isPrimary || index === 0,
-            sortOrder: index,
-          })),
+          create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },
         variants: {
           create: parsed.data.variants.map((variant) => ({
@@ -509,15 +515,15 @@ const bannerSchema = z.object({
   eyebrow: z.string().trim().max(80).optional().or(z.literal("")),
   title: z.string().trim().min(2).max(180),
   description: z.string().trim().max(500).optional().or(z.literal("")),
-  imageUrl: z.string().url().optional().or(z.literal("")),
-  mobileImageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
+  mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
   ctaText: z.string().trim().max(60).optional().or(z.literal("")),
   ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
   background: z.string().trim().max(40).optional().or(z.literal("")),
   textColor: z.string().trim().max(40).optional().or(z.literal("")),
   priority: z.number().int().min(0).max(1000).optional(),
-  startsAt: z.string().datetime().optional(),
-  endsAt: z.string().datetime().optional(),
+  startsAt: z.string().datetime().nullable().optional(),
+  endsAt: z.string().datetime().nullable().optional(),
 });
 
 router.get(
@@ -557,13 +563,47 @@ router.post(
   }),
 );
 
+const bannerUpdateSchema = z.object({
+  placement: z.enum(["HOME_HERO", "HOME_STRIP"]).optional(),
+  eyebrow: z.string().trim().max(80).optional().or(z.literal("")),
+  title: z.string().trim().min(2).max(180).optional(),
+  description: z.string().trim().max(500).optional().or(z.literal("")),
+  imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
+  mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
+  ctaText: z.string().trim().max(60).optional().or(z.literal("")),
+  ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
+  background: z.string().trim().max(40).optional().or(z.literal("")),
+  textColor: z.string().trim().max(40).optional().or(z.literal("")),
+  priority: z.number().int().min(0).max(10000).optional(),
+  startsAt: z.string().datetime().nullable().optional(),
+  endsAt: z.string().datetime().nullable().optional(),
+  isActive: z.boolean().optional(),
+});
+
 router.patch(
   "/banners/:id",
   asyncHandler(async (req, res) => {
-    const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid banner update" });
-    const banner = await prisma.banner.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    const parsed = bannerUpdateSchema.safeParse(req.body);
+    if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid banner update", errors: parsed.success ? undefined : parsed.error.flatten() });
+
+    const data: any = { ...parsed.data };
+    for (const key of ["eyebrow", "description", "imageUrl", "mobileImageUrl", "ctaText", "ctaLink", "background", "textColor"]) {
+      if (key in data && data[key] === "") data[key] = null;
+    }
+    if ("startsAt" in data) data.startsAt = data.startsAt ? new Date(data.startsAt) : null;
+    if ("endsAt" in data) data.endsAt = data.endsAt ? new Date(data.endsAt) : null;
+    if (data.startsAt && data.endsAt && data.endsAt <= data.startsAt) return res.status(400).json({ success: false, message: "Banner end date must be after the start date" });
+
+    const banner = await prisma.banner.update({ where: { id: req.params.id }, data });
     res.json({ success: true, data: banner });
+  }),
+);
+
+router.delete(
+  "/banners/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.banner.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
   }),
 );
 
@@ -796,13 +836,8 @@ router.put(
           isActive: parsed.data.isActive,
           badge: parsed.data.badge || null,
           images: {
-            create: parsed.data.images.map((image, index) => ({
-              url: image.url,
-              altText: image.altText || parsed.data.name,
-              isPrimary: image.isPrimary || index === 0,
-              sortOrder: index,
-            })),
-          },
+          create: normalizedProductImages(parsed.data.images, parsed.data.name),
+        },
         },
         include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { isActive: true }, orderBy: { createdAt: "asc" } } },
       });

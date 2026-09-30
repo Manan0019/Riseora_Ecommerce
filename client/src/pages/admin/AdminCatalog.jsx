@@ -14,6 +14,7 @@ export default function AdminCatalog() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
@@ -41,10 +42,24 @@ export default function AdminCatalog() {
   function addVariant() { setProduct((current) => ({ ...current, variants: [...current.variants, newVariant()] })); }
   function removeVariant(index) { setProduct((current) => ({ ...current, variants: current.variants.filter((_, i) => i !== index) })); }
   function addImage() { setProduct((current) => ({ ...current, images: [...current.images, { url: "", altText: "", isPrimary: false }] })); }
+  function moveImage(from, to) {
+    if (to < 0 || to >= product.images.length || from === to) return;
+    setProduct((current) => {
+      const images = [...current.images];
+      const [moved] = images.splice(from, 1);
+      images.splice(to, 0, moved);
+      return { ...current, images };
+    });
+  }
+  function dropImage(to) {
+    if (dragImageIndex == null) return;
+    moveImage(dragImageIndex, to);
+    setDragImageIndex(null);
+  }
   function addFaq() { setProduct((current) => ({ ...current, faq: [...current.faq, { question: "", answer: "" }] })); }
   function updateFaq(index, field, value) { setProduct((current) => ({ ...current, faq: current.faq.map((item, i) => i === index ? { ...item, [field]: value } : item) })); }
   function removeFaq(index) { setProduct((current) => ({ ...current, faq: current.faq.filter((_, i) => i !== index) })); }
-  function removeImage(index) { setProduct((current) => ({ ...current, images: current.images.filter((_, i) => i !== index) })); }
+  function removeImage(index) { setProduct((current) => { const images = current.images.filter((_, i) => i !== index); if (images.length && !images.some((image) => image.isPrimary)) images[0] = { ...images[0], isPrimary: true }; return { ...current, images }; }); }
   function makePrimary(index) { setProduct((current) => ({ ...current, images: current.images.map((image, i) => ({ ...image, isPrimary: i === index })) })); }
   async function uploadImages(files) {
     if (!files?.length) return;
@@ -88,7 +103,10 @@ export default function AdminCatalog() {
 
   async function saveProduct(event) {
     event.preventDefault(); setError(""); setMessage("");
-    const cleanImages = product.images.filter((image) => image.url.trim()).map((image, index) => ({ url: image.url.trim(), altText: image.altText.trim(), isPrimary: image.isPrimary || index === 0 }));
+    const validImages = product.images.filter((image) => image.url.trim());
+    const requestedPrimary = validImages.findIndex((image) => image.isPrimary);
+    const primaryIndex = requestedPrimary >= 0 ? requestedPrimary : 0;
+    const cleanImages = validImages.map((image, index) => ({ url: image.url.trim(), altText: image.altText.trim(), isPrimary: index === primaryIndex }));
     const payload = {
       categoryId: product.categoryId,
       name: product.name,
@@ -152,8 +170,8 @@ export default function AdminCatalog() {
         <div className="editor-section-head"><div><strong>Product FAQ</strong><small>Shown as collapsible questions on the product page.</small></div><button type="button" className="state-toggle active" onClick={addFaq}>+ FAQ</button></div>
         <div className="phase9-faq-editor">{product.faq.map((item, index) => <div className="phase9-faq-row" key={index}><input value={item.question} onChange={(e) => updateFaq(index, "question", e.target.value)} placeholder="Question" /><textarea value={item.answer} onChange={(e) => updateFaq(index, "answer", e.target.value)} placeholder="Answer" />{product.faq.length > 1 && <button type="button" className="mini-danger" onClick={() => removeFaq(index)}>×</button>}</div>)}</div>
 
-        <div className="editor-section-head"><div><strong>Product images</strong><small>Upload JPG, PNG or WEBP (max 5 MB each), or paste an HTTPS image URL.</small></div><div className="image-editor-actions"><label className={uploadingImages ? "state-toggle disabled" : "state-toggle active"}>{uploadingImages ? "Uploading…" : "Upload images"}<input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled={uploadingImages} onChange={(e) => uploadImages(e.target.files)} /></label><button type="button" className="state-toggle" onClick={addImage}>+ URL</button></div></div>
-        <div className="admin-image-editor">{product.images.map((image, index) => <div className="admin-image-row phase5-image-row" key={index}>{image.url && <div className="admin-image-preview"><img src={mediaUrl(image.url)} alt="" /></div>}<input type="text" value={image.url} onChange={(e) => updateImage(index, "url", e.target.value)} placeholder="https://... or uploaded image" /><input value={image.altText} onChange={(e) => updateImage(index, "altText", e.target.value)} placeholder="Alt text" /><button type="button" className={image.isPrimary ? "state-toggle active" : "state-toggle"} onClick={() => makePrimary(index)}>{image.isPrimary ? "Primary" : "Make primary"}</button>{product.images.length > 1 && <button type="button" className="mini-danger" onClick={() => removeImage(index)}>×</button>}</div>)}</div>
+        <div className="editor-section-head"><div><strong>Product images</strong><small>Upload multiple JPG, PNG or WEBP images. Drag or use arrows to set the storefront/hover slideshow order. The primary image is shown first.</small></div><div className="image-editor-actions"><label className={uploadingImages ? "state-toggle disabled" : "state-toggle active"}>{uploadingImages ? "Uploading…" : "Upload images"}<input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled={uploadingImages} onChange={(e) => uploadImages(e.target.files)} /></label><button type="button" className="state-toggle" onClick={addImage}>+ URL</button></div></div>
+        <div className="admin-image-editor">{product.images.map((image, index) => <div className={`admin-image-row phase5-image-row phase12-sortable-image ${dragImageIndex === index ? "dragging" : ""}`} key={`${image.url || "blank"}-${index}`} draggable onDragStart={() => setDragImageIndex(index)} onDragEnd={() => setDragImageIndex(null)} onDragOver={(e) => e.preventDefault()} onDrop={() => dropImage(index)}><div className="phase12-image-order"><span className="phase12-drag-handle" title="Drag to reorder">⋮⋮</span><b>{index + 1}</b><button type="button" disabled={index === 0} onClick={() => moveImage(index, index - 1)} aria-label="Move image earlier">↑</button><button type="button" disabled={index === product.images.length - 1} onClick={() => moveImage(index, index + 1)} aria-label="Move image later">↓</button></div>{image.url && <div className="admin-image-preview"><img src={mediaUrl(image.url)} alt="" /></div>}<input type="text" value={image.url} onChange={(e) => updateImage(index, "url", e.target.value)} placeholder="https://... or uploaded image" /><input value={image.altText} onChange={(e) => updateImage(index, "altText", e.target.value)} placeholder="Alt text" /><button type="button" className={image.isPrimary ? "state-toggle active" : "state-toggle"} onClick={() => makePrimary(index)}>{image.isPrimary ? "Primary" : "Make primary"}</button>{product.images.length > 1 && <button type="button" className="mini-danger" onClick={() => removeImage(index)}>×</button>}</div>)}</div>
 
         <div className="editor-section-head"><div><strong>Variants</strong><small>Each size/pack needs a unique SKU and stock quantity.</small></div><button type="button" className="state-toggle active" onClick={addVariant}>+ Variant</button></div>
         <div className="variant-editor-list">{product.variants.map((variant, index) => <div className="variant-editor-card" key={index}><div className="variant-editor-title"><strong>Variant {index + 1}</strong>{product.variants.length > 1 && <button type="button" onClick={() => removeVariant(index)}>Remove</button>}</div><div className="admin-field-grid three"><label>Name<input required value={variant.name} onChange={(e) => updateVariant(index, "name", e.target.value)} placeholder="100 ml" /></label><label>SKU<input required value={variant.sku} onChange={(e) => updateVariant(index, "sku", e.target.value)} placeholder="RISE-OIL-100" /></label><label>Size<input value={variant.size} onChange={(e) => updateVariant(index, "size", e.target.value)} placeholder="100" /></label></div><div className="admin-field-grid four"><label>Unit<input value={variant.unit} onChange={(e) => updateVariant(index, "unit", e.target.value)} /></label><label>MRP<input required type="number" min="1" step="0.01" value={variant.mrp} onChange={(e) => updateVariant(index, "mrp", e.target.value)} /></label><label>Selling price<input required type="number" min="1" step="0.01" value={variant.sellingPrice} onChange={(e) => updateVariant(index, "sellingPrice", e.target.value)} /></label><label>Cost price<input type="number" min="0" step="0.01" value={variant.costPrice} onChange={(e) => updateVariant(index, "costPrice", e.target.value)} /></label></div><div className="admin-field-grid three"><label>Stock<input type="number" min="0" value={variant.stockQuantity} onChange={(e) => updateVariant(index, "stockQuantity", e.target.value)} /></label><label>Low stock warning<input type="number" min="0" value={variant.lowStockThreshold} onChange={(e) => updateVariant(index, "lowStockThreshold", e.target.value)} /></label><label>Weight grams<input type="number" min="0" step="0.01" value={variant.weightGrams} onChange={(e) => updateVariant(index, "weightGrams", e.target.value)} /></label></div><div className="admin-field-grid two"><label>HSN / SAC code<input value={variant.hsnCode} onChange={(e) => updateVariant(index, "hsnCode", e.target.value)} placeholder="Set with your accountant" /></label><label>GST rate %<input type="number" min="0" max="100" step="0.01" value={variant.gstRate} onChange={(e) => updateVariant(index, "gstRate", e.target.value)} /><small>Used for GST invoice tax split. Confirm the correct rate before production.</small></label></div></div>)}</div>

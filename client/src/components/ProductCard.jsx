@@ -1,3 +1,4 @@
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
@@ -7,8 +8,48 @@ import { Icon } from "./Icons";
 export default function ProductCard({ product, compact = false }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
+  const [activeImage, setActiveImage] = useState(0);
+  const [hovering, setHovering] = useState(false);
+
+  const images = useMemo(() => {
+    const source = Array.isArray(product.images) ? product.images.filter((item) => item?.url) : [];
+    const primaryIndex = source.findIndex((item) => item.isPrimary);
+    if (primaryIndex <= 0) return source;
+    return [source[primaryIndex], ...source.filter((_, index) => index !== primaryIndex)];
+  }, [product.images]);
+
+  useEffect(() => {
+    setActiveImage(0);
+    setHovering(false);
+  }, [product.id]);
+
+  useEffect(() => {
+    if (!hovering || images.length <= 1) return undefined;
+    const timer = window.setInterval(() => {
+      setActiveImage((value) => (value + 1) % images.length);
+    }, 950);
+    return () => window.clearInterval(timer);
+  }, [hovering, images.length]);
+
+  function beginSlideshow() {
+    if (images.length <= 1) return;
+    if (window.matchMedia?.("(hover: hover) and (pointer: fine)")?.matches === false) return;
+    setHovering(true);
+    const next = images[(activeImage + 1) % images.length];
+    if (next?.url) {
+      const preload = new Image();
+      preload.src = mediaUrl(next.url);
+    }
+  }
+
+  function stopSlideshow() {
+    setHovering(false);
+    setActiveImage(0);
+  }
+
   const variant = product.variants?.[0];
-  const image = mediaUrl(product.images?.[0]?.url);
+  const imageItem = images[activeImage] || images[0];
+  const image = mediaUrl(imageItem?.url);
   const inStock = variant && Number(variant.stockQuantity) > 0;
   const sellingPrice = Number(variant?.sellingPrice || 0);
   const mrp = Number(variant?.mrp || 0);
@@ -16,14 +57,33 @@ export default function ProductCard({ product, compact = false }) {
   const wished = has(product.id);
 
   return (
-    <article className={`product-card mc-product-card ${compact ? "compact" : ""}`}>
+    <article className={`product-card mc-product-card ${compact ? "compact" : ""}`} onMouseEnter={beginSlideshow} onMouseLeave={stopSlideshow}>
       <div className="product-image-shell">
         <Link to={`/product/${product.slug}`} className="product-image-wrap" aria-label={product.name}>
           <div className="product-badge-stack">
             {product.badge && <span className="brand-badge">{product.badge}</span>}
             {discount > 0 && <span className="sale-badge">{discount}% OFF</span>}
           </div>
-          {image ? <img className="product-image" src={image} alt={product.images?.[0]?.altText || product.name} loading="lazy" decoding="async" width="420" height="420" /> : <div className="image-placeholder"><span>R</span><small>Riseora</small></div>}
+          {image ? (
+            <img
+              key={`${product.id}-${activeImage}`}
+              className="product-image product-image-transition"
+              src={image}
+              alt={imageItem?.altText || product.name}
+              loading="lazy"
+              decoding="async"
+              width="420"
+              height="420"
+            />
+          ) : (
+            <div className="image-placeholder"><span>R</span><small>Riseora</small></div>
+          )}
+          {images.length > 1 && (
+            <div className="product-image-dots" aria-hidden="true">
+              {images.slice(0, 6).map((item, index) => <span key={item.id || `${item.url}-${index}`} className={index === activeImage ? "active" : ""} />)}
+            </div>
+          )}
+          {images.length > 1 && <span className="product-image-count">{activeImage + 1}/{images.length}</span>}
         </Link>
         <button className={wished ? "wishlist-button active" : "wishlist-button"} onClick={() => toggle(product)} aria-label={wished ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}>
           <Icon name="heart" size={18} />

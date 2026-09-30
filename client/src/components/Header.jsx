@@ -4,6 +4,7 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
+import BrandLogo from "./BrandLogo";
 import { useStore } from "../context/StoreContext";
 
 export default function Header() {
@@ -35,8 +36,7 @@ export default function Header() {
         </div>
         <div className="container nav-row">
           <Link className="brand" to="/" aria-label="Riseora home">
-            <span className="brand-mark">R</span>
-            <span className="brand-copy"><strong>RISEORA</strong><small>HERBALS</small></span>
+            <BrandLogo />
           </Link>
           <nav className="main-nav" aria-label="Primary navigation">
             <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}

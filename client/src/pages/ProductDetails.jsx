@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
@@ -41,12 +41,14 @@ export default function ProductDetails() {
   const [stockAlertBusy, setStockAlertBusy] = useState(false);
   const [related, setRelated] = useState([]);
   const [recent, setRecent] = useState([]);
+  const galleryTouchStart = useRef(null);
 
   function loadProduct() {
     return apiFetch(`/products/${slug}`).then((response) => {
       setProduct(response.data);
       setVariantId(response.data.variants?.[0]?.id || "");
-      setActiveImage(0);
+      const primaryImageIndex = response.data.images?.findIndex((item) => item.isPrimary) ?? -1;
+      setActiveImage(primaryImageIndex >= 0 ? primaryImageIndex : 0);
       setRecent(readRecent().filter((item) => item.id !== response.data.id).slice(0, 6));
       rememberProduct(response.data);
       if (response.data.category?.slug) {
@@ -66,6 +68,18 @@ export default function ProductDetails() {
 
   const imageItem = product.images?.[activeImage] || product.images?.[0];
   const image = mediaUrl(imageItem?.url);
+  const imageCount = product.images?.length || 0;
+  const changeImage = (direction) => {
+    if (imageCount <= 1) return;
+    setActiveImage((value) => (value + direction + imageCount) % imageCount);
+  };
+  const onGalleryTouchStart = (event) => { galleryTouchStart.current = event.changedTouches?.[0]?.clientX ?? null; };
+  const onGalleryTouchEnd = (event) => {
+    const start = galleryTouchStart.current; const end = event.changedTouches?.[0]?.clientX;
+    galleryTouchStart.current = null;
+    if (start == null || end == null || Math.abs(end - start) < 45) return;
+    changeImage(end < start ? 1 : -1);
+  };
   const inStock = variant && Number(variant.stockQuantity) > 0;
   const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, Number(variant.stockQuantity)));
   const wished = has(product.id);
@@ -97,7 +111,7 @@ export default function ProductDetails() {
     <div className="product-detail-page phase3-detail phase9-detail-page">
       <div className="container product-detail">
         <div className="detail-media phase3-media phase9-product-gallery">
-          <div className="detail-image-frame">{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img src={image} alt={imageItem?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}</div>
+          <div className="detail-image-frame phase12-detail-image-frame" onTouchStart={onGalleryTouchStart} onTouchEnd={onGalleryTouchEnd}>{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img key={`${product.id}-${activeImage}`} className="phase12-detail-main-image" src={image} alt={imageItem?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}{imageCount > 1 && <><button className="phase12-gallery-arrow prev" type="button" onClick={() => changeImage(-1)} aria-label="Previous product image"><span><Icon name="arrow" size={20} /></span></button><button className="phase12-gallery-arrow next" type="button" onClick={() => changeImage(1)} aria-label="Next product image"><Icon name="arrow" size={20} /></button><span className="phase12-gallery-counter">{activeImage + 1} / {imageCount}</span></>}</div>
           {product.images?.length > 1 && <div className="phase9-gallery-thumbs">{product.images.map((item, index) => <button key={item.id || index} className={activeImage === index ? "active" : ""} onClick={() => setActiveImage(index)}><img src={mediaUrl(item.url)} alt={item.altText || `${product.name} ${index + 1}`} /></button>)}</div>}
         </div>
         <div className="detail-content phase3-detail-content">
