@@ -15,12 +15,13 @@ function RouteScrollManager() {
 }
 
 export default function Layout() {
+  const { pathname } = useLocation();
   return (
     <div className="app-shell phase15-app-shell">
       <RouteScrollManager />
       <Header />
       <main className="main-content">
-        <Outlet />
+        <div key={pathname} className="phase18-route-frame"><Outlet /></div>
       </main>
       <Footer />
       <MobileBottomNav />

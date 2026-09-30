@@ -22,7 +22,7 @@ const createOrderSchema = z.object({
     country: z.string().trim().default("India"),
   }),
   paymentMethod: z.literal("COD").default("COD"),
-  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(20) })).min(1),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
 router.post(
@@ -37,6 +37,10 @@ router.post(
     } catch (error) {
       const message = error instanceof Error ? error.message : "ORDER_FAILED";
       if (message === "PRODUCT_UNAVAILABLE") return res.status(400).json({ success: false, message: "One or more products are unavailable" });
+      if (message.startsWith("PURCHASE_LIMIT:")) {
+        const [, productName, limit] = message.split(":");
+        return res.status(400).json({ success: false, message: `${productName} is limited to ${limit} per order.` });
+      }
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
       if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });

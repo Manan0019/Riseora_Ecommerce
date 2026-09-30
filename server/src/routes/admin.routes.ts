@@ -14,7 +14,7 @@ router.use(requireAuth, requireAdmin);
 router.get(
   "/categories",
   asyncHandler(async (_req, res) => {
-    const categories = await prisma.category.findMany({ orderBy: { name: "asc" } });
+    const categories = await prisma.category.findMany({ orderBy: [{ sortOrder: "asc" }, { name: "asc" }] });
     res.json({ success: true, data: categories });
   }),
 );
@@ -22,8 +22,9 @@ router.get(
 const categorySchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: z.string().trim().optional(),
-  description: z.string().trim().optional().or(z.literal("")),
-  imageUrl: z.string().url().optional().or(z.literal("")),
+  description: z.string().trim().max(500).optional().or(z.literal("")),
+  imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid category image URL"),
+  sortOrder: z.number().int().min(0).max(100000).optional(),
 });
 
 router.post(
@@ -34,12 +35,14 @@ router.post(
       return res.status(400).json({ success: false, message: "Invalid category", errors: parsed.error.flatten() });
     }
 
+    const lastCategory = await prisma.category.findFirst({ orderBy: [{ sortOrder: "desc" }, { createdAt: "desc" }], select: { sortOrder: true } });
     const category = await prisma.category.create({
       data: {
         name: parsed.data.name,
         slug: slugify(parsed.data.slug || parsed.data.name),
         description: parsed.data.description || null,
         imageUrl: parsed.data.imageUrl || null,
+        sortOrder: parsed.data.sortOrder ?? ((lastCategory?.sortOrder ?? 0) + 10),
       },
     });
 
@@ -60,6 +63,7 @@ const productSchema = z.object({
   faq: z.array(z.object({ question: z.string().trim().min(2).max(300), answer: z.string().trim().min(2).max(3000) })).max(20).default([]),
   isFeatured: z.boolean().default(false),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
+  maxPurchaseQuantity: z.number().int().min(1).max(10000).nullable().optional(),
   images: z
     .array(
       z.object({
@@ -135,6 +139,7 @@ router.post(
         faq: parsed.data.faq as any,
         isFeatured: parsed.data.isFeatured,
         badge: parsed.data.badge || null,
+        maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
         images: {
           create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },
@@ -760,7 +765,8 @@ router.patch(
     const parsed = z.object({
       name: z.string().trim().min(2).max(100).optional(),
       description: z.string().trim().max(500).nullable().optional(),
-      imageUrl: z.string().url().nullable().optional(),
+      imageUrl: z.string().trim().nullable().optional().refine((value) => value == null || value === "" || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid category image URL"),
+      sortOrder: z.number().int().min(0).max(100000).optional(),
       isActive: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid category update" });
@@ -769,7 +775,8 @@ router.patch(
       data: {
         ...(parsed.data.name !== undefined ? { name: parsed.data.name, slug: slugify(parsed.data.name) } : {}),
         ...(parsed.data.description !== undefined ? { description: parsed.data.description } : {}),
-        ...(parsed.data.imageUrl !== undefined ? { imageUrl: parsed.data.imageUrl } : {}),
+        ...(parsed.data.imageUrl !== undefined ? { imageUrl: parsed.data.imageUrl || null } : {}),
+        ...(parsed.data.sortOrder !== undefined ? { sortOrder: parsed.data.sortOrder } : {}),
         ...(parsed.data.isActive !== undefined ? { isActive: parsed.data.isActive } : {}),
       },
     });
@@ -835,6 +842,7 @@ router.put(
           isFeatured: parsed.data.isFeatured,
           isActive: parsed.data.isActive,
           badge: parsed.data.badge || null,
+          maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
           images: {
           create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },

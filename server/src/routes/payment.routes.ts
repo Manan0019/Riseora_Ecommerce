@@ -13,7 +13,7 @@ const checkoutSchema = z.object({
   customerName: z.string().trim().min(2).max(120), customerEmail: z.string().trim().email().optional().or(z.literal("")), customerPhone: z.string().trim().min(8).max(20),
   couponCode: z.string().trim().max(40).optional().or(z.literal("")),
   shippingAddress: z.object({ line1: z.string().trim().min(3), line2: z.string().trim().optional().or(z.literal("")), landmark: z.string().trim().optional().or(z.literal("")), city: z.string().trim().min(2), state: z.string().trim().min(2), postalCode: z.string().trim().min(4).max(12), country: z.string().trim().default("India") }),
-  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(20) })).min(1),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
 router.get("/config", (_req, res) => res.json({ success: true, data: { onlinePaymentsEnabled, provider: onlinePaymentsEnabled ? "RAZORPAY" : null } }));
@@ -33,6 +33,10 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
     if (session) await releaseCheckoutSession(session.id).catch(() => {});
     const message = error instanceof Error ? error.message : "CHECKOUT_FAILED";
     if (message === "PRODUCT_UNAVAILABLE") return res.status(400).json({ success: false, message: "One or more products are unavailable" });
+    if (message.startsWith("PURCHASE_LIMIT:")) {
+      const [, productName, limit] = message.split(":");
+      return res.status(400).json({ success: false, message: `${productName} is limited to ${limit} per order.` });
+    }
     if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
     if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
     if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });

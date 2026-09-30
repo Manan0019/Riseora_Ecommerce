@@ -59,7 +59,7 @@ export default function AdminLayout() {
           <div><span className="admin-mobile-brand">RISEORA ADMIN</span><strong>{user?.firstName ? `Hi, ${user.firstName}` : "Store admin"}</strong></div>
           <a href="/" className="admin-view-store">View store</a>
         </header>
-        <main className="admin-content"><Outlet /></main>
+        <main className="admin-content"><div key={pathname} className="phase18-route-frame"><Outlet /></div></main>
       </div>
 
       <nav className="admin-mobile-nav phase15-admin-mobile-dock" aria-label="Admin navigation">

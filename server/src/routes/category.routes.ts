@@ -9,7 +9,7 @@ router.get(
   asyncHandler(async (_req, res) => {
     const categories = await prisma.category.findMany({
       where: { isActive: true },
-      orderBy: { name: "asc" },
+      orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     });
 
     res.json({ success: true, data: categories });

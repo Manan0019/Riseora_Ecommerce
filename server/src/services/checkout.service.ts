@@ -48,6 +48,23 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
   if (variants.length !== requestedIds.length) throw new Error("PRODUCT_UNAVAILABLE");
   const variantMap = new Map(variants.map((variant) => [variant.id, variant]));
 
+  const requestedByProduct = new Map<string, { quantity: number; name: string; limit: number | null }>();
+  for (const item of input.items) {
+    const variant = variantMap.get(item.variantId)!;
+    const current = requestedByProduct.get(variant.productId);
+    const limit = variant.product.maxPurchaseQuantity == null ? null : Number(variant.product.maxPurchaseQuantity);
+    requestedByProduct.set(variant.productId, {
+      quantity: (current?.quantity || 0) + item.quantity,
+      name: variant.product.name,
+      limit,
+    });
+  }
+  for (const request of requestedByProduct.values()) {
+    if (request.limit !== null && request.quantity > request.limit) {
+      throw new Error(`PURCHASE_LIMIT:${request.name}:${request.limit}`);
+    }
+  }
+
   const paidItems: SnapshotItem[] = input.items.map((item) => {
     const variant = variantMap.get(item.variantId)!;
     const unitPrice = Number(variant.sellingPrice);

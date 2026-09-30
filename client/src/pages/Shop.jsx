@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { apiFetch } from "../api/http";
+import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
@@ -45,12 +45,18 @@ export default function Shop() {
   }, [query]);
 
   const activeFilterCount = [category, inStock, minPrice !== "", maxPrice !== "", badge].filter(Boolean).length;
+  const activeCategory = categories.find((item) => item.slug === category);
   function clearFilters() { setCategory(""); setInStock(false); setMinPrice(""); setMaxPrice(""); setBadge(""); }
 
   return <>
     <Seo title="Shop" description="Shop Riseora Herbals products, variants and current offers online." />
     <div className="container shop-page page-space phase9-shop">
-      <div className="shop-title-row"><div><p className="eyebrow">RISEORA STORE</p><h1>Find your ritual</h1><p className="muted">Search, filter and compare the complete Riseora catalogue.</p></div></div>
+      <div className="shop-title-row"><div><p className="eyebrow">RISEORA STORE</p><h1>{activeCategory ? activeCategory.name : "Find your ritual"}</h1><p className="muted">{activeCategory?.description || "Search, filter and compare the complete Riseora catalogue."}</p></div></div>
+
+      {activeCategory && <section className="phase18-shop-category-banner">
+        <div className="phase18-shop-category-image">{activeCategory.imageUrl ? <img src={mediaUrl(activeCategory.imageUrl)} alt={activeCategory.name} /> : <span>{activeCategory.name.charAt(0)}</span>}</div>
+        <div><small>SHOP CATEGORY</small><strong>{activeCategory.name}</strong><p>{activeCategory.description || `Explore all ${activeCategory.name} products from Riseora.`}</p></div>
+      </section>}
 
       <div className="phase9-shop-toolbar">
         <div className="shop-search-wrap"><Icon name="search" size={20} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search products, benefits or SKU" aria-label="Search products" /></div>

@@ -63,7 +63,7 @@ const cartRecoverySchema = z.object({
     productName: z.string().trim().max(200),
     variantName: z.string().trim().max(120).optional().or(z.literal("")),
     sku: z.string().trim().max(100),
-    quantity: z.number().int().min(1).max(50),
+    quantity: z.number().int().min(1),
     price: z.number().nonnegative(),
     imageUrl: z.string().max(2000).optional().or(z.literal("")),
   })).min(1).max(50),
@@ -120,6 +120,7 @@ router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (r
     const quantity = Math.max(1, Math.min(variant.stockQuantity, Number(stored.quantity || 1)));
     return [{
       variantId: variant.id,
+      productId: variant.product.id,
       productSlug: variant.product.slug,
       productName: variant.product.name,
       variantName: variant.name,
@@ -127,6 +128,7 @@ router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (r
       price: Number(variant.sellingPrice),
       mrp: Number(variant.mrp),
       stockQuantity: variant.stockQuantity,
+      maxPurchaseQuantity: variant.product.maxPurchaseQuantity,
       imageUrl: variant.product.images[0]?.url || "",
       quantity,
     }];

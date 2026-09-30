@@ -21,10 +21,17 @@ function readInitialBuyNow() {
   return typeof window === "undefined" ? [] : readJson(window.sessionStorage, BUY_NOW_KEY);
 }
 
+function normalizePurchaseLimit(value) {
+  const parsed = Number(value);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
+}
+
 function toCartLine(product, variant, quantity = 1) {
-  const max = Math.max(0, Number(variant?.stockQuantity || 0));
-  if (!product?.id || !variant?.id || max <= 0) return null;
+  const stock = Math.max(0, Number(variant?.stockQuantity || 0));
+  if (!product?.id || !variant?.id || stock <= 0) return null;
   const primary = product.images?.find((item) => item.isPrimary) || product.images?.[0];
+  const maxPurchaseQuantity = normalizePurchaseLimit(product.maxPurchaseQuantity);
+  const allowed = Math.min(stock, maxPurchaseQuantity ?? stock);
   return {
     variantId: variant.id,
     productId: product.id,
@@ -34,10 +41,36 @@ function toCartLine(product, variant, quantity = 1) {
     sku: variant.sku,
     price: Number(variant.sellingPrice),
     mrp: Number(variant.mrp),
-    stockQuantity: max,
+    stockQuantity: stock,
+    maxPurchaseQuantity,
     imageUrl: primary?.url || "",
-    quantity: Math.max(1, Math.min(max, Number(quantity || 1))),
+    quantity: Math.max(1, Math.min(allowed, Number(quantity || 1))),
   };
+}
+
+function productQuantity(lines, productId, excludeVariantId = "") {
+  return lines.reduce((sum, item) => item.productId === productId && item.variantId !== excludeVariantId ? sum + Number(item.quantity || 0) : sum, 0);
+}
+
+function addLine(lines, product, variant, quantity = 1) {
+  const stock = Math.max(0, Number(variant?.stockQuantity || 0));
+  if (!stock || !product?.id || !variant?.id) return lines;
+  const limit = normalizePurchaseLimit(product.maxPurchaseQuantity);
+  const existing = lines.find((item) => item.variantId === variant.id);
+  const otherProductQty = productQuantity(lines, product.id, variant.id);
+  const maxForVariant = Math.max(0, Math.min(stock, limit == null ? stock : limit - otherProductQty));
+  if (maxForVariant <= 0) return lines;
+
+  if (existing) {
+    return lines.map((item) =>
+      item.variantId === variant.id
+        ? { ...item, stockQuantity: stock, maxPurchaseQuantity: limit, quantity: Math.min(maxForVariant, item.quantity + Number(quantity || 1)) }
+        : item,
+    );
+  }
+
+  const line = toCartLine(product, variant, Math.min(maxForVariant, Number(quantity || 1)));
+  return line ? [...lines, line] : lines;
 }
 
 export function CartProvider({ children }) {
@@ -57,19 +90,7 @@ export function CartProvider({ children }) {
   }, [buyNowItems]);
 
   function addItem(product, variant, quantity = 1) {
-    setItems((current) => {
-      const existing = current.find((item) => item.variantId === variant.id);
-      const max = Math.max(0, Number(variant.stockQuantity || 0));
-      if (existing) {
-        return current.map((item) =>
-          item.variantId === variant.id
-            ? { ...item, quantity: Math.min(max, item.quantity + quantity) }
-            : item,
-        );
-      }
-      const line = toCartLine(product, variant, quantity);
-      return line ? [...current, line] : current;
-    });
+    setItems((current) => addLine(current, product, variant, quantity));
     setDrawerOpen(true);
   }
 
@@ -102,18 +123,7 @@ export function CartProvider({ children }) {
     if (!additions.length) return false;
     setItems((current) => {
       let next = [...current];
-      for (const addition of additions) {
-        const { product, variant } = addition;
-        const max = Math.max(0, Number(variant.stockQuantity || 0));
-        if (!max) continue;
-        const existing = next.find((item) => item.variantId === variant.id);
-        if (existing) {
-          next = next.map((item) => item.variantId === variant.id ? { ...item, quantity: Math.min(max, item.quantity + addition.quantity) } : item);
-        } else {
-          const line = toCartLine(product, variant, addition.quantity);
-          if (line) next.push(line);
-        }
-      }
+      for (const addition of additions) next = addLine(next, addition.product, addition.variant, addition.quantity);
       return next;
     });
     setDrawerOpen(true);
@@ -121,15 +131,21 @@ export function CartProvider({ children }) {
   }
 
   function updateQuantity(variantId, quantity) {
-    setItems((current) =>
-      current
+    setItems((current) => {
+      const target = current.find((item) => item.variantId === variantId);
+      if (!target) return current;
+      const otherProductQty = productQuantity(current, target.productId, variantId);
+      const limit = normalizePurchaseLimit(target.maxPurchaseQuantity);
+      const stock = Math.max(0, Number(target.stockQuantity || 0));
+      const maxForVariant = Math.max(0, Math.min(stock, limit == null ? stock : limit - otherProductQty));
+      return current
         .map((item) =>
           item.variantId === variantId
-            ? { ...item, quantity: Math.max(0, Math.min(item.stockQuantity, quantity)) }
+            ? { ...item, quantity: Math.max(0, Math.min(maxForVariant, Number(quantity || 0))) }
             : item,
         )
-        .filter((item) => item.quantity > 0),
-    );
+        .filter((item) => item.quantity > 0);
+    });
   }
 
   function removeItem(variantId) {
@@ -141,12 +157,21 @@ export function CartProvider({ children }) {
   }
 
   function replaceCart(nextItems) {
-    const safe = Array.isArray(nextItems) ? nextItems
-      .filter((item) => item?.variantId && Number(item?.stockQuantity || 0) > 0)
-      .map((item) => ({
+    const source = Array.isArray(nextItems) ? nextItems : [];
+    const safe = [];
+    for (const item of source) {
+      if (!item?.variantId || !item?.productId || Number(item?.stockQuantity || 0) <= 0) continue;
+      const stock = Number(item.stockQuantity || 0);
+      const limit = normalizePurchaseLimit(item.maxPurchaseQuantity);
+      const otherProductQty = productQuantity(safe, item.productId);
+      const allowed = Math.max(0, Math.min(stock, limit == null ? stock : limit - otherProductQty));
+      if (allowed <= 0) continue;
+      safe.push({
         ...item,
-        quantity: Math.max(1, Math.min(Number(item.stockQuantity || 0), Number(item.quantity || 1))),
-      })) : [];
+        maxPurchaseQuantity: limit,
+        quantity: Math.max(1, Math.min(allowed, Number(item.quantity || 1))),
+      });
+    }
     setItems(safe);
   }
 

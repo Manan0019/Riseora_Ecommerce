@@ -392,3 +392,18 @@ npm run build
 ```
 
 See `PHASE17_INSTANT_BUY_DELIVERY_CHECKOUT.md` for the runtime checklist.
+
+## Phase 18 — Mobile Visual Hierarchy, Category Media & Purchase Guardrails
+
+Phase 18 replaces the branded route-loading interstitial with a restrained route fade, moves image-led category circles above the campaign on mobile, compresses the first mobile viewport so product discovery starts sooner, stacks product education vertically on phones, adds category image upload/reordering, and adds an optional per-product order quantity limit enforced by both the cart UI and backend checkout.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase18_mobile_category_purchase_limits
+npm run db:generate
+npm run build
+```
+
+See `PHASE18_MOBILE_CATEGORY_GUARDRAILS.md` for the runtime checklist.
+

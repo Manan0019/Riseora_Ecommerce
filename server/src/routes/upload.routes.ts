@@ -6,6 +6,7 @@ import {
   isAllowedProductImage,
   storeBrandImage,
   storeCampaignImage,
+  storeCategoryImage,
   storeProductImage,
 } from "../services/media.service";
 
@@ -43,6 +44,22 @@ router.post("/brand", upload.single("image"), async (req, res, next) => {
     const file = req.file;
     if (!file) return res.status(400).json({ success: false, message: "Select a logo image" });
     const stored = await storeBrandImage(file.buffer, file.mimetype);
+    res.status(201).json({
+      success: true,
+      storage: cloudMediaEnabled ? "cloudinary" : "local",
+      data: { ...stored, originalName: file.originalname, size: file.size },
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+
+router.post("/categories", upload.single("image"), async (req, res, next) => {
+  try {
+    const file = req.file;
+    if (!file) return res.status(400).json({ success: false, message: "Select a category image" });
+    const stored = await storeCategoryImage(file.buffer, file.mimetype);
     res.status(201).json({
       success: true,
       storage: cloudMediaEnabled ? "cloudinary" : "local",

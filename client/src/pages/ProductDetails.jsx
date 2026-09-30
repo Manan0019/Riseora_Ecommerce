@@ -32,6 +32,7 @@ function rememberProduct(product) {
     const snapshot = {
       id: product.id, slug: product.slug, name: product.name, shortDescription: product.shortDescription, badge: product.badge,
       category: product.category, images: product.images, variants: product.variants, ratingAverage: product.ratingAverage, reviewCount: product.reviewCount,
+      maxPurchaseQuantity: product.maxPurchaseQuantity,
     };
     const next = [snapshot, ...readRecent().filter((item) => item.id !== product.id)].slice(0, 8);
     localStorage.setItem(RECENT_KEY, JSON.stringify(next));
@@ -110,6 +111,8 @@ export default function ProductDetails() {
   };
   const inStock = variant && Number(variant.stockQuantity) > 0;
   const stockQuantity = Number(variant?.stockQuantity || 0);
+  const purchaseLimit = Number.isInteger(Number(product.maxPurchaseQuantity)) && Number(product.maxPurchaseQuantity) > 0 ? Number(product.maxPurchaseQuantity) : null;
+  const maxSelectableQuantity = Math.max(1, Math.min(stockQuantity || 1, purchaseLimit ?? (stockQuantity || 1)));
   const lowStockThreshold = Math.max(1, Number(store.lowStockUrgencyThreshold || 5));
   const lowStock = inStock && stockQuantity <= lowStockThreshold;
   const dispatchDays = Math.max(0, Number(store.dispatchWithinDays ?? 2));
@@ -117,10 +120,10 @@ export default function ProductDetails() {
   const deliveryMaxDays = Math.max(deliveryMinDays, Number(store.deliveryMaxDays ?? 7));
   const estimatedFrom = formatEta(dispatchDays + deliveryMinDays);
   const estimatedTo = formatEta(dispatchDays + deliveryMaxDays);
-  const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, Number(variant.stockQuantity)));
+  const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, maxSelectableQuantity));
   const buyCurrent = () => {
     if (!inStock || !variant) return;
-    if (startBuyNow(product, variant, Math.min(quantity, stockQuantity))) navigate("/checkout?mode=buy-now");
+    if (startBuyNow(product, variant, Math.min(quantity, maxSelectableQuantity))) navigate("/checkout?mode=buy-now");
   };
   const wished = has(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
@@ -189,7 +192,8 @@ export default function ProductDetails() {
           {variant && <div className="detail-price"><strong>₹{Number(variant.sellingPrice).toFixed(0)}</strong>{Number(variant.mrp) > Number(variant.sellingPrice) && <del>₹{Number(variant.mrp).toFixed(0)}</del>}{Number(variant.mrp) > Number(variant.sellingPrice) && <span className="detail-saving">Save ₹{(Number(variant.mrp)-Number(variant.sellingPrice)).toFixed(0)}</span>}</div>}
           <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
           {lowStock && <div className="phase17-low-stock"><span>SELLING FAST</span><strong>Only {stockQuantity} left in {variant.name}</strong></div>}
-          <div className="desktop-buy-block phase17-desktop-buy"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(Number(variant?.stockQuantity || 1), Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><div className="phase17-buy-actions"><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
+          {purchaseLimit && <div className="phase18-purchase-limit-note"><Icon name="shield" size={16} /><span><strong>Purchase limit</strong> Maximum {purchaseLimit} unit{purchaseLimit === 1 ? "" : "s"} of this product per order.</span></div>}
+          <div className="desktop-buy-block phase17-desktop-buy"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={maxSelectableQuantity} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(maxSelectableQuantity, Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(maxSelectableQuantity, value + 1))}>+</button></div><div className="phase17-buy-actions"><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
           {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
           <section className="phase17-delivery-card">
             <div className="phase17-delivery-head"><span><Icon name="truck" size={20} /></span><div><strong>Delivery estimate</strong><small>Usually dispatches within {dispatchDays} day{dispatchDays === 1 ? "" : "s"} · typical arrival {estimatedFrom}–{estimatedTo}</small></div><button type="button" onClick={shareProduct} aria-label="Share product"><Icon name="share" size={18} /></button></div>

@@ -56,6 +56,8 @@ export default function ProductQuickView({ product, open, onClose }) {
   const inStock = variant && Number(variant.stockQuantity || 0) > 0;
   const sellingPrice = Number(variant?.sellingPrice || 0);
   const mrp = Number(variant?.mrp || 0);
+  const purchaseLimit = Number.isInteger(Number(current?.maxPurchaseQuantity)) && Number(current?.maxPurchaseQuantity) > 0 ? Number(current.maxPurchaseQuantity) : null;
+  const maxSelectableQuantity = Math.max(1, Math.min(Number(variant?.stockQuantity || 1), purchaseLimit ?? Number(variant?.stockQuantity || 1)));
   const wished = current ? has(current.id) : false;
 
   useEffect(() => {
@@ -71,13 +73,13 @@ export default function ProductQuickView({ product, open, onClose }) {
 
   function addCurrent() {
     if (!variant || !inStock) return;
-    addItem(current, variant, Math.min(quantity, Number(variant.stockQuantity || 1)));
+    addItem(current, variant, Math.min(quantity, maxSelectableQuantity));
     onClose?.();
   }
 
   function buyCurrent() {
     if (!variant || !inStock) return;
-    const started = startBuyNow(current, variant, Math.min(quantity, Number(variant.stockQuantity || 1)));
+    const started = startBuyNow(current, variant, Math.min(quantity, maxSelectableQuantity));
     if (!started) return;
     onClose?.();
     navigate("/checkout?mode=buy-now");
@@ -102,7 +104,8 @@ export default function ProductQuickView({ product, open, onClose }) {
           <p>{current.shortDescription || "Thoughtful herbal care for your everyday routine."}</p>
           {variant && <div className="phase16-quick-price"><strong>₹{sellingPrice.toFixed(0)}</strong>{mrp > sellingPrice && <del>₹{mrp.toFixed(0)}</del>}{mrp > sellingPrice && <span>{Math.round(((mrp-sellingPrice)/mrp)*100)}% OFF</span>}</div>}
           {current.variants?.length > 0 && <div className="phase16-quick-options"><span>CHOOSE SIZE</span><div>{current.variants.map((item) => <button key={item.id} className={variant?.id === item.id ? "active" : ""} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity || 0) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>}
-          <div className="phase16-quick-buy phase17-quick-buy"><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input aria-label="Quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(Number(variant?.stockQuantity || 1), Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><div><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "SOLD OUT"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
+          {purchaseLimit && <div className="phase18-quick-limit"><Icon name="shield" size={14} /> Max {purchaseLimit} per order</div>}
+          <div className="phase16-quick-buy phase17-quick-buy"><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input aria-label="Quantity" type="number" min="1" max={maxSelectableQuantity} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(maxSelectableQuantity, Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(maxSelectableQuantity, value + 1))}>+</button></div><div><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "SOLD OUT"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
           <Link className="phase16-full-link" to={`/product/${current.slug}`} onClick={onClose}>VIEW FULL DETAILS <Icon name="arrow" size={15} /></Link>
         </div>
       </div>}

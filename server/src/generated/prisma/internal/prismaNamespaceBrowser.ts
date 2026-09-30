@@ -153,6 +153,7 @@ export const CategoryScalarFieldEnum = {
   slug: 'slug',
   description: 'description',
   imageUrl: 'imageUrl',
+  sortOrder: 'sortOrder',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -176,6 +177,7 @@ export const ProductScalarFieldEnum = {
   isActive: 'isActive',
   isFeatured: 'isFeatured',
   badge: 'badge',
+  maxPurchaseQuantity: 'maxPurchaseQuantity',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -372,6 +374,10 @@ export const StoreSettingScalarFieldEnum = {
   freeShippingThreshold: 'freeShippingThreshold',
   flatShippingFee: 'flatShippingFee',
   codFee: 'codFee',
+  dispatchWithinDays: 'dispatchWithinDays',
+  deliveryMinDays: 'deliveryMinDays',
+  deliveryMaxDays: 'deliveryMaxDays',
+  lowStockUrgencyThreshold: 'lowStockUrgencyThreshold',
   returnsEnabled: 'returnsEnabled',
   returnWindowDays: 'returnWindowDays',
   returnPolicy: 'returnPolicy',

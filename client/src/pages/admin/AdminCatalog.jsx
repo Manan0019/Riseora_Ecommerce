@@ -3,12 +3,14 @@ import { apiFetch, mediaUrl } from "../../api/http";
 import { Icon } from "../../components/Icons";
 
 const newVariant = () => ({ id: "", name: "", sku: "", size: "", unit: "ml", mrp: "", sellingPrice: "", costPrice: "", stockQuantity: "0", lowStockThreshold: "5", weightGrams: "", hsnCode: "", gstRate: "0", isActive: true });
-const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", benefits: "", ingredients: "", howToUse: "", suitableFor: "", faq: [{ question: "", answer: "" }], isFeatured: false, isActive: true, badge: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
+const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", benefits: "", ingredients: "", howToUse: "", suitableFor: "", faq: [{ question: "", answer: "" }], isFeatured: false, isActive: true, badge: "", maxPurchaseQuantity: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
+const emptyCategory = () => ({ id: "", name: "", description: "", imageUrl: "", isActive: true, sortOrder: 0 });
 
 export default function AdminCatalog() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
-  const [categoryName, setCategoryName] = useState("");
+  const [categoryDraft, setCategoryDraft] = useState(emptyCategory());
+  const [uploadingCategory, setUploadingCategory] = useState(false);
   const [product, setProduct] = useState(emptyProduct());
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -23,14 +25,68 @@ export default function AdminCatalog() {
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
-  async function createCategory(event) {
+  async function saveCategory(event) {
     event.preventDefault(); setError(""); setMessage("");
-    try { await apiFetch("/admin/categories", { method: "POST", body: JSON.stringify({ name: categoryName }) }); setCategoryName(""); setMessage("Category created."); await refresh(); } catch (e) { setError(e.message); }
+    const payload = {
+      name: categoryDraft.name,
+      description: categoryDraft.description,
+      imageUrl: categoryDraft.imageUrl,
+      ...(categoryDraft.id ? { isActive: categoryDraft.isActive } : {}),
+    };
+    try {
+      await apiFetch(categoryDraft.id ? `/admin/categories/${categoryDraft.id}` : "/admin/categories", {
+        method: categoryDraft.id ? "PATCH" : "POST",
+        body: JSON.stringify(payload),
+      });
+      setMessage(categoryDraft.id ? "Category updated." : "Category created.");
+      setCategoryDraft(emptyCategory());
+      await refresh();
+    } catch (e) { setError(e.message); }
+  }
+
+  function editCategory(category) {
+    setCategoryDraft({
+      id: category.id,
+      name: category.name || "",
+      description: category.description || "",
+      imageUrl: category.imageUrl || "",
+      isActive: category.isActive !== false,
+      sortOrder: Number(category.sortOrder || 0),
+    });
+  }
+
+  async function uploadCategoryImage(file) {
+    if (!file) return;
+    setUploadingCategory(true); setError(""); setMessage("");
+    try {
+      const body = new FormData();
+      body.append("image", file);
+      const response = await apiFetch("/admin/uploads/categories", { method: "POST", body });
+      setCategoryDraft((current) => ({ ...current, imageUrl: response.data.url }));
+      setMessage("Category image uploaded. Save the category to apply it.");
+    } catch (e) { setError(e.message); }
+    finally { setUploadingCategory(false); }
   }
 
   async function toggleCategory(category) {
     try { await apiFetch(`/admin/categories/${category.id}`, { method: "PATCH", body: JSON.stringify({ isActive: !category.isActive }) }); await refresh(); }
     catch (e) { setError(e.message); }
+  }
+
+  async function moveCategory(index, direction) {
+    const to = index + direction;
+    if (to < 0 || to >= categories.length) return;
+    const current = categories[index];
+    const target = categories[to];
+    const currentOrder = Number(current.sortOrder || index * 10);
+    const targetOrder = Number(target.sortOrder || to * 10);
+    try {
+      await Promise.all([
+        apiFetch(`/admin/categories/${current.id}`, { method: "PATCH", body: JSON.stringify({ sortOrder: targetOrder }) }),
+        apiFetch(`/admin/categories/${target.id}`, { method: "PATCH", body: JSON.stringify({ sortOrder: currentOrder }) }),
+      ]);
+      await refresh();
+    } catch (e) { setError(e.message); }
   }
 
   function updateProductField(event) {
@@ -92,6 +148,7 @@ export default function AdminCatalog() {
       isFeatured: item.isFeatured,
       isActive: item.isActive,
       badge: item.badge || "",
+      maxPurchaseQuantity: item.maxPurchaseQuantity == null ? "" : String(item.maxPurchaseQuantity),
       images: item.images?.length ? item.images.map((image) => ({ url: image.url, altText: image.altText || "", isPrimary: image.isPrimary })) : [{ url: "", altText: "", isPrimary: true }],
       variants: item.variants?.length ? item.variants.map((variant) => ({ id: variant.id, name: variant.name, sku: variant.sku, size: variant.size || "", unit: variant.unit || "", mrp: String(Number(variant.mrp)), sellingPrice: String(Number(variant.sellingPrice)), costPrice: variant.costPrice == null ? "" : String(Number(variant.costPrice)), stockQuantity: String(variant.stockQuantity), lowStockThreshold: String(variant.lowStockThreshold), weightGrams: variant.weightGrams == null ? "" : String(Number(variant.weightGrams)), hsnCode: variant.hsnCode || "", gstRate: String(Number(variant.gstRate || 0)), isActive: variant.isActive !== false })) : [newVariant()],
     });
@@ -120,6 +177,7 @@ export default function AdminCatalog() {
       isFeatured: product.isFeatured,
       isActive: product.isActive,
       badge: product.badge,
+      maxPurchaseQuantity: product.maxPurchaseQuantity === "" ? null : Number(product.maxPurchaseQuantity),
       images: cleanImages,
       variants: product.variants.map((variant) => ({
         ...(variant.id ? { id: variant.id } : {}), name: variant.name, sku: variant.sku, size: variant.size, unit: variant.unit,
@@ -153,16 +211,28 @@ export default function AdminCatalog() {
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
 
     <div className="admin-catalog-top-grid">
-      <section className="admin-panel category-manager">
-        <div className="admin-panel-head"><div><h2>Categories</h2><p>Storefront browsing groups.</p></div></div>
-        <form className="category-quick-create" onSubmit={createCategory}><input required value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="e.g. Hair Care" /><button className="button">Add</button></form>
-        <div className="category-admin-list">{categories.map((category) => <div key={category.id}><span><strong>{category.name}</strong><small>{category.isActive ? "Visible" : "Hidden"}</small></span><button className={category.isActive ? "state-toggle active" : "state-toggle"} onClick={() => toggleCategory(category)}>{category.isActive ? "Active" : "Inactive"}</button></div>)}</div>
+      <section className="admin-panel category-manager phase18-category-manager">
+        <div className="admin-panel-head"><div><h2>Categories</h2><p>Add an image for Hair Care, Skin Care and every storefront category. Reorder them to control the mobile home circles.</p></div>{categoryDraft.id && <button type="button" className="link-button" onClick={() => setCategoryDraft(emptyCategory())}>New category</button>}</div>
+        <form className="phase18-category-form" onSubmit={saveCategory}>
+          <div className="phase18-category-preview">{categoryDraft.imageUrl ? <img src={mediaUrl(categoryDraft.imageUrl)} alt="" /> : <span>{categoryDraft.name?.charAt(0) || "R"}</span>}</div>
+          <div className="phase18-category-fields">
+            <input required value={categoryDraft.name} onChange={(e) => setCategoryDraft((current) => ({ ...current, name: e.target.value }))} placeholder="e.g. Hair Care" />
+            <textarea value={categoryDraft.description} onChange={(e) => setCategoryDraft((current) => ({ ...current, description: e.target.value }))} placeholder="Short category description (optional)" />
+            <input value={categoryDraft.imageUrl} onChange={(e) => setCategoryDraft((current) => ({ ...current, imageUrl: e.target.value }))} placeholder="Image URL or upload below" />
+            <div className="phase18-category-form-actions">
+              <label className={uploadingCategory ? "state-toggle disabled" : "state-toggle active"}>{uploadingCategory ? "Uploading…" : "Upload image"}<input type="file" hidden accept="image/jpeg,image/png,image/webp" disabled={uploadingCategory} onChange={(e) => uploadCategoryImage(e.target.files?.[0])} /></label>
+              <button className="button">{categoryDraft.id ? "Save category" : "Create category"}</button>
+            </div>
+          </div>
+        </form>
+        <div className="category-admin-list phase18-category-list">{categories.map((category, index) => <div key={category.id}><div className="phase18-category-list-thumb">{category.imageUrl ? <img src={mediaUrl(category.imageUrl)} alt="" /> : <span>{category.name.charAt(0)}</span>}</div><span><strong>{category.name}</strong><small>{category.isActive ? "Visible on store" : "Hidden"}{category.imageUrl ? " • image ready" : " • no image"}</small></span><div className="phase18-category-order"><button type="button" disabled={index === 0} onClick={() => moveCategory(index, -1)}>↑</button><button type="button" disabled={index === categories.length - 1} onClick={() => moveCategory(index, 1)}>↓</button></div><button type="button" className="state-toggle" onClick={() => editCategory(category)}>Edit</button><button type="button" className={category.isActive ? "state-toggle active" : "state-toggle"} onClick={() => toggleCategory(category)}>{category.isActive ? "Active" : "Inactive"}</button></div>)}</div>
       </section>
 
       <form className="admin-panel admin-form product-editor" onSubmit={saveProduct}>
         <div className="admin-panel-head"><div><h2>{editing ? "Edit product" : "Add product"}</h2><p>{editing ? "Update complete product information." : "Create the product and all sellable variants."}</p></div>{editing && <button type="button" className="link-button" onClick={resetProduct}>Cancel edit</button>}</div>
         <div className="admin-field-grid two"><label>Category<select required name="categoryId" value={product.categoryId} onChange={updateProductField}><option value="">Select category</option>{categories.filter((c) => c.isActive || c.id === product.categoryId).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Product name<input required name="name" value={product.name} onChange={updateProductField} /></label></div>
         <div className="admin-field-grid two"><label>Badge<input name="badge" value={product.badge} onChange={updateProductField} placeholder="BEST SELLER / NEW / TRENDING" /></label><div className="admin-check-row"><label className="checkbox-row"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={updateProductField} /> Featured</label>{editing && <label className="checkbox-row"><input type="checkbox" name="isActive" checked={product.isActive} onChange={updateProductField} /> Active</label>}</div></div>
+        <div className="phase18-purchase-limit-card"><label className="checkbox-row"><input type="checkbox" checked={product.maxPurchaseQuantity !== ""} onChange={(e) => setProduct((current) => ({ ...current, maxPurchaseQuantity: e.target.checked ? (current.maxPurchaseQuantity || "5") : "" }))} /> Limit how many units of this product a customer can place in one order</label>{product.maxPurchaseQuantity !== "" && <label>Maximum units per order<input type="number" min="1" max="10000" value={product.maxPurchaseQuantity} onChange={(e) => setProduct((current) => ({ ...current, maxPurchaseQuantity: e.target.value }))} /><small>The backend enforces this across all sizes/variants of the same product. Leave the option off for no product-specific limit.</small></label>}</div>
         <label>Short description<input name="shortDescription" value={product.shortDescription} onChange={updateProductField} placeholder="Short product card copy" /></label>
         <label>Full description<textarea name="description" value={product.description} onChange={updateProductField} placeholder="Benefits, usage and product story" /></label>
         <div className="admin-field-grid two phase9-content-grid"><label>Key benefits<textarea name="benefits" value={product.benefits} onChange={updateProductField} placeholder="One benefit per line works well on mobile" /></label><label>Suitable for<textarea name="suitableFor" value={product.suitableFor} onChange={updateProductField} placeholder="Hair types, skin types, use cases…" /></label></div>
@@ -182,7 +252,7 @@ export default function AdminCatalog() {
     <section className="admin-panel catalog-product-list-panel">
       <div className="admin-panel-head"><div><h2>Products</h2><p>{products.length} products in catalog</p></div></div>
       <div className="admin-search-bar catalog-search"><Icon name="search" size={19} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search product, category or SKU" /></div>
-      {visibleProducts.length === 0 ? <div className="admin-empty">No products found.</div> : <div className="admin-product-list">{visibleProducts.map((item) => { const variant = item.variants?.[0]; const image = item.images?.find((i) => i.isPrimary) || item.images?.[0]; return <article className="admin-product-row-v2" key={item.id}><div className="admin-product-thumb">{image?.url ? <img src={mediaUrl(image.url)} alt="" /> : "R"}</div><div className="admin-product-info"><strong>{item.name}</strong><span>{item.category?.name}{item.badge ? ` • ${item.badge}` : ""}</span><small>{item.variants?.length || 0} variant(s) • {variant?.sku || "No SKU"}</small></div><div className="admin-product-pricing"><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong><span>{item.variants?.reduce((sum, v) => sum + Number(v.stockQuantity), 0) || 0} stock</span></div><div className="admin-inline-actions"><button className="state-toggle" onClick={() => editProduct(item)}>Edit</button><button className={item.isFeatured ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isFeatured: !item.isFeatured })}>{item.isFeatured ? "Featured" : "Feature"}</button><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isActive: !item.isActive })}>{item.isActive ? "Active" : "Inactive"}</button></div></article>; })}</div>}
+      {visibleProducts.length === 0 ? <div className="admin-empty">No products found.</div> : <div className="admin-product-list">{visibleProducts.map((item) => { const variant = item.variants?.[0]; const image = item.images?.find((i) => i.isPrimary) || item.images?.[0]; return <article className="admin-product-row-v2" key={item.id}><div className="admin-product-thumb">{image?.url ? <img src={mediaUrl(image.url)} alt="" /> : "R"}</div><div className="admin-product-info"><strong>{item.name}</strong><span>{item.category?.name}{item.badge ? ` • ${item.badge}` : ""}</span><small>{item.variants?.length || 0} variant(s) • {variant?.sku || "No SKU"}{item.maxPurchaseQuantity ? ` • max ${item.maxPurchaseQuantity}/order` : ""}</small></div><div className="admin-product-pricing"><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong><span>{item.variants?.reduce((sum, v) => sum + Number(v.stockQuantity), 0) || 0} stock</span></div><div className="admin-inline-actions"><button className="state-toggle" onClick={() => editProduct(item)}>Edit</button><button className={item.isFeatured ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isFeatured: !item.isFeatured })}>{item.isFeatured ? "Featured" : "Feature"}</button><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isActive: !item.isActive })}>{item.isActive ? "Active" : "Inactive"}</button></div></article>; })}</div>}
     </section>
   </>;
 }
