@@ -72,7 +72,9 @@ export const ModelName = {
   Coupon: 'Coupon',
   Offer: 'Offer',
   Review: 'Review',
-  Banner: 'Banner'
+  Banner: 'Banner',
+  ContactMessage: 'ContactMessage',
+  NewsletterSubscriber: 'NewsletterSubscriber'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -348,6 +350,19 @@ export const StoreSettingScalarFieldEnum = {
   shippingPolicy: 'shippingPolicy',
   privacyPolicy: 'privacyPolicy',
   termsPolicy: 'termsPolicy',
+  brandTagline: 'brandTagline',
+  announcementText: 'announcementText',
+  announcementSecondary: 'announcementSecondary',
+  siteUrl: 'siteUrl',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  aboutTitle: 'aboutTitle',
+  aboutBody: 'aboutBody',
+  contactIntro: 'contactIntro',
+  instagramUrl: 'instagramUrl',
+  facebookUrl: 'facebookUrl',
+  youtubeUrl: 'youtubeUrl',
+  whatsappNumber: 'whatsappNumber',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -509,6 +524,37 @@ export const BannerScalarFieldEnum = {
 } as const
 
 export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof BannerScalarFieldEnum]
+
+
+export const ContactMessageScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  email: 'email',
+  phone: 'phone',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  adminNote: 'adminNote',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
+
+
+export const NewsletterSubscriberScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  source: 'source',
+  isActive: 'isActive',
+  subscribedAt: 'subscribedAt',
+  unsubscribedAt: 'unsubscribedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type NewsletterSubscriberScalarFieldEnum = (typeof NewsletterSubscriberScalarFieldEnum)[keyof typeof NewsletterSubscriberScalarFieldEnum]
 
 
 export const SortOrder = {

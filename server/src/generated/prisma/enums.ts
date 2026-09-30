@@ -109,3 +109,13 @@ export const RefundMethod = {
 } as const
 
 export type RefundMethod = (typeof RefundMethod)[keyof typeof RefundMethod]
+
+
+export const ContactMessageStatus = {
+  NEW: 'NEW',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED',
+  SPAM: 'SPAM'
+} as const
+
+export type ContactMessageStatus = (typeof ContactMessageStatus)[keyof typeof ContactMessageStatus]

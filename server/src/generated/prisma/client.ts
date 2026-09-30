@@ -151,3 +151,13 @@ export type Review = Prisma.ReviewModel
  * 
  */
 export type Banner = Prisma.BannerModel
+/**
+ * Model ContactMessage
+ * 
+ */
+export type ContactMessage = Prisma.ContactMessageModel
+/**
+ * Model NewsletterSubscriber
+ * 
+ */
+export type NewsletterSubscriber = Prisma.NewsletterSubscriberModel
