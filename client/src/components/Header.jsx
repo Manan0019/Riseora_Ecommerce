@@ -4,11 +4,13 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
+import { useStore } from "../context/StoreContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
   const { count } = useCart();
   const { count: wishlistCount } = useWishlist();
+  const { store } = useStore();
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
@@ -29,7 +31,7 @@ export default function Header() {
     <>
       <header className="site-header phase3-header">
         <div className="announcement mc-announcement">
-          <span>FREE SHIPPING ON ORDERS ABOVE ₹599</span><span className="announcement-dot">•</span><span>HERBAL CARE, MADE FOR EVERYDAY</span>
+          <span>{store.announcementText || (store.freeShippingThreshold ? `FREE SHIPPING ON ORDERS ABOVE ₹${Number(store.freeShippingThreshold).toFixed(0)}` : "RISEORA HERBALS")}</span><span className="announcement-dot">•</span><span>{store.announcementSecondary || "HERBAL CARE, MADE FOR EVERYDAY"}</span>
         </div>
         <div className="container nav-row">
           <Link className="brand" to="/" aria-label="Riseora home">
@@ -37,7 +39,7 @@ export default function Header() {
             <span className="brand-copy"><strong>RISEORA</strong><small>HERBALS</small></span>
           </Link>
           <nav className="main-nav" aria-label="Primary navigation">
-            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/wishlist">Wishlist</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
+            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
           </nav>
           <div className="nav-actions">
             <button className="icon-action" onClick={() => setSearchOpen(true)} aria-label="Search"><Icon name="search" size={21} /></button>

@@ -23,7 +23,7 @@ export default function ProductCard({ product, compact = false }) {
             {product.badge && <span className="brand-badge">{product.badge}</span>}
             {discount > 0 && <span className="sale-badge">{discount}% OFF</span>}
           </div>
-          {image ? <img className="product-image" src={image} alt={product.images?.[0]?.altText || product.name} loading="lazy" /> : <div className="image-placeholder"><span>R</span><small>Riseora</small></div>}
+          {image ? <img className="product-image" src={image} alt={product.images?.[0]?.altText || product.name} loading="lazy" decoding="async" width="420" height="420" /> : <div className="image-placeholder"><span>R</span><small>Riseora</small></div>}
         </Link>
         <button className={wished ? "wishlist-button active" : "wishlist-button"} onClick={() => toggle(product)} aria-label={wished ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}>
           <Icon name="heart" size={18} />

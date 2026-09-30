@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
+import Seo from "../components/Seo";
 
 export default function Shop() {
   const [params] = useSearchParams();
@@ -43,7 +44,9 @@ export default function Shop() {
   }, [query]);
 
   return (
-    <div className="container shop-page page-space">
+    <>
+      <Seo title="Shop" description="Shop Riseora Herbals products, variants and current offers online." />
+      <div className="container shop-page page-space">
       <div className="shop-title-row">
         <div><p className="eyebrow">RISEORA STORE</p><h1>Shop herbal care</h1><p className="muted">Browse the complete Riseora catalogue.</p></div>
       </div>
@@ -63,6 +66,7 @@ export default function Shop() {
       {error && <p className="alert error">{error}</p>}
       {!loading && !error && products.length === 0 && <div className="empty-state premium-empty"><span className="empty-icon"><Icon name="search" /></span><h3>No matching products</h3><p>Try another search or category.</p></div>}
       <div className="product-grid shop-grid">{products.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>
-    </div>
+      </div>
+    </>
   );
 }

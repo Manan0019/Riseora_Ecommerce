@@ -33,6 +33,19 @@ const settingsSchema = z.object({
   shippingPolicy: z.string().trim().max(10000).nullable().optional(),
   privacyPolicy: z.string().trim().max(20000).nullable().optional(),
   termsPolicy: z.string().trim().max(20000).nullable().optional(),
+  brandTagline: z.string().trim().max(240).nullable().optional(),
+  announcementText: z.string().trim().max(180).nullable().optional(),
+  announcementSecondary: z.string().trim().max(180).nullable().optional(),
+  siteUrl: z.string().trim().url().nullable().optional(),
+  seoTitle: z.string().trim().max(120).nullable().optional(),
+  seoDescription: z.string().trim().max(320).nullable().optional(),
+  aboutTitle: z.string().trim().max(180).nullable().optional(),
+  aboutBody: z.string().trim().max(12000).nullable().optional(),
+  contactIntro: z.string().trim().max(2000).nullable().optional(),
+  instagramUrl: z.string().trim().url().nullable().optional(),
+  facebookUrl: z.string().trim().url().nullable().optional(),
+  youtubeUrl: z.string().trim().url().nullable().optional(),
+  whatsappNumber: z.string().trim().max(30).nullable().optional(),
 });
 
 router.get(

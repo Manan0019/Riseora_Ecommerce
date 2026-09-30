@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
+import Seo from "../components/Seo";
+import { useStore } from "../context/StoreContext";
 
 const fallbackBanner = {
   eyebrow: "RISEORA HERBALS",
@@ -15,6 +17,7 @@ const fallbackBanner = {
 };
 
 export default function Home() {
+  const { store } = useStore();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -35,7 +38,8 @@ export default function Home() {
   const trending = useMemo(() => [...products].sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0)).slice(0, 8), [products]);
   const newest = products.slice(0, 8);
 
-  return <>
+  const organizationJson = { "@context": "https://schema.org", "@type": "Organization", name: store.storeName || "Riseora Herbals", url: store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin, email: store.supportEmail || undefined };
+  return <><Seo description={store.seoDescription || store.brandTagline} jsonLd={organizationJson} />
     <section className="campaign-hero" style={{ "--hero-bg": hero.background || "#d8a693", "--hero-color": hero.textColor || "#11251c" }}>
       <div className="container campaign-hero-grid">
         <div className="campaign-copy"><p className="hero-kicker">{hero.eyebrow || "RISEORA HERBALS"}</p><h1>{hero.title}</h1><p>{hero.description}</p><div className="campaign-actions"><Link className="black-button" to={hero.ctaLink || "/shop"}>{hero.ctaText || "SHOP NOW"}</Link><Link className="underlined-link" to="/offers">VIEW OFFERS</Link></div><div className="micro-trust"><span>✓ Secure checkout</span><span>✓ Delivery across India</span></div></div>
@@ -43,7 +47,7 @@ export default function Home() {
       </div>
     </section>
 
-    <section className="quick-value-strip"><div className="container"><span><Icon name="truck" size={18} /> Free shipping above ₹599</span><span><Icon name="shield" size={18} /> Secure checkout</span><span><Icon name="leaf" size={18} /> Herbal-first care</span></div></section>
+    <section className="quick-value-strip"><div className="container"><span><Icon name="truck" size={18} /> {store.freeShippingThreshold ? `Free shipping above ₹${Number(store.freeShippingThreshold).toFixed(0)}` : "Delivery across India"}</span><span><Icon name="shield" size={18} /> Secure checkout</span><span><Icon name="leaf" size={18} /> Herbal-first care</span></div></section>
 
     {categories.length > 0 && <section className="container phase3-section category-section"><div className="section-title-row"><div><p className="phase3-eyebrow">SHOP BY CATEGORY</p><h2>Pick your routine</h2></div><Link to="/shop">VIEW ALL</Link></div><div className="round-category-row">{categories.slice(0, 8).map((category) => <Link key={category.id} to={`/shop?category=${category.slug}`}><div className="round-category-art">{category.imageUrl ? <img src={mediaUrl(category.imageUrl)} alt="" /> : <span>{category.name.charAt(0)}</span>}</div><strong>{category.name}</strong></Link>)}</div></section>}
 

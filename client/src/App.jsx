@@ -1,74 +1,18 @@
-import { Route, Routes } from "react-router-dom";
+import { Suspense, lazy } from "react";
+import { Route, Routes, useLocation } from "react-router-dom";
 import AdminLayout from "./components/AdminLayout";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Account from "./pages/Account";
-import Cart from "./pages/Cart";
-import Checkout from "./pages/Checkout";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import NotFound from "./pages/NotFound";
-import Offers from "./pages/Offers";
-import OrderSuccess from "./pages/OrderSuccess";
-import Orders from "./pages/Orders";
-import OrderDetail from "./pages/OrderDetail";
-import TrackOrder from "./pages/TrackOrder";
-import ProductDetails from "./pages/ProductDetails";
-import Register from "./pages/Register";
-import Shop from "./pages/Shop";
-import Wishlist from "./pages/Wishlist";
-import Returns from "./pages/Returns";
-import ReturnRequest from "./pages/ReturnRequest";
-import Invoice from "./pages/Invoice";
-import Policy from "./pages/Policy";
-import AdminCatalog from "./pages/admin/AdminCatalog";
-import AdminCustomers from "./pages/admin/AdminCustomers";
-import AdminInventory from "./pages/admin/AdminInventory";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminOrders from "./pages/admin/AdminOrders";
-import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
-import AdminPromotions from "./pages/admin/AdminPromotions";
-import AdminReturns from "./pages/admin/AdminReturns";
-import AdminSettings from "./pages/admin/AdminSettings";
-import AdminInvoice from "./pages/admin/AdminInvoice";
+import { PageAnalytics } from "./components/AnalyticsBridge";
+import Seo from "./components/Seo";
 
-export default function App() {
-  return (
-    <Routes>
-      <Route element={<Layout />}>
-        <Route path="/" element={<Home />} />
-        <Route path="/shop" element={<Shop />} />
-        <Route path="/offers" element={<Offers />} />
-        <Route path="/product/:slug" element={<ProductDetails />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/wishlist" element={<Wishlist />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
-        <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-        <Route path="/orders/:orderNumber" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
-        <Route path="/track-order" element={<TrackOrder />} />
-        <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-        <Route path="/returns" element={<ProtectedRoute><Returns /></ProtectedRoute>} />
-        <Route path="/returns/new/:orderNumber" element={<ProtectedRoute><ReturnRequest /></ProtectedRoute>} />
-        <Route path="/invoice/:orderNumber" element={<ProtectedRoute><Invoice /></ProtectedRoute>} />
-        <Route path="/policies/:type" element={<Policy />} />
-        <Route path="*" element={<NotFound />} />
-      </Route>
+const Home = lazy(() => import("./pages/Home")); const Shop = lazy(() => import("./pages/Shop")); const Offers = lazy(() => import("./pages/Offers")); const ProductDetails = lazy(() => import("./pages/ProductDetails")); const Cart = lazy(() => import("./pages/Cart")); const Wishlist = lazy(() => import("./pages/Wishlist")); const Checkout = lazy(() => import("./pages/Checkout")); const Login = lazy(() => import("./pages/Login")); const Register = lazy(() => import("./pages/Register")); const OrderSuccess = lazy(() => import("./pages/OrderSuccess")); const Orders = lazy(() => import("./pages/Orders")); const OrderDetail = lazy(() => import("./pages/OrderDetail")); const TrackOrder = lazy(() => import("./pages/TrackOrder")); const Account = lazy(() => import("./pages/Account")); const Returns = lazy(() => import("./pages/Returns")); const ReturnRequest = lazy(() => import("./pages/ReturnRequest")); const Invoice = lazy(() => import("./pages/Invoice")); const Policy = lazy(() => import("./pages/Policy")); const About = lazy(() => import("./pages/About")); const Contact = lazy(() => import("./pages/Contact")); const NotFound = lazy(() => import("./pages/NotFound"));
+const AdminCatalog = lazy(() => import("./pages/admin/AdminCatalog")); const AdminCustomers = lazy(() => import("./pages/admin/AdminCustomers")); const AdminInventory = lazy(() => import("./pages/admin/AdminInventory")); const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard")); const AdminOrders = lazy(() => import("./pages/admin/AdminOrders")); const AdminOrderDetail = lazy(() => import("./pages/admin/AdminOrderDetail")); const AdminPromotions = lazy(() => import("./pages/admin/AdminPromotions")); const AdminReturns = lazy(() => import("./pages/admin/AdminReturns")); const AdminSettings = lazy(() => import("./pages/admin/AdminSettings")); const AdminInvoice = lazy(() => import("./pages/admin/AdminInvoice")); const AdminAudience = lazy(() => import("./pages/admin/AdminAudience"));
 
-      <Route path="/admin" element={<ProtectedRoute admin><AdminLayout /></ProtectedRoute>}>
-        <Route index element={<AdminDashboard />} />
-        <Route path="catalog" element={<AdminCatalog />} />
-        <Route path="inventory" element={<AdminInventory />} />
-        <Route path="customers" element={<AdminCustomers />} />
-        <Route path="orders" element={<AdminOrders />} />
-        <Route path="orders/:id" element={<AdminOrderDetail />} />
-        <Route path="promotions" element={<AdminPromotions />} />
-        <Route path="returns" element={<AdminReturns />} />
-        <Route path="settings" element={<AdminSettings />} />
-        <Route path="orders/:id/invoice" element={<AdminInvoice />} />
-      </Route>
-    </Routes>
-  );
+function LoadingScreen() { return <div className="route-loading"><span>R</span><small>Loading Riseora…</small></div>; }
+function RoutePrivacySeo() {
+  const { pathname } = useLocation();
+  const noindex = ["/admin", "/account", "/cart", "/checkout", "/login", "/register", "/wishlist", "/orders", "/returns", "/invoice", "/order-success", "/track-order"].some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+  return noindex ? <Seo title="Riseora" noindex /> : null;
 }
+export default function App() { return <><PageAnalytics /><RoutePrivacySeo /><Suspense fallback={<LoadingScreen />}><Routes><Route element={<Layout />}><Route path="/" element={<Home />} /><Route path="/shop" element={<Shop />} /><Route path="/offers" element={<Offers />} /><Route path="/about" element={<About />} /><Route path="/contact" element={<Contact />} /><Route path="/product/:slug" element={<ProductDetails />} /><Route path="/cart" element={<Cart />} /><Route path="/wishlist" element={<Wishlist />} /><Route path="/checkout" element={<Checkout />} /><Route path="/login" element={<Login />} /><Route path="/register" element={<Register />} /><Route path="/order-success/:orderNumber" element={<OrderSuccess />} /><Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} /><Route path="/orders/:orderNumber" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} /><Route path="/track-order" element={<TrackOrder />} /><Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} /><Route path="/returns" element={<ProtectedRoute><Returns /></ProtectedRoute>} /><Route path="/returns/new/:orderNumber" element={<ProtectedRoute><ReturnRequest /></ProtectedRoute>} /><Route path="/invoice/:orderNumber" element={<ProtectedRoute><Invoice /></ProtectedRoute>} /><Route path="/policies/:type" element={<Policy />} /><Route path="*" element={<NotFound />} /></Route><Route path="/admin" element={<ProtectedRoute admin><AdminLayout /></ProtectedRoute>}><Route index element={<AdminDashboard />} /><Route path="catalog" element={<AdminCatalog />} /><Route path="inventory" element={<AdminInventory />} /><Route path="customers" element={<AdminCustomers />} /><Route path="orders" element={<AdminOrders />} /><Route path="orders/:id" element={<AdminOrderDetail />} /><Route path="promotions" element={<AdminPromotions />} /><Route path="returns" element={<AdminReturns />} /><Route path="audience" element={<AdminAudience />} /><Route path="settings" element={<AdminSettings />} /><Route path="orders/:id/invoice" element={<AdminInvoice />} /></Route></Routes></Suspense></>; }

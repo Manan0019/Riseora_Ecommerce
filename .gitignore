@@ -7,6 +7,8 @@ server/node_modules/
 .env
 .env.*
 !.env.example
+!**/.env.example
+!**/.env.production.example
 client/.env
 server/.env
 
@@ -31,3 +33,7 @@ Thumbs.db
 
 # Prisma local artifacts
 server/prisma/dev.db
+
+# Local product uploads (development only)
+server/uploads/products/*
+!server/uploads/products/.gitkeep

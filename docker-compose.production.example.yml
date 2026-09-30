@@ -1,0 +1,12 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    env_file:
+      - server/.env.production
+    ports:
+      - "5000:5000"
+    volumes:
+      - riseora_uploads:/app/server/uploads
+volumes:
+  riseora_uploads:

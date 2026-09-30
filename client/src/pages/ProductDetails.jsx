@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "../components/Icons";
+import Seo from "../components/Seo";
 
 export default function ProductDetails() {
   const { slug } = useParams();
@@ -43,7 +44,8 @@ export default function ProductDetails() {
     } catch (err) { setReviewMessage(err.message); }
   }
 
-  return <div className="product-detail-page phase3-detail">
+  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || product.description || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
+  return <><Seo title={product.name} description={product.shortDescription || product.description} image={image} type="product" jsonLd={productJson} /><div className="product-detail-page phase3-detail">
     <div className="container product-detail">
       <div className="detail-media phase3-media">
         <div className="detail-image-frame">{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img src={image} alt={product.images?.[0]?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}</div>
@@ -68,5 +70,5 @@ export default function ProductDetails() {
     </section>
 
     <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div><button className="button" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
-  </div>;
+  </div></>;
 }

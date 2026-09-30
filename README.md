@@ -13,12 +13,12 @@ This repository is intentionally independent from the Riseora ERP. The storefron
 - Customer registration/login
 - Guest or signed-in checkout
 - COD order creation with transactional stock reduction
-- Customer order history
-- Admin API + basic admin screen for catalogue/order operations
+- Customer order history, detail timeline and guest order tracking
+- Admin dashboard for catalogue, inventory, customers, promotions and order fulfilment
 - PostgreSQL + Prisma 7
 - Public-repository-safe environment templates
 
-Online payment gateway, image upload/cloud storage, shipping-provider integration and ERP sync are intentionally left as later integrations because they require real provider credentials and business rules.
+Online payment gateway, persistent cloud image storage, courier API integration and ERP sync remain later integrations because they require real provider credentials and business rules. Phase 5 includes local development image upload plus manual carrier/tracking management.
 
 ## Stack
 
@@ -174,8 +174,12 @@ GET    /api/products
 GET    /api/products/:slug
 POST   /api/orders
 GET    /api/orders/my
+GET    /api/orders/my/:orderNumber
+GET    /api/orders/track
 GET    /api/admin/orders
-PATCH  /api/admin/orders/:id/status
+GET    /api/admin/orders/:id
+PATCH  /api/admin/orders/:id/fulfilment
+POST   /api/admin/uploads/products
 POST   /api/admin/categories
 POST   /api/admin/products
 ```
@@ -212,18 +216,83 @@ Do not commit:
 
 This repository does not include an open-source license. Public visibility does not by itself grant permission to reuse or redistribute the source code.
 
-## Future phases
+## Next production phases
 
-1. Real Riseora catalogue and product photography
-2. Cloud image upload/storage
+1. Real Riseora catalogue, photography and copy
+2. Persistent cloud image storage (replace Phase 5 local-disk uploads)
 3. Online payment gateway
-4. Shipping/fulfilment integration
-5. Customer address book
-6. Coupons and offers
-7. Email/WhatsApp notifications
-8. Production deployment and domain setup
-9. Riseora ERP product/stock/order synchronization
+4. Courier/shipping-provider API integration
+5. Email/WhatsApp order notifications
+6. Returns/refunds policy workflow
+7. Production deployment, domain, backups and observability
+8. Riseora ERP product/stock/order synchronization
 
 ---
 
 Copyright © Riseora Herbals. All rights reserved.
+
+---
+
+## Mobile-first Phase 2
+
+The customer storefront is now designed mobile-first while remaining responsive on desktop. Mobile users receive thumb-friendly navigation, horizontal category/featured-product browsing, a two-column shop catalogue, and a sticky product purchase bar.
+
+The admin experience is intentionally separated from the customer storefront and now includes Dashboard, Catalog, Orders, and Promotions areas. Promotions support storefront offers and checkout coupon codes.
+
+When updating an existing local installation, preserve `server/.env` and `server/prisma/migrations/`, then run a new Prisma migration for the promotion models. See `MOBILE_PHASE2_UPDATE.md` for exact commands.
+
+
+## Phase 5 — uploads, fulfilment and tracking
+
+Phase 5 adds direct local product-image upload for development, customer order timelines, public order tracking by order number + phone, admin shipping/courier fields, status history, stock restoration on pre-shipment cancellation, and COD payment completion on delivery.
+
+Apply the update and run:
+
+```powershell
+npm install
+npm run db:generate
+npm run db:migrate -- --name phase5_fulfilment_tracking
+npm run build
+```
+
+See `PHASE5_UPLOADS_FULFILMENT_TRACKING.md` for the runtime test sequence.
+
+## Phase 6 — online payments, cloud media and email
+
+Phase 6 adds optional Razorpay checkout with server-side signature verification and webhooks, checkout stock/coupon reservations, prepaid refunds before shipment, optional Cloudinary product-image storage, and optional Resend transactional order emails.
+
+The integrations are feature-gated by environment variables, so local development continues to work with COD + local uploads when no external credentials are configured.
+
+Apply with:
+
+```powershell
+npm install
+npm run db:migrate -- --name phase6_payments_cloud_email
+npm run db:generate
+npm run build
+```
+
+See `PHASE6_PAYMENTS_CLOUD_EMAIL.md` for environment variables and runtime tests.
+
+## Phase 7 — Store Operations
+
+The current development build also includes:
+
+- configurable shipping/free-shipping/COD fees
+- admin-managed courier partners and dispatch CSV export
+- customer + admin printable GST-ready invoices
+- HSN/SAC and GST rate snapshot per order item
+- item-level return requests and reverse tracking
+- inventory restock on received returns
+- Razorpay partial refunds for eligible online returns
+- manual refund references for COD returns
+- owner-managed shipping, returns, privacy and terms pages
+- production deployment checklist
+
+See `PHASE7_RETURNS_INVOICES_STOREOPS.md` and `DEPLOYMENT_PRODUCTION.md`.
+
+> Tax classifications are not inferred by the application. Riseora should enter GSTIN, HSN/SAC and GST rates only after confirmation from its accountant/tax adviser.
+
+
+## Phase 8 — Production launch preparation
+SEO metadata/sitemap, About/Contact, newsletter + admin inbox, consent-gated analytics, PWA/mobile performance, security hardening and deployable same-origin production serving are now included. See `PHASE8_LAUNCH_SEO_AUDIENCE_PWA.md`.

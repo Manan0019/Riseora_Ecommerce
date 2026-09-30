@@ -10,6 +10,7 @@ const nav = [
   { to: "/admin/customers", label: "Customers", icon: "user" },
   { to: "/admin/promotions", label: "Promotions", icon: "tag" },
   { to: "/admin/returns", label: "Returns", icon: "truck" },
+  { to: "/admin/audience", label: "Audience", icon: "mail" },
   { to: "/admin/settings", label: "Settings", icon: "shield" },
 ];
 

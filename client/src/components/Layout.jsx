@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom";
 import Footer from "./Footer";
 import Header from "./Header";
 import MobileBottomNav from "./MobileBottomNav";
+import { AnalyticsConsent } from "./AnalyticsBridge";
 
 export default function Layout() {
   return (
@@ -12,6 +13,7 @@ export default function Layout() {
       </main>
       <Footer />
       <MobileBottomNav />
+      <AnalyticsConsent />
     </div>
   );
 }

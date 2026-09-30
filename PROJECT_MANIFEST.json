@@ -1,11 +1,16 @@
 {
   "project": "Riseora E-Commerce",
-  "generated": "2026-09-25",
-  "notes": [
-    "No real secrets are included.",
-    "No payment gateway credentials or implementation is included.",
-    "No real Riseora product data or images are invented.",
-    "Preserve server/.env and existing Prisma migration history when merging with an existing database."
+  "phase": "8 - Launch Readiness, SEO, Audience & PWA",
+  "direction": "mobile-first D2C storefront with admin operations and production-launch foundations",
+  "customer": [
+    "campaign-led mobile storefront", "search", "categories", "offers", "wishlist", "reviews", "cart", "COD and optional Razorpay checkout", "order tracking", "returns", "invoices", "About", "Contact", "newsletter", "PWA install support"
   ],
-  "file_count": 66
+  "admin": [
+    "catalog", "image upload", "inventory", "orders", "fulfilment", "customers", "promotions", "returns", "store/tax/shipping settings", "contact inbox", "newsletter audience", "SEO/social settings"
+  ],
+  "launch_foundations": [
+    "dynamic SEO metadata", "JSON-LD", "sitemap", "robots", "consent-gated GA4/Meta Pixel", "route code splitting", "service worker", "configurable CORS", "rate limiting", "same-origin production serving", "Docker starter"
+  ],
+  "database_changes": ["ContactMessageStatus", "ContactMessage", "NewsletterSubscriber", "StoreSetting SEO/social/about/contact fields"],
+  "erp_sync": "deferred until standalone ecommerce production workflows are stable"
 }

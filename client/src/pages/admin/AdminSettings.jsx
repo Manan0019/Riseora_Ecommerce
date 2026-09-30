@@ -39,6 +39,10 @@ export default function AdminSettings() {
         addressLine1: settings.addressLine1?.trim() || null, addressLine2: settings.addressLine2?.trim() || null,
         city: settings.city?.trim() || null, state: settings.state?.trim() || null, postalCode: settings.postalCode?.trim() || null,
         returnPolicy: settings.returnPolicy?.trim() || null, shippingPolicy: settings.shippingPolicy?.trim() || null, privacyPolicy: settings.privacyPolicy?.trim() || null, termsPolicy: settings.termsPolicy?.trim() || null,
+        brandTagline: settings.brandTagline?.trim() || null, announcementText: settings.announcementText?.trim() || null, announcementSecondary: settings.announcementSecondary?.trim() || null,
+        siteUrl: settings.siteUrl?.trim() || null, seoTitle: settings.seoTitle?.trim() || null, seoDescription: settings.seoDescription?.trim() || null,
+        aboutTitle: settings.aboutTitle?.trim() || null, aboutBody: settings.aboutBody?.trim() || null, contactIntro: settings.contactIntro?.trim() || null,
+        instagramUrl: settings.instagramUrl?.trim() || null, facebookUrl: settings.facebookUrl?.trim() || null, youtubeUrl: settings.youtubeUrl?.trim() || null, whatsappNumber: settings.whatsappNumber?.trim() || null,
         freeShippingThreshold: settings.freeShippingThreshold === "" ? null : Number(settings.freeShippingThreshold),
         flatShippingFee: Number(settings.flatShippingFee || 0), codFee: Number(settings.codFee || 0), returnWindowDays: Number(settings.returnWindowDays || 0),
       };
@@ -89,6 +93,14 @@ export default function AdminSettings() {
       <label className="checkbox-row"><input type="checkbox" name="returnsEnabled" checked={Boolean(settings.returnsEnabled)} onChange={update} /> Allow customer return requests</label>
       <div className="admin-field-grid two"><label>Shipping policy<textarea name="shippingPolicy" value={settings.shippingPolicy || ""} onChange={update} /></label><label>Return policy<textarea name="returnPolicy" value={settings.returnPolicy || ""} onChange={update} /></label></div>
       <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div>
+      <div className="editor-section-head"><div><strong>Storefront, SEO & social</strong><small>Used by mobile navigation, search previews and customer pages.</small></div></div>
+      <div className="admin-field-grid two"><label>Brand tagline<input name="brandTagline" value={settings.brandTagline || ""} onChange={update} placeholder="Everyday herbal care, thoughtfully made." /></label><label>Public site URL<input name="siteUrl" value={settings.siteUrl || ""} onChange={update} placeholder="https://www.riseora.com" /></label></div>
+      <div className="admin-field-grid two"><label>Announcement line 1<input name="announcementText" value={settings.announcementText || ""} onChange={update} /></label><label>Announcement line 2<input name="announcementSecondary" value={settings.announcementSecondary || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid two"><label>SEO title<input name="seoTitle" value={settings.seoTitle || ""} onChange={update} placeholder="Riseora Herbals | Herbal Care" /></label><label>SEO description<textarea name="seoDescription" value={settings.seoDescription || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid two"><label>About page title<input name="aboutTitle" value={settings.aboutTitle || ""} onChange={update} /></label><label>Contact page introduction<textarea name="contactIntro" value={settings.contactIntro || ""} onChange={update} /></label></div>
+      <label>About page story<textarea name="aboutBody" value={settings.aboutBody || ""} onChange={update} rows="6" /></label>
+      <div className="admin-field-grid four"><label>Instagram URL<input name="instagramUrl" value={settings.instagramUrl || ""} onChange={update} /></label><label>Facebook URL<input name="facebookUrl" value={settings.facebookUrl || ""} onChange={update} /></label><label>YouTube URL<input name="youtubeUrl" value={settings.youtubeUrl || ""} onChange={update} /></label><label>WhatsApp number<input name="whatsappNumber" value={settings.whatsappNumber || ""} onChange={update} placeholder="9198…" /></label></div>
+
       <p className="admin-help-note"><strong>GST note:</strong> GSTIN, HSN/SAC and GST rates are business/tax data. Confirm the correct values with Riseora's accountant before issuing production tax invoices.</p>
       <button className="button">Save store settings</button>
     </form>
