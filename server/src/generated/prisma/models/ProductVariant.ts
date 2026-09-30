@@ -33,6 +33,7 @@ export type ProductVariantAvgAggregateOutputType = {
   stockQuantity: number | null
   lowStockThreshold: number | null
   weightGrams: runtime.Decimal | null
+  gstRate: runtime.Decimal | null
 }
 
 export type ProductVariantSumAggregateOutputType = {
@@ -42,6 +43,7 @@ export type ProductVariantSumAggregateOutputType = {
   stockQuantity: number | null
   lowStockThreshold: number | null
   weightGrams: runtime.Decimal | null
+  gstRate: runtime.Decimal | null
 }
 
 export type ProductVariantMinAggregateOutputType = {
@@ -57,6 +59,8 @@ export type ProductVariantMinAggregateOutputType = {
   stockQuantity: number | null
   lowStockThreshold: number | null
   weightGrams: runtime.Decimal | null
+  hsnCode: string | null
+  gstRate: runtime.Decimal | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -75,6 +79,8 @@ export type ProductVariantMaxAggregateOutputType = {
   stockQuantity: number | null
   lowStockThreshold: number | null
   weightGrams: runtime.Decimal | null
+  hsnCode: string | null
+  gstRate: runtime.Decimal | null
   isActive: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -93,6 +99,8 @@ export type ProductVariantCountAggregateOutputType = {
   stockQuantity: number
   lowStockThreshold: number
   weightGrams: number
+  hsnCode: number
+  gstRate: number
   isActive: number
   createdAt: number
   updatedAt: number
@@ -107,6 +115,7 @@ export type ProductVariantAvgAggregateInputType = {
   stockQuantity?: true
   lowStockThreshold?: true
   weightGrams?: true
+  gstRate?: true
 }
 
 export type ProductVariantSumAggregateInputType = {
@@ -116,6 +125,7 @@ export type ProductVariantSumAggregateInputType = {
   stockQuantity?: true
   lowStockThreshold?: true
   weightGrams?: true
+  gstRate?: true
 }
 
 export type ProductVariantMinAggregateInputType = {
@@ -131,6 +141,8 @@ export type ProductVariantMinAggregateInputType = {
   stockQuantity?: true
   lowStockThreshold?: true
   weightGrams?: true
+  hsnCode?: true
+  gstRate?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -149,6 +161,8 @@ export type ProductVariantMaxAggregateInputType = {
   stockQuantity?: true
   lowStockThreshold?: true
   weightGrams?: true
+  hsnCode?: true
+  gstRate?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -167,6 +181,8 @@ export type ProductVariantCountAggregateInputType = {
   stockQuantity?: true
   lowStockThreshold?: true
   weightGrams?: true
+  hsnCode?: true
+  gstRate?: true
   isActive?: true
   createdAt?: true
   updatedAt?: true
@@ -272,6 +288,8 @@ export type ProductVariantGroupByOutputType = {
   stockQuantity: number
   lowStockThreshold: number
   weightGrams: runtime.Decimal | null
+  hsnCode: string | null
+  gstRate: runtime.Decimal
   isActive: boolean
   createdAt: Date
   updatedAt: Date
@@ -313,6 +331,8 @@ export type ProductVariantWhereInput = {
   stockQuantity?: Prisma.IntFilter<"ProductVariant"> | number
   lowStockThreshold?: Prisma.IntFilter<"ProductVariant"> | number
   weightGrams?: Prisma.DecimalNullableFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
+  gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -333,6 +353,8 @@ export type ProductVariantOrderByWithRelationInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrderInput | Prisma.SortOrder
+  hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -356,6 +378,8 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   stockQuantity?: Prisma.IntFilter<"ProductVariant"> | number
   lowStockThreshold?: Prisma.IntFilter<"ProductVariant"> | number
   weightGrams?: Prisma.DecimalNullableFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
+  gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -376,6 +400,8 @@ export type ProductVariantOrderByWithAggregationInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrderInput | Prisma.SortOrder
+  hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -402,6 +428,8 @@ export type ProductVariantScalarWhereWithAggregatesInput = {
   stockQuantity?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
   lowStockThreshold?: Prisma.IntWithAggregatesFilter<"ProductVariant"> | number
   weightGrams?: Prisma.DecimalNullableWithAggregatesFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
+  gstRate?: Prisma.DecimalWithAggregatesFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
@@ -419,6 +447,8 @@ export type ProductVariantCreateInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -439,6 +469,8 @@ export type ProductVariantUncheckedCreateInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -457,6 +489,8 @@ export type ProductVariantUpdateInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -477,6 +511,8 @@ export type ProductVariantUncheckedUpdateInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -496,6 +532,8 @@ export type ProductVariantCreateManyInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -513,6 +551,8 @@ export type ProductVariantUpdateManyMutationInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -531,6 +571,8 @@ export type ProductVariantUncheckedUpdateManyInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -559,6 +601,8 @@ export type ProductVariantCountOrderByAggregateInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrder
+  hsnCode?: Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -571,6 +615,7 @@ export type ProductVariantAvgOrderByAggregateInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
 }
 
 export type ProductVariantMaxOrderByAggregateInput = {
@@ -586,6 +631,8 @@ export type ProductVariantMaxOrderByAggregateInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrder
+  hsnCode?: Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -604,6 +651,8 @@ export type ProductVariantMinOrderByAggregateInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrder
+  hsnCode?: Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -616,6 +665,7 @@ export type ProductVariantSumOrderByAggregateInput = {
   stockQuantity?: Prisma.SortOrder
   lowStockThreshold?: Prisma.SortOrder
   weightGrams?: Prisma.SortOrder
+  gstRate?: Prisma.SortOrder
 }
 
 export type ProductVariantNullableScalarRelationFilter = {
@@ -717,6 +767,8 @@ export type ProductVariantCreateWithoutProductInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -735,6 +787,8 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -783,6 +837,8 @@ export type ProductVariantScalarWhereInput = {
   stockQuantity?: Prisma.IntFilter<"ProductVariant"> | number
   lowStockThreshold?: Prisma.IntFilter<"ProductVariant"> | number
   weightGrams?: Prisma.DecimalNullableFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
+  gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -800,6 +856,8 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -819,6 +877,8 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -852,6 +912,8 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -871,6 +933,8 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -888,6 +952,8 @@ export type ProductVariantCreateManyProductInput = {
   stockQuantity?: number
   lowStockThreshold?: number
   weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -905,6 +971,8 @@ export type ProductVariantUpdateWithoutProductInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -923,6 +991,8 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -941,6 +1011,8 @@ export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
   stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
   lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
   weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -990,6 +1062,8 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   stockQuantity?: boolean
   lowStockThreshold?: boolean
   weightGrams?: boolean
+  hsnCode?: boolean
+  gstRate?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1011,6 +1085,8 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   stockQuantity?: boolean
   lowStockThreshold?: boolean
   weightGrams?: boolean
+  hsnCode?: boolean
+  gstRate?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1030,6 +1106,8 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   stockQuantity?: boolean
   lowStockThreshold?: boolean
   weightGrams?: boolean
+  hsnCode?: boolean
+  gstRate?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -1049,12 +1127,14 @@ export type ProductVariantSelectScalar = {
   stockQuantity?: boolean
   lowStockThreshold?: boolean
   weightGrams?: boolean
+  hsnCode?: boolean
+  gstRate?: boolean
   isActive?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "weightGrams" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "weightGrams" | "hsnCode" | "gstRate" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   orderItems?: boolean | Prisma.ProductVariant$orderItemsArgs<ExtArgs>
@@ -1086,6 +1166,8 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     stockQuantity: number
     lowStockThreshold: number
     weightGrams: runtime.Decimal | null
+    hsnCode: string | null
+    gstRate: runtime.Decimal
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -1526,6 +1608,8 @@ export interface ProductVariantFieldRefs {
   readonly stockQuantity: Prisma.FieldRef<"ProductVariant", 'Int'>
   readonly lowStockThreshold: Prisma.FieldRef<"ProductVariant", 'Int'>
   readonly weightGrams: Prisma.FieldRef<"ProductVariant", 'Decimal'>
+  readonly hsnCode: Prisma.FieldRef<"ProductVariant", 'String'>
+  readonly gstRate: Prisma.FieldRef<"ProductVariant", 'Decimal'>
   readonly isActive: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>

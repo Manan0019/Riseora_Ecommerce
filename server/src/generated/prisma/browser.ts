@@ -53,6 +53,16 @@ export type ProductImage = Prisma.ProductImageModel
  */
 export type Order = Prisma.OrderModel
 /**
+ * Model OrderStatusHistory
+ * 
+ */
+export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
+/**
+ * Model Shipment
+ * 
+ */
+export type Shipment = Prisma.ShipmentModel
+/**
  * Model OrderItem
  * 
  */
@@ -63,6 +73,41 @@ export type OrderItem = Prisma.OrderItemModel
  */
 export type Payment = Prisma.PaymentModel
 /**
+ * Model CheckoutSession
+ * 
+ */
+export type CheckoutSession = Prisma.CheckoutSessionModel
+/**
+ * Model PaymentWebhookEvent
+ * 
+ */
+export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
+/**
+ * Model StoreSetting
+ * 
+ */
+export type StoreSetting = Prisma.StoreSettingModel
+/**
+ * Model ShippingPartner
+ * 
+ */
+export type ShippingPartner = Prisma.ShippingPartnerModel
+/**
+ * Model Invoice
+ * 
+ */
+export type Invoice = Prisma.InvoiceModel
+/**
+ * Model ReturnRequest
+ * 
+ */
+export type ReturnRequest = Prisma.ReturnRequestModel
+/**
+ * Model ReturnRequestItem
+ * 
+ */
+export type ReturnRequestItem = Prisma.ReturnRequestItemModel
+/**
  * Model Coupon
  * 
  */
@@ -72,3 +117,13 @@ export type Coupon = Prisma.CouponModel
  * 
  */
 export type Offer = Prisma.OfferModel
+/**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
+ * Model Banner
+ * 
+ */
+export type Banner = Prisma.BannerModel

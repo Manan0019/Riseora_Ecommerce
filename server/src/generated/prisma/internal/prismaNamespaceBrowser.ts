@@ -58,10 +58,21 @@ export const ModelName = {
   ProductVariant: 'ProductVariant',
   ProductImage: 'ProductImage',
   Order: 'Order',
+  OrderStatusHistory: 'OrderStatusHistory',
+  Shipment: 'Shipment',
   OrderItem: 'OrderItem',
   Payment: 'Payment',
+  CheckoutSession: 'CheckoutSession',
+  PaymentWebhookEvent: 'PaymentWebhookEvent',
+  StoreSetting: 'StoreSetting',
+  ShippingPartner: 'ShippingPartner',
+  Invoice: 'Invoice',
+  ReturnRequest: 'ReturnRequest',
+  ReturnRequestItem: 'ReturnRequestItem',
   Coupon: 'Coupon',
-  Offer: 'Offer'
+  Offer: 'Offer',
+  Review: 'Review',
+  Banner: 'Banner'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -140,6 +151,7 @@ export const ProductScalarFieldEnum = {
   description: 'description',
   isActive: 'isActive',
   isFeatured: 'isFeatured',
+  badge: 'badge',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -160,6 +172,8 @@ export const ProductVariantScalarFieldEnum = {
   stockQuantity: 'stockQuantity',
   lowStockThreshold: 'lowStockThreshold',
   weightGrams: 'weightGrams',
+  hsnCode: 'hsnCode',
+  gstRate: 'gstRate',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -203,6 +217,33 @@ export const OrderScalarFieldEnum = {
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
 
 
+export const OrderStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  status: 'status',
+  note: 'note',
+  source: 'source',
+  createdAt: 'createdAt'
+} as const
+
+export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalarFieldEnum)[keyof typeof OrderStatusHistoryScalarFieldEnum]
+
+
+export const ShipmentScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  carrier: 'carrier',
+  trackingNumber: 'trackingNumber',
+  trackingUrl: 'trackingUrl',
+  shippedAt: 'shippedAt',
+  deliveredAt: 'deliveredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
+
+
 export const OrderItemScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -213,6 +254,8 @@ export const OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   unitPrice: 'unitPrice',
   lineTotal: 'lineTotal',
+  hsnCode: 'hsnCode',
+  gstRate: 'gstRate',
   createdAt: 'createdAt'
 } as const
 
@@ -230,11 +273,165 @@ export const PaymentScalarFieldEnum = {
   transactionId: 'transactionId',
   amount: 'amount',
   paidAt: 'paidAt',
+  refundId: 'refundId',
+  refundedAmount: 'refundedAmount',
+  refundedAt: 'refundedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const CheckoutSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  shippingAddress: 'shippingAddress',
+  couponCode: 'couponCode',
+  subtotal: 'subtotal',
+  shippingFee: 'shippingFee',
+  discountAmount: 'discountAmount',
+  totalAmount: 'totalAmount',
+  amountPaise: 'amountPaise',
+  currency: 'currency',
+  items: 'items',
+  status: 'status',
+  providerOrderId: 'providerOrderId',
+  providerPaymentId: 'providerPaymentId',
+  stockReserved: 'stockReserved',
+  orderId: 'orderId',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CheckoutSessionScalarFieldEnum = (typeof CheckoutSessionScalarFieldEnum)[keyof typeof CheckoutSessionScalarFieldEnum]
+
+
+export const PaymentWebhookEventScalarFieldEnum = {
+  id: 'id',
+  provider: 'provider',
+  eventId: 'eventId',
+  eventType: 'eventType',
+  providerOrderId: 'providerOrderId',
+  providerPaymentId: 'providerPaymentId',
+  createdAt: 'createdAt'
+} as const
+
+export type PaymentWebhookEventScalarFieldEnum = (typeof PaymentWebhookEventScalarFieldEnum)[keyof typeof PaymentWebhookEventScalarFieldEnum]
+
+
+export const StoreSettingScalarFieldEnum = {
+  id: 'id',
+  storeName: 'storeName',
+  legalName: 'legalName',
+  supportEmail: 'supportEmail',
+  supportPhone: 'supportPhone',
+  gstin: 'gstin',
+  addressLine1: 'addressLine1',
+  addressLine2: 'addressLine2',
+  city: 'city',
+  state: 'state',
+  postalCode: 'postalCode',
+  country: 'country',
+  invoicePrefix: 'invoicePrefix',
+  invoiceNextNumber: 'invoiceNextNumber',
+  freeShippingThreshold: 'freeShippingThreshold',
+  flatShippingFee: 'flatShippingFee',
+  codFee: 'codFee',
+  returnsEnabled: 'returnsEnabled',
+  returnWindowDays: 'returnWindowDays',
+  returnPolicy: 'returnPolicy',
+  shippingPolicy: 'shippingPolicy',
+  privacyPolicy: 'privacyPolicy',
+  termsPolicy: 'termsPolicy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const ShippingPartnerScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  code: 'code',
+  trackingUrlTemplate: 'trackingUrlTemplate',
+  isActive: 'isActive',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingPartnerScalarFieldEnum = (typeof ShippingPartnerScalarFieldEnum)[keyof typeof ShippingPartnerScalarFieldEnum]
+
+
+export const InvoiceScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  invoiceNumber: 'invoiceNumber',
+  issuedAt: 'issuedAt',
+  sellerName: 'sellerName',
+  sellerGstin: 'sellerGstin',
+  sellerAddress: 'sellerAddress',
+  buyerName: 'buyerName',
+  buyerAddress: 'buyerAddress',
+  taxableTotal: 'taxableTotal',
+  cgstTotal: 'cgstTotal',
+  sgstTotal: 'sgstTotal',
+  igstTotal: 'igstTotal',
+  taxTotal: 'taxTotal',
+  grandTotal: 'grandTotal',
+  lines: 'lines',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
+
+
+export const ReturnRequestScalarFieldEnum = {
+  id: 'id',
+  returnNumber: 'returnNumber',
+  orderId: 'orderId',
+  userId: 'userId',
+  status: 'status',
+  reason: 'reason',
+  details: 'details',
+  customerNote: 'customerNote',
+  adminNote: 'adminNote',
+  refundMethod: 'refundMethod',
+  refundAmount: 'refundAmount',
+  providerRefundId: 'providerRefundId',
+  refundReference: 'refundReference',
+  reverseCarrier: 'reverseCarrier',
+  reverseTrackingNumber: 'reverseTrackingNumber',
+  reverseTrackingUrl: 'reverseTrackingUrl',
+  requestedAt: 'requestedAt',
+  approvedAt: 'approvedAt',
+  receivedAt: 'receivedAt',
+  restockedAt: 'restockedAt',
+  refundedAt: 'refundedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReturnRequestScalarFieldEnum = (typeof ReturnRequestScalarFieldEnum)[keyof typeof ReturnRequestScalarFieldEnum]
+
+
+export const ReturnRequestItemScalarFieldEnum = {
+  id: 'id',
+  returnRequestId: 'returnRequestId',
+  orderItemId: 'orderItemId',
+  quantity: 'quantity',
+  unitRefundAmount: 'unitRefundAmount',
+  createdAt: 'createdAt'
+} as const
+
+export type ReturnRequestItemScalarFieldEnum = (typeof ReturnRequestItemScalarFieldEnum)[keyof typeof ReturnRequestItemScalarFieldEnum]
 
 
 export const CouponScalarFieldEnum = {
@@ -273,6 +470,45 @@ export const OfferScalarFieldEnum = {
 } as const
 
 export type OfferScalarFieldEnum = (typeof OfferScalarFieldEnum)[keyof typeof OfferScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  rating: 'rating',
+  title: 'title',
+  comment: 'comment',
+  isApproved: 'isApproved',
+  verifiedPurchase: 'verifiedPurchase',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const BannerScalarFieldEnum = {
+  id: 'id',
+  placement: 'placement',
+  eyebrow: 'eyebrow',
+  title: 'title',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  mobileImageUrl: 'mobileImageUrl',
+  ctaText: 'ctaText',
+  ctaLink: 'ctaLink',
+  background: 'background',
+  textColor: 'textColor',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  isActive: 'isActive',
+  priority: 'priority',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof BannerScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -50,6 +50,8 @@ export const PaymentStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
   FAILED: 'FAILED',
+  REFUNDING: 'REFUNDING',
+  PARTIALLY_REFUNDED: 'PARTIALLY_REFUNDED',
   REFUNDED: 'REFUNDED',
   CANCELLED: 'CANCELLED'
 } as const
@@ -63,3 +65,47 @@ export const CouponDiscountType = {
 } as const
 
 export type CouponDiscountType = (typeof CouponDiscountType)[keyof typeof CouponDiscountType]
+
+
+export const BannerPlacement = {
+  HOME_HERO: 'HOME_HERO',
+  HOME_STRIP: 'HOME_STRIP'
+} as const
+
+export type BannerPlacement = (typeof BannerPlacement)[keyof typeof BannerPlacement]
+
+
+export const CheckoutSessionStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type CheckoutSessionStatus = (typeof CheckoutSessionStatus)[keyof typeof CheckoutSessionStatus]
+
+
+export const ReturnStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  PICKUP_PENDING: 'PICKUP_PENDING',
+  IN_TRANSIT: 'IN_TRANSIT',
+  RECEIVED: 'RECEIVED',
+  REFUNDING: 'REFUNDING',
+  REFUNDED: 'REFUNDED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ReturnStatus = (typeof ReturnStatus)[keyof typeof ReturnStatus]
+
+
+export const RefundMethod = {
+  ORIGINAL_PAYMENT: 'ORIGINAL_PAYMENT',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  UPI: 'UPI',
+  STORE_CREDIT: 'STORE_CREDIT',
+  OTHER: 'OTHER'
+} as const
+
+export type RefundMethod = (typeof RefundMethod)[keyof typeof RefundMethod]
