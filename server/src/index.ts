@@ -15,6 +15,10 @@ import productRoutes from "./routes/product.routes";
 import promotionRoutes from "./routes/promotion.routes";
 import uploadRoutes from "./routes/upload.routes";
 import paymentRoutes, { razorpayWebhook } from "./routes/payment.routes";
+import storeRoutes from "./routes/store.routes";
+import returnRoutes from "./routes/return.routes";
+import invoiceRoutes from "./routes/invoice.routes";
+import adminOpsRoutes from "./routes/admin-ops.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
 import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
 
@@ -62,11 +66,15 @@ app.get("/api/health", async (_req, res) => {
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/promotions", promotionRoutes);
+app.use("/api/store", storeRoutes);
 app.use("/api/payments", rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: "draft-8", legacyHeaders: false }), paymentRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/returns", returnRoutes);
+app.use("/api/invoices", invoiceRoutes);
 app.use("/api/account", accountRoutes);
 app.use("/api/admin/uploads", uploadRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/admin", adminOpsRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -72,3 +72,29 @@ export async function sendOrderStatusNotification(order: OrderEmailShape) {
     html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Order update</h2><p>Your order <strong>${escapeHtml(order.orderNumber)}</strong> is now <strong>${escapeHtml(order.status)}</strong>.</p>${tracking}<p>Total: ${money(order.totalAmount)}</p></div>`,
   });
 }
+
+type ReturnEmailShape = {
+  returnNumber: string;
+  status: string;
+  refundAmount: unknown;
+  reason?: string | null;
+  reverseCarrier?: string | null;
+  reverseTrackingNumber?: string | null;
+  reverseTrackingUrl?: string | null;
+  order?: { orderNumber?: string | null; customerEmail?: string | null } | null;
+  user?: { email?: string | null; firstName?: string | null } | null;
+};
+
+export async function sendReturnStatusNotification(request: ReturnEmailShape) {
+  const email = request.user?.email || request.order?.customerEmail || null;
+  if (!email) return;
+  const tracking = request.reverseTrackingNumber
+    ? `<p><strong>Return courier:</strong> ${escapeHtml(request.reverseCarrier || "Courier")}<br/><strong>Tracking:</strong> ${escapeHtml(request.reverseTrackingNumber)}${request.reverseTrackingUrl ? `<br/><a href="${escapeHtml(request.reverseTrackingUrl)}">Track return pickup</a>` : ""}</p>`
+    : "";
+  await send({
+    to: email,
+    subject: `Riseora return ${request.returnNumber}: ${request.status}`,
+    idempotencyKey: `return-status/${request.returnNumber}/${request.status}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Return update</h2><p>Your return <strong>${escapeHtml(request.returnNumber)}</strong>${request.order?.orderNumber ? ` for order <strong>${escapeHtml(request.order.orderNumber)}</strong>` : ""} is now <strong>${escapeHtml(request.status)}</strong>.</p>${tracking}<p>Expected refund value: ${money(request.refundAmount)}</p></div>`,
+  });
+}

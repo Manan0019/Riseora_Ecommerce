@@ -18,7 +18,7 @@ export default function OrderDetail() {
   if (!order) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
   return <div className="container page-space order-detail-page">
-    <div className="order-detail-head"><div><Link to="/orders" className="back-link">← My orders</Link><p className="eyebrow">ORDER {order.orderNumber}</p><h1>Track your order</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
+    <div className="order-detail-head"><div><Link to="/orders" className="back-link">← My orders</Link><p className="eyebrow">ORDER {order.orderNumber}</p><h1>Track your order</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p><div className="order-detail-actions">{!["PENDING","CANCELLED"].includes(order.status) && <Link className="button button-secondary" to={`/invoice/${order.orderNumber}`}>Tax invoice</Link>}{order.status === "DELIVERED" && <Link className="button" to={`/returns/new/${order.orderNumber}`}>Request return</Link>}</div></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
 
     <div className="order-detail-grid">
       <section className="order-detail-card"><h2>Order progress</h2><OrderTimeline order={order} /></section>

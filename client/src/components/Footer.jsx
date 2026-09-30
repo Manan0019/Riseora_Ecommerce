@@ -23,7 +23,10 @@ export default function Footer() {
           <h3>Customer care</h3>
           <span>Secure checkout</span>
           <Link to="/track-order">Order tracking</Link>
-          <span>India-wide delivery</span>
+          <Link to="/policies/shipping">Shipping policy</Link>
+          <Link to="/policies/returns">Returns & refunds</Link>
+          <Link to="/policies/privacy">Privacy</Link>
+          <Link to="/policies/terms">Terms</Link>
         </div>
         <div className="footer-promise">
           <Icon name="leaf" size={24} />

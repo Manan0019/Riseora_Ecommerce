@@ -19,13 +19,26 @@ export default function AdminOrderDetail() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [refunding, setRefunding] = useState(false);
+  const [partners, setPartners] = useState([]);
 
   async function load() {
-    const response = await apiFetch(`/admin/orders/${id}`);
-    setOrder(response.data);
+    const [response, partnerResponse] = await Promise.all([apiFetch(`/admin/orders/${id}`), apiFetch("/admin/shipping-partners")]);
+    setOrder(response.data); setPartners(partnerResponse.data.filter((item) => item.isActive));
     setForm((current) => ({ ...current, status: response.data.status, carrier: response.data.shipment?.carrier || "", trackingNumber: response.data.shipment?.trackingNumber || "", trackingUrl: response.data.shipment?.trackingUrl || "" }));
   }
   useEffect(() => { load().catch((e) => setError(e.message)); }, [id]);
+
+  function chooseCarrier(name) {
+    const partner = partners.find((item) => item.name === name);
+    const trackingUrl = partner?.trackingUrlTemplate && form.trackingNumber ? partner.trackingUrlTemplate.replaceAll("{trackingNumber}", encodeURIComponent(form.trackingNumber)) : form.trackingUrl;
+    setForm((current) => ({ ...current, carrier: name, trackingUrl }));
+  }
+
+  function updateTrackingNumber(value) {
+    const partner = partners.find((item) => item.name === form.carrier);
+    const trackingUrl = partner?.trackingUrlTemplate ? partner.trackingUrlTemplate.replaceAll("{trackingNumber}", encodeURIComponent(value)) : form.trackingUrl;
+    setForm((current) => ({ ...current, trackingNumber: value, trackingUrl }));
+  }
 
   const statusOptions = useMemo(() => {
     if (!order) return [];
@@ -57,7 +70,7 @@ export default function AdminOrderDetail() {
   const address = order.shippingAddress || {};
 
   return <>
-    <div className="admin-page-heading"><div><Link className="back-link" to="/admin/orders">← Orders</Link><p className="eyebrow">{order.orderNumber}</p><h1>Order fulfilment</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
+    <div className="admin-page-heading"><div><Link className="back-link" to="/admin/orders">← Orders</Link><p className="eyebrow">{order.orderNumber}</p><h1>Order fulfilment</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p><div className="order-detail-actions">{!["PENDING","CANCELLED"].includes(order.status) && <Link className="button button-secondary" to={`/admin/orders/${order.id}/invoice`}>Tax invoice</Link>}</div></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
 
     <div className="admin-order-detail-grid">
@@ -67,7 +80,7 @@ export default function AdminOrderDetail() {
 
     <div className="admin-order-detail-grid fulfilment-grid">
       <section className="admin-panel"><div className="admin-panel-head"><div><h2>Progress</h2><p>Customer sees this timeline.</p></div></div><OrderTimeline order={order} /></section>
-      <form className="admin-panel admin-form" onSubmit={save}><div className="admin-panel-head"><div><h2>Update fulfilment</h2><p>Move orders forward and add courier details.</p></div></div><label>Status<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>{statusOptions.map((status) => <option key={status}>{status}</option>)}</select></label>{form.status === "SHIPPED" && <><div className="admin-field-grid two"><label>Courier / carrier<input required value={form.carrier} onChange={(e) => setForm({ ...form, carrier: e.target.value })} placeholder="e.g. Delhivery" /></label><label>Tracking number<input required value={form.trackingNumber} onChange={(e) => setForm({ ...form, trackingNumber: e.target.value })} /></label></div><label>Tracking URL<input type="url" value={form.trackingUrl} onChange={(e) => setForm({ ...form, trackingUrl: e.target.value })} placeholder="https://..." /></label></>}<label>Customer-visible note<textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Optional update, e.g. Packed and ready for dispatch" /></label><button className="button">Save fulfilment update</button></form>
+      <form className="admin-panel admin-form" onSubmit={save}><div className="admin-panel-head"><div><h2>Update fulfilment</h2><p>Move orders forward and add courier details.</p></div></div><label>Status<select value={form.status} onChange={(e) => setForm({ ...form, status: e.target.value })}>{statusOptions.map((status) => <option key={status}>{status}</option>)}</select></label>{form.status === "SHIPPED" && <><div className="admin-field-grid two"><label>Courier / carrier<input required list="riseora-couriers" value={form.carrier} onChange={(e) => chooseCarrier(e.target.value)} placeholder="e.g. Delhivery" /><datalist id="riseora-couriers">{partners.map((partner) => <option key={partner.id} value={partner.name} />)}</datalist></label><label>Tracking number<input required value={form.trackingNumber} onChange={(e) => updateTrackingNumber(e.target.value)} /></label></div><label>Tracking URL<input type="url" value={form.trackingUrl} onChange={(e) => setForm({ ...form, trackingUrl: e.target.value })} placeholder="https://..." /></label></>}<label>Customer-visible note<textarea value={form.note} onChange={(e) => setForm({ ...form, note: e.target.value })} placeholder="Optional update, e.g. Packed and ready for dispatch" /></label><button className="button">Save fulfilment update</button></form>
     </div>
 
     <section className="admin-panel"><div className="admin-panel-head"><div><h2>Order items</h2><p>{order.items.length} line item(s)</p></div></div><div className="admin-order-line-items">{order.items.map((item) => <div key={item.id}><span><strong>{item.productName}</strong><small>{item.variantName || item.sku} × {item.quantity}</small></span><strong>₹{Number(item.lineTotal).toFixed(0)}</strong></div>)}</div><div className="admin-order-totals"><span>Subtotal <strong>₹{Number(order.subtotal).toFixed(0)}</strong></span>{Number(order.discountAmount) > 0 && <span>Discount <strong>−₹{Number(order.discountAmount).toFixed(0)}</strong></span>}<span className="total">Total <strong>₹{Number(order.totalAmount).toFixed(0)}</strong></span></div></section>

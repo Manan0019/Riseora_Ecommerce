@@ -1,0 +1,110 @@
+import { useEffect, useState } from "react";
+import { apiFetch } from "../../api/http";
+
+const emptyPartner = { name: "", code: "", trackingUrlTemplate: "", sortOrder: 0 };
+
+function csvEscape(value) {
+  const text = String(value ?? "");
+  return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+}
+
+export default function AdminSettings() {
+  const [settings, setSettings] = useState(null);
+  const [partners, setPartners] = useState([]);
+  const [partner, setPartner] = useState(emptyPartner);
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+
+  async function load() {
+    const [settingResponse, partnerResponse] = await Promise.all([apiFetch("/admin/settings"), apiFetch("/admin/shipping-partners")]);
+    const value = settingResponse.data;
+    setSettings({ ...value, freeShippingThreshold: value.freeShippingThreshold == null ? "" : String(Number(value.freeShippingThreshold)), flatShippingFee: String(Number(value.flatShippingFee || 0)), codFee: String(Number(value.codFee || 0)), returnWindowDays: String(value.returnWindowDays ?? 7) });
+    setPartners(partnerResponse.data);
+  }
+  useEffect(() => { load().catch((e) => setError(e.message)); }, []);
+
+  function update(event) {
+    const { name, value, type, checked } = event.target;
+    setSettings((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
+  }
+
+  async function save(event) {
+    event.preventDefault(); setMessage(""); setError("");
+    try {
+      const payload = {
+        ...settings,
+        supportEmail: settings.supportEmail?.trim() || null,
+        supportPhone: settings.supportPhone?.trim() || null,
+        legalName: settings.legalName?.trim() || null, gstin: settings.gstin?.trim() || null,
+        addressLine1: settings.addressLine1?.trim() || null, addressLine2: settings.addressLine2?.trim() || null,
+        city: settings.city?.trim() || null, state: settings.state?.trim() || null, postalCode: settings.postalCode?.trim() || null,
+        returnPolicy: settings.returnPolicy?.trim() || null, shippingPolicy: settings.shippingPolicy?.trim() || null, privacyPolicy: settings.privacyPolicy?.trim() || null, termsPolicy: settings.termsPolicy?.trim() || null,
+        freeShippingThreshold: settings.freeShippingThreshold === "" ? null : Number(settings.freeShippingThreshold),
+        flatShippingFee: Number(settings.flatShippingFee || 0), codFee: Number(settings.codFee || 0), returnWindowDays: Number(settings.returnWindowDays || 0),
+      };
+      delete payload.id; delete payload.invoiceNextNumber; delete payload.createdAt; delete payload.updatedAt;
+      await apiFetch("/admin/settings", { method: "PATCH", body: JSON.stringify(payload) });
+      setMessage("Store settings saved."); await load();
+    } catch (e) { setError(e.message); }
+  }
+
+  async function addPartner(event) {
+    event.preventDefault(); setMessage(""); setError("");
+    try { await apiFetch("/admin/shipping-partners", { method: "POST", body: JSON.stringify({ ...partner, sortOrder: Number(partner.sortOrder || 0) }) }); setPartner(emptyPartner); setMessage("Courier partner added."); await load(); } catch (e) { setError(e.message); }
+  }
+
+  async function togglePartner(item) {
+    try { await apiFetch(`/admin/shipping-partners/${item.id}`, { method: "PATCH", body: JSON.stringify({ isActive: !item.isActive }) }); await load(); } catch (e) { setError(e.message); }
+  }
+
+  async function exportDispatch(status) {
+    setError("");
+    try {
+      const response = await apiFetch(`/admin/dispatch?status=${status}`);
+      const rows = response.data;
+      if (!rows.length) return setMessage(`No ${status.toLowerCase()} orders to export.`);
+      const keys = ["orderNumber","customerName","customerPhone","customerEmail","addressLine1","addressLine2","landmark","city","state","postalCode","country","paymentMethod","codAmount","totalAmount","totalWeightGrams","skuSummary"];
+      const csv = [keys.join(","), ...rows.map((row) => keys.map((key) => csvEscape(row[key])).join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+      const url = URL.createObjectURL(blob); const anchor = document.createElement("a"); anchor.href = url; anchor.download = `riseora-${status.toLowerCase()}-dispatch.csv`; anchor.click(); URL.revokeObjectURL(url);
+      setMessage(`${rows.length} dispatch row(s) exported.`);
+    } catch (e) { setError(e.message); }
+  }
+
+  if (!settings) return <div className="admin-panel"><div className="skeleton-card tall" /></div>;
+
+  return <>
+    <div className="admin-page-heading"><div><p className="eyebrow">STORE CONTROL</p><h1>Settings, shipping & tax</h1><p>Business identity, shipping fees, return policy, GST invoice setup and courier tools.</p></div></div>
+    {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
+
+    <form className="admin-panel admin-form settings-form" onSubmit={save}>
+      <div className="admin-panel-head"><div><h2>Business & invoice identity</h2><p>These details are used on customer documents and tax invoices.</p></div></div>
+      <div className="admin-field-grid two"><label>Store name<input name="storeName" value={settings.storeName || ""} onChange={update} /></label><label>Legal business name<input name="legalName" value={settings.legalName || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid three"><label>Support email<input type="email" name="supportEmail" value={settings.supportEmail || ""} onChange={update} /></label><label>Support phone<input name="supportPhone" value={settings.supportPhone || ""} onChange={update} /></label><label>GSTIN<input name="gstin" value={settings.gstin || ""} onChange={update} placeholder="Confirm with owner/accountant" /></label></div>
+      <div className="admin-field-grid two"><label>Address line 1<input name="addressLine1" value={settings.addressLine1 || ""} onChange={update} /></label><label>Address line 2<input name="addressLine2" value={settings.addressLine2 || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid four"><label>City<input name="city" value={settings.city || ""} onChange={update} /></label><label>State<input name="state" value={settings.state || ""} onChange={update} /></label><label>PIN code<input name="postalCode" value={settings.postalCode || ""} onChange={update} /></label><label>Invoice prefix<input name="invoicePrefix" value={settings.invoicePrefix || ""} onChange={update} /></label></div>
+
+      <div className="editor-section-head"><div><strong>Shipping & returns</strong><small>Checkout uses these values server-side.</small></div></div>
+      <div className="admin-field-grid four"><label>Free shipping above ₹<input type="number" min="0" step="0.01" name="freeShippingThreshold" value={settings.freeShippingThreshold} onChange={update} placeholder="Blank = never automatic" /></label><label>Flat shipping fee ₹<input type="number" min="0" step="0.01" name="flatShippingFee" value={settings.flatShippingFee} onChange={update} /></label><label>COD fee ₹<input type="number" min="0" step="0.01" name="codFee" value={settings.codFee} onChange={update} /></label><label>Return window days<input type="number" min="0" max="90" name="returnWindowDays" value={settings.returnWindowDays} onChange={update} /></label></div>
+      <label className="checkbox-row"><input type="checkbox" name="returnsEnabled" checked={Boolean(settings.returnsEnabled)} onChange={update} /> Allow customer return requests</label>
+      <div className="admin-field-grid two"><label>Shipping policy<textarea name="shippingPolicy" value={settings.shippingPolicy || ""} onChange={update} /></label><label>Return policy<textarea name="returnPolicy" value={settings.returnPolicy || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div>
+      <p className="admin-help-note"><strong>GST note:</strong> GSTIN, HSN/SAC and GST rates are business/tax data. Confirm the correct values with Riseora's accountant before issuing production tax invoices.</p>
+      <button className="button">Save store settings</button>
+    </form>
+
+    <div className="admin-settings-grid">
+      <section className="admin-panel">
+        <div className="admin-panel-head"><div><h2>Courier partners</h2><p>Store common carriers and tracking URL templates.</p></div></div>
+        <form className="admin-form" onSubmit={addPartner}><div className="admin-field-grid two"><label>Name<input required value={partner.name} onChange={(e) => setPartner({ ...partner, name: e.target.value })} placeholder="Delhivery" /></label><label>Code<input required value={partner.code} onChange={(e) => setPartner({ ...partner, code: e.target.value })} placeholder="DELHIVERY" /></label></div><label>Tracking URL template<input value={partner.trackingUrlTemplate} onChange={(e) => setPartner({ ...partner, trackingUrlTemplate: e.target.value })} placeholder="https://courier.example/track/{trackingNumber}" /></label><button className="button button-secondary">Add courier</button></form>
+        <div className="settings-partner-list">{partners.map((item) => <div key={item.id}><span><strong>{item.name}</strong><small>{item.trackingUrlTemplate || "Manual tracking URL"}</small></span><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => togglePartner(item)}>{item.isActive ? "Active" : "Inactive"}</button></div>)}</div>
+      </section>
+
+      <section className="admin-panel">
+        <div className="admin-panel-head"><div><h2>Courier dispatch export</h2><p>Export shipping-ready rows for portal upload or courier processing.</p></div></div>
+        <div className="dispatch-actions"><button className="button" onClick={() => exportDispatch("PROCESSING")}>Export processing orders CSV</button><button className="button button-secondary" onClick={() => exportDispatch("CONFIRMED")}>Export confirmed orders CSV</button></div>
+        <p className="admin-help-note">CSV contains customer delivery details, COD amount, order value, SKU summary and calculated product weight. Adapt/import it according to your courier's current template.</p>
+      </section>
+    </div>
+  </>;
+}

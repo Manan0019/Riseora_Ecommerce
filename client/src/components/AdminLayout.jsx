@@ -9,6 +9,8 @@ const nav = [
   { to: "/admin/orders", label: "Orders", icon: "orders" },
   { to: "/admin/customers", label: "Customers", icon: "user" },
   { to: "/admin/promotions", label: "Promotions", icon: "tag" },
+  { to: "/admin/returns", label: "Returns", icon: "truck" },
+  { to: "/admin/settings", label: "Settings", icon: "shield" },
 ];
 
 export default function AdminLayout() {

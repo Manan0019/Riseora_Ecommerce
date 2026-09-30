@@ -36,6 +36,7 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
+  const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0 });
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
@@ -47,6 +48,7 @@ export default function Checkout() {
 
   useEffect(() => {
     apiFetch("/payments/config").then((response) => setOnlinePaymentsEnabled(Boolean(response.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false));
+    apiFetch("/store/config").then((response) => setStoreConfig(response.data)).catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -137,7 +139,12 @@ export default function Checkout() {
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
   }
 
-  const total = Math.max(0, subtotal - discountAmount);
+  const merchandiseAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold);
+  const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0);
+  const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0;
+  const shippingFee = baseShipping + codFee;
+  const total = Math.max(0, merchandiseAfterDiscount + shippingFee);
 
   return (
     <div className="container page-space checkout-page">
@@ -170,7 +177,7 @@ export default function Checkout() {
           <div className="coupon-box"><label>Coupon code</label><div><input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Enter code" /><button type="button" onClick={applyCoupon}>Apply</button></div>{couponMessage && <small className="coupon-success">{couponMessage}</small>}{couponError && <small className="coupon-error">{couponError}</small>}</div>
           <div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div>
           {discountAmount > 0 && <div className="summary-row discount-row"><span>Coupon {appliedCoupon}</span><strong>−₹{discountAmount.toFixed(0)}</strong></div>}
-          <div className="summary-row"><span>Shipping</span><span>₹0</span></div>
+          <div className="summary-row"><span>Shipping{codFee > 0 ? " + COD fee" : ""}</span><span>{shippingFee > 0 ? `₹${shippingFee.toFixed(0)}` : "FREE"}</span></div>
           <div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div>
         </aside>
       </div>

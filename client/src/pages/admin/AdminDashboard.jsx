@@ -16,6 +16,7 @@ export default function AdminDashboard() {
     { label: "Low stock", value: data.lowStockCount, icon: "tag", to: "/admin/inventory" },
     { label: "Products", value: data.productCount, icon: "shop", to: "/admin/catalog" },
     { label: "Customers", value: data.customerCount, icon: "user", to: "/admin/customers" },
+    { label: "Returns", value: data.pendingReturnCount ?? 0, icon: "truck", to: "/admin/returns" },
   ] : [];
 
   return <>

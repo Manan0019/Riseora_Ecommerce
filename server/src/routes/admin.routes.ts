@@ -77,6 +77,8 @@ const productSchema = z.object({
         stockQuantity: z.number().int().nonnegative().default(0),
         lowStockThreshold: z.number().int().nonnegative().default(5),
         weightGrams: z.number().positive().optional(),
+        hsnCode: z.string().trim().max(30).optional().or(z.literal("")),
+        gstRate: z.number().min(0).max(100).default(0),
         isActive: z.boolean().default(true),
       }),
     )
@@ -131,6 +133,8 @@ router.post(
             stockQuantity: variant.stockQuantity,
             lowStockThreshold: variant.lowStockThreshold,
             weightGrams: variant.weightGrams ?? null,
+            hsnCode: variant.hsnCode || null,
+            gstRate: variant.gstRate,
             isActive: variant.isActive,
           })),
         },
@@ -227,6 +231,12 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
       throw new Error("SHIPMENT_DETAILS_REQUIRED");
     }
 
+    let resolvedTrackingUrl = payload.trackingUrl || "";
+    if (payload.carrier && payload.trackingNumber && !resolvedTrackingUrl) {
+      const partner = await tx.shippingPartner.findFirst({ where: { name: payload.carrier, isActive: true } });
+      if (partner?.trackingUrlTemplate) resolvedTrackingUrl = partner.trackingUrlTemplate.replaceAll("{trackingNumber}", encodeURIComponent(payload.trackingNumber));
+    }
+
     if (!isSameStatus && payload.status === "CANCELLED") {
       if (order.paymentMethod === "ONLINE" && order.payment?.status === "PAID") throw new Error("PREPAID_REFUND_REQUIRED");
       for (const item of order.items) {
@@ -249,13 +259,13 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
           orderId: order.id,
           carrier: payload.carrier || null,
           trackingNumber: payload.trackingNumber || null,
-          trackingUrl: payload.trackingUrl || null,
+          trackingUrl: resolvedTrackingUrl || null,
           shippedAt: new Date(),
         },
         update: {
           carrier: payload.carrier || null,
           trackingNumber: payload.trackingNumber || null,
-          trackingUrl: payload.trackingUrl || null,
+          trackingUrl: resolvedTrackingUrl || null,
           shippedAt: order.shipment?.shippedAt ?? new Date(),
         },
       });
@@ -265,7 +275,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
         data: {
           ...(payload.carrier ? { carrier: payload.carrier } : {}),
           ...(payload.trackingNumber ? { trackingNumber: payload.trackingNumber } : {}),
-          ...(payload.trackingUrl ? { trackingUrl: payload.trackingUrl } : {}),
+          ...(resolvedTrackingUrl ? { trackingUrl: resolvedTrackingUrl } : {}),
         },
       });
     }
@@ -321,7 +331,7 @@ router.post(
     const updated = await prisma.$transaction(async (tx) => {
       for (const item of order.items) if (item.variantId) await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
       if (order.couponCode) await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
-      await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAt: new Date() } });
+      await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date() } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
       await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
       return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
@@ -553,7 +563,7 @@ router.get(
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [productCount, customerCount, openOrderCount, todayOrderCount, todaySales, recentOrders, variants] = await Promise.all([
+    const [productCount, customerCount, openOrderCount, todayOrderCount, todaySales, recentOrders, variants, pendingReturnCount] = await Promise.all([
       prisma.product.count(),
       prisma.user.count({ where: { role: "CUSTOMER" } }),
       prisma.order.count({ where: { status: { in: ["PENDING", "CONFIRMED", "PROCESSING"] } } }),
@@ -569,6 +579,7 @@ router.get(
         include: { product: { select: { id: true, name: true } } },
         orderBy: { stockQuantity: "asc" },
       }),
+      prisma.returnRequest.count({ where: { status: { in: ["REQUESTED", "APPROVED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED"] } } }),
     ]);
 
     const lowStock = variants.filter((variant) => variant.stockQuantity <= variant.lowStockThreshold);
@@ -582,6 +593,7 @@ router.get(
         todayOrderCount,
         todaySales: Number(todaySales._sum.totalAmount ?? 0),
         lowStockCount: lowStock.length,
+        pendingReturnCount,
         recentOrders,
         lowStock: lowStock.slice(0, 6),
       },
@@ -743,6 +755,8 @@ router.put(
           stockQuantity: variant.stockQuantity,
           lowStockThreshold: variant.lowStockThreshold,
           weightGrams: variant.weightGrams ?? null,
+          hsnCode: variant.hsnCode || null,
+          gstRate: variant.gstRate,
           isActive: variant.isActive,
         };
         if (variant.id) await tx.productVariant.update({ where: { id: variant.id }, data });

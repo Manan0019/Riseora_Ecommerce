@@ -17,6 +17,10 @@ import ProductDetails from "./pages/ProductDetails";
 import Register from "./pages/Register";
 import Shop from "./pages/Shop";
 import Wishlist from "./pages/Wishlist";
+import Returns from "./pages/Returns";
+import ReturnRequest from "./pages/ReturnRequest";
+import Invoice from "./pages/Invoice";
+import Policy from "./pages/Policy";
 import AdminCatalog from "./pages/admin/AdminCatalog";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminInventory from "./pages/admin/AdminInventory";
@@ -24,6 +28,9 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminOrderDetail from "./pages/admin/AdminOrderDetail";
 import AdminPromotions from "./pages/admin/AdminPromotions";
+import AdminReturns from "./pages/admin/AdminReturns";
+import AdminSettings from "./pages/admin/AdminSettings";
+import AdminInvoice from "./pages/admin/AdminInvoice";
 
 export default function App() {
   return (
@@ -43,6 +50,10 @@ export default function App() {
         <Route path="/orders/:orderNumber" element={<ProtectedRoute><OrderDetail /></ProtectedRoute>} />
         <Route path="/track-order" element={<TrackOrder />} />
         <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
+        <Route path="/returns" element={<ProtectedRoute><Returns /></ProtectedRoute>} />
+        <Route path="/returns/new/:orderNumber" element={<ProtectedRoute><ReturnRequest /></ProtectedRoute>} />
+        <Route path="/invoice/:orderNumber" element={<ProtectedRoute><Invoice /></ProtectedRoute>} />
+        <Route path="/policies/:type" element={<Policy />} />
         <Route path="*" element={<NotFound />} />
       </Route>
 
@@ -54,6 +65,9 @@ export default function App() {
         <Route path="orders" element={<AdminOrders />} />
         <Route path="orders/:id" element={<AdminOrderDetail />} />
         <Route path="promotions" element={<AdminPromotions />} />
+        <Route path="returns" element={<AdminReturns />} />
+        <Route path="settings" element={<AdminSettings />} />
+        <Route path="orders/:id/invoice" element={<AdminInvoice />} />
       </Route>
     </Routes>
   );

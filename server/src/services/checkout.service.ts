@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
 import { sendOrderPlacedNotifications } from "./notification.service";
+import { calculateShippingFee, getStoreSettings } from "./store.service";
 
 export type CheckoutInput = {
   customerName: string;
@@ -14,14 +15,14 @@ export type CheckoutInput = {
   items: { variantId: string; quantity: number }[];
 };
 
-type SnapshotItem = { variantId: string; productName: string; variantName: string; sku: string; quantity: number; unitPrice: number; lineTotal: number };
+type SnapshotItem = { variantId: string; productName: string; variantName: string; sku: string; quantity: number; unitPrice: number; lineTotal: number; hsnCode: string | null; gstRate: number };
 
 function makeOrderNumber() {
   const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
   return `RISE-${date}-${randomBytes(3).toString("hex").toUpperCase()}`;
 }
 
-export async function prepareCheckout(input: CheckoutInput) {
+export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE") {
   const requestedIds = [...new Set(input.items.map((item) => item.variantId))];
   const variants = await prisma.productVariant.findMany({ where: { id: { in: requestedIds }, isActive: true, product: { isActive: true } }, include: { product: true } });
   if (variants.length !== requestedIds.length) throw new Error("PRODUCT_UNAVAILABLE");
@@ -29,10 +30,9 @@ export async function prepareCheckout(input: CheckoutInput) {
   const items: SnapshotItem[] = input.items.map((item) => {
     const variant = variantMap.get(item.variantId)!;
     const unitPrice = Number(variant.sellingPrice);
-    return { variantId: variant.id, productName: variant.product.name, variantName: variant.name, sku: variant.sku, quantity: item.quantity, unitPrice, lineTotal: unitPrice * item.quantity };
+    return { variantId: variant.id, productName: variant.product.name, variantName: variant.name, sku: variant.sku, quantity: item.quantity, unitPrice, lineTotal: unitPrice * item.quantity, hsnCode: variant.hsnCode ?? null, gstRate: Number(variant.gstRate || 0) };
   });
   const subtotal = items.reduce((sum, item) => sum + item.lineTotal, 0);
-  const shippingFee = 0;
   let coupon = null;
   let discountAmount = 0;
   if (input.couponCode) {
@@ -42,6 +42,9 @@ export async function prepareCheckout(input: CheckoutInput) {
     if (!evaluation.valid) throw new Error(`COUPON_INVALID:${evaluation.message}`);
     discountAmount = evaluation.discountAmount;
   }
+  const settings = await getStoreSettings();
+  const merchandiseAfterDiscount = Math.max(0, subtotal - discountAmount);
+  const shippingFee = calculateShippingFee({ merchandiseAfterDiscount, paymentMethod, settings });
   return { items, subtotal, shippingFee, discountAmount, totalAmount: Math.max(0, subtotal + shippingFee - discountAmount), coupon };
 }
 
@@ -61,7 +64,7 @@ async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { item
 }
 
 export async function createCodOrder(input: CheckoutInput, userId: string | null) {
-  const prepared = await prepareCheckout(input);
+  const prepared = await prepareCheckout(input, "COD");
   const order = await prisma.$transaction(async (tx) => {
     await reserveCouponAndStock(tx, prepared);
     return tx.order.create({
@@ -69,7 +72,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
         orderNumber: makeOrderNumber(), userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
         customerPhone: input.customerPhone, shippingAddress: input.shippingAddress, paymentMethod: "COD", couponCode: prepared.coupon?.code ?? null,
         subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount, totalAmount: prepared.totalAmount,
-        items: { create: prepared.items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName, sku: item.sku, quantity: item.quantity, unitPrice: item.unitPrice, lineTotal: item.lineTotal })) },
+        items: { create: prepared.items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName, sku: item.sku, quantity: item.quantity, unitPrice: item.unitPrice, lineTotal: item.lineTotal, hsnCode: item.hsnCode ?? null, gstRate: item.gstRate ?? 0 })) },
         payment: { create: { method: "COD", status: "PENDING", amount: prepared.totalAmount } },
         statusHistory: { create: { status: "PENDING", note: "Order placed", source: userId ? "CUSTOMER" : "GUEST" } },
       },
@@ -81,7 +84,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
 }
 
 export async function createOnlineCheckoutReservation(input: CheckoutInput, userId: string | null) {
-  const prepared = await prepareCheckout(input);
+  const prepared = await prepareCheckout(input, "ONLINE");
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   return prisma.$transaction(async (tx) => {
     await reserveCouponAndStock(tx, prepared);
@@ -142,7 +145,7 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
         customerPhone: existing.customerPhone, shippingAddress: existing.shippingAddress as Prisma.InputJsonValue,
         paymentMethod: "ONLINE", couponCode: existing.couponCode, subtotal: existing.subtotal, shippingFee: existing.shippingFee,
         discountAmount: existing.discountAmount, totalAmount: existing.totalAmount, status: "CONFIRMED",
-        items: { create: items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName, sku: item.sku, quantity: item.quantity, unitPrice: item.unitPrice, lineTotal: item.lineTotal })) },
+        items: { create: items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName, sku: item.sku, quantity: item.quantity, unitPrice: item.unitPrice, lineTotal: item.lineTotal, hsnCode: item.hsnCode ?? null, gstRate: item.gstRate ?? 0 })) },
         payment: { create: { method: "ONLINE", status: "PAID", provider: "RAZORPAY", providerOrderId: input.providerOrderId, providerPaymentId: input.providerPaymentId, transactionId: input.providerPaymentId, amount: existing.totalAmount, paidAt: new Date() } },
         statusHistory: { create: [{ status: "PENDING", note: "Online payment initiated", source: "PAYMENT" }, { status: "CONFIRMED", note: "Online payment received", source: "PAYMENT" }] },
       },
