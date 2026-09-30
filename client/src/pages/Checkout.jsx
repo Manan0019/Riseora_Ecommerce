@@ -5,6 +5,22 @@ import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
 
+let razorpayScriptPromise;
+function loadRazorpayScript() {
+  if (window.Razorpay) return Promise.resolve(true);
+  if (!razorpayScriptPromise) {
+    razorpayScriptPromise = new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  }
+  return razorpayScriptPromise;
+}
+
 export default function Checkout() {
   const { items, subtotal, clearCart } = useCart();
   const { user } = useAuth();
@@ -18,23 +34,20 @@ export default function Checkout() {
   const [appliedCoupon, setAppliedCoupon] = useState("");
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("COD");
+  const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
     customerPhone: user?.phone || "",
-    line1: "",
-    line2: "",
-    landmark: "",
-    city: "",
-    state: "Gujarat",
-    postalCode: "",
+    line1: "", line2: "", landmark: "", city: "", state: "Gujarat", postalCode: "",
   });
 
+  useEffect(() => { setAppliedCoupon(""); setDiscountAmount(0); setCouponMessage(""); }, [subtotal]);
+
   useEffect(() => {
-    setAppliedCoupon("");
-    setDiscountAmount(0);
-    setCouponMessage("");
-  }, [subtotal]);
+    apiFetch("/payments/config").then((response) => setOnlinePaymentsEnabled(Boolean(response.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false));
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -47,17 +60,7 @@ export default function Checkout() {
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
-    setForm((current) => ({
-      ...current,
-      customerName: item.name || current.customerName,
-      customerPhone: item.phone || current.customerPhone,
-      line1: item.line1 || "",
-      line2: item.line2 || "",
-      landmark: item.landmark || "",
-      city: item.city || "",
-      state: item.state || "",
-      postalCode: item.postalCode || "",
-    }));
+    setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: item.postalCode || "" }));
   }
 
   if (items.length === 0) return <Navigate to="/cart" replace />;
@@ -70,30 +73,67 @@ export default function Checkout() {
     setCouponError(""); setCouponMessage("");
     try {
       const response = await apiFetch("/promotions/coupons/validate", { method: "POST", body: JSON.stringify({ code, subtotal }) });
-      setAppliedCoupon(response.data.code);
-      setDiscountAmount(Number(response.data.discountAmount));
-      setCouponMessage(`Coupon ${response.data.code} applied.`);
-    } catch (err) {
-      setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message);
-    }
+      setAppliedCoupon(response.data.code); setDiscountAmount(Number(response.data.discountAmount)); setCouponMessage(`Coupon ${response.data.code} applied.`);
+    } catch (err) { setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message); }
+  }
+
+  function checkoutPayload() {
+    return {
+      customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "",
+      shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" },
+      items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
+    };
+  }
+
+  async function payOnline() {
+    const scriptReady = await loadRazorpayScript();
+    if (!scriptReady || !window.Razorpay) throw new Error("Secure payment window could not be loaded. Please try again or use COD.");
+    const sessionResponse = await apiFetch("/payments/razorpay/session", { method: "POST", body: JSON.stringify(checkoutPayload()) });
+    const session = sessionResponse.data;
+
+    return new Promise((resolve, reject) => {
+      const checkout = new window.Razorpay({
+        key: session.keyId,
+        amount: session.amountPaise,
+        currency: session.currency,
+        name: "Riseora Herbals",
+        description: "Riseora online order",
+        order_id: session.providerOrderId,
+        prefill: { name: session.customer.name || "", email: session.customer.email || "", contact: session.customer.phone || "" },
+        theme: { color: "#173326" },
+        handler: async (paymentResponse) => {
+          try {
+            const verified = await apiFetch("/payments/razorpay/verify", {
+              method: "POST",
+              body: JSON.stringify({ sessionId: session.sessionId, ...paymentResponse }),
+            });
+            resolve(verified.data);
+          } catch (verifyError) { reject(verifyError); }
+        },
+        modal: {
+          ondismiss: () => {
+            apiFetch("/payments/razorpay/cancel", { method: "POST", body: JSON.stringify({ sessionId: session.sessionId }) }).catch(() => {});
+            reject(new Error("Payment was cancelled. Your cart is still here."));
+          },
+        },
+      });
+      checkout.on("payment.failed", (response) => reject(new Error(response?.error?.description || "Payment failed. Please try again.")));
+      checkout.open();
+    });
   }
 
   async function submit(event) {
     event.preventDefault(); setSubmitting(true); setError("");
     try {
-      const response = await apiFetch("/orders", {
-        method: "POST",
-        body: JSON.stringify({
-          customerName: form.customerName,
-          customerEmail: form.customerEmail,
-          customerPhone: form.customerPhone,
-          couponCode: appliedCoupon || "",
-          paymentMethod: "COD",
-          shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" },
-          items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
-        }),
-      });
-      clearCart(); navigate(`/order-success/${response.data.orderNumber}`, { replace: true });
+      let order;
+      if (paymentMethod === "ONLINE") {
+        order = await payOnline();
+      } else {
+        const response = await apiFetch("/orders", { method: "POST", body: JSON.stringify({ ...checkoutPayload(), paymentMethod: "COD" }) });
+        order = response.data;
+      }
+      clearCart();
+      navigate(`/order-success/${order.orderNumber}`, { replace: true });
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
   }
 
@@ -116,9 +156,12 @@ export default function Checkout() {
           <label>Landmark<input name="landmark" value={form.landmark} onChange={update} /></label>
           <div className="form-grid three"><label>City<input required name="city" value={form.city} onChange={update} autoComplete="address-level2" /></label><label>State<input required name="state" value={form.state} onChange={update} autoComplete="address-level1" /></label><label>PIN code<input required name="postalCode" value={form.postalCode} onChange={update} inputMode="numeric" autoComplete="postal-code" /></label></div>
 
-          <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>More payment options can be added later.</p></div></div>
-          <div className="payment-box selected"><span><Icon name="shield" size={20} /></span><div><strong>Cash on Delivery (COD)</strong><p>Pay when your order arrives.</p></div><b>✓</b></div>
-          <button className="button wide checkout-submit" disabled={submitting}>{submitting ? "Placing order…" : `Place order • ₹${total.toFixed(0)}`}</button>
+          <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
+          <div className="payment-choice-grid">
+            {onlinePaymentsEnabled && <button type="button" className={paymentMethod === "ONLINE" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("ONLINE")}><span><Icon name="shield" size={20} /></span><div><strong>Pay online</strong><p>UPI, cards, netbanking & supported wallets.</p></div><b>{paymentMethod === "ONLINE" ? "✓" : ""}</b></button>}
+            <button type="button" className={paymentMethod === "COD" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>Pay when your order arrives.</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button>
+          </div>
+          <button className="button wide checkout-submit" disabled={submitting}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
         </form>
 
         <aside className="summary-card checkout-summary">

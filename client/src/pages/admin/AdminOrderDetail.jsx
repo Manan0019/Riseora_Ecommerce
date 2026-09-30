@@ -18,6 +18,7 @@ export default function AdminOrderDetail() {
   const [form, setForm] = useState({ status: "", note: "", carrier: "", trackingNumber: "", trackingUrl: "" });
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [refunding, setRefunding] = useState(false);
 
   async function load() {
     const response = await apiFetch(`/admin/orders/${id}`);
@@ -26,7 +27,12 @@ export default function AdminOrderDetail() {
   }
   useEffect(() => { load().catch((e) => setError(e.message)); }, [id]);
 
-  const statusOptions = useMemo(() => order ? [order.status, ...(nextByStatus[order.status] || [])] : [], [order]);
+  const statusOptions = useMemo(() => {
+    if (!order) return [];
+    const next = nextByStatus[order.status] || [];
+    const filtered = order.paymentMethod === "ONLINE" && order.payment?.status === "PAID" ? next.filter((status) => status !== "CANCELLED") : next;
+    return [order.status, ...filtered];
+  }, [order]);
 
   async function save(event) {
     event.preventDefault(); setMessage(""); setError("");
@@ -34,6 +40,16 @@ export default function AdminOrderDetail() {
       await apiFetch(`/admin/orders/${id}/fulfilment`, { method: "PATCH", body: JSON.stringify(form) });
       setMessage("Order fulfilment updated."); setForm((current) => ({ ...current, note: "" })); await load();
     } catch (e) { setError(e.message); }
+  }
+
+  async function refundAndCancel() {
+    if (!order || !window.confirm(`Refund ₹${Number(order.totalAmount).toFixed(0)} and cancel ${order.orderNumber}?`)) return;
+    setRefunding(true); setMessage(""); setError("");
+    try {
+      await apiFetch(`/admin/orders/${id}/refund`, { method: "POST" });
+      setMessage("Online payment refunded and order cancelled.");
+      await load();
+    } catch (e) { setError(e.message); } finally { setRefunding(false); }
   }
 
   if (error && !order) return <><p className="alert error">{error}</p><Link to="/admin/orders">← Back to orders</Link></>;
@@ -46,7 +62,7 @@ export default function AdminOrderDetail() {
 
     <div className="admin-order-detail-grid">
       <section className="admin-panel"><div className="admin-panel-head"><div><h2>Customer & delivery</h2><p>Shipping snapshot captured at checkout.</p></div></div><div className="admin-detail-stack"><strong>{order.customerName}</strong><span>{order.customerPhone}</span>{order.customerEmail && <span>{order.customerEmail}</span>}<p>{[address.line1, address.line2, address.landmark, address.city, address.state, address.postalCode, address.country].filter(Boolean).join(", ")}</p></div></section>
-      <section className="admin-panel"><div className="admin-panel-head"><div><h2>Payment</h2><p>{order.paymentMethod}</p></div></div><div className="admin-payment-summary"><span>Status <strong>{order.payment?.status || "PENDING"}</strong></span><span>Total <strong>₹{Number(order.totalAmount).toFixed(0)}</strong></span>{order.couponCode && <span>Coupon <strong>{order.couponCode}</strong></span>}</div></section>
+      <section className="admin-panel"><div className="admin-panel-head"><div><h2>Payment</h2><p>{order.paymentMethod}</p></div></div><div className="admin-payment-summary"><span>Status <strong>{order.payment?.status || "PENDING"}</strong></span><span>Total <strong>₹{Number(order.totalAmount).toFixed(0)}</strong></span>{order.payment?.providerPaymentId && <span>Payment ID <strong>{order.payment.providerPaymentId}</strong></span>}{order.payment?.refundId && <span>Refund ID <strong>{order.payment.refundId}</strong></span>}{order.couponCode && <span>Coupon <strong>{order.couponCode}</strong></span>}</div>{order.paymentMethod === "ONLINE" && order.payment?.status === "PAID" && !["SHIPPED","DELIVERED","CANCELLED"].includes(order.status) && <button type="button" className="button button-danger admin-refund-button" disabled={refunding} onClick={refundAndCancel}>{refunding ? "Refunding…" : "Refund payment & cancel order"}</button>}</section>
     </div>
 
     <div className="admin-order-detail-grid fulfilment-grid">

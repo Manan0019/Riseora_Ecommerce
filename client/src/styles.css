@@ -979,3 +979,13 @@ textarea { min-height: 105px; resize: vertical; }
   .admin-order-detail-grid { grid-template-columns:1fr 1fr; }
   .fulfilment-grid { grid-template-columns:.9fr 1.1fr; }
 }
+
+/* Phase 6: payment selection */
+.payment-choice-grid { display: grid; gap: 10px; }
+.payment-choice-grid .payment-box { width: 100%; text-align: left; cursor: pointer; }
+.payment-choice-grid .payment-box:not(.selected) { background: #fff; border-color: var(--line); }
+.payment-choice-grid .payment-box.selected { border-color: var(--green-800); box-shadow: 0 0 0 2px rgba(23,51,38,.08); }
+@media (min-width: 720px) { .payment-choice-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+.admin-refund-button { margin-top: 16px; }
+.button-danger { background: #8b2f2f; color: #fff; border-color: #8b2f2f; }
+.button-danger:hover { background: #742525; }

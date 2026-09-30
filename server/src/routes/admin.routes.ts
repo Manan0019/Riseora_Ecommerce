@@ -4,6 +4,8 @@ import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { slugify } from "../utils/slugify";
+import { sendOrderStatusNotification } from "../services/notification.service";
+import { refundRazorpayPayment } from "../services/payment.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -226,6 +228,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
 
     if (!isSameStatus && payload.status === "CANCELLED") {
+      if (order.paymentMethod === "ONLINE" && order.payment?.status === "PAID") throw new Error("PREPAID_REFUND_REQUIRED");
       for (const item of order.items) {
         if (item.variantId) {
           await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
@@ -295,6 +298,39 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
   });
 }
 
+router.post(
+  "/orders/:id/refund",
+  asyncHandler(async (req, res) => {
+    const order = await prisma.order.findUnique({ where: { id: req.params.id }, include: { items: true, payment: true, shipment: true } });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (["SHIPPED", "DELIVERED", "CANCELLED"].includes(order.status)) return res.status(400).json({ success: false, message: "This order can no longer be refunded from the dashboard" });
+    if (order.paymentMethod !== "ONLINE" || !order.payment?.providerPaymentId || order.payment.status !== "PAID") return res.status(400).json({ success: false, message: "This order does not have a refundable online payment" });
+
+    const locked = await prisma.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING" } });
+    if (locked.count !== 1) return res.status(409).json({ success: false, message: "This payment is already being refunded or is no longer refundable" });
+
+    let refund;
+    try {
+      refund = await refundRazorpayPayment(order.payment.providerPaymentId, Math.round(Number(order.totalAmount) * 100));
+    } catch (error) {
+      await prisma.payment.updateMany({ where: { orderId: order.id, status: "REFUNDING" }, data: { status: "PAID" } });
+      if (error instanceof Error && error.message === "PAYMENT_REFUND_FAILED") return res.status(502).json({ success: false, message: "Refund could not be completed by the payment provider. No order data was changed." });
+      throw error;
+    }
+
+    const updated = await prisma.$transaction(async (tx) => {
+      for (const item of order.items) if (item.variantId) await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
+      if (order.couponCode) await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
+      await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAt: new Date() } });
+      await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
+      await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
+      return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
+    });
+    if (updated) void sendOrderStatusNotification(updated).catch((error) => console.error("Refund email failed", error));
+    res.json({ success: true, data: updated });
+  }),
+);
+
 router.patch(
   "/orders/:id/fulfilment",
   asyncHandler(async (req, res) => {
@@ -302,11 +338,13 @@ router.patch(
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid fulfilment update", errors: parsed.error.flatten() });
     try {
       const order = await updateFulfilment(req.params.id, parsed.data);
+      if (order) void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
       res.json({ success: true, data: order });
     } catch (error) {
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
       if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Carrier and tracking number are required before marking an order shipped" });
+      if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }
@@ -320,10 +358,12 @@ router.patch(
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid order status" });
     try {
       const order = await updateFulfilment(req.params.id, { status: parsed.data.status });
+      if (order) void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
       res.json({ success: true, data: order });
     } catch (error) {
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Use order details to add shipping information before marking this order shipped" });
+      if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
       throw error;
