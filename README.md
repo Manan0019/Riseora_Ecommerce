@@ -379,3 +379,16 @@ The storefront now has a persistent safe-area mobile bottom dock, mobile filter 
 
 Phase 16 adds live product/category suggestions in the global search, recent-search and recently-viewed discovery, and a responsive product Quick View (desktop modal / mobile bottom sheet) with fresh variant, stock, gallery, wishlist and Add-to-Cart controls. No database migration is required. See `PHASE16_PREDICTIVE_SEARCH_QUICK_VIEW.md` for runtime checks.
 
+## Phase 17 — Instant Buy, Delivery Promise & Mobile Checkout
+
+Phase 17 adds a session-scoped Buy Now path that leaves the normal cart untouched, configurable dispatch/delivery estimates, remembered PIN preference, low-stock urgency messaging, product sharing, and a sticky mobile Checkout completion dock.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase17_instant_buy_delivery_checkout
+npm run db:generate
+npm run build
+```
+
+See `PHASE17_INSTANT_BUY_DELIVERY_CHECKOUT.md` for the runtime checklist.

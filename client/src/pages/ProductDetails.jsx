@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useStore } from "../context/StoreContext";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
@@ -13,6 +14,19 @@ const RECENT_KEY = "riseora_recent_products";
 function readRecent() {
   try { return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]"); } catch { return []; }
 }
+function readSavedPin() {
+  try {
+    const value = localStorage.getItem("riseora_delivery_pin") || "";
+    return /^\d{6}$/.test(value) ? value : "";
+  } catch { return ""; }
+}
+
+function formatEta(days) {
+  const date = new Date();
+  date.setDate(date.getDate() + Math.max(0, Number(days || 0)));
+  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+}
+
 function rememberProduct(product) {
   try {
     const snapshot = {
@@ -26,9 +40,11 @@ function rememberProduct(product) {
 
 export default function ProductDetails() {
   const { slug } = useParams();
-  const { addItem } = useCart();
+  const navigate = useNavigate();
+  const { addItem, startBuyNow } = useCart();
   const { user } = useAuth();
   const { toggle, has } = useWishlist();
+  const { store } = useStore();
   const [product, setProduct] = useState(null);
   const [variantId, setVariantId] = useState("");
   const [quantity, setQuantity] = useState(1);
@@ -43,6 +59,9 @@ export default function ProductDetails() {
   const [frequentlyBought, setFrequentlyBought] = useState([]);
   const [recent, setRecent] = useState([]);
   const [fbtSelected, setFbtSelected] = useState([]);
+  const [deliveryPin, setDeliveryPin] = useState(readSavedPin);
+  const [deliveryMessage, setDeliveryMessage] = useState("");
+  const [shareMessage, setShareMessage] = useState("");
   const galleryTouchStart = useRef(null);
 
   function loadProduct() {
@@ -90,7 +109,19 @@ export default function ProductDetails() {
     changeImage(end < start ? 1 : -1);
   };
   const inStock = variant && Number(variant.stockQuantity) > 0;
+  const stockQuantity = Number(variant?.stockQuantity || 0);
+  const lowStockThreshold = Math.max(1, Number(store.lowStockUrgencyThreshold || 5));
+  const lowStock = inStock && stockQuantity <= lowStockThreshold;
+  const dispatchDays = Math.max(0, Number(store.dispatchWithinDays ?? 2));
+  const deliveryMinDays = Math.max(1, Number(store.deliveryMinDays ?? 3));
+  const deliveryMaxDays = Math.max(deliveryMinDays, Number(store.deliveryMaxDays ?? 7));
+  const estimatedFrom = formatEta(dispatchDays + deliveryMinDays);
+  const estimatedTo = formatEta(dispatchDays + deliveryMaxDays);
   const addCurrent = () => inStock && addItem(product, variant, Math.min(quantity, Number(variant.stockQuantity)));
+  const buyCurrent = () => {
+    if (!inStock || !variant) return;
+    if (startBuyNow(product, variant, Math.min(quantity, stockQuantity))) navigate("/checkout?mode=buy-now");
+  };
   const wished = has(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
   const fbtProducts = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2);
@@ -99,6 +130,26 @@ export default function ProductDetails() {
   function addFrequentlyBought() {
     if (inStock && variant) addItem(product, variant, 1);
     for (const item of fbtChosen) { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); if (v) addItem(item, v, 1); }
+  }
+
+  function saveDeliveryPin(event) {
+    event.preventDefault();
+    const value = deliveryPin.replace(/\D/g, "").slice(0, 6);
+    setDeliveryPin(value);
+    if (!/^\d{6}$/.test(value)) { setDeliveryMessage("Enter a valid 6-digit PIN code."); return; }
+    try { localStorage.setItem("riseora_delivery_pin", value); } catch { /* optional preference */ }
+    setDeliveryMessage(`Typical estimate for PIN ${value}: ${estimatedFrom}–${estimatedTo}. Final serviceability is confirmed by the courier.`);
+  }
+
+  async function shareProduct() {
+    const url = window.location.href;
+    setShareMessage("");
+    try {
+      if (navigator.share) await navigator.share({ title: product.name, text: product.shortDescription || product.name, url });
+      else { await navigator.clipboard.writeText(url); setShareMessage("Product link copied."); }
+    } catch (err) {
+      if (err?.name !== "AbortError") setShareMessage("Copy this page link to share the product.");
+    }
   }
 
   async function submitReview(event) {
@@ -137,9 +188,16 @@ export default function ProductDetails() {
           <p className="lead">{product.shortDescription || "Thoughtful herbal care for your everyday routine."}</p>
           {variant && <div className="detail-price"><strong>₹{Number(variant.sellingPrice).toFixed(0)}</strong>{Number(variant.mrp) > Number(variant.sellingPrice) && <del>₹{Number(variant.mrp).toFixed(0)}</del>}{Number(variant.mrp) > Number(variant.sellingPrice) && <span className="detail-saving">Save ₹{(Number(variant.mrp)-Number(variant.sellingPrice)).toFixed(0)}</span>}</div>}
           <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
-          <div className="desktop-buy-block"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><button className="button wide phase3-add" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
+          {lowStock && <div className="phase17-low-stock"><span>SELLING FAST</span><strong>Only {stockQuantity} left in {variant.name}</strong></div>}
+          <div className="desktop-buy-block phase17-desktop-buy"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(Number(variant?.stockQuantity || 1), Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><div className="phase17-buy-actions"><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
           {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
-          <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="truck" size={19} /><b>India delivery</b><small>Track your order</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>
+          <section className="phase17-delivery-card">
+            <div className="phase17-delivery-head"><span><Icon name="truck" size={20} /></span><div><strong>Delivery estimate</strong><small>Usually dispatches within {dispatchDays} day{dispatchDays === 1 ? "" : "s"} · typical arrival {estimatedFrom}–{estimatedTo}</small></div><button type="button" onClick={shareProduct} aria-label="Share product"><Icon name="share" size={18} /></button></div>
+            <form className="phase17-pin-check" onSubmit={saveDeliveryPin}><input value={deliveryPin} onChange={(e) => setDeliveryPin(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" placeholder="Enter 6-digit PIN" aria-label="Delivery PIN code" /><button type="submit">SAVE PIN</button></form>
+            {deliveryMessage && <small className="phase17-delivery-message">{deliveryMessage}</small>}
+            {shareMessage && <small className="phase17-share-message">{shareMessage}</small>}
+          </section>
+          <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="clock" size={19} /><b>{deliveryMinDays}–{deliveryMaxDays} day delivery</b><small>Typical estimate</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>
         </div>
       </div>
 
@@ -166,7 +224,7 @@ export default function ProductDetails() {
         <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews are checked by Riseora before publishing.</p><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><button className="black-button" type="submit">SUBMIT REVIEW</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div></div>
       </section>
 
-      <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <button className="button" onClick={addCurrent}>ADD TO CART</button> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>
+      <div className="mobile-buy-bar phase3-buy-bar phase17-mobile-buy"><div className="phase17-mobile-price"><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <div className="phase17-mobile-actions"><button className="button button-secondary" onClick={addCurrent}>ADD</button><button className="button" onClick={buyCurrent}>BUY NOW</button></div> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>
     </div>
   </>;
 }

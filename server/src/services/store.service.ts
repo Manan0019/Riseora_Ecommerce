@@ -11,6 +11,10 @@ const defaultSettingData = {
   invoiceNextNumber: 1,
   flatShippingFee: 0,
   codFee: 0,
+  dispatchWithinDays: 2,
+  deliveryMinDays: 3,
+  deliveryMaxDays: 7,
+  lowStockUrgencyThreshold: 5,
   returnsEnabled: true,
   returnWindowDays: 7,
 } as const;

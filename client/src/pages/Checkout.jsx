@@ -1,11 +1,23 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
 
 const RECOVERY_KEY = "riseora_cart_recovery_token";
+const BUY_NOW_RECOVERY_KEY = "riseora_buy_now_recovery_token";
+function readSavedPin() {
+  try {
+    const value = localStorage.getItem("riseora_delivery_pin") || "";
+    return /^\d{6}$/.test(value) ? value : "";
+  } catch { return ""; }
+}
+function formatEta(days) {
+  const date = new Date();
+  date.setDate(date.getDate() + Math.max(0, Number(days || 0)));
+  return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+}
 let razorpayScriptPromise;
 function loadRazorpayScript() {
   if (window.Razorpay) return Promise.resolve(true);
@@ -23,9 +35,14 @@ function loadRazorpayScript() {
 }
 
 export default function Checkout() {
-  const { items, subtotal, clearCart } = useCart();
+  const { items, subtotal, clearCart, buyNowItems, buyNowSubtotal, clearBuyNow } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const buyNowMode = searchParams.get("mode") === "buy-now";
+  const checkoutItems = buyNowMode ? buyNowItems : items;
+  const checkoutSubtotal = buyNowMode ? buyNowSubtotal : subtotal;
+  const activeRecoveryKey = buyNowMode ? BUY_NOW_RECOVERY_KEY : RECOVERY_KEY;
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -38,16 +55,16 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
   const [recoveryOptIn, setRecoveryOptIn] = useState(false);
-  const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0 });
+  const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7 });
   const [pricing, setPricing] = useState(null);
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
     customerPhone: user?.phone || "",
-    line1: "", line2: "", landmark: "", city: "", state: "Gujarat", postalCode: "",
+    line1: "", line2: "", landmark: "", city: "", state: "Gujarat", postalCode: readSavedPin(),
   });
 
-  useEffect(() => { setAppliedCoupon(""); setDiscountAmount(0); setCouponMessage(""); }, [subtotal]);
+  useEffect(() => { setAppliedCoupon(""); setDiscountAmount(0); setCouponMessage(""); }, [checkoutSubtotal]);
 
   useEffect(() => {
     apiFetch("/payments/config").then((response) => setOnlinePaymentsEnabled(Boolean(response.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false));
@@ -65,40 +82,40 @@ export default function Checkout() {
 
   useEffect(() => {
     const email = form.customerEmail.trim();
-    if (!items.length || !/^\S+@\S+\.\S+$/.test(email)) return;
+    if (!checkoutItems.length || !/^\S+@\S+\.\S+$/.test(email)) return;
     const timer = setTimeout(() => {
       let cartToken;
-      try { cartToken = localStorage.getItem(RECOVERY_KEY) || undefined; } catch { cartToken = undefined; }
+      try { cartToken = localStorage.getItem(activeRecoveryKey) || undefined; } catch { cartToken = undefined; }
       apiFetch("/cart-recovery", {
         method: "POST",
         body: JSON.stringify({
           ...(cartToken ? { cartToken } : {}),
-          email, name: form.customerName, phone: form.customerPhone, subtotal, recoveryOptIn,
-          items: items.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName || "", sku: item.sku, quantity: item.quantity, price: Number(item.price), imageUrl: item.imageUrl || "" })),
+          email, name: form.customerName, phone: form.customerPhone, subtotal: checkoutSubtotal, recoveryOptIn,
+          items: checkoutItems.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName || "", sku: item.sku, quantity: item.quantity, price: Number(item.price), imageUrl: item.imageUrl || "" })),
         }),
-      }).then((response) => { try { localStorage.setItem(RECOVERY_KEY, response.data.cartToken); } catch {} }).catch(() => {});
+      }).then((response) => { try { localStorage.setItem(activeRecoveryKey, response.data.cartToken); } catch {} }).catch(() => {});
     }, 1200);
     return () => clearTimeout(timer);
-  }, [form.customerEmail, form.customerName, form.customerPhone, items, subtotal, recoveryOptIn]);
+  }, [form.customerEmail, form.customerName, form.customerPhone, checkoutItems, checkoutSubtotal, recoveryOptIn, activeRecoveryKey]);
 
   useEffect(() => {
-    if (!items.length) { setPricing(null); return; }
+    if (!checkoutItems.length) { setPricing(null); return; }
     let cancelled = false;
     const timer = setTimeout(() => {
       apiFetch("/promotions/cart-preview", {
         method: "POST",
-        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
       }).then((response) => { if (!cancelled) setPricing(response.data); }).catch(() => { if (!cancelled) setPricing(null); });
     }, 180);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [items, paymentMethod, appliedCoupon]);
+  }, [checkoutItems, paymentMethod, appliedCoupon]);
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
     setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: item.postalCode || "" }));
   }
 
-  if (items.length === 0) return <Navigate to="/cart" replace />;
+  if (checkoutItems.length === 0) return <Navigate to={buyNowMode ? "/shop" : "/cart"} replace />;
 
   function update(event) { setForm((current) => ({ ...current, [event.target.name]: event.target.value })); }
 
@@ -107,7 +124,7 @@ export default function Checkout() {
     if (!code) return;
     setCouponError(""); setCouponMessage("");
     try {
-      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
+      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
       setAppliedCoupon(code); setDiscountAmount(Number(response.data.couponDiscountAmount || 0)); setPricing(response.data); setCouponMessage(`Coupon ${code} applied.`);
     } catch (err) { setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message); }
   }
@@ -116,7 +133,7 @@ export default function Checkout() {
     return {
       customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "",
       shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" },
-      items: items.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
+      items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })),
     };
   }
 
@@ -168,18 +185,18 @@ export default function Checkout() {
         order = response.data;
       }
       try {
-        const cartToken = localStorage.getItem(RECOVERY_KEY);
+        const cartToken = localStorage.getItem(activeRecoveryKey);
         if (cartToken) {
           await apiFetch("/cart-recovery/converted", { method: "POST", body: JSON.stringify({ cartToken, orderNumber: order.orderNumber }) });
-          localStorage.removeItem(RECOVERY_KEY);
+          localStorage.removeItem(activeRecoveryKey);
         }
       } catch { /* recovery tracking must never block a completed order */ }
-      clearCart();
+      if (buyNowMode) clearBuyNow(); else clearCart();
       navigate(`/order-success/${order.orderNumber}`, { replace: true });
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? subtotal);
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal);
   const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0);
   const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount);
   const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount);
@@ -189,12 +206,17 @@ export default function Checkout() {
   const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee;
   const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee);
   const freeItems = pricing?.freeItems || [];
+  const dispatchDays = Math.max(0, Number(storeConfig.dispatchWithinDays ?? 2));
+  const deliveryMinDays = Math.max(1, Number(storeConfig.deliveryMinDays ?? 3));
+  const deliveryMaxDays = Math.max(deliveryMinDays, Number(storeConfig.deliveryMaxDays ?? 7));
+  const estimatedFrom = formatEta(dispatchDays + deliveryMinDays);
+  const estimatedTo = formatEta(dispatchDays + deliveryMaxDays);
 
   return (
     <div className="container page-space checkout-page">
-      <div className="checkout-heading"><p className="eyebrow">SECURE CHECKOUT</p><h1>Complete your order</h1></div>
+      <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
       <div className="checkout-layout">
-        <form className="form-card checkout-form" onSubmit={submit}>
+        <form id="riseora-checkout-form" className="form-card checkout-form" onSubmit={submit}>
           <div className="form-section-title"><span>1</span><div><h2>Contact details</h2><p>We'll use these details for your order.</p></div></div>
           {error && <p className="alert error">{error}</p>}
           <div className="form-grid two"><label>Full name<input required name="customerName" value={form.customerName} onChange={update} autoComplete="name" /></label><label>Phone<input required name="customerPhone" value={form.customerPhone} onChange={update} inputMode="tel" autoComplete="tel" /></label></div>
@@ -207,6 +229,7 @@ export default function Checkout() {
           <label>Address line 2<input name="line2" value={form.line2} onChange={update} autoComplete="address-line2" /></label>
           <label>Landmark<input name="landmark" value={form.landmark} onChange={update} /></label>
           <div className="form-grid three"><label>City<input required name="city" value={form.city} onChange={update} autoComplete="address-level2" /></label><label>State<input required name="state" value={form.state} onChange={update} autoComplete="address-level1" /></label><label>PIN code<input required name="postalCode" value={form.postalCode} onChange={update} inputMode="numeric" autoComplete="postal-code" /></label></div>
+          <div className="phase17-checkout-delivery"><Icon name="truck" size={19} /><div><strong>Typical delivery {estimatedFrom}–{estimatedTo}</strong><small>Usually dispatched within {dispatchDays} day{dispatchDays === 1 ? "" : "s"}. Final courier serviceability depends on the delivery PIN code.</small></div></div>
 
           <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
           <div className="payment-choice-grid">
@@ -218,7 +241,7 @@ export default function Checkout() {
 
         <aside className="summary-card checkout-summary">
           <h2>Order summary</h2>
-          <div className="checkout-items">{items.map((item) => <div className="checkout-item" key={item.variantId}><div className="checkout-item-image">{item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt="" /> : "R"}<b>{item.quantity}</b></div><div><strong>{item.productName}</strong><span>{item.variantName}</span></div><strong>₹{(item.price * item.quantity).toFixed(0)}</strong></div>)}</div>
+          <div className="checkout-items">{checkoutItems.map((item) => <div className="checkout-item" key={item.variantId}><div className="checkout-item-image">{item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt="" /> : "R"}<b>{item.quantity}</b></div><div><strong>{item.productName}</strong><span>{item.variantName}</span></div><strong>₹{(item.price * item.quantity).toFixed(0)}</strong></div>)}</div>
           <div className="coupon-box"><label>Coupon code</label><div><input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Enter code" /><button type="button" onClick={applyCoupon}>Apply</button></div>{couponMessage && <small className="coupon-success">{couponMessage}</small>}{couponError && <small className="coupon-error">{couponError}</small>}</div>
           {pricing?.automaticPromotionName && <div className="phase13-auto-offer"><span>✨</span><div><strong>{pricing.automaticPromotionName}</strong><small>{automaticDiscountAmount > 0 ? `Automatic saving ₹${automaticDiscountAmount.toFixed(0)}` : freeItems.length ? "Free gift unlocked automatically" : "Automatic offer applied"}</small></div></div>}
           {freeItems.length > 0 && <div className="phase13-free-items">{freeItems.map((item) => <div key={`${item.variantId}-${item.promotionLabel}`}><span>FREE</span><strong>{item.productName}</strong><small>{item.variantName} × {item.quantity}</small></div>)}</div>}
@@ -229,6 +252,7 @@ export default function Checkout() {
           <div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div>
         </aside>
       </div>
+      <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={submitting}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
     </div>
   );
 }

@@ -2,22 +2,59 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";
+const BUY_NOW_KEY = "riseora_buy_now";
 
-function readInitialCart() {
+function readJson(storage, key) {
   try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+    const value = storage?.getItem(key);
+    return value ? JSON.parse(value) : [];
   } catch {
     return [];
   }
 }
 
+function readInitialCart() {
+  return typeof window === "undefined" ? [] : readJson(window.localStorage, STORAGE_KEY);
+}
+
+function readInitialBuyNow() {
+  return typeof window === "undefined" ? [] : readJson(window.sessionStorage, BUY_NOW_KEY);
+}
+
+function toCartLine(product, variant, quantity = 1) {
+  const max = Math.max(0, Number(variant?.stockQuantity || 0));
+  if (!product?.id || !variant?.id || max <= 0) return null;
+  const primary = product.images?.find((item) => item.isPrimary) || product.images?.[0];
+  return {
+    variantId: variant.id,
+    productId: product.id,
+    productSlug: product.slug,
+    productName: product.name,
+    variantName: variant.name,
+    sku: variant.sku,
+    price: Number(variant.sellingPrice),
+    mrp: Number(variant.mrp),
+    stockQuantity: max,
+    imageUrl: primary?.url || "",
+    quantity: Math.max(1, Math.min(max, Number(quantity || 1))),
+  };
+}
+
 export function CartProvider({ children }) {
   const [items, setItems] = useState(readInitialCart);
+  const [buyNowItems, setBuyNowItems] = useState(readInitialBuyNow);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch { /* cart persistence is best effort */ }
   }, [items]);
+
+  useEffect(() => {
+    try {
+      if (buyNowItems.length) sessionStorage.setItem(BUY_NOW_KEY, JSON.stringify(buyNowItems));
+      else sessionStorage.removeItem(BUY_NOW_KEY);
+    } catch { /* buy-now persistence is best effort */ }
+  }, [buyNowItems]);
 
   function addItem(product, variant, quantity = 1) {
     setItems((current) => {
@@ -30,25 +67,22 @@ export function CartProvider({ children }) {
             : item,
         );
       }
-
-      return [
-        ...current,
-        {
-          variantId: variant.id,
-          productId: product.id,
-          productSlug: product.slug,
-          productName: product.name,
-          variantName: variant.name,
-          sku: variant.sku,
-          price: Number(variant.sellingPrice),
-          mrp: Number(variant.mrp),
-          stockQuantity: max,
-          imageUrl: (product.images?.find((item) => item.isPrimary) || product.images?.[0])?.url || "",
-          quantity: Math.min(max, quantity),
-        },
-      ];
+      const line = toCartLine(product, variant, quantity);
+      return line ? [...current, line] : current;
     });
     setDrawerOpen(true);
+  }
+
+  function startBuyNow(product, variant, quantity = 1) {
+    const line = toCartLine(product, variant, quantity);
+    if (!line) return false;
+    setBuyNowItems([line]);
+    setDrawerOpen(false);
+    return true;
+  }
+
+  function clearBuyNow() {
+    setBuyNowItems([]);
   }
 
   function openCart() { setDrawerOpen(true); }
@@ -76,12 +110,8 @@ export function CartProvider({ children }) {
         if (existing) {
           next = next.map((item) => item.variantId === variant.id ? { ...item, quantity: Math.min(max, item.quantity + addition.quantity) } : item);
         } else {
-          const primary = product.images?.find((item) => item.isPrimary) || product.images?.[0];
-          next.push({
-            variantId: variant.id, productId: product.id, productSlug: product.slug, productName: product.name, variantName: variant.name, sku: variant.sku,
-            price: Number(variant.sellingPrice), mrp: Number(variant.mrp), stockQuantity: max, imageUrl: primary?.url || "",
-            quantity: Math.min(max, addition.quantity),
-          });
+          const line = toCartLine(product, variant, addition.quantity);
+          if (line) next.push(line);
         }
       }
       return next;
@@ -122,10 +152,11 @@ export function CartProvider({ children }) {
 
   const count = items.reduce((sum, item) => sum + item.quantity, 0);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, drawerOpen, openCart, closeCart, addItem, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),
-    [items, count, subtotal, drawerOpen],
+    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),
+    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

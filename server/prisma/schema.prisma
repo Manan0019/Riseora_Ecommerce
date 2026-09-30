@@ -459,6 +459,10 @@ model StoreSetting {
   freeShippingThreshold Decimal? @db.Decimal(12, 2)
   flatShippingFee       Decimal  @default(0) @db.Decimal(12, 2)
   codFee                Decimal  @default(0) @db.Decimal(12, 2)
+  dispatchWithinDays    Int      @default(2)
+  deliveryMinDays       Int      @default(3)
+  deliveryMaxDays       Int      @default(7)
+  lowStockUrgencyThreshold Int   @default(5)
 
   returnsEnabled   Boolean @default(true)
   returnWindowDays Int     @default(7)

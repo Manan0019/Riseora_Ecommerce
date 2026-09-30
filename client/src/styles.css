@@ -1765,3 +1765,84 @@ textarea { min-height: 105px; resize: vertical; }
   .phase16-searching span { animation: none; }
   .phase16-quick-trigger, .phase16-product-results > a { transition: none; }
 }
+
+/* =========================================================
+   Phase 17 — Instant Buy + delivery promise + checkout polish
+   ========================================================= */
+.phase17-low-stock { width: fit-content; margin: -2px 0 12px; padding: 8px 10px; display: inline-flex; align-items: center; gap: 8px; border: 1px solid #ead6b2; border-radius: 999px; background: #fff8ea; color: #805419; }
+.phase17-low-stock span { padding: 4px 6px; border-radius: 999px; background: #8b5d1e; color: #fff; font-size: 7px; font-weight: 900; letter-spacing: .1em; }
+.phase17-low-stock strong { font-size: 9px; }
+.phase17-desktop-buy { align-items: end; }
+.phase17-buy-actions { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 9px; }
+.phase17-buy-actions .button { min-width: 0; }
+.phase17-buy-actions .button-secondary { background: #fff; color: var(--green-950); border-color: var(--green-900); }
+.phase17-delivery-card { margin-top: 16px; padding: 14px; display: grid; gap: 11px; border: 1px solid #dfe5dc; border-radius: 16px; background: linear-gradient(145deg,#fbfcf8,#f3f7ef); }
+.phase17-delivery-head { display: grid; grid-template-columns: 38px minmax(0,1fr) 38px; align-items: center; gap: 10px; }
+.phase17-delivery-head > span, .phase17-delivery-head > button { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; }
+.phase17-delivery-head > span { background: #e4ecdf; color: var(--green-800); }
+.phase17-delivery-head > button { border: 1px solid #d7ddd4; background: #fff; color: var(--green-900); }
+.phase17-delivery-head > div { min-width: 0; display: grid; gap: 3px; }
+.phase17-delivery-head strong { font-size: 11px; }
+.phase17-delivery-head small { color: #657168; font-size: 9px; line-height: 1.45; }
+.phase17-pin-check { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 8px; }
+.phase17-pin-check input { min-width: 0; min-height: 43px; padding: 0 12px; border: 1px solid #d9dfd6; border-radius: 10px; background: #fff; font-size: 11px; outline: none; }
+.phase17-pin-check input:focus { border-color: var(--green-700); box-shadow: 0 0 0 3px rgba(46,91,61,.08); }
+.phase17-pin-check button { min-height: 43px; padding: 0 13px; border: 0; border-radius: 10px; background: var(--green-950); color: #fff; font-size: 8px; font-weight: 900; letter-spacing: .06em; }
+.phase17-delivery-message, .phase17-share-message { color: #4f6657; font-size: 8px; line-height: 1.5; }
+.phase17-share-message { color: var(--green-800); font-weight: 800; }
+.phase17-quick-buy > div:last-child { min-width: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.phase17-quick-buy .button-secondary { background: #fff; color: var(--green-950); border-color: var(--green-900); }
+.phase17-buy-now-note { max-width: 680px; margin: 8px 0 0; color: #5f6c64; font-size: 10px; line-height: 1.5; }
+.phase17-checkout-delivery { margin-top: 12px; padding: 11px 12px; display: grid; grid-template-columns: 28px minmax(0,1fr); gap: 9px; align-items: start; border: 1px solid #dfe6dc; border-radius: 12px; background: #f7faf4; color: var(--green-900); }
+.phase17-checkout-delivery > div { display: grid; gap: 3px; }
+.phase17-checkout-delivery strong { font-size: 10px; }
+.phase17-checkout-delivery small { color: #657168; font-size: 8px; line-height: 1.5; }
+.phase17-checkout-sticky { display: none; }
+.phase17-delivery-settings { margin-top: 10px; }
+.phase17-delivery-note { margin-top: 7px; }
+
+@media (max-width: 899px) {
+  .phase17-desktop-buy .phase17-buy-actions { grid-template-columns: 1fr 1fr; }
+  .phase17-mobile-buy { min-height: 70px; padding: 8px 9px 8px 13px; display: grid; grid-template-columns: minmax(78px,.65fr) minmax(0,1.35fr); }
+  .phase17-mobile-price { min-width: 0; display: grid !important; gap: 2px; }
+  .phase17-mobile-price small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .phase17-mobile-actions { min-width: 0; display: grid !important; grid-template-columns: minmax(68px,.78fr) minmax(94px,1.22fr); gap: 7px; }
+  .phase17-mobile-actions .button { min-width: 0; min-height: 46px; padding: 8px 9px; font-size: 9px; }
+  .phase17-mobile-actions .button-secondary { background: #fff; color: #111; border-color: #111; }
+  .phase17-delivery-card { padding: 12px; }
+  .phase17-delivery-head { grid-template-columns: 34px minmax(0,1fr) 34px; }
+  .phase17-delivery-head > span, .phase17-delivery-head > button { width: 34px; height: 34px; }
+  .phase17-quick-buy { grid-template-columns: 94px minmax(0,1fr); }
+  .phase17-quick-buy > div:last-child { grid-template-columns: 1fr 1fr; gap: 6px; }
+  .phase17-quick-buy > div:last-child .button { padding-inline: 7px; font-size: 8px; }
+
+  .checkout-page { padding-bottom: calc(138px + var(--mobile-dock-height) + env(safe-area-inset-bottom)); }
+  .phase17-checkout-sticky {
+    position: fixed; left: 0; right: 0; bottom: calc(var(--mobile-dock-height) + env(safe-area-inset-bottom)); z-index: 96;
+    min-height: 68px; padding: 9px 12px; display: grid; grid-template-columns: minmax(0,1fr) auto; align-items: center; gap: 12px;
+    border-top: 1px solid rgba(28,57,40,.12); background: rgba(255,254,250,.98); box-shadow: 0 -10px 28px rgba(16,42,29,.1); backdrop-filter: blur(16px);
+  }
+  .phase17-checkout-sticky > div { min-width: 0; display: grid; gap: 2px; }
+  .phase17-checkout-sticky small { color: var(--muted); font-size: 7px; font-weight: 900; letter-spacing: .11em; }
+  .phase17-checkout-sticky strong { color: var(--green-950); font-size: 20px; }
+  .phase17-checkout-sticky .button { min-height: 48px; padding-inline: 16px; font-size: 9px; }
+  .checkout-form > .checkout-submit { display: none; }
+}
+
+@media (max-width: 380px) {
+  .phase17-mobile-buy { grid-template-columns: 74px minmax(0,1fr); gap: 6px; }
+  .phase17-mobile-actions { grid-template-columns: 62px minmax(88px,1fr); gap: 5px; }
+  .phase17-mobile-actions .button { padding-inline: 6px; font-size: 8px; }
+  .phase17-pin-check { grid-template-columns: 1fr; }
+  .phase17-pin-check button { min-height: 40px; }
+  .phase17-quick-buy { grid-template-columns: 82px minmax(0,1fr); }
+  .phase17-quick-buy > div:last-child { grid-template-columns: 1fr; }
+}
+
+@media (min-width: 900px) {
+  .phase17-checkout-sticky { display: none !important; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase17-delivery-card, .phase17-checkout-sticky { scroll-behavior: auto; }
+}
