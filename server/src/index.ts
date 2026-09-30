@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import { env } from "./config/env";
 import { prisma } from "./config/prisma";
 import adminRoutes from "./routes/admin.routes";
+import accountRoutes from "./routes/account.routes";
 import authRoutes from "./routes/auth.routes";
 import categoryRoutes from "./routes/category.routes";
 import orderRoutes from "./routes/order.routes";
@@ -56,6 +57,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/promotions", promotionRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/account", accountRoutes);
 app.use("/api/admin", adminRoutes);
 
 app.use(notFound);

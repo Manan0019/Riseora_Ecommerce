@@ -40,12 +40,16 @@ export function AuthProvider({ children }) {
     return response.data.user;
   }
 
+  function updateUser(nextUser) {
+    setUser((current) => ({ ...(current || {}), ...nextUser }));
+  }
+
   function logout() {
     localStorage.removeItem("riseora_token");
     setUser(null);
   }
 
-  const value = useMemo(() => ({ user, loading, login, register, logout }), [user, loading]);
+  const value = useMemo(() => ({ user, loading, login, register, updateUser, logout }), [user, loading]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

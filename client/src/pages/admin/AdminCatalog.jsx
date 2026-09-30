@@ -1,18 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../api/http";
+import { Icon } from "../../components/Icons";
 
-const emptyProduct = { categoryId: "", name: "", shortDescription: "", description: "", isFeatured: false, badge: "", imageUrl: "", variantName: "", sku: "", size: "", unit: "ml", mrp: "", sellingPrice: "", stockQuantity: "0" };
+const newVariant = () => ({ name: "", sku: "", size: "", unit: "ml", mrp: "", sellingPrice: "", costPrice: "", stockQuantity: "0", lowStockThreshold: "5", weightGrams: "" });
+const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", isFeatured: false, isActive: true, badge: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
 
 export default function AdminCatalog() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
   const [categoryName, setCategoryName] = useState("");
-  const [product, setProduct] = useState(emptyProduct);
+  const [product, setProduct] = useState(emptyProduct());
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const [search, setSearch] = useState("");
+  const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse] = await Promise.all([apiFetch("/categories"), apiFetch("/admin/products")]);
+    const [categoryResponse, productResponse] = await Promise.all([apiFetch("/admin/categories"), apiFetch("/admin/products")]);
     setCategories(categoryResponse.data); setProducts(productResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
@@ -21,35 +25,112 @@ export default function AdminCatalog() {
     event.preventDefault(); setError(""); setMessage("");
     try { await apiFetch("/admin/categories", { method: "POST", body: JSON.stringify({ name: categoryName }) }); setCategoryName(""); setMessage("Category created."); await refresh(); } catch (e) { setError(e.message); }
   }
-  function updateProduct(event) { const { name, value, type, checked } = event.target; setProduct((current) => ({ ...current, [name]: type === "checkbox" ? checked : value })); }
-  async function createProduct(event) {
-    event.preventDefault(); setError(""); setMessage("");
-    try {
-      await apiFetch("/admin/products", { method: "POST", body: JSON.stringify({ categoryId: product.categoryId, name: product.name, shortDescription: product.shortDescription, description: product.description, isFeatured: product.isFeatured, badge: product.badge, images: product.imageUrl ? [{ url: product.imageUrl, isPrimary: true }] : [], variants: [{ name: product.variantName, sku: product.sku, size: product.size, unit: product.unit, mrp: Number(product.mrp), sellingPrice: Number(product.sellingPrice), stockQuantity: Number(product.stockQuantity) }] }) });
-      setProduct(emptyProduct); setMessage("Product created."); await refresh();
-    } catch (e) { setError(e.message); }
-  }
-  async function patchProduct(id, data) {
-    try { await apiFetch(`/admin/products/${id}`, { method: "PATCH", body: JSON.stringify(data) }); await refresh(); } catch (e) { setError(e.message); }
+
+  async function toggleCategory(category) {
+    try { await apiFetch(`/admin/categories/${category.id}`, { method: "PATCH", body: JSON.stringify({ isActive: !category.isActive }) }); await refresh(); }
+    catch (e) { setError(e.message); }
   }
 
+  function updateProductField(event) {
+    const { name, value, type, checked } = event.target;
+    setProduct((current) => ({ ...current, [name]: type === "checkbox" ? checked : value }));
+  }
+  function updateVariant(index, field, value) { setProduct((current) => ({ ...current, variants: current.variants.map((v, i) => i === index ? { ...v, [field]: value } : v) })); }
+  function updateImage(index, field, value) { setProduct((current) => ({ ...current, images: current.images.map((v, i) => i === index ? { ...v, [field]: value } : v) })); }
+  function addVariant() { setProduct((current) => ({ ...current, variants: [...current.variants, newVariant()] })); }
+  function removeVariant(index) { setProduct((current) => ({ ...current, variants: current.variants.filter((_, i) => i !== index) })); }
+  function addImage() { setProduct((current) => ({ ...current, images: [...current.images, { url: "", altText: "", isPrimary: false }] })); }
+  function removeImage(index) { setProduct((current) => ({ ...current, images: current.images.filter((_, i) => i !== index) })); }
+  function makePrimary(index) { setProduct((current) => ({ ...current, images: current.images.map((image, i) => ({ ...image, isPrimary: i === index })) })); }
+
+  function editProduct(item) {
+    setProduct({
+      id: item.id,
+      categoryId: item.categoryId,
+      name: item.name,
+      shortDescription: item.shortDescription || "",
+      description: item.description || "",
+      isFeatured: item.isFeatured,
+      isActive: item.isActive,
+      badge: item.badge || "",
+      images: item.images?.length ? item.images.map((image) => ({ url: image.url, altText: image.altText || "", isPrimary: image.isPrimary })) : [{ url: "", altText: "", isPrimary: true }],
+      variants: item.variants?.length ? item.variants.map((variant) => ({ name: variant.name, sku: variant.sku, size: variant.size || "", unit: variant.unit || "", mrp: String(Number(variant.mrp)), sellingPrice: String(Number(variant.sellingPrice)), costPrice: variant.costPrice == null ? "" : String(Number(variant.costPrice)), stockQuantity: String(variant.stockQuantity), lowStockThreshold: String(variant.lowStockThreshold), weightGrams: variant.weightGrams == null ? "" : String(Number(variant.weightGrams)) })) : [newVariant()],
+    });
+    setMessage(""); setError("");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function resetProduct() { setProduct(emptyProduct()); }
+
+  async function saveProduct(event) {
+    event.preventDefault(); setError(""); setMessage("");
+    const cleanImages = product.images.filter((image) => image.url.trim()).map((image, index) => ({ url: image.url.trim(), altText: image.altText.trim(), isPrimary: image.isPrimary || index === 0 }));
+    const payload = {
+      categoryId: product.categoryId,
+      name: product.name,
+      shortDescription: product.shortDescription,
+      description: product.description,
+      isFeatured: product.isFeatured,
+      isActive: product.isActive,
+      badge: product.badge,
+      images: cleanImages,
+      variants: product.variants.map((variant) => ({
+        name: variant.name, sku: variant.sku, size: variant.size, unit: variant.unit,
+        mrp: Number(variant.mrp), sellingPrice: Number(variant.sellingPrice),
+        ...(variant.costPrice !== "" ? { costPrice: Number(variant.costPrice) } : {}),
+        stockQuantity: Number(variant.stockQuantity), lowStockThreshold: Number(variant.lowStockThreshold),
+        ...(variant.weightGrams !== "" ? { weightGrams: Number(variant.weightGrams) } : {}),
+      })),
+    };
+    try {
+      await apiFetch(editing ? `/admin/products/${product.id}` : "/admin/products", { method: editing ? "PUT" : "POST", body: JSON.stringify(payload) });
+      setMessage(editing ? "Product updated." : "Product created.");
+      resetProduct(); await refresh();
+    } catch (e) { setError(e.message); }
+  }
+
+  async function patchProduct(id, data) {
+    try { await apiFetch(`/admin/products/${id}`, { method: "PATCH", body: JSON.stringify(data) }); await refresh(); }
+    catch (e) { setError(e.message); }
+  }
+
+  const visibleProducts = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return products;
+    return products.filter((item) => [item.name, item.category?.name, ...(item.variants || []).map((v) => v.sku)].filter(Boolean).some((value) => String(value).toLowerCase().includes(q)));
+  }, [products, search]);
+
   return <>
-    <div className="admin-page-heading"><div><p className="eyebrow">CATALOG</p><h1>Products & categories</h1><p>Manage what customers see in the Riseora storefront.</p></div></div>
+    <div className="admin-page-heading"><div><p className="eyebrow">CATALOG</p><h1>Products & categories</h1><p>Add products, variants, images, prices and storefront merchandising.</p></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
-    <div className="admin-form-grid">
-      <form className="admin-panel admin-form" onSubmit={createCategory}><div className="admin-panel-head"><div><h2>Add category</h2><p>Create a storefront category.</p></div></div><label>Name<input required value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="e.g. Hair Care" /></label><button className="button">Create category</button></form>
-      <form className="admin-panel admin-form product-admin-form" onSubmit={createProduct}>
-        <div className="admin-panel-head"><div><h2>Add product</h2><p>Create a product with its first sellable variant.</p></div></div>
-        <div className="admin-field-grid two"><label>Category<select required name="categoryId" value={product.categoryId} onChange={updateProduct}><option value="">Select category</option>{categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Product name<input required name="name" value={product.name} onChange={updateProduct} /></label></div>
-        <div className="admin-field-grid two"><label>Badge<input name="badge" value={product.badge} onChange={updateProduct} placeholder="BEST SELLER / NEW" /></label><label>Primary image URL<input type="url" name="imageUrl" value={product.imageUrl} onChange={updateProduct} placeholder="https://..." /></label></div>
-        <label>Short description<input name="shortDescription" value={product.shortDescription} onChange={updateProduct} /></label><label>Full description<textarea name="description" value={product.description} onChange={updateProduct} /></label>
-        <label className="checkbox-row"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={updateProduct} /> Show in bestseller / featured shelf</label>
-        <div className="admin-field-grid two"><label>Variant name<input required name="variantName" value={product.variantName} onChange={updateProduct} placeholder="100 ml" /></label><label>SKU<input required name="sku" value={product.sku} onChange={updateProduct} placeholder="RISE-OIL-100" /></label></div>
-        <div className="admin-field-grid three"><label>Size<input name="size" value={product.size} onChange={updateProduct} /></label><label>Unit<input name="unit" value={product.unit} onChange={updateProduct} /></label><label>Stock<input type="number" min="0" name="stockQuantity" value={product.stockQuantity} onChange={updateProduct} /></label></div>
-        <div className="admin-field-grid two"><label>MRP<input type="number" min="0" step="0.01" required name="mrp" value={product.mrp} onChange={updateProduct} /></label><label>Selling price<input type="number" min="0" step="0.01" required name="sellingPrice" value={product.sellingPrice} onChange={updateProduct} /></label></div>
-        <button className="button">Create product</button>
+
+    <div className="admin-catalog-top-grid">
+      <section className="admin-panel category-manager">
+        <div className="admin-panel-head"><div><h2>Categories</h2><p>Storefront browsing groups.</p></div></div>
+        <form className="category-quick-create" onSubmit={createCategory}><input required value={categoryName} onChange={(e) => setCategoryName(e.target.value)} placeholder="e.g. Hair Care" /><button className="button">Add</button></form>
+        <div className="category-admin-list">{categories.map((category) => <div key={category.id}><span><strong>{category.name}</strong><small>{category.isActive ? "Visible" : "Hidden"}</small></span><button className={category.isActive ? "state-toggle active" : "state-toggle"} onClick={() => toggleCategory(category)}>{category.isActive ? "Active" : "Inactive"}</button></div>)}</div>
+      </section>
+
+      <form className="admin-panel admin-form product-editor" onSubmit={saveProduct}>
+        <div className="admin-panel-head"><div><h2>{editing ? "Edit product" : "Add product"}</h2><p>{editing ? "Update complete product information." : "Create the product and all sellable variants."}</p></div>{editing && <button type="button" className="link-button" onClick={resetProduct}>Cancel edit</button>}</div>
+        <div className="admin-field-grid two"><label>Category<select required name="categoryId" value={product.categoryId} onChange={updateProductField}><option value="">Select category</option>{categories.filter((c) => c.isActive || c.id === product.categoryId).map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Product name<input required name="name" value={product.name} onChange={updateProductField} /></label></div>
+        <div className="admin-field-grid two"><label>Badge<input name="badge" value={product.badge} onChange={updateProductField} placeholder="BEST SELLER / NEW / TRENDING" /></label><div className="admin-check-row"><label className="checkbox-row"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={updateProductField} /> Featured</label>{editing && <label className="checkbox-row"><input type="checkbox" name="isActive" checked={product.isActive} onChange={updateProductField} /> Active</label>}</div></div>
+        <label>Short description<input name="shortDescription" value={product.shortDescription} onChange={updateProductField} placeholder="Short product card copy" /></label>
+        <label>Full description<textarea name="description" value={product.description} onChange={updateProductField} placeholder="Benefits, usage and product story" /></label>
+
+        <div className="editor-section-head"><div><strong>Product images</strong><small>Use HTTPS image URLs for now. First image is primary unless changed.</small></div><button type="button" className="state-toggle active" onClick={addImage}>+ Image</button></div>
+        <div className="admin-image-editor">{product.images.map((image, index) => <div className="admin-image-row" key={index}><input type="url" value={image.url} onChange={(e) => updateImage(index, "url", e.target.value)} placeholder="https://..." /><input value={image.altText} onChange={(e) => updateImage(index, "altText", e.target.value)} placeholder="Alt text" /><button type="button" className={image.isPrimary ? "state-toggle active" : "state-toggle"} onClick={() => makePrimary(index)}>{image.isPrimary ? "Primary" : "Make primary"}</button>{product.images.length > 1 && <button type="button" className="mini-danger" onClick={() => removeImage(index)}>×</button>}</div>)}</div>
+
+        <div className="editor-section-head"><div><strong>Variants</strong><small>Each size/pack needs a unique SKU and stock quantity.</small></div><button type="button" className="state-toggle active" onClick={addVariant}>+ Variant</button></div>
+        <div className="variant-editor-list">{product.variants.map((variant, index) => <div className="variant-editor-card" key={index}><div className="variant-editor-title"><strong>Variant {index + 1}</strong>{product.variants.length > 1 && <button type="button" onClick={() => removeVariant(index)}>Remove</button>}</div><div className="admin-field-grid three"><label>Name<input required value={variant.name} onChange={(e) => updateVariant(index, "name", e.target.value)} placeholder="100 ml" /></label><label>SKU<input required value={variant.sku} onChange={(e) => updateVariant(index, "sku", e.target.value)} placeholder="RISE-OIL-100" /></label><label>Size<input value={variant.size} onChange={(e) => updateVariant(index, "size", e.target.value)} placeholder="100" /></label></div><div className="admin-field-grid four"><label>Unit<input value={variant.unit} onChange={(e) => updateVariant(index, "unit", e.target.value)} /></label><label>MRP<input required type="number" min="1" step="0.01" value={variant.mrp} onChange={(e) => updateVariant(index, "mrp", e.target.value)} /></label><label>Selling price<input required type="number" min="1" step="0.01" value={variant.sellingPrice} onChange={(e) => updateVariant(index, "sellingPrice", e.target.value)} /></label><label>Cost price<input type="number" min="0" step="0.01" value={variant.costPrice} onChange={(e) => updateVariant(index, "costPrice", e.target.value)} /></label></div><div className="admin-field-grid three"><label>Stock<input type="number" min="0" value={variant.stockQuantity} onChange={(e) => updateVariant(index, "stockQuantity", e.target.value)} /></label><label>Low stock warning<input type="number" min="0" value={variant.lowStockThreshold} onChange={(e) => updateVariant(index, "lowStockThreshold", e.target.value)} /></label><label>Weight grams<input type="number" min="0" step="0.01" value={variant.weightGrams} onChange={(e) => updateVariant(index, "weightGrams", e.target.value)} /></label></div></div>)}</div>
+        <button className="button wide">{editing ? "Save product changes" : "Create product"}</button>
       </form>
     </div>
-    <section className="admin-panel admin-catalog-list"><div className="admin-panel-head"><div><h2>Current catalog</h2><p>{products.length} product{products.length === 1 ? "" : "s"}</p></div></div>{products.length === 0 ? <div className="admin-empty">No products yet.</div> : <div className="admin-product-list">{products.map((item) => { const variant = item.variants?.[0]; return <div key={item.id} className={`admin-product-row ${!item.isActive ? "inactive-row" : ""}`}><div className="admin-product-thumb">{item.images?.[0]?.url ? <img src={item.images[0].url} alt="" /> : "R"}</div><div><strong>{item.name}</strong><span>{item.category?.name} • {variant?.name || "No variant"}{item.badge ? ` • ${item.badge}` : ""}</span><div className="admin-inline-actions"><button className={item.isFeatured ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isFeatured: !item.isFeatured })}>{item.isFeatured ? "Featured" : "Feature"}</button><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isActive: !item.isActive })}>{item.isActive ? "Active" : "Inactive"}</button></div></div><div className="admin-product-meta"><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong><span>{variant ? `${variant.stockQuantity} in stock` : ""}</span></div></div>; })}</div>}</section>
+
+    <section className="admin-panel catalog-product-list-panel">
+      <div className="admin-panel-head"><div><h2>Products</h2><p>{products.length} products in catalog</p></div></div>
+      <div className="admin-search-bar catalog-search"><Icon name="search" size={19} /><input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search product, category or SKU" /></div>
+      {visibleProducts.length === 0 ? <div className="admin-empty">No products found.</div> : <div className="admin-product-list">{visibleProducts.map((item) => { const variant = item.variants?.[0]; const image = item.images?.find((i) => i.isPrimary) || item.images?.[0]; return <article className="admin-product-row-v2" key={item.id}><div className="admin-product-thumb">{image?.url ? <img src={image.url} alt="" /> : "R"}</div><div className="admin-product-info"><strong>{item.name}</strong><span>{item.category?.name}{item.badge ? ` • ${item.badge}` : ""}</span><small>{item.variants?.length || 0} variant(s) • {variant?.sku || "No SKU"}</small></div><div className="admin-product-pricing"><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong><span>{item.variants?.reduce((sum, v) => sum + Number(v.stockQuantity), 0) || 0} stock</span></div><div className="admin-inline-actions"><button className="state-toggle" onClick={() => editProduct(item)}>Edit</button><button className={item.isFeatured ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isFeatured: !item.isFeatured })}>{item.isFeatured ? "Featured" : "Feature"}</button><button className={item.isActive ? "state-toggle active" : "state-toggle"} onClick={() => patchProduct(item.id, { isActive: !item.isActive })}>{item.isActive ? "Active" : "Inactive"}</button></div></article>; })}</div>}
+    </section>
   </>;
 }

@@ -16,6 +16,8 @@ export default function Checkout() {
   const [couponError, setCouponError] = useState("");
   const [discountAmount, setDiscountAmount] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState("");
+  const [savedAddresses, setSavedAddresses] = useState([]);
+  const [selectedAddressId, setSelectedAddressId] = useState("");
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
@@ -33,6 +35,30 @@ export default function Checkout() {
     setDiscountAmount(0);
     setCouponMessage("");
   }, [subtotal]);
+
+  useEffect(() => {
+    if (!user) return;
+    apiFetch("/account/addresses").then((response) => {
+      setSavedAddresses(response.data);
+      const preferred = response.data.find((item) => item.isDefault) || response.data[0];
+      if (preferred) selectSavedAddress(preferred);
+    }).catch(() => {});
+  }, [user]);
+
+  function selectSavedAddress(item) {
+    setSelectedAddressId(item.id);
+    setForm((current) => ({
+      ...current,
+      customerName: item.name || current.customerName,
+      customerPhone: item.phone || current.customerPhone,
+      line1: item.line1 || "",
+      line2: item.line2 || "",
+      landmark: item.landmark || "",
+      city: item.city || "",
+      state: item.state || "",
+      postalCode: item.postalCode || "",
+    }));
+  }
 
   if (items.length === 0) return <Navigate to="/cart" replace />;
 
@@ -84,6 +110,7 @@ export default function Checkout() {
           <label>Email<input type="email" name="customerEmail" value={form.customerEmail} onChange={update} autoComplete="email" /></label>
 
           <div className="form-section-title form-section-gap"><span>2</span><div><h2>Delivery address</h2><p>Where should we send your order?</p></div></div>
+          {savedAddresses.length > 0 && <div className="checkout-saved-addresses">{savedAddresses.map((item) => <button type="button" key={item.id} className={selectedAddressId === item.id ? "checkout-address-chip active" : "checkout-address-chip"} onClick={() => selectSavedAddress(item)}><span>{item.type}{item.isDefault ? " • DEFAULT" : ""}</span><strong>{item.name}</strong><small>{item.line1}, {item.city} {item.postalCode}</small></button>)}</div>}
           <label>Address<input required name="line1" value={form.line1} onChange={update} autoComplete="address-line1" /></label>
           <label>Address line 2<input name="line2" value={form.line2} onChange={update} autoComplete="address-line2" /></label>
           <label>Landmark<input name="landmark" value={form.landmark} onChange={update} /></label>

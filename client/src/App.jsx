@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import AdminLayout from "./components/AdminLayout";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Account from "./pages/Account";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
 import Home from "./pages/Home";
@@ -15,6 +16,8 @@ import Register from "./pages/Register";
 import Shop from "./pages/Shop";
 import Wishlist from "./pages/Wishlist";
 import AdminCatalog from "./pages/admin/AdminCatalog";
+import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminInventory from "./pages/admin/AdminInventory";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/AdminOrders";
 import AdminPromotions from "./pages/admin/AdminPromotions";
@@ -34,12 +37,15 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/order-success/:orderNumber" element={<OrderSuccess />} />
         <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
+        <Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
         <Route path="*" element={<NotFound />} />
       </Route>
 
       <Route path="/admin" element={<ProtectedRoute admin><AdminLayout /></ProtectedRoute>}>
         <Route index element={<AdminDashboard />} />
         <Route path="catalog" element={<AdminCatalog />} />
+        <Route path="inventory" element={<AdminInventory />} />
+        <Route path="customers" element={<AdminCustomers />} />
         <Route path="orders" element={<AdminOrders />} />
         <Route path="promotions" element={<AdminPromotions />} />
       </Route>

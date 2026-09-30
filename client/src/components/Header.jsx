@@ -43,7 +43,7 @@ export default function Header() {
             <button className="icon-action" onClick={() => setSearchOpen(true)} aria-label="Search"><Icon name="search" size={21} /></button>
             <Link className="icon-action desktop-wishlist-action" to="/wishlist" aria-label="Wishlist"><Icon name="heart" size={20} />{wishlistCount > 0 && <b>{wishlistCount > 9 ? "9+" : wishlistCount}</b>}</Link>
             {user?.role === "ADMIN" && <Link className="admin-shortcut" to="/admin">Admin</Link>}
-            <Link className="icon-action account-action" to={user ? "/orders" : "/login"} aria-label={user ? "My orders" : "Login"}><Icon name="user" size={20} /><span>{user ? user.firstName : "Login"}</span></Link>
+            <Link className="icon-action account-action" to={user ? "/account" : "/login"} aria-label={user ? "My account" : "Login"}><Icon name="user" size={20} /><span>{user ? user.firstName : "Login"}</span></Link>
             {user && <button className="icon-action logout-action" onClick={logout} aria-label="Logout"><Icon name="logout" size={19} /></button>}
             <Link className="icon-action cart-action" to="/cart" aria-label={`Cart with ${count} items`}><Icon name="cart" size={21} /><span className="desktop-cart-label">Cart</span>{count > 0 && <b>{count > 99 ? "99+" : count}</b>}</Link>
           </div>
