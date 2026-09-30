@@ -98,3 +98,22 @@ export async function sendReturnStatusNotification(request: ReturnEmailShape) {
     html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Return update</h2><p>Your return <strong>${escapeHtml(request.returnNumber)}</strong>${request.order?.orderNumber ? ` for order <strong>${escapeHtml(request.order.orderNumber)}</strong>` : ""} is now <strong>${escapeHtml(request.status)}</strong>.</p>${tracking}<p>Expected refund value: ${money(request.refundAmount)}</p></div>`,
   });
 }
+
+export async function sendBackInStockNotification(input: {
+  email: string;
+  name?: string | null;
+  productName: string;
+  productSlug: string;
+  variantName: string;
+}) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
+  const url = `${base}/product/${encodeURIComponent(input.productSlug)}`;
+  await send({
+    to: input.email,
+    subject: `${input.productName} is back in stock at Riseora`,
+    idempotencyKey: `stock-alert/${input.productSlug}/${input.variantName}/${input.email}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>It's back.</h2><p>${input.name ? `${escapeHtml(input.name)}, ` : ""}<strong>${escapeHtml(input.productName)}</strong> (${escapeHtml(input.variantName)}) is available again.</p><p><a href="${escapeHtml(url)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Shop now</a></p><p style="color:#68776e;font-size:13px">Stock can move quickly and availability is not reserved by this notification.</p></div>`,
+  });
+  return true;
+}

@@ -306,3 +306,18 @@ See `PHASE7_RETURNS_INVOICES_STOREOPS.md` and `DEPLOYMENT_PRODUCTION.md`.
 
 ## Phase 8 — Production launch preparation
 SEO metadata/sitemap, About/Contact, newsletter + admin inbox, consent-gated analytics, PWA/mobile performance, security hardening and deployable same-origin production serving are now included. See `PHASE8_LAUNCH_SEO_AUDIENCE_PWA.md`.
+
+
+## Phase 10 — Reports & back-in-stock alerts
+
+Phase 10 adds date-range business reports with CSV export plus customer back-in-stock requests for sold-out product variants. Pending demand is visible in Admin → Audience and can be notified automatically after restock when Resend email is configured.
+
+Apply with:
+
+```powershell
+npm run db:migrate -- --name phase10_reports_stock_alerts
+npm run db:generate
+npm run build
+```
+
+See `PHASE10_REPORTS_STOCK_ALERTS.md` for the runtime checklist.

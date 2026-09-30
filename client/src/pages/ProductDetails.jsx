@@ -36,6 +36,9 @@ export default function ProductDetails() {
   const [error, setError] = useState("");
   const [review, setReview] = useState({ rating: 5, title: "", comment: "" });
   const [reviewMessage, setReviewMessage] = useState("");
+  const [stockEmail, setStockEmail] = useState("");
+  const [stockAlertMessage, setStockAlertMessage] = useState("");
+  const [stockAlertBusy, setStockAlertBusy] = useState(false);
   const [related, setRelated] = useState([]);
   const [recent, setRecent] = useState([]);
 
@@ -54,6 +57,8 @@ export default function ProductDetails() {
     });
   }
   useEffect(() => { setError(""); loadProduct().catch((err) => setError(err.message)); }, [slug]);
+  useEffect(() => { if (user?.email) setStockEmail(user.email); }, [user?.email]);
+  useEffect(() => { setStockAlertMessage(""); }, [variantId]);
 
   const variant = useMemo(() => product?.variants?.find((item) => item.id === variantId), [product, variantId]);
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
@@ -75,6 +80,17 @@ export default function ProductDetails() {
     } catch (err) { setReviewMessage(err.message); }
   }
 
+  async function submitStockAlert(event) {
+    event.preventDefault();
+    if (!variant) return;
+    setStockAlertBusy(true); setStockAlertMessage("");
+    try {
+      const response = await apiFetch("/stock-alerts", { method: "POST", body: JSON.stringify({ variantId: variant.id, email: stockEmail, name: user?.firstName || "" }) });
+      setStockAlertMessage(response.message || "Back-in-stock alert saved.");
+    } catch (err) { setStockAlertMessage(err.message); }
+    finally { setStockAlertBusy(false); }
+  }
+
   const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || product.description || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
 
   return <><Seo title={product.name} description={product.shortDescription || product.description} image={image} type="product" jsonLd={productJson} />
@@ -90,8 +106,9 @@ export default function ProductDetails() {
           {product.reviewCount > 0 && <a className="detail-rating" href="#reviews">★ {product.ratingAverage} <span>{product.reviewCount} review{product.reviewCount === 1 ? "" : "s"}</span></a>}
           <p className="lead">{product.shortDescription || "Thoughtful herbal care for your everyday routine."}</p>
           {variant && <div className="detail-price"><strong>₹{Number(variant.sellingPrice).toFixed(0)}</strong>{Number(variant.mrp) > Number(variant.sellingPrice) && <del>₹{Number(variant.mrp).toFixed(0)}</del>}{Number(variant.mrp) > Number(variant.sellingPrice) && <span className="detail-saving">Save ₹{(Number(variant.mrp)-Number(variant.sellingPrice)).toFixed(0)}</span>}</div>}
-          <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} disabled={Number(item.stockQuantity) <= 0} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
+          <div className="detail-control-group"><span className="field-label">CHOOSE SIZE</span><div className="variant-pills">{product.variants.map((item) => <button key={item.id} className={variantId === item.id ? "variant-pill active" : "variant-pill"} onClick={() => { setVariantId(item.id); setQuantity(1); }}>{item.name}<small>{Number(item.stockQuantity) > 0 ? "In stock" : "Sold out"}</small></button>)}</div></div>
           <div className="desktop-buy-block"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={variant?.stockQuantity || 1} value={quantity} onChange={(event) => setQuantity(Math.max(1, Number(event.target.value) || 1))} /><button onClick={() => setQuantity((value) => Math.min(Number(variant?.stockQuantity || 1), value + 1))}>+</button></div><button className="button wide phase3-add" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
+          {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
           <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="truck" size={19} /><b>India delivery</b><small>Track your order</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>
         </div>
       </div>
@@ -117,7 +134,7 @@ export default function ProductDetails() {
         <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews are checked by Riseora before publishing.</p><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><button className="black-button" type="submit">SUBMIT REVIEW</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div></div>
       </section>
 
-      <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div><button className="button" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button></div>
+      <div className="mobile-buy-bar phase3-buy-bar"><div><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <button className="button" onClick={addCurrent}>ADD TO CART</button> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>
     </div>
   </>;
 }

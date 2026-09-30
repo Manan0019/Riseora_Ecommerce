@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { slugify } from "../utils/slugify";
 import { sendOrderStatusNotification } from "../services/notification.service";
 import { refundRazorpayPayment } from "../services/payment.service";
+import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -703,7 +704,12 @@ router.patch(
     if (parsed.data.mrp !== undefined && parsed.data.sellingPrice !== undefined && parsed.data.sellingPrice > parsed.data.mrp) {
       return res.status(400).json({ success: false, message: "Selling price cannot be higher than MRP" });
     }
+    const before = await prisma.productVariant.findUnique({ where: { id: req.params.id }, select: { stockQuantity: true } });
+    if (!before) return res.status(404).json({ success: false, message: "Variant not found" });
     const variant = await prisma.productVariant.update({ where: { id: req.params.id }, data: parsed.data });
+    if (before.stockQuantity <= 0 && variant.stockQuantity > 0) {
+      void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
+    }
     res.json({ success: true, data: variant });
   }),
 );
@@ -802,6 +808,9 @@ router.put(
       });
     });
 
+    for (const variant of product.variants) {
+      if (variant.stockQuantity > 0) void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
+    }
     res.json({ success: true, data: product });
   }),
 );
@@ -853,6 +862,108 @@ router.delete(
   asyncHandler(async (req, res) => {
     await prisma.review.delete({ where: { id: req.params.id } });
     res.json({ success: true });
+  }),
+);
+
+
+function reportDateRange(query: any) {
+  const now = new Date();
+  const defaultFrom = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - 29, 0, 0, 0, 0));
+  const defaultTo = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(), 23, 59, 59, 999));
+  const from = typeof query.from === "string" && /^\d{4}-\d{2}-\d{2}$/.test(query.from) ? new Date(`${query.from}T00:00:00.000Z`) : defaultFrom;
+  const to = typeof query.to === "string" && /^\d{4}-\d{2}-\d{2}$/.test(query.to) ? new Date(`${query.to}T23:59:59.999Z`) : defaultTo;
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime()) || from > to) throw new Error("INVALID_REPORT_RANGE");
+  if (to.getTime() - from.getTime() > 370 * 24 * 60 * 60 * 1000) throw new Error("REPORT_RANGE_TOO_LARGE");
+  return { from, to };
+}
+
+router.get(
+  "/reports",
+  asyncHandler(async (req, res) => {
+    let range;
+    try { range = reportDateRange(req.query); }
+    catch (error) {
+      const message = error instanceof Error ? error.message : "INVALID_REPORT_RANGE";
+      return res.status(400).json({ success: false, message: message === "REPORT_RANGE_TOO_LARGE" ? "Choose a report range of 370 days or less" : "Invalid report date range" });
+    }
+
+    const [orders, newCustomers] = await Promise.all([
+      prisma.order.findMany({
+        where: { createdAt: { gte: range.from, lte: range.to } },
+        include: {
+          items: true,
+          payment: true,
+          returnRequests: { select: { status: true, refundAmount: true } },
+        },
+        orderBy: { createdAt: "asc" },
+      }),
+      prisma.user.count({ where: { role: "CUSTOMER", createdAt: { gte: range.from, lte: range.to } } }),
+    ]);
+
+    const activeOrders = orders.filter((order) => order.status !== "CANCELLED");
+    const money = (value: unknown) => Number(value || 0);
+    const orderRefund = (order: any) => {
+      if (order.payment) return money(order.payment.refundedAmount);
+      return (order.returnRequests || []).filter((item: any) => item.status === "REFUNDED").reduce((sum: number, item: any) => sum + money(item.refundAmount), 0);
+    };
+
+    const grossOrderValue = activeOrders.reduce((sum, order) => sum + money(order.totalAmount), 0);
+    const refundedValue = activeOrders.reduce((sum, order) => sum + orderRefund(order), 0);
+    const netOrderValue = Math.max(0, grossOrderValue - refundedValue);
+    const unitsOrdered = activeOrders.reduce((sum, order) => sum + order.items.reduce((lineSum, item) => lineSum + item.quantity, 0), 0);
+    const averageOrderValue = activeOrders.length ? grossOrderValue / activeOrders.length : 0;
+
+    const daily = new Map<string, any>();
+    const products = new Map<string, any>();
+    const coupons = new Map<string, any>();
+    const customers = new Map<string, any>();
+    const payments = new Map<string, any>();
+    const statuses = new Map<string, number>();
+
+    for (const order of orders) {
+      statuses.set(order.status, (statuses.get(order.status) || 0) + 1);
+      if (order.status === "CANCELLED") continue;
+      const date = order.createdAt.toISOString().slice(0, 10);
+      const row = daily.get(date) || { date, orders: 0, gross: 0, refunds: 0, net: 0, units: 0 };
+      const refund = orderRefund(order);
+      row.orders += 1; row.gross += money(order.totalAmount); row.refunds += refund; row.net += Math.max(0, money(order.totalAmount) - refund);
+      row.units += order.items.reduce((sum, item) => sum + item.quantity, 0);
+      daily.set(date, row);
+
+      const paymentKey = order.paymentMethod || "UNKNOWN";
+      const payment = payments.get(paymentKey) || { method: paymentKey, orders: 0, value: 0 };
+      payment.orders += 1; payment.value += money(order.totalAmount); payments.set(paymentKey, payment);
+
+      if (order.couponCode) {
+        const coupon = coupons.get(order.couponCode) || { code: order.couponCode, orders: 0, discount: 0, orderValue: 0 };
+        coupon.orders += 1; coupon.discount += money(order.discountAmount); coupon.orderValue += money(order.totalAmount); coupons.set(order.couponCode, coupon);
+      }
+
+      const customerKey = (order.customerEmail || order.customerPhone || order.customerName).toLowerCase();
+      const customer = customers.get(customerKey) || { name: order.customerName, email: order.customerEmail, phone: order.customerPhone, orders: 0, value: 0 };
+      customer.orders += 1; customer.value += money(order.totalAmount); customers.set(customerKey, customer);
+
+      for (const item of order.items) {
+        const key = item.sku || `${item.productName}/${item.variantName || ""}`;
+        const product = products.get(key) || { sku: item.sku, productName: item.productName, variantName: item.variantName, units: 0, value: 0 };
+        product.units += item.quantity; product.value += money(item.lineTotal); products.set(key, product);
+      }
+    }
+
+    const result = {
+      range: { from: range.from.toISOString().slice(0, 10), to: range.to.toISOString().slice(0, 10) },
+      summary: {
+        totalOrders: orders.length, activeOrders: activeOrders.length, grossOrderValue, refundedValue, netOrderValue, averageOrderValue, unitsOrdered,
+        deliveredOrders: orders.filter((order) => order.status === "DELIVERED").length, newCustomers,
+      },
+      daily: [...daily.values()],
+      topProducts: [...products.values()].sort((a, b) => b.value - a.value).slice(0, 20),
+      topCustomers: [...customers.values()].sort((a, b) => b.value - a.value).slice(0, 20),
+      couponPerformance: [...coupons.values()].sort((a, b) => b.orderValue - a.orderValue),
+      paymentSplit: [...payments.values()].sort((a, b) => b.value - a.value),
+      statusSplit: [...statuses.entries()].map(([status, count]) => ({ status, count })).sort((a, b) => b.count - a.count),
+    };
+    res.json({ success: true, data: result });
   }),
 );
 

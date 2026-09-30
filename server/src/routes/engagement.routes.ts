@@ -68,6 +68,34 @@ const cartRecoverySchema = z.object({
   })).min(1).max(50),
 });
 
+
+
+const stockAlertSchema = z.object({
+  variantId: z.string().uuid(),
+  email: z.string().trim().email().max(200),
+  name: z.string().trim().max(120).optional().or(z.literal("")),
+});
+
+router.post("/stock-alerts", publicWriteLimit, asyncHandler(async (req, res) => {
+  const parsed = stockAlertSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid email address" });
+
+  const variant = await prisma.productVariant.findFirst({
+    where: { id: parsed.data.variantId, isActive: true, product: { isActive: true } },
+    include: { product: true },
+  });
+  if (!variant) return res.status(404).json({ success: false, message: "Product option not found" });
+  if (variant.stockQuantity > 0) return res.status(409).json({ success: false, message: "This option is already back in stock." });
+
+  const email = parsed.data.email.toLowerCase();
+  await prisma.stockAlert.upsert({
+    where: { variantId_email: { variantId: variant.id, email } },
+    create: { variantId: variant.id, email, name: parsed.data.name || null },
+    update: { name: parsed.data.name || null, status: "PENDING", subscribedAt: new Date(), notifiedAt: null },
+  });
+  res.json({ success: true, message: `We'll email you when ${variant.product.name} (${variant.name}) is available again.` });
+}));
+
 router.post("/cart-recovery", cartRecoveryLimit, asyncHandler(async (req, res) => {
   const parsed = cartRecoverySchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart recovery snapshot" });

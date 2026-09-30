@@ -93,6 +93,12 @@ enum CartRecoveryStatus {
   EXPIRED
 }
 
+enum StockAlertStatus {
+  PENDING
+  NOTIFIED
+  CANCELLED
+}
+
 
 model User {
   id           String   @id @default(uuid()) @db.Uuid
@@ -204,6 +210,7 @@ model ProductVariant {
   isActive          Boolean  @default(true)
 
   orderItems OrderItem[]
+  stockAlerts StockAlert[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -701,4 +708,25 @@ model NewsletterSubscriber {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, subscribedAt])
+}
+
+
+model StockAlert {
+  id String @id @default(uuid()) @db.Uuid
+
+  variantId String @db.Uuid
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  email String
+  name  String?
+  status StockAlertStatus @default(PENDING)
+  subscribedAt DateTime @default(now())
+  notifiedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([variantId, email])
+  @@index([status, createdAt])
+  @@index([email])
 }

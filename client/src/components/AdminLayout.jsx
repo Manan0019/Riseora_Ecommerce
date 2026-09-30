@@ -5,6 +5,7 @@ import { Icon } from "./Icons";
 const nav = [
   { to: "/admin", label: "Dashboard", icon: "dashboard", end: true },
   { to: "/admin/catalog", label: "Catalog", icon: "package" },
+  { to: "/admin/reports", label: "Reports", icon: "sparkles" },
   { to: "/admin/inventory", label: "Inventory", icon: "tag" },
   { to: "/admin/orders", label: "Orders", icon: "orders" },
   { to: "/admin/customers", label: "Customers", icon: "user" },
