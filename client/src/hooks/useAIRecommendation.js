@@ -1,0 +1,3 @@
+export function useAIRecommendation(){
+  return [];
+}
