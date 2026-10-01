@@ -1,5 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
+import rateLimit from "express-rate-limit";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import {
   cloudMediaEnabled,
@@ -8,10 +9,11 @@ import {
   storeCampaignImage,
   storeCategoryImage,
   storeProductImage,
+  storeReviewImage,
 } from "../services/media.service";
 
 const router = Router();
-router.use(requireAuth, requireAdmin);
+const reviewUploadLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 20, standardHeaders: "draft-8", legacyHeaders: false });
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -21,6 +23,25 @@ const upload = multer({
       ? callback(null, true)
       : callback(new Error("Only JPG, PNG and WEBP images are allowed")),
 });
+
+router.post("/reviews", reviewUploadLimit, requireAuth, upload.array("images", 4), async (req, res, next) => {
+  try {
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    if (files.length === 0) return res.status(400).json({ success: false, message: "Select at least one review image" });
+    const stored = await Promise.all(
+      files.map(async (file) => ({
+        ...(await storeReviewImage(file.buffer, file.mimetype)),
+        originalName: file.originalname,
+        size: file.size,
+      })),
+    );
+    res.status(201).json({ success: true, storage: cloudMediaEnabled ? "cloudinary" : "local", data: stored });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.use(requireAuth, requireAdmin);
 
 router.post("/products", upload.array("images", 8), async (req, res, next) => {
   try {

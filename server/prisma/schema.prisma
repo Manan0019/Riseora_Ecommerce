@@ -131,6 +131,7 @@ model User {
   addresses Address[]
   orders    Order[]
   reviews   Review[]
+  productQuestions ProductQuestion[]
   checkoutSessions CheckoutSession[]
   returnRequests ReturnRequest[]
   passwordResetTokens PasswordResetToken[]
@@ -220,6 +221,7 @@ model Product {
   variants ProductVariant[]
   images   ProductImage[]
   reviews  Review[]
+  questions ProductQuestion[]
   couponLinks CouponProduct[]
 
   createdAt DateTime @default(now())
@@ -791,6 +793,7 @@ model Review {
   rating           Int
   title            String?
   comment          String
+  images           Json?
   isApproved       Boolean @default(false)
   verifiedPurchase Boolean @default(false)
 
@@ -799,6 +802,27 @@ model Review {
 
   @@unique([userId, productId])
   @@index([productId, isApproved])
+}
+
+model ProductQuestion {
+  id String @id @default(uuid()) @db.Uuid
+
+  productId String  @db.Uuid
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  question    String
+  answer      String?
+  isPublished Boolean @default(false)
+  answeredAt  DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([productId, isPublished, createdAt])
+  @@index([userId, createdAt])
 }
 
 model Banner {

@@ -2115,3 +2115,81 @@ textarea { min-height: 105px; resize: vertical; }
 @media(max-width:900px){.phase21-zone-list{grid-template-columns:1fr}.phase21-zone-controls{grid-template-columns:1fr 1fr}.phase21-zone-editor-actions{justify-content:flex-start}}
 @media(max-width:720px){.phase21-checkout-zone{padding:11px 12px}.phase21-zone-form{padding:12px}.phase21-zone-controls{grid-template-columns:1fr}.phase21-zone-editor-actions{display:grid;grid-template-columns:1fr 1fr}.phase21-zone-editor-actions .button{width:100%}.phase21-zone-facts{grid-template-columns:1fr 1fr}.phase21-zone-card{padding:13px}.phase21-zone-card-actions{display:grid;grid-template-columns:1fr 1fr}.phase21-zone-card-actions .danger-link{grid-column:1/-1;text-align:left}}
 .phase21-order-zone{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}.phase21-order-zone span{display:grid;gap:2px;padding:8px 10px;border:1px solid #dde5dc;border-radius:10px;background:#f7faf6;color:#56665c;font-size:.75rem}.phase21-order-zone b{color:#294334;font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}.phase21-order-zone.admin{margin-top:4px}
+
+/* Phase 22 — visual reviews + moderated product Q&A */
+.phase22-qa-section { scroll-margin-top: 120px; }
+.phase22-qa-count { font-size: .76rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #4d6659; }
+.phase22-qa-layout { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(290px, .55fr); gap: 28px; align-items: start; }
+.phase22-qa-list { border-top: 1px solid rgba(25, 55, 40, .12); }
+.phase22-qa-item { border-bottom: 1px solid rgba(25, 55, 40, .12); }
+.phase22-qa-question { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 18px; text-align: left; padding: 20px 2px; border: 0; background: transparent; color: inherit; cursor: pointer; font: inherit; }
+.phase22-qa-question > span { display: flex; align-items: flex-start; gap: 12px; font-weight: 760; line-height: 1.45; }
+.phase22-qa-question > span b { flex: 0 0 28px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #173c2a; color: #fff; font-size: .78rem; }
+.phase22-qa-question > i { font-style: normal; font-size: 1.45rem; line-height: 1; transition: transform .26s ease; color: #173c2a; }
+.phase22-qa-item.open .phase22-qa-question > i { transform: rotate(45deg); }
+.phase22-qa-answer-wrap { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .34s cubic-bezier(.2,.7,.2,1), opacity .24s ease; }
+.phase22-qa-item.open .phase22-qa-answer-wrap { grid-template-rows: 1fr; opacity: 1; }
+.phase22-qa-answer { overflow: hidden; display: flex; gap: 12px; padding: 0 2px; }
+.phase22-qa-item.open .phase22-qa-answer { padding-bottom: 22px; }
+.phase22-qa-answer > span { flex: 0 0 28px; width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #e7f0e9; color: #173c2a; font-weight: 900; font-size: .78rem; }
+.phase22-qa-answer p { margin: 1px 0 8px; color: #33473d; line-height: 1.65; }
+.phase22-qa-answer small { color: #78837d; }
+.phase22-question-form-card, .phase22-qa-empty { border: 1px solid rgba(25, 55, 40, .12); border-radius: 20px; background: #fbfcf9; padding: 22px; }
+.phase22-question-form-card { position: sticky; top: 120px; }
+.phase22-question-form-card h3 { margin: 6px 0 8px; }
+.phase22-question-form-card p { color: #65746c; line-height: 1.55; }
+.phase22-question-form-card textarea { min-height: 118px; resize: vertical; }
+.phase22-character-count { margin: -5px 0 12px; text-align: right; color: #8b948f; font-size: .74rem; }
+
+.phase22-review-overview { display: grid; grid-template-columns: 200px minmax(260px, 480px); gap: 28px; align-items: center; padding: 20px 0 26px; }
+.phase22-rating-score { display: grid; gap: 5px; }
+.phase22-rating-score > strong { font-size: clamp(2.8rem, 5vw, 4.5rem); line-height: .95; letter-spacing: -.06em; }
+.phase22-rating-score > span { color: #f0a928; letter-spacing: .08em; }
+.phase22-rating-score > small { color: #738078; }
+.phase22-rating-bars { display: grid; gap: 8px; }
+.phase22-rating-bars button { display: grid; grid-template-columns: 42px minmax(100px, 1fr) 32px; align-items: center; gap: 10px; width: 100%; padding: 3px 4px; border: 0; background: transparent; color: #415047; cursor: pointer; font: inherit; border-radius: 8px; }
+.phase22-rating-bars button:hover, .phase22-rating-bars button.active { background: #f3f6f1; }
+.phase22-rating-bars i { height: 7px; overflow: hidden; border-radius: 999px; background: #e5e9e4; }
+.phase22-rating-bars i b { display: block; height: 100%; min-width: 0; border-radius: inherit; background: #d89c2f; }
+.phase22-rating-bars small { text-align: right; color: #7d8782; }
+.phase22-review-filter-note { display: flex; gap: 10px; align-items: center; margin: -8px 0 18px; font-size: .84rem; color: #56675e; }
+.phase22-review-filter-note button { border: 0; background: transparent; padding: 0; text-decoration: underline; cursor: pointer; color: #173c2a; font-weight: 750; }
+.phase22-review-card { overflow: hidden; }
+.phase22-review-images, .phase22-admin-review-media { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0; }
+.phase22-review-images a, .phase22-admin-review-media a { display: block; width: 76px; height: 76px; overflow: hidden; border-radius: 12px; border: 1px solid rgba(20, 45, 32, .1); background: #f1f3ef; }
+.phase22-review-images img, .phase22-admin-review-media img { width: 100%; height: 100%; object-fit: cover; transition: transform .25s ease; }
+.phase22-review-images a:hover img, .phase22-admin-review-media a:hover img { transform: scale(1.055); }
+.phase22-review-upload input { margin-top: 8px; padding: 10px; border: 1px dashed rgba(23, 60, 42, .28); background: #fbfcf9; }
+.phase22-review-upload small { display: block; margin-top: 6px; color: #7d8782; font-size: .72rem; }
+.phase22-selected-files { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 12px; }
+.phase22-selected-files span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 5px 8px; border-radius: 999px; background: #eef4ef; color: #355140; font-size: .72rem; }
+
+.phase22-admin-community-tabs { display: flex; gap: 8px; margin: 0 0 18px; padding: 5px; width: fit-content; border-radius: 14px; background: #eef2ed; }
+.phase22-admin-community-tabs button { border: 0; background: transparent; padding: 9px 16px; border-radius: 10px; font-weight: 800; color: #647168; cursor: pointer; }
+.phase22-admin-community-tabs button.active { background: #fff; color: #173c2a; box-shadow: 0 2px 12px rgba(25, 55, 40, .08); }
+.phase22-admin-question-list { display: grid; gap: 14px; }
+.phase22-admin-question-card { padding: 18px; border: 1px solid rgba(20, 45, 32, .12); border-radius: 16px; background: #fff; }
+.phase22-question-meta { display: flex; justify-content: space-between; gap: 12px; color: #6d7a72; font-size: .78rem; }
+.phase22-question-meta span { font-weight: 800; color: #173c2a; }
+.phase22-admin-question-card h3 { margin: 10px 0 6px; line-height: 1.45; }
+.phase22-admin-question-card > small { display: block; color: #7a867f; margin-bottom: 14px; }
+.phase22-admin-question-card textarea { min-height: 112px; resize: vertical; }
+.phase22-question-actions { margin-top: 12px; flex-wrap: wrap; }
+
+@media (max-width: 760px) {
+  .phase22-qa-layout { grid-template-columns: 1fr; gap: 18px; }
+  .phase22-question-form-card { position: static; top: auto; }
+  .phase22-qa-question { padding: 17px 0; }
+  .phase22-review-overview { grid-template-columns: 112px 1fr; gap: 14px; padding-top: 14px; }
+  .phase22-rating-score > strong { font-size: 3rem; }
+  .phase22-rating-score > span { font-size: .78rem; letter-spacing: .02em; }
+  .phase22-rating-bars button { grid-template-columns: 36px 1fr 24px; gap: 7px; font-size: .76rem; }
+  .phase22-review-images a { width: 68px; height: 68px; }
+  .phase22-admin-community-tabs { width: 100%; }
+  .phase22-admin-community-tabs button { flex: 1; }
+  .phase22-question-meta { align-items: flex-start; flex-direction: column; gap: 3px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase22-qa-answer-wrap, .phase22-qa-question > i, .phase22-review-images img, .phase22-admin-review-media img { transition: none !important; }
+}

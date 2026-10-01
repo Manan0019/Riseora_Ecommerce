@@ -201,6 +201,12 @@ router.get(
           orderBy: { createdAt: "desc" },
           include: { user: { select: { firstName: true } } },
         },
+        questions: {
+          where: { isPublished: true, answer: { not: null } },
+          orderBy: [{ answeredAt: "desc" }, { createdAt: "desc" }],
+          include: { user: { select: { firstName: true } } },
+          take: 50,
+        },
       },
     });
 
@@ -211,10 +217,13 @@ router.get(
   }),
 );
 
+const mediaUrlSchema = z.string().trim().max(2000).refine((value) => value.startsWith("/uploads/reviews/") || /^https:\/\//i.test(value), "Invalid review image URL");
+
 const reviewSchema = z.object({
   rating: z.number().int().min(1).max(5),
   title: z.string().trim().max(100).optional().or(z.literal("")),
   comment: z.string().trim().min(5).max(1200),
+  images: z.array(mediaUrlSchema).max(4).default([]),
 });
 
 router.post(
@@ -243,6 +252,7 @@ router.post(
         rating: parsed.data.rating,
         title: parsed.data.title || null,
         comment: parsed.data.comment,
+        images: parsed.data.images,
         verifiedPurchase: Boolean(purchased),
         isApproved: false,
       },
@@ -250,6 +260,7 @@ router.post(
         rating: parsed.data.rating,
         title: parsed.data.title || null,
         comment: parsed.data.comment,
+        images: parsed.data.images,
         verifiedPurchase: Boolean(purchased),
         isApproved: false,
       },
@@ -257,6 +268,34 @@ router.post(
     });
 
     res.status(201).json({ success: true, data: review, message: "Thanks — your review was submitted for moderation." });
+  }),
+);
+
+const questionSchema = z.object({
+  question: z.string().trim().min(8).max(500),
+});
+
+router.post(
+  "/:id/questions",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = questionSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Please enter a clear product question", errors: parsed.error.flatten() });
+
+    const product = await prisma.product.findFirst({ where: { id: req.params.id, isActive: true }, select: { id: true, name: true } });
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+
+    const recentDuplicate = await prisma.productQuestion.findFirst({
+      where: { userId: req.user!.id, productId: product.id, question: { equals: parsed.data.question, mode: "insensitive" }, createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } },
+      select: { id: true },
+    });
+    if (recentDuplicate) return res.status(409).json({ success: false, message: "You already submitted this question recently." });
+
+    const question = await prisma.productQuestion.create({
+      data: { productId: product.id, userId: req.user!.id, question: parsed.data.question },
+      include: { user: { select: { firstName: true } } },
+    });
+    res.status(201).json({ success: true, data: question, message: "Question submitted. Riseora will publish it after answering." });
   }),
 );
 

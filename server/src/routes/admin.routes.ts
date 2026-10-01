@@ -1021,6 +1021,63 @@ router.delete(
   }),
 );
 
+router.get(
+  "/product-questions",
+  asyncHandler(async (req, res) => {
+    const status = typeof req.query.status === "string" ? req.query.status : "";
+    const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
+    const where: any = {};
+    if (status === "pending") where.isPublished = false;
+    if (status === "published") where.isPublished = true;
+    if (search) where.OR = [
+      { question: { contains: search, mode: "insensitive" } },
+      { answer: { contains: search, mode: "insensitive" } },
+      { user: { email: { contains: search, mode: "insensitive" } } },
+      { product: { name: { contains: search, mode: "insensitive" } } },
+    ];
+    const data = await prisma.productQuestion.findMany({
+      where,
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, email: true } },
+        product: { select: { id: true, name: true, slug: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 500,
+    });
+    res.json({ success: true, data });
+  }),
+);
+
+router.patch(
+  "/product-questions/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      answer: z.string().trim().max(4000).nullable().optional(),
+      isPublished: z.boolean().optional(),
+    }).safeParse(req.body);
+    if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid question update" });
+    const current = await prisma.productQuestion.findUnique({ where: { id: req.params.id } });
+    if (!current) return res.status(404).json({ success: false, message: "Question not found" });
+    const answer = parsed.data.answer !== undefined ? (parsed.data.answer || null) : current.answer;
+    const publish = parsed.data.isPublished !== undefined ? parsed.data.isPublished : current.isPublished;
+    if (publish && !answer?.trim()) return res.status(400).json({ success: false, message: "Add an answer before publishing the question" });
+    const data = await prisma.productQuestion.update({
+      where: { id: current.id },
+      data: { answer, isPublished: publish, answeredAt: answer ? (current.answeredAt || new Date()) : null },
+      include: { user: { select: { firstName: true, lastName: true, email: true } }, product: { select: { name: true, slug: true } } },
+    });
+    res.json({ success: true, data });
+  }),
+);
+
+router.delete(
+  "/product-questions/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.productQuestion.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
+  }),
+);
+
 
 function reportDateRange(query: any) {
   const now = new Date();

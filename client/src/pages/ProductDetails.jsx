@@ -10,6 +10,7 @@ import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
 import RichText, { richTextToPlain } from "../components/RichText";
 import ProductFaq from "../components/ProductFaq";
+import ProductQuestions from "../components/ProductQuestions";
 
 const RECENT_KEY = "riseora_recent_products";
 
@@ -54,7 +55,13 @@ export default function ProductDetails() {
   const [activeImage, setActiveImage] = useState(0);
   const [error, setError] = useState("");
   const [review, setReview] = useState({ rating: 5, title: "", comment: "" });
+  const [reviewFiles, setReviewFiles] = useState([]);
+  const [reviewBusy, setReviewBusy] = useState(false);
+  const [reviewFilter, setReviewFilter] = useState(0);
   const [reviewMessage, setReviewMessage] = useState("");
+  const [questionText, setQuestionText] = useState("");
+  const [questionMessage, setQuestionMessage] = useState("");
+  const [questionBusy, setQuestionBusy] = useState(false);
   const [stockEmail, setStockEmail] = useState("");
   const [stockAlertMessage, setStockAlertMessage] = useState("");
   const [stockAlertBusy, setStockAlertBusy] = useState(false);
@@ -131,6 +138,13 @@ export default function ProductDetails() {
   };
   const wished = has(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
+  const publicQuestions = Array.isArray(product.questions) ? product.questions : [];
+  const publicReviews = Array.isArray(product.reviews) ? product.reviews : [];
+  const visibleReviews = reviewFilter ? publicReviews.filter((item) => Number(item.rating) === reviewFilter) : publicReviews;
+  const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => {
+    const count = publicReviews.filter((item) => Number(item.rating) === rating).length;
+    return { rating, count, percent: publicReviews.length ? Math.round((count / publicReviews.length) * 100) : 0 };
+  });
   const fbtProducts = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2);
   const fbtChosen = fbtProducts.filter((item) => fbtSelected.includes(item.id));
   const fbtTotal = Number(variant?.sellingPrice || 0) + fbtChosen.reduce((sum, item) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); return sum + Number(v?.sellingPrice || 0); }, 0);
@@ -174,12 +188,36 @@ export default function ProductDetails() {
   }
 
   async function submitReview(event) {
-    event.preventDefault(); setReviewMessage("");
+    event.preventDefault(); setReviewMessage(""); setReviewBusy(true);
     try {
-      const response = await apiFetch(`/products/${product.id}/reviews`, { method: "POST", body: JSON.stringify({ rating: Number(review.rating), title: review.title, comment: review.comment }) });
+      let images = [];
+      if (reviewFiles.length) {
+        const form = new FormData();
+        reviewFiles.forEach((file) => form.append("images", file));
+        const uploadResponse = await apiFetch("/uploads/reviews", { method: "POST", body: form });
+        images = (uploadResponse.data || []).map((item) => item.url).filter(Boolean).slice(0, 4);
+      }
+      const response = await apiFetch(`/products/${product.id}/reviews`, { method: "POST", body: JSON.stringify({ rating: Number(review.rating), title: review.title, comment: review.comment, images }) });
       setReview({ rating: 5, title: "", comment: "" });
+      setReviewFiles([]);
       setReviewMessage(response.message || "Thanks — your review was submitted for moderation.");
-    } catch (err) { setReviewMessage(err.message); }
+    } catch (err) { setReviewMessage(err.message); } finally { setReviewBusy(false); }
+  }
+
+  function chooseReviewFiles(event) {
+    const files = Array.from(event.target.files || []).filter((file) => ["image/jpeg", "image/png", "image/webp"].includes(file.type)).slice(0, 4);
+    setReviewFiles(files);
+    if ((event.target.files?.length || 0) > 4) setReviewMessage("You can attach up to 4 review photos.");
+  }
+
+  async function submitQuestion(event) {
+    event.preventDefault();
+    setQuestionMessage(""); setQuestionBusy(true);
+    try {
+      const response = await apiFetch(`/products/${product.id}/questions`, { method: "POST", body: JSON.stringify({ question: questionText }) });
+      setQuestionText("");
+      setQuestionMessage(response.message || "Question submitted for Riseora to answer.");
+    } catch (err) { setQuestionMessage(err.message); } finally { setQuestionBusy(false); }
   }
 
   async function submitStockAlert(event) {
@@ -242,10 +280,27 @@ export default function ProductDetails() {
       {related.length > 0 && <ProductShelf title="You may also like" eyebrow="PAIR IT WITH" products={related} />}
       {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
 
-      <section id="reviews" className="container review-section phase3-section">
+      <section className="container phase3-section phase22-qa-section" id="questions">
+        <div className="section-title-row"><div><p className="phase3-eyebrow">ASK BEFORE YOU BUY</p><h2>Product questions &amp; answers</h2></div>{publicQuestions.length > 0 && <span className="phase22-qa-count">{publicQuestions.length} answered</span>}</div>
+        <div className="phase22-qa-layout">
+          <div>{publicQuestions.length ? <ProductQuestions items={publicQuestions} /> : <div className="phase22-qa-empty"><strong>No published questions yet.</strong><p>Ask about usage, texture, routine pairing, pack size or other product details.</p></div>}</div>
+          <aside className="phase22-question-form-card">
+            {user ? <form onSubmit={submitQuestion}><span className="phase3-eyebrow">NEED CLARITY?</span><h3>Ask Riseora</h3><p>Questions are reviewed and answered before they appear publicly.</p><textarea required minLength="8" maxLength="500" value={questionText} onChange={(e) => setQuestionText(e.target.value)} placeholder="Example: Can I use this with my evening hair-care routine?" /><div className="phase22-character-count">{questionText.length}/500</div><button className="button wide" disabled={questionBusy}>{questionBusy ? "SUBMITTING…" : "ASK A QUESTION"}</button>{questionMessage && <p className="review-message">{questionMessage}</p>}</form> : <div><span className="phase3-eyebrow">NEED CLARITY?</span><h3>Ask a product question</h3><p>Log in to ask Riseora something about this product.</p><Link className="button wide" to="/login">LOGIN TO ASK</Link></div>}
+          </aside>
+        </div>
+      </section>
+
+      <section id="reviews" className="container review-section phase3-section phase22-review-section">
         <div className="section-title-row"><div><p className="phase3-eyebrow">REAL EXPERIENCES</p><h2>Customer reviews</h2></div>{product.reviewCount > 0 && <span className="review-summary">★ {product.ratingAverage} / 5</span>}</div>
-        <div className="reviews-layout"><div className="review-list">{product.reviews?.length ? product.reviews.map((item) => <article className="review-card" key={item.id}><div><span className="review-stars">{"★".repeat(item.rating)}{"☆".repeat(5-item.rating)}</span>{item.verifiedPurchase && <b>Verified purchase</b>}</div><h3>{item.title || "Customer review"}</h3><p>{item.comment}</p><small>{item.user?.firstName || "Customer"}</small></article>) : <div className="empty-review">No approved reviews yet. Be the first to share your experience.</div>}</div>
-        <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews are checked by Riseora before publishing.</p><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><button className="black-button" type="submit">SUBMIT REVIEW</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div></div>
+        <div className="phase22-review-overview">
+          <div className="phase22-rating-score"><strong>{product.reviewCount ? Number(product.ratingAverage).toFixed(1) : "—"}</strong><span>★★★★★</span><small>{product.reviewCount} approved review{product.reviewCount === 1 ? "" : "s"}</small></div>
+          <div className="phase22-rating-bars">{ratingDistribution.map((row) => <button type="button" key={row.rating} className={reviewFilter === row.rating ? "active" : ""} onClick={() => setReviewFilter((current) => current === row.rating ? 0 : row.rating)}><span>{row.rating} ★</span><i><b style={{ width: `${row.percent}%` }} /></i><small>{row.count}</small></button>)}</div>
+        </div>
+        {reviewFilter > 0 && <div className="phase22-review-filter-note">Showing {reviewFilter}-star reviews <button onClick={() => setReviewFilter(0)}>Show all</button></div>}
+        <div className="reviews-layout">
+          <div className="review-list">{visibleReviews.length ? visibleReviews.map((item) => <article className="review-card phase22-review-card" key={item.id}><div><span className="review-stars">{"★".repeat(item.rating)}{"☆".repeat(5-item.rating)}</span>{item.verifiedPurchase && <b>Verified purchase</b>}</div><h3>{item.title || "Customer review"}</h3><p>{item.comment}</p>{Array.isArray(item.images) && item.images.length > 0 && <div className="phase22-review-images">{item.images.map((src, index) => <a key={`${src}-${index}`} href={mediaUrl(src)} target="_blank" rel="noreferrer"><img src={mediaUrl(src)} alt={`${product.name} customer review ${index + 1}`} loading="lazy" /></a>)}</div>}<small>{item.user?.firstName || "Customer"}</small></article>) : <div className="empty-review">{reviewFilter ? `No ${reviewFilter}-star reviews yet.` : "No approved reviews yet. Be the first to share your experience."}</div>}</div>
+          <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews and photos are checked by Riseora before publishing.</p><label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><label className="phase22-review-upload">Add photos <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={chooseReviewFiles} /><small>Optional · JPG, PNG or WEBP · up to 4 photos · 5 MB each</small></label>{reviewFiles.length > 0 && <div className="phase22-selected-files">{reviewFiles.map((file) => <span key={`${file.name}-${file.lastModified}`}>{file.name}</span>)}</div>}<button className="black-button" type="submit" disabled={reviewBusy}>{reviewBusy ? "SUBMITTING…" : "SUBMIT REVIEW"}</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div>
+        </div>
       </section>
 
       <div className="mobile-buy-bar phase3-buy-bar phase17-mobile-buy"><div className="phase17-mobile-price"><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <div className="phase17-mobile-actions"><button className="button button-secondary" onClick={addCurrent}>ADD</button><button className="button" onClick={buyCurrent}>BUY NOW</button></div> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>

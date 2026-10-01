@@ -452,3 +452,17 @@ npm run build
 
 See `PHASE21_DELIVERY_ZONES_SERVICEABILITY.md` for zone-matching examples and the runtime checklist.
 
+
+## Phase 22 — Visual Reviews & Product Q&A
+
+Phase 22 adds moderated customer review photos, a rating-distribution/filter experience, and a customer product-question workflow with admin draft/publish moderation. Customer review uploads reuse the existing local/Cloudinary media layer and remain hidden until the review is approved.
+
+Apply the included migration with:
+
+```powershell
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+See `PHASE22_VISUAL_REVIEWS_PRODUCT_QA.md` for the runtime checklist.
