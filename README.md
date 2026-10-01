@@ -466,3 +466,17 @@ npm run build
 ```
 
 See `PHASE22_VISUAL_REVIEWS_PRODUCT_QA.md` for the runtime checklist.
+
+## Phase 23 — Repeat Purchase & Private Wishlist Sharing
+
+Phase 23 adds a safe **Buy Again** experience based on delivered purchases and private 30-day wishlist share links. Reorders are rebuilt from the current catalog, so old order prices, stock and limits are never blindly reused. Shared wishlists store only product IDs and an unguessable expiring token—no customer identity data.
+
+Apply the included migration with:
+
+```powershell
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+See `PHASE23_REPEAT_PURCHASE_SHARED_WISHLIST.md` for the runtime checklist.

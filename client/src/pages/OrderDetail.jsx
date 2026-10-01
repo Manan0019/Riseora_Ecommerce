@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import OrderTimeline from "../components/OrderTimeline";
+import { useCart } from "../context/CartContext";
 
 function Address({ value }) {
   if (!value) return null;
@@ -10,15 +11,32 @@ function Address({ value }) {
 
 export default function OrderDetail() {
   const { orderNumber } = useParams();
+  const { addItems } = useCart();
   const [order, setOrder] = useState(null);
   const [error, setError] = useState("");
+  const [notice, setNotice] = useState("");
+  const [reordering, setReordering] = useState(false);
 
   useEffect(() => { apiFetch(`/orders/my/${orderNumber}`).then((r) => setOrder(r.data)).catch((e) => setError(e.message)); }, [orderNumber]);
-  if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
+
+  async function buyAgain() {
+    setError(""); setNotice(""); setReordering(true);
+    try {
+      const response = await apiFetch(`/account/reorder/${orderNumber}`, { method: "POST" });
+      addItems(response.data.items || []);
+      const notes = response.data.skipped || [];
+      setNotice(`${response.data.priceChanged ? "Current prices were refreshed. " : ""}Available items were added to your cart${notes.length ? ` with ${notes.length} stock/limit adjustment${notes.length === 1 ? "" : "s"}` : ""}.`);
+    } catch (e) { setError(e.message); }
+    finally { setReordering(false); }
+  }
+
+  if (error && !order) return <div className="container page-space"><p className="alert error">{error}</p></div>;
   if (!order) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
   return <div className="container page-space order-detail-page">
-    <div className="order-detail-head"><div><Link to="/orders" className="back-link">← My orders</Link><p className="eyebrow">ORDER {order.orderNumber}</p><h1>Track your order</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p><div className="order-detail-actions">{!["PENDING","CANCELLED"].includes(order.status) && <Link className="button button-secondary" to={`/invoice/${order.orderNumber}`}>Tax invoice</Link>}{order.status === "DELIVERED" && <Link className="button" to={`/returns/new/${order.orderNumber}`}>Request return</Link>}</div></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
+    {notice && <p className="alert success">{notice}</p>}
+    {error && <p className="alert error">{error}</p>}
+    <div className="order-detail-head"><div><Link to="/orders" className="back-link">← My orders</Link><p className="eyebrow">ORDER {order.orderNumber}</p><h1>Track your order</h1><p>Placed {new Date(order.createdAt).toLocaleString()}</p><div className="order-detail-actions">{!["PENDING","CANCELLED"].includes(order.status) && <Link className="button button-secondary" to={`/invoice/${order.orderNumber}`}>Tax invoice</Link>}{order.status === "DELIVERED" && <button className="button button-secondary" type="button" disabled={reordering} onClick={buyAgain}>{reordering ? "Refreshing…" : "Buy again"}</button>}{order.status === "DELIVERED" && <Link className="button" to={`/returns/new/${order.orderNumber}`}>Request return</Link>}</div></div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span></div>
 
     <div className="order-detail-grid">
       <section className="order-detail-card"><h2>Order progress</h2><OrderTimeline order={order} /></section>

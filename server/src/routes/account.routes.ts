@@ -182,4 +182,122 @@ router.delete(
   }),
 );
 
+
+router.get(
+  "/buy-again",
+  asyncHandler(async (req, res) => {
+    const rows = await prisma.orderItem.findMany({
+      where: {
+        isComplimentary: false,
+        order: { userId: req.user!.id, status: "DELIVERED" },
+        variant: { is: { isActive: true, product: { isActive: true } } },
+      },
+      include: {
+        variant: {
+          include: {
+            product: {
+              include: {
+                category: true,
+                images: { orderBy: { sortOrder: "asc" } },
+                variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
+                reviews: { where: { isApproved: true }, select: { rating: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 120,
+    });
+
+    const seen = new Set<string>();
+    const products: any[] = [];
+    for (const row of rows) {
+      const product = row.variant?.product;
+      if (!product || seen.has(product.id)) continue;
+      seen.add(product.id);
+      const ratings = product.reviews || [];
+      const ratingAverage = ratings.length ? ratings.reduce((sum, review) => sum + review.rating, 0) / ratings.length : 0;
+      const { reviews: _reviews, ...rest } = product;
+      products.push({ ...rest, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length });
+      if (products.length >= 10) break;
+    }
+    res.json({ success: true, data: products });
+  }),
+);
+
+router.post(
+  "/reorder/:orderNumber",
+  asyncHandler(async (req, res) => {
+    const order = await prisma.order.findFirst({
+      where: { orderNumber: req.params.orderNumber, userId: req.user!.id },
+      include: { items: true },
+    });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (order.status !== "DELIVERED") return res.status(400).json({ success: false, message: "Buy Again is available after an order is delivered" });
+
+    const sourceItems = order.items.filter((item) => !item.isComplimentary && item.variantId);
+    const ids = [...new Set(sourceItems.map((item) => item.variantId!).filter(Boolean))];
+    const variants = ids.length ? await prisma.productVariant.findMany({
+      where: { id: { in: ids } },
+      include: {
+        product: {
+          include: {
+            category: true,
+            images: { orderBy: { sortOrder: "asc" } },
+          },
+        },
+      },
+    }) : [];
+    const variantMap = new Map<string, any>(variants.map((variant: any) => [variant.id, variant]));
+    const usedByProduct = new Map<string, number>();
+    const ready: any[] = [];
+    const skipped: any[] = [];
+
+    for (const item of sourceItems) {
+      const variant = item.variantId ? variantMap.get(item.variantId) : null;
+      if (!variant || !variant.isActive || !variant.product.isActive) {
+        skipped.push({ sku: item.sku, productName: item.productName, reason: "No longer available" });
+        continue;
+      }
+      const stock = Math.max(0, Number(variant.stockQuantity || 0));
+      if (stock <= 0) {
+        skipped.push({ sku: item.sku, productName: item.productName, reason: "Out of stock" });
+        continue;
+      }
+      const limit = variant.product.maxPurchaseQuantity == null ? null : Number(variant.product.maxPurchaseQuantity);
+      const already = usedByProduct.get(variant.productId) || 0;
+      const room = limit == null ? stock : Math.max(0, limit - already);
+      const quantity = Math.max(0, Math.min(Number(item.quantity || 1), stock, room));
+      if (quantity <= 0) {
+        skipped.push({ sku: item.sku, productName: item.productName, reason: "Current purchase limit reached" });
+        continue;
+      }
+      usedByProduct.set(variant.productId, already + quantity);
+      ready.push({
+        product: variant.product,
+        variant,
+        quantity,
+        previousUnitPrice: Number(item.unitPrice),
+        currentUnitPrice: Number(variant.sellingPrice),
+        priceChanged: Math.abs(Number(item.unitPrice) - Number(variant.sellingPrice)) >= 0.01,
+      });
+      if (quantity < Number(item.quantity || 1)) {
+        skipped.push({ sku: item.sku, productName: item.productName, reason: `Quantity adjusted to ${quantity} for current stock/limits` });
+      }
+    }
+
+    if (!ready.length) return res.status(409).json({ success: false, message: "None of the products from this order can currently be added again", data: { items: [], skipped } });
+    res.json({
+      success: true,
+      data: {
+        items: ready,
+        skipped,
+        priceChanged: ready.some((item) => item.priceChanged),
+      },
+      message: skipped.length ? "Available products are ready. Some items were adjusted or skipped." : "Order items refreshed using current prices and stock.",
+    });
+  }),
+);
+
 export default router;

@@ -94,6 +94,21 @@ export function CartProvider({ children }) {
     setDrawerOpen(true);
   }
 
+  function addItems(entries = []) {
+    const source = Array.isArray(entries) ? entries : [];
+    if (!source.length) return false;
+    setItems((current) => {
+      let next = [...current];
+      for (const entry of source) {
+        if (!entry?.product || !entry?.variant) continue;
+        next = addLine(next, entry.product, entry.variant, Number(entry.quantity || 1));
+      }
+      return next;
+    });
+    setDrawerOpen(true);
+    return true;
+  }
+
   function startBuyNow(product, variant, quantity = 1) {
     const line = toCartLine(product, variant, quantity);
     if (!line) return false;
@@ -180,7 +195,7 @@ export function CartProvider({ children }) {
   const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),
+    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),
     [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen],
   );
 

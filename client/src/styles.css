@@ -2193,3 +2193,34 @@ textarea { min-height: 105px; resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
   .phase22-qa-answer-wrap, .phase22-qa-question > i, .phase22-review-images img, .phase22-admin-review-media img { transition: none !important; }
 }
+
+/* Phase 23 — repeat purchase + private wishlist sharing */
+.phase23-buy-again-section { margin: 30px 0 36px; padding: 24px; border: 1px solid rgba(25, 55, 40, .11); border-radius: 24px; background: linear-gradient(135deg, #fbfdf9, #f3f8f2); overflow: hidden; }
+.phase23-section-heading { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 16px; }
+.phase23-section-heading h2 { margin: 4px 0 5px; }
+.phase23-product-rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(215px, 250px); gap: 14px; overflow-x: auto; overscroll-behavior-inline: contain; scroll-snap-type: x proximity; padding: 2px 2px 10px; scrollbar-width: thin; }
+.phase23-product-rail > * { scroll-snap-align: start; }
+.phase23-order-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.phase23-order-actions .button { margin: 0; }
+.phase23-wishlist-head { align-items: center; gap: 16px; }
+.phase23-share-wishlist { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.phase23-share-note { display: flex; gap: 12px; align-items: center; margin: -2px 0 18px; padding: 11px 13px; border: 1px solid rgba(25, 55, 40, .11); border-radius: 14px; background: #f6f9f5; color: #617067; font-size: .8rem; }
+.phase23-share-note strong { color: #294334; white-space: nowrap; }
+.phase23-shared-wishlist { min-height: 62vh; }
+.phase23-shared-hero { display: flex; align-items: center; gap: 18px; margin-bottom: 26px; padding: 22px; border: 1px solid rgba(25, 55, 40, .11); border-radius: 22px; background: linear-gradient(135deg, #f4f8f2, #fff); }
+.phase23-shared-hero > span { width: 54px; height: 54px; flex: 0 0 54px; display: grid; place-items: center; border-radius: 50%; background: #173c2a; color: #fff; }
+.phase23-shared-hero h1 { margin: 4px 0 5px; }
+.phase23-shared-hero p:last-child { margin: 0; color: #65736b; line-height: 1.5; }
+
+@media (max-width: 760px) {
+  .phase23-buy-again-section { margin: 22px -2px 28px; padding: 18px 14px; border-radius: 20px; }
+  .phase23-section-heading { align-items: flex-start; }
+  .phase23-section-heading .text-link { white-space: nowrap; margin-top: 5px; }
+  .phase23-product-rail { grid-auto-columns: minmax(68vw, 245px); gap: 10px; margin-right: -14px; padding-right: 18px; }
+  .phase23-order-actions { grid-template-columns: 1fr; }
+  .phase23-wishlist-head { align-items: flex-start; flex-direction: column; }
+  .phase23-share-wishlist { width: 100%; justify-content: center; }
+  .phase23-share-note { align-items: flex-start; flex-direction: column; gap: 3px; }
+  .phase23-shared-hero { align-items: flex-start; padding: 17px; border-radius: 18px; }
+  .phase23-shared-hero > span { width: 44px; height: 44px; flex-basis: 44px; }
+}

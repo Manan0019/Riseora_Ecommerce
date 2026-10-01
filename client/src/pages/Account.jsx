@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import { useAuth } from "../context/AuthContext";
 import { Icon } from "../components/Icons";
+import ProductCard from "../components/ProductCard";
 
 const emptyAddress = {
   name: "",
@@ -28,6 +29,7 @@ export default function Account() {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
+  const [buyAgain, setBuyAgain] = useState([]);
 
   async function refreshAddresses() {
     const response = await apiFetch("/account/addresses");
@@ -35,11 +37,12 @@ export default function Account() {
   }
 
   useEffect(() => {
-    Promise.all([apiFetch("/account/profile"), apiFetch("/account/addresses")])
-      .then(([profileResponse, addressResponse]) => {
+    Promise.all([apiFetch("/account/profile"), apiFetch("/account/addresses"), apiFetch("/account/buy-again")])
+      .then(([profileResponse, addressResponse, buyAgainResponse]) => {
         const current = profileResponse.data;
         setProfile({ firstName: current.firstName || "", lastName: current.lastName || "", phone: current.phone || "" });
         setAddresses(addressResponse.data);
+        setBuyAgain(buyAgainResponse.data || []);
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -110,6 +113,11 @@ export default function Account() {
         <Link to="/wishlist"><Icon name="heart" /><span><strong>Wishlist</strong><small>Your saved products</small></span><b>›</b></Link>
         <Link to="/returns"><Icon name="truck" /><span><strong>Returns & refunds</strong><small>Track return requests and refunds</small></span><b>›</b></Link>
       </div>
+
+      {buyAgain.length > 0 && <section className="phase23-buy-again-section">
+        <div className="section-heading phase23-section-heading"><div><p className="eyebrow">BUY AGAIN</p><h2>Your repeat favourites</h2><p className="muted">Fresh prices, current stock and current purchase limits are always used.</p></div><Link className="text-link" to="/orders">Past orders →</Link></div>
+        <div className="phase23-product-rail">{buyAgain.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>
+      </section>}
 
       <div className="account-grid">
         <form className="account-card" onSubmit={saveProfile}>

@@ -522,6 +522,17 @@ model StoreSetting {
   updatedAt DateTime @updatedAt
 }
 
+model WishlistShare {
+  id String @id @default(uuid()) @db.Uuid
+  token String @unique
+  title String?
+  productIds Json
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
 model ShippingZone {
   id String @id @default(uuid()) @db.Uuid
 
