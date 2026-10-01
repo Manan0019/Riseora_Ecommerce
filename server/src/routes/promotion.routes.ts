@@ -2,6 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
+import { optionalAuth } from "../middleware/auth";
 import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
 import { prepareCheckout } from "../services/checkout.service";
@@ -51,20 +52,23 @@ router.get(
 const cartPreviewSchema = z.object({
   paymentMethod: z.enum(["COD", "ONLINE"]).default("COD"),
   couponCode: z.string().trim().max(40).optional().or(z.literal("")),
+  customerEmail: z.string().trim().email().optional().or(z.literal("")),
+  customerPhone: z.string().trim().max(24).optional().or(z.literal("")),
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
 router.post(
   "/cart-preview",
+  optionalAuth,
   asyncHandler(async (req, res) => {
     const parsed = cartPreviewSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart" });
     try {
       const prepared = await prepareCheckout({
-        customerName: "Preview", customerEmail: "", customerPhone: "00000000", couponCode: parsed.data.couponCode || "",
+        customerName: "Preview", customerEmail: parsed.data.customerEmail || "", customerPhone: parsed.data.customerPhone || "", couponCode: parsed.data.couponCode || "",
         shippingAddress: { line1: "Preview", city: "Preview", state: "Gujarat", postalCode: "0000", country: "India" },
         items: parsed.data.items,
-      }, parsed.data.paymentMethod);
+      }, parsed.data.paymentMethod, req.user?.id ?? null);
       res.json({
         success: true,
         data: {
@@ -103,7 +107,8 @@ router.post(
     const coupon = await prisma.coupon.findUnique({ where: { code: parsed.data.code.toUpperCase() } });
     if (!coupon) return res.status(404).json({ success: false, message: "Coupon code not found" });
 
-    const result = evaluateCoupon(coupon as unknown as CouponLike, parsed.data.subtotal);
+    if ((coupon as any).scope && (coupon as any).scope !== "ORDER") return res.status(400).json({ success: false, message: "Product/category coupons must be validated against the cart" });
+    const result = evaluateCoupon(coupon as unknown as CouponLike, parsed.data.subtotal, parsed.data.subtotal);
     if (!result.valid) return res.status(400).json({ success: false, message: result.message });
 
     res.json({

@@ -8,6 +8,8 @@ import { useStore } from "../context/StoreContext";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
+import RichText, { richTextToPlain } from "../components/RichText";
+import ProductFaq from "../components/ProductFaq";
 
 const RECENT_KEY = "riseora_recent_products";
 
@@ -175,9 +177,9 @@ export default function ProductDetails() {
     finally { setStockAlertBusy(false); }
   }
 
-  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || product.description || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
+  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || richTextToPlain(product.description) || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
 
-  return <><Seo title={product.name} description={product.shortDescription || product.description} image={image} type="product" jsonLd={productJson} />
+  return <><Seo title={product.name} description={product.shortDescription || richTextToPlain(product.description)} image={image} type="product" jsonLd={productJson} />
     <div className="product-detail-page phase3-detail phase9-detail-page">
       <div className="container product-detail">
         <div className="detail-media phase3-media phase9-product-gallery">
@@ -206,16 +208,16 @@ export default function ProductDetails() {
       </div>
 
       <section className="container phase9-product-story phase3-section">
-        <div className="phase9-story-intro"><p className="phase3-eyebrow">KNOW YOUR PRODUCT</p><h2>Everything you need to know</h2><p>{product.description || "Full product information can be added from the Riseora Admin dashboard."}</p></div>
+        <div className="phase9-story-intro"><p className="phase3-eyebrow">KNOW YOUR PRODUCT</p><h2>Everything you need to know</h2>{product.description ? <RichText value={product.description} /> : <p>Full product information can be added from the Riseora Admin dashboard.</p>}</div>
         <div className="phase9-info-grid">
-          {product.benefits && <article><span>01</span><h3>Key benefits</h3><p>{product.benefits}</p></article>}
-          {product.ingredients && <article><span>02</span><h3>Ingredients</h3><p>{product.ingredients}</p></article>}
-          {product.howToUse && <article><span>03</span><h3>How to use</h3><p>{product.howToUse}</p></article>}
-          {product.suitableFor && <article><span>04</span><h3>Suitable for</h3><p>{product.suitableFor}</p></article>}
+          {product.benefits && <article><span>01</span><h3>Key benefits</h3><RichText value={product.benefits} /></article>}
+          {product.ingredients && <article><span>02</span><h3>Ingredients</h3><RichText value={product.ingredients} /></article>}
+          {product.howToUse && <article><span>03</span><h3>How to use</h3><RichText value={product.howToUse} /></article>}
+          {product.suitableFor && <article><span>04</span><h3>Suitable for</h3><div className="phase19-suitable-display">{String(product.suitableFor).split(/[\n,;|]+/).map((item) => item.trim()).filter(Boolean).map((item) => <b key={item}>{item}</b>)}</div></article>}
         </div>
       </section>
 
-      {faq.length > 0 && <section className="container phase3-section phase9-faq-section"><div className="section-title-row"><div><p className="phase3-eyebrow">QUESTIONS, ANSWERED</p><h2>Product FAQ</h2></div></div><div className="phase9-faq-list">{faq.map((item, index) => <details key={`${item.question}-${index}`}><summary>{item.question}<span>+</span></summary><p>{item.answer}</p></details>)}</div></section>}
+      {faq.length > 0 && <section className="container phase3-section phase9-faq-section"><div className="section-title-row"><div><p className="phase3-eyebrow">QUESTIONS, ANSWERED</p><h2>Product FAQ</h2></div></div><ProductFaq items={faq} /></section>}
 
       {inStock && fbtProducts.length > 0 && <section className="container phase3-section phase14-fbt"><div className="section-title-row"><div><p className="phase3-eyebrow">COMPLETE THE ROUTINE</p><h2>Frequently bought together</h2></div><Link to="/routine-builder">BUILD A ROUTINE</Link></div><div className="phase14-fbt-box"><div className="phase14-fbt-products"><FbtItem product={product} variant={variant} checked locked /><span className="phase14-fbt-plus">+</span>{fbtProducts.map((item, index) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); const checked = fbtSelected.includes(item.id); return <div className="phase14-fbt-fragment" key={item.id}><FbtItem product={item} variant={v} checked={checked} onChange={() => setFbtSelected((current) => checked ? current.filter((id) => id !== item.id) : [...current, item.id])} />{index < fbtProducts.length - 1 && <span className="phase14-fbt-plus">+</span>}</div>; })}</div><div className="phase14-fbt-summary"><small>{1 + fbtChosen.length} item{fbtChosen.length ? "s" : ""} selected</small><strong>₹{fbtTotal.toFixed(0)}</strong><button className="button" onClick={addFrequentlyBought}>ADD TOGETHER <Icon name="plus" size={16} /></button></div></div></section>}
 

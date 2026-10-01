@@ -407,3 +407,16 @@ npm run build
 
 See `PHASE18_MOBILE_CATEGORY_GUARDRAILS.md` for the runtime checklist.
 
+## Phase 19 — Content Controls, Quick View Repair & Targeted Coupons
+
+Phase 19 adds reusable Suitable For options, safe rich-text product/campaign authoring, campaign typography controls, a portal-based Quick View fix, smooth FAQ accordions, product/category/order coupon targeting, editable per-customer coupon usage limits, and line-level discount snapshots for accurate new-order invoice/return calculations.
+
+Apply the included migration with:
+
+```powershell
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+See `PHASE19_CONTENT_COUPON_CONTROLS.md` for the runtime checklist.

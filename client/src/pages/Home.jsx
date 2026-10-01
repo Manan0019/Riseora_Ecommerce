@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
+import RichText from "../components/RichText";
 import ProductCard from "../components/ProductCard";
 import HeroCarousel from "../components/HeroCarousel";
 import DealCard from "../components/DealCard";
@@ -93,7 +94,7 @@ export default function Home() {
     <div className="phase18-home-trending"><ProductShelf title="Trending now" eyebrow="WHAT'S HOT" products={trending} /></div>
 
     {offers.length > 0 && <section className="container phase3-section promo-card-row phase18-home-offers">
-      {offers.slice(0, 3).map((offer, index) => <Link key={offer.id} to={offer.ctaLink || "/shop"} className={`promo-tile promo-tone-${(index % 3) + 1}`}><span>{offer.badge || "SPECIAL OFFER"}</span><h3>{offer.title}</h3><p>{offer.description}</p><strong>{offer.ctaText || "SHOP NOW"} →</strong></Link>)}
+      {offers.slice(0, 3).map((offer, index) => <Link key={offer.id} to={offer.ctaLink || "/shop"} className={`promo-tile promo-tone-${(index % 3) + 1}`}><span>{offer.badge || "SPECIAL OFFER"}</span><h3>{offer.title}</h3>{offer.description && <RichText value={offer.description} />}<strong>{offer.ctaText || "SHOP NOW"} →</strong></Link>)}
     </section>}
 
     {deals.length > 0 && <section className="container phase3-section phase13-deals-section phase18-home-deals">

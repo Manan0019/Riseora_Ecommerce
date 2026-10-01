@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiFetch, mediaUrl } from "../../api/http";
 import { Icon } from "../../components/Icons";
+import RichTextEditor from "../../components/RichTextEditor";
+import SuitabilityPicker from "../../components/SuitabilityPicker";
 
 const newVariant = () => ({ id: "", name: "", sku: "", size: "", unit: "ml", mrp: "", sellingPrice: "", costPrice: "", stockQuantity: "0", lowStockThreshold: "5", weightGrams: "", hsnCode: "", gstRate: "0", isActive: true });
 const emptyProduct = () => ({ id: "", categoryId: "", name: "", shortDescription: "", description: "", benefits: "", ingredients: "", howToUse: "", suitableFor: "", faq: [{ question: "", answer: "" }], isFeatured: false, isActive: true, badge: "", maxPurchaseQuantity: "", images: [{ url: "", altText: "", isPrimary: true }], variants: [newVariant()] });
@@ -9,6 +11,7 @@ const emptyCategory = () => ({ id: "", name: "", description: "", imageUrl: "", 
 export default function AdminCatalog() {
   const [categories, setCategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [suitabilityOptions, setSuitabilityOptions] = useState([]);
   const [categoryDraft, setCategoryDraft] = useState(emptyCategory());
   const [uploadingCategory, setUploadingCategory] = useState(false);
   const [product, setProduct] = useState(emptyProduct());
@@ -20,8 +23,8 @@ export default function AdminCatalog() {
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse] = await Promise.all([apiFetch("/admin/categories"), apiFetch("/admin/products")]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data);
+    const [categoryResponse, productResponse, suitabilityResponse] = await Promise.all([apiFetch("/admin/categories"), apiFetch("/admin/products"), apiFetch("/admin/suitability-options")]);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -158,6 +161,16 @@ export default function AdminCatalog() {
 
   function resetProduct() { setProduct(emptyProduct()); }
 
+  async function addSuitabilityOption(name) {
+    setError("");
+    try {
+      const response = await apiFetch("/admin/suitability-options", { method: "POST", body: JSON.stringify({ name }) });
+      setSuitabilityOptions((current) => [...current.filter((item) => item.id !== response.data.id), response.data].sort((a, b) => Number(a.sortOrder || 0) - Number(b.sortOrder || 0) || a.name.localeCompare(b.name)));
+      setMessage(`“${response.data.name}” added to Suitable for list.`);
+      return response.data;
+    } catch (e) { setError(e.message); return null; }
+  }
+
   async function saveProduct(event) {
     event.preventDefault(); setError(""); setMessage("");
     const validImages = product.images.filter((image) => image.url.trim());
@@ -234,11 +247,11 @@ export default function AdminCatalog() {
         <div className="admin-field-grid two"><label>Badge<input name="badge" value={product.badge} onChange={updateProductField} placeholder="BEST SELLER / NEW / TRENDING" /></label><div className="admin-check-row"><label className="checkbox-row"><input type="checkbox" name="isFeatured" checked={product.isFeatured} onChange={updateProductField} /> Featured</label>{editing && <label className="checkbox-row"><input type="checkbox" name="isActive" checked={product.isActive} onChange={updateProductField} /> Active</label>}</div></div>
         <div className="phase18-purchase-limit-card"><label className="checkbox-row"><input type="checkbox" checked={product.maxPurchaseQuantity !== ""} onChange={(e) => setProduct((current) => ({ ...current, maxPurchaseQuantity: e.target.checked ? (current.maxPurchaseQuantity || "5") : "" }))} /> Limit how many units of this product a customer can place in one order</label>{product.maxPurchaseQuantity !== "" && <label>Maximum units per order<input type="number" min="1" max="10000" value={product.maxPurchaseQuantity} onChange={(e) => setProduct((current) => ({ ...current, maxPurchaseQuantity: e.target.value }))} /><small>The backend enforces this across all sizes/variants of the same product. Leave the option off for no product-specific limit.</small></label>}</div>
         <label>Short description<input name="shortDescription" value={product.shortDescription} onChange={updateProductField} placeholder="Short product card copy" /></label>
-        <label>Full description<textarea name="description" value={product.description} onChange={updateProductField} placeholder="Benefits, usage and product story" /></label>
-        <div className="admin-field-grid two phase9-content-grid"><label>Key benefits<textarea name="benefits" value={product.benefits} onChange={updateProductField} placeholder="One benefit per line works well on mobile" /></label><label>Suitable for<textarea name="suitableFor" value={product.suitableFor} onChange={updateProductField} placeholder="Hair types, skin types, use cases…" /></label></div>
-        <div className="admin-field-grid two phase9-content-grid"><label>Ingredients<textarea name="ingredients" value={product.ingredients} onChange={updateProductField} placeholder="Full ingredient list or key ingredients" /></label><label>How to use<textarea name="howToUse" value={product.howToUse} onChange={updateProductField} placeholder="Step-by-step usage instructions" /></label></div>
+        <div className="phase19-editor-field"><label>Full description</label><RichTextEditor value={product.description} onChange={(value) => setProduct((current) => ({ ...current, description: value }))} placeholder="Product story, paragraphs, bullets and formatted content…" /></div>
+        <div className="admin-field-grid two phase9-content-grid phase19-content-editor-grid"><div className="phase19-editor-field"><label>Key benefits</label><RichTextEditor compact value={product.benefits} onChange={(value) => setProduct((current) => ({ ...current, benefits: value }))} placeholder="Add benefits as bullets or formatted text" /></div><div className="phase19-editor-field"><label>Suitable for</label><SuitabilityPicker value={product.suitableFor} options={suitabilityOptions} onChange={(value) => setProduct((current) => ({ ...current, suitableFor: value }))} onAddOption={addSuitabilityOption} /></div></div>
+        <div className="admin-field-grid two phase9-content-grid phase19-content-editor-grid"><div className="phase19-editor-field"><label>Ingredients</label><RichTextEditor compact value={product.ingredients} onChange={(value) => setProduct((current) => ({ ...current, ingredients: value }))} placeholder="Ingredients, key actives, bullet list…" /></div><div className="phase19-editor-field"><label>How to use</label><RichTextEditor compact value={product.howToUse} onChange={(value) => setProduct((current) => ({ ...current, howToUse: value }))} placeholder="Steps, bullets and usage instructions…" /></div></div>
         <div className="editor-section-head"><div><strong>Product FAQ</strong><small>Shown as collapsible questions on the product page.</small></div><button type="button" className="state-toggle active" onClick={addFaq}>+ FAQ</button></div>
-        <div className="phase9-faq-editor">{product.faq.map((item, index) => <div className="phase9-faq-row" key={index}><input value={item.question} onChange={(e) => updateFaq(index, "question", e.target.value)} placeholder="Question" /><textarea value={item.answer} onChange={(e) => updateFaq(index, "answer", e.target.value)} placeholder="Answer" />{product.faq.length > 1 && <button type="button" className="mini-danger" onClick={() => removeFaq(index)}>×</button>}</div>)}</div>
+        <div className="phase9-faq-editor">{product.faq.map((item, index) => <div className="phase9-faq-row" key={index}><input value={item.question} onChange={(e) => updateFaq(index, "question", e.target.value)} placeholder="Question" /><RichTextEditor compact value={item.answer} onChange={(value) => updateFaq(index, "answer", value)} placeholder="Answer with bullets or formatted text" />{product.faq.length > 1 && <button type="button" className="mini-danger" onClick={() => removeFaq(index)}>×</button>}</div>)}</div>
 
         <div className="editor-section-head"><div><strong>Product images</strong><small>Upload multiple JPG, PNG or WEBP images. Drag or use arrows to set the storefront/hover slideshow order. The primary image is shown first.</small></div><div className="image-editor-actions"><label className={uploadingImages ? "state-toggle disabled" : "state-toggle active"}>{uploadingImages ? "Uploading…" : "Upload images"}<input type="file" accept="image/jpeg,image/png,image/webp" multiple hidden disabled={uploadingImages} onChange={(e) => uploadImages(e.target.files)} /></label><button type="button" className="state-toggle" onClick={addImage}>+ URL</button></div></div>
         <div className="admin-image-editor">{product.images.map((image, index) => <div className={`admin-image-row phase5-image-row phase12-sortable-image ${dragImageIndex === index ? "dragging" : ""}`} key={`${image.url || "blank"}-${index}`} draggable onDragStart={() => setDragImageIndex(index)} onDragEnd={() => setDragImageIndex(null)} onDragOver={(e) => e.preventDefault()} onDrop={() => dropImage(index)}><div className="phase12-image-order"><span className="phase12-drag-handle" title="Drag to reorder">⋮⋮</span><b>{index + 1}</b><button type="button" disabled={index === 0} onClick={() => moveImage(index, index - 1)} aria-label="Move image earlier">↑</button><button type="button" disabled={index === product.images.length - 1} onClick={() => moveImage(index, index + 1)} aria-label="Move image later">↓</button></div>{image.url && <div className="admin-image-preview"><img src={mediaUrl(image.url)} alt="" /></div>}<input type="text" value={image.url} onChange={(e) => updateImage(index, "url", e.target.value)} placeholder="https://... or uploaded image" /><input value={image.altText} onChange={(e) => updateImage(index, "altText", e.target.value)} placeholder="Alt text" /><button type="button" className={image.isPrimary ? "state-toggle active" : "state-toggle"} onClick={() => makePrimary(index)}>{image.isPrimary ? "Primary" : "Make primary"}</button>{product.images.length > 1 && <button type="button" className="mini-danger" onClick={() => removeImage(index)}>×</button>}</div>)}</div>

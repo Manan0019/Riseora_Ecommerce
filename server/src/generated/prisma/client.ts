@@ -142,6 +142,26 @@ export type ReturnRequestItem = Prisma.ReturnRequestItemModel
  */
 export type Coupon = Prisma.CouponModel
 /**
+ * Model CouponProduct
+ * 
+ */
+export type CouponProduct = Prisma.CouponProductModel
+/**
+ * Model CouponCategory
+ * 
+ */
+export type CouponCategory = Prisma.CouponCategoryModel
+/**
+ * Model CouponRedemption
+ * 
+ */
+export type CouponRedemption = Prisma.CouponRedemptionModel
+/**
+ * Model SuitabilityOption
+ * 
+ */
+export type SuitabilityOption = Prisma.SuitabilityOptionModel
+/**
  * Model Offer
  * 
  */

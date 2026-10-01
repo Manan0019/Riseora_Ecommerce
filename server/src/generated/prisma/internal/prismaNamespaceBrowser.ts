@@ -71,6 +71,10 @@ export const ModelName = {
   ReturnRequest: 'ReturnRequest',
   ReturnRequestItem: 'ReturnRequestItem',
   Coupon: 'Coupon',
+  CouponProduct: 'CouponProduct',
+  CouponCategory: 'CouponCategory',
+  CouponRedemption: 'CouponRedemption',
+  SuitabilityOption: 'SuitabilityOption',
   Offer: 'Offer',
   MerchandisingDeal: 'MerchandisingDeal',
   Review: 'Review',
@@ -282,6 +286,7 @@ export const OrderItemScalarFieldEnum = {
   quantity: 'quantity',
   unitPrice: 'unitPrice',
   lineTotal: 'lineTotal',
+  discountAmount: 'discountAmount',
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
   promotionLabel: 'promotionLabel',
@@ -492,10 +497,13 @@ export const CouponScalarFieldEnum = {
   description: 'description',
   discountType: 'discountType',
   discountValue: 'discountValue',
+  scope: 'scope',
+  application: 'application',
   minOrderAmount: 'minOrderAmount',
   maxDiscountAmount: 'maxDiscountAmount',
   usageLimit: 'usageLimit',
   usageCount: 'usageCount',
+  perCustomerUsageLimit: 'perCustomerUsageLimit',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',
@@ -504,6 +512,47 @@ export const CouponScalarFieldEnum = {
 } as const
 
 export type CouponScalarFieldEnum = (typeof CouponScalarFieldEnum)[keyof typeof CouponScalarFieldEnum]
+
+
+export const CouponProductScalarFieldEnum = {
+  couponId: 'couponId',
+  productId: 'productId'
+} as const
+
+export type CouponProductScalarFieldEnum = (typeof CouponProductScalarFieldEnum)[keyof typeof CouponProductScalarFieldEnum]
+
+
+export const CouponCategoryScalarFieldEnum = {
+  couponId: 'couponId',
+  categoryId: 'categoryId'
+} as const
+
+export type CouponCategoryScalarFieldEnum = (typeof CouponCategoryScalarFieldEnum)[keyof typeof CouponCategoryScalarFieldEnum]
+
+
+export const CouponRedemptionScalarFieldEnum = {
+  id: 'id',
+  couponId: 'couponId',
+  orderId: 'orderId',
+  userId: 'userId',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  redeemedAt: 'redeemedAt'
+} as const
+
+export type CouponRedemptionScalarFieldEnum = (typeof CouponRedemptionScalarFieldEnum)[keyof typeof CouponRedemptionScalarFieldEnum]
+
+
+export const SuitabilityOptionScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  sortOrder: 'sortOrder',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SuitabilityOptionScalarFieldEnum = (typeof SuitabilityOptionScalarFieldEnum)[keyof typeof SuitabilityOptionScalarFieldEnum]
 
 
 export const OfferScalarFieldEnum = {
@@ -579,6 +628,13 @@ export const BannerScalarFieldEnum = {
   ctaLink: 'ctaLink',
   background: 'background',
   textColor: 'textColor',
+  titleFontFamily: 'titleFontFamily',
+  titleFontWeight: 'titleFontWeight',
+  titleFontStyle: 'titleFontStyle',
+  titleTextAlign: 'titleTextAlign',
+  titleSize: 'titleSize',
+  descriptionFontFamily: 'descriptionFontFamily',
+  descriptionTextAlign: 'descriptionTextAlign',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',

@@ -55,13 +55,17 @@ export async function ensureInvoice(orderId: string) {
     const discount = Number(order.discountAmount || 0);
     const sameState = Boolean(settings.state && normalized(settings.state) === normalized((order.shippingAddress as any)?.state));
 
+    const snapshotDiscountTotal = round2(order.items.reduce((sum, item) => sum + Number(item.discountAmount || 0), 0));
+    const useLineDiscountSnapshot = snapshotDiscountTotal > 0 && Math.abs(snapshotDiscountTotal - discount) <= 0.05;
     let allocatedDiscount = 0;
     const lastDiscountableIndex = order.items.reduce((last, item, index) => Number(item.lineTotal) > 0 ? index : last, -1);
     const lines: InvoiceLine[] = order.items.map((item, index) => {
       const gross = Number(item.lineTotal);
-      const discountShare = gross <= 0 ? 0 : index === lastDiscountableIndex
-        ? round2(Math.max(0, discount - allocatedDiscount))
-        : subtotal > 0 ? round2(discount * (gross / subtotal)) : 0;
+      const discountShare = useLineDiscountSnapshot
+        ? Math.min(gross, Math.max(0, Number(item.discountAmount || 0)))
+        : gross <= 0 ? 0 : index === lastDiscountableIndex
+          ? round2(Math.max(0, discount - allocatedDiscount))
+          : subtotal > 0 ? round2(discount * (gross / subtotal)) : 0;
       allocatedDiscount = round2(allocatedDiscount + discountShare);
       const discountedGross = Math.max(0, round2(gross - discountShare));
       const rate = Math.max(0, Number(item.gstRate || 0));

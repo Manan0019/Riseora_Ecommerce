@@ -67,6 +67,23 @@ export const CouponDiscountType = {
 export type CouponDiscountType = (typeof CouponDiscountType)[keyof typeof CouponDiscountType]
 
 
+export const CouponScope = {
+  ORDER: 'ORDER',
+  PRODUCT: 'PRODUCT',
+  CATEGORY: 'CATEGORY'
+} as const
+
+export type CouponScope = (typeof CouponScope)[keyof typeof CouponScope]
+
+
+export const CouponApplication = {
+  ORDER_TOTAL: 'ORDER_TOTAL',
+  ELIGIBLE_ITEMS: 'ELIGIBLE_ITEMS'
+} as const
+
+export type CouponApplication = (typeof CouponApplication)[keyof typeof CouponApplication]
+
+
 export const BannerPlacement = {
   HOME_HERO: 'HOME_HERO',
   HOME_STRIP: 'HOME_STRIP'

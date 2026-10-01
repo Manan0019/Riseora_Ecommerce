@@ -1973,3 +1973,121 @@ textarea { min-height: 105px; resize: vertical; }
 @media (prefers-reduced-motion: reduce) {
   .phase18-route-frame,.phase18-route-loading > span,.phase18-inline-loader span { animation:none !important; transform:none !important; }
 }
+
+/* Phase 19 — rich content, safer quick view, smooth FAQ and advanced promotion controls */
+.phase19-quick-layer { z-index: 10050; isolation: isolate; }
+.phase19-quick-layer .phase16-quick-backdrop { z-index: 0; }
+.phase19-quick-layer .phase16-quick-view { z-index: 2; animation: phase19QuickIn .24s cubic-bezier(.2,.72,.28,1); }
+@keyframes phase19QuickIn { from { opacity: 0; transform: translate3d(0,14px,0) scale(.985); } to { opacity: 1; transform: none; } }
+
+.riseora-rich-text { min-width: 0; color: inherit; line-height: 1.65; }
+.riseora-rich-text > :first-child { margin-top: 0; }
+.riseora-rich-text > :last-child { margin-bottom: 0; }
+.riseora-rich-text p, .riseora-rich-text div { margin: .35em 0; }
+.riseora-rich-text ul, .riseora-rich-text ol { margin: .55em 0; padding-left: 1.25rem; }
+.riseora-rich-text li + li { margin-top: .25em; }
+.riseora-rich-text blockquote { margin: .75em 0; padding-left: .9rem; border-left: 3px solid rgba(29,77,52,.28); color: var(--muted); }
+.riseora-rich-text h2, .riseora-rich-text h3, .riseora-rich-text h4 { margin: .65em 0 .35em; line-height: 1.2; }
+
+.phase19-rich-editor { overflow: hidden; border: 1px solid #dce2da; border-radius: 13px; background: #fff; }
+.phase19-rich-toolbar { padding: 7px; display: flex; flex-wrap: wrap; align-items: center; gap: 5px; border-bottom: 1px solid #e6e9e3; background: #f7f8f4; }
+.phase19-rich-toolbar select, .phase19-rich-toolbar button { min-height: 31px; padding: 5px 8px; border: 1px solid #d9dfd6; border-radius: 8px; background: #fff; color: var(--ink); font: 700 9px/1 Inter,ui-sans-serif,system-ui,sans-serif; }
+.phase19-rich-toolbar button:hover, .phase19-rich-toolbar select:focus { border-color: #8ba495; background: #f0f5ef; }
+.phase19-toolbar-group { display: inline-flex; gap: 3px; }
+.phase19-clear-format { margin-left: auto; }
+.phase19-rich-surface { min-height: 150px; padding: 13px 14px; outline: 0; color: var(--ink); font-size: 12px; line-height: 1.65; }
+.phase19-rich-editor.compact .phase19-rich-surface { min-height: 112px; }
+.phase19-rich-surface:empty::before { content: attr(data-placeholder); color: #9aa39c; pointer-events: none; }
+.phase19-rich-surface ul, .phase19-rich-surface ol { padding-left: 1.2rem; }
+.phase19-rich-surface blockquote { margin-left: 0; padding-left: .8rem; border-left: 3px solid #aac0af; color: #66736a; }
+.phase19-editor-field { display: grid; gap: 7px; }
+.phase19-editor-field > label { font-size: 9px; font-weight: 850; letter-spacing: .035em; }
+.phase19-content-editor-grid { align-items: start; }
+
+.phase19-suitability-picker { position: relative; min-height: 150px; padding: 11px; display: grid; align-content: start; gap: 9px; border: 1px solid #dde3db; border-radius: 13px; background: #fbfcf9; }
+.phase19-suitability-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.phase19-suitability-chips button, .phase19-suitability-matches button { min-height: 34px; padding: 7px 11px; border: 1px solid #d9e0d8; border-radius: 999px; background: #fff; color: var(--ink); font-size: 9px; font-weight: 800; }
+.phase19-suitability-chips button.active { border-color: var(--green-800); background: var(--green-950); color: #fff; }
+.phase19-suitability-search { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 7px; }
+.phase19-suitability-search input { min-width: 0; }
+.phase19-suitability-search button { padding: 0 12px; border: 0; border-radius: 9px; background: #e9f0e7; color: var(--green-900); font-size: 9px; font-weight: 850; }
+.phase19-suitability-matches { display: flex; flex-wrap: wrap; gap: 6px; }
+.phase19-suitability-picker > small { color: var(--muted); font-size: 8px; line-height: 1.5; }
+.phase19-suitable-display { display: flex; flex-wrap: wrap; gap: 7px; }
+.phase19-suitable-display b { padding: 7px 10px; border: 1px solid #dbe2d9; border-radius: 999px; background: #f7faf5; color: var(--green-900); font-size: 9px; }
+
+.phase19-faq-list { display: grid; gap: 9px; }
+.phase19-faq-item { overflow: hidden; border: 1px solid #dfe4dc; border-radius: 14px; background: #fff; transition: border-color .22s ease, box-shadow .22s ease, background .22s ease; }
+.phase19-faq-item.open { border-color: #b7c7ba; background: #fcfdf9; box-shadow: 0 9px 24px rgba(18,48,31,.055); }
+.phase19-faq-question { width: 100%; min-height: 56px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border: 0; background: transparent; color: var(--ink); text-align: left; font: 750 12px/1.4 Inter,ui-sans-serif,system-ui,sans-serif; }
+.phase19-faq-question i { width: 26px; height: 26px; flex: 0 0 26px; display: grid; place-items: center; border-radius: 50%; background: #eef3eb; color: var(--green-900); font-style: normal; font-size: 18px; transition: transform .3s cubic-bezier(.2,.72,.28,1), background .2s ease, color .2s ease; }
+.phase19-faq-item.open .phase19-faq-question i { transform: rotate(45deg); background: var(--green-950); color: #fff; }
+.phase19-faq-answer-wrap { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows .34s cubic-bezier(.2,.72,.28,1), opacity .24s ease; }
+.phase19-faq-answer-wrap > div { min-height: 0; overflow: hidden; }
+.phase19-faq-item.open .phase19-faq-answer-wrap { grid-template-rows: 1fr; opacity: 1; }
+.phase19-faq-answer { padding: 0 16px 16px; color: var(--muted); font-size: 11px; }
+
+.phase19-typography-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 9px; }
+.phase19-hero-title.size-m { font-size: clamp(30px,7vw,46px) !important; }
+.phase19-hero-title.size-l { font-size: clamp(36px,9vw,58px) !important; }
+.phase19-hero-title.size-xl { font-size: clamp(42px,11vw,72px) !important; }
+.phase19-hero-title.size-xxl { font-size: clamp(48px,13vw,84px) !important; }
+.phase19-hero-description { max-width: 620px; margin-top: 14px; color: inherit; }
+.phase19-hero-description .riseora-rich-text { font-size: 12px; line-height: 1.6; }
+.phase19-hero-description ul, .phase19-hero-description ol { display: inline-block; text-align: left; }
+
+.phase19-coupon-targets { padding: 12px; display: grid; gap: 9px; border: 1px solid #dce3da; border-radius: 13px; background: #f9fbf7; }
+.phase19-target-head { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; }
+.phase19-target-head strong { font-size: 10px; }
+.phase19-target-head small { color: var(--muted); font-size: 8px; }
+.phase19-target-list { max-height: 260px; overflow: auto; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 6px; }
+.phase19-target-list label { min-width: 0; padding: 8px 9px; display: flex; align-items: center; gap: 8px; border: 1px solid #e1e5df; border-radius: 10px; background: #fff; }
+.phase19-target-list label.selected { border-color: #8ea795; background: #eff5ed; }
+.phase19-target-list label > span { min-width: 0; display: grid; gap: 2px; }
+.phase19-target-list strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 9px; }
+.phase19-target-list small { color: var(--muted); font-size: 7px; }
+.phase19-coupon-row > div:first-child { min-width: 0; }
+.phase19-coupon-row > div:first-child span { display: block; margin-top: 3px; color: var(--muted); font-size: 8px; line-height: 1.5; }
+
+@media (max-width: 760px) {
+  .phase19-quick-layer .phase16-quick-view { animation: phase19QuickSheetIn .28s cubic-bezier(.2,.72,.28,1); }
+  @keyframes phase19QuickSheetIn { from { opacity: .4; transform: translate3d(0,36px,0); } to { opacity: 1; transform: none; } }
+  .phase19-rich-toolbar { gap: 4px; }
+  .phase19-rich-toolbar select, .phase19-rich-toolbar button { min-height: 34px; }
+  .phase19-clear-format { margin-left: 0; }
+  .phase19-suitability-search { grid-template-columns: 1fr; }
+  .phase19-typography-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .phase19-target-list { grid-template-columns: 1fr; }
+  .phase19-faq-question { min-height: 60px; padding: 15px; font-size: 11px; }
+  .phase19-faq-answer { padding: 0 15px 16px; }
+  .phase19-hero-description .riseora-rich-text { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase19-quick-layer .phase16-quick-view, .phase19-faq-answer-wrap, .phase19-faq-question i, .phase19-faq-item { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 760px) {
+  .phase19-hero-title.size-m { font-size: clamp(25px,7.2vw,31px) !important; }
+  .phase19-hero-title.size-l { font-size: clamp(28px,8vw,34px) !important; }
+  .phase19-hero-title.size-xl { font-size: clamp(31px,8.8vw,38px) !important; }
+  .phase19-hero-title.size-xxl { font-size: clamp(34px,9.6vw,42px) !important; }
+  .phase19-hero-description { margin-top: 8px; }
+  .phase19-hero-description .riseora-rich-text { line-height: 1.45; }
+}
+
+.phase19-campaign-style-preview { min-height: 190px; overflow: hidden; display: grid; grid-template-columns: minmax(0,1.35fr) minmax(150px,.65fr); border: 1px solid rgba(22,49,34,.12); border-radius: 16px; }
+.phase19-campaign-style-copy { min-width: 0; padding: 20px; display: flex; flex-direction: column; justify-content: center; align-items: stretch; }
+.phase19-campaign-style-copy > small { margin-bottom: 7px; font-size: 8px; font-weight: 900; letter-spacing: .14em; }
+.phase19-campaign-style-copy h3 { margin: 0 0 8px; line-height: .98; overflow-wrap: anywhere; }
+.phase19-campaign-style-copy .riseora-rich-text { font-size: 10px; line-height: 1.45; }
+.phase19-campaign-style-copy > span { width: fit-content; margin-top: 11px; padding: 8px 12px; border-radius: 8px; background: #111; color: #fff; font-size: 8px; font-weight: 900; letter-spacing: .08em; }
+.phase19-campaign-style-media { min-height: 190px; display: grid; place-items: center; overflow: hidden; background: rgba(255,255,255,.18); }
+.phase19-campaign-style-media img { width: 100%; height: 100%; object-fit: cover; }
+.phase19-campaign-style-media b { opacity: .38; font-size: 11px; letter-spacing: .15em; }
+@media (max-width: 760px) {
+  .phase19-campaign-style-preview { grid-template-columns: 1fr; }
+  .phase19-campaign-style-media { display: none; }
+  .phase19-campaign-style-copy { padding: 16px; }
+  .phase19-campaign-style-copy h3 { font-size: min(34px,9vw) !important; }
+}

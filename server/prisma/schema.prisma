@@ -47,6 +47,17 @@ enum CouponDiscountType {
   FIXED
 }
 
+enum CouponScope {
+  ORDER
+  PRODUCT
+  CATEGORY
+}
+
+enum CouponApplication {
+  ORDER_TOTAL
+  ELIGIBLE_ITEMS
+}
+
 enum BannerPlacement {
   HOME_HERO
   HOME_STRIP
@@ -123,6 +134,7 @@ model User {
   checkoutSessions CheckoutSession[]
   returnRequests ReturnRequest[]
   passwordResetTokens PasswordResetToken[]
+  couponRedemptions CouponRedemption[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -178,6 +190,7 @@ model Category {
   isActive    Boolean @default(true)
 
   products Product[]
+  couponLinks CouponCategory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -206,6 +219,7 @@ model Product {
   variants ProductVariant[]
   images   ProductImage[]
   reviews  Review[]
+  couponLinks CouponProduct[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -292,6 +306,7 @@ model Order {
   checkoutSession CheckoutSession?
   invoice       Invoice?
   returnRequests ReturnRequest[]
+  couponRedemption CouponRedemption?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -348,6 +363,7 @@ model OrderItem {
   quantity  Int
   unitPrice Decimal @db.Decimal(12, 2)
   lineTotal Decimal @db.Decimal(12, 2)
+  discountAmount Decimal @default(0) @db.Decimal(12, 2)
   hsnCode   String?
   gstRate   Decimal @default(0) @db.Decimal(5, 2)
   promotionLabel String?
@@ -602,12 +618,19 @@ model Coupon {
   description   String?
   discountType  CouponDiscountType
   discountValue Decimal            @db.Decimal(12, 2)
+  scope         CouponScope        @default(ORDER)
+  application   CouponApplication  @default(ORDER_TOTAL)
 
   minOrderAmount    Decimal? @db.Decimal(12, 2)
   maxDiscountAmount Decimal? @db.Decimal(12, 2)
 
-  usageLimit Int?
-  usageCount Int @default(0)
+  usageLimit             Int?
+  usageCount             Int @default(0)
+  perCustomerUsageLimit  Int? @default(1)
+
+  products     CouponProduct[]
+  categories   CouponCategory[]
+  redemptions  CouponRedemption[]
 
   startsAt DateTime?
   endsAt   DateTime?
@@ -618,6 +641,54 @@ model Coupon {
 
   @@index([isActive])
   @@index([startsAt, endsAt])
+}
+
+model CouponProduct {
+  couponId  String @db.Uuid
+  productId String @db.Uuid
+  coupon  Coupon  @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, productId])
+  @@index([productId])
+}
+
+model CouponCategory {
+  couponId   String @db.Uuid
+  categoryId String @db.Uuid
+  coupon   Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, categoryId])
+  @@index([categoryId])
+}
+
+model CouponRedemption {
+  id String @id @default(uuid()) @db.Uuid
+  couponId String @db.Uuid
+  coupon Coupon @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  orderId String @unique @db.Uuid
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  customerEmail String?
+  customerPhone String?
+  redeemedAt DateTime @default(now())
+
+  @@index([couponId, userId])
+  @@index([couponId, customerEmail])
+  @@index([couponId, customerPhone])
+}
+
+model SuitabilityOption {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  sortOrder Int @default(0)
+  isActive Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, sortOrder])
 }
 
 model Offer {
@@ -710,6 +781,13 @@ model Banner {
   ctaLink        String?
   background     String?
   textColor      String?
+  titleFontFamily String?
+  titleFontWeight Int @default(900)
+  titleFontStyle String @default("normal")
+  titleTextAlign String @default("left")
+  titleSize String @default("XL")
+  descriptionFontFamily String?
+  descriptionTextAlign String @default("left")
 
   startsAt DateTime?
   endsAt   DateTime?

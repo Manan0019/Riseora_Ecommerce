@@ -85,6 +85,7 @@ router.post(
     let refundAmount = 0;
     const subtotal = Number(order.subtotal || 0);
     const discount = Number(order.discountAmount || 0);
+    const hasLineDiscountSnapshot = order.items.some((item) => Number(item.discountAmount || 0) > 0);
 
     for (const requested of parsed.data.items) {
       const orderItem = orderItemMap.get(requested.orderItemId)!;
@@ -99,7 +100,7 @@ router.post(
       if (requested.quantity > remaining) return res.status(400).json({ success: false, message: `Only ${remaining} unit(s) of ${orderItem.productName} remain returnable` });
 
       const lineGross = Number(orderItem.lineTotal);
-      const lineDiscount = subtotal > 0 ? discount * (lineGross / subtotal) : 0;
+      const lineDiscount = hasLineDiscountSnapshot ? Number(orderItem.discountAmount || 0) : subtotal > 0 ? discount * (lineGross / subtotal) : 0;
       const effectiveLine = Math.max(0, lineGross - lineDiscount);
       const unitRefund = round2(effectiveLine / orderItem.quantity);
       const lineRefund = round2(unitRefund * requested.quantity);

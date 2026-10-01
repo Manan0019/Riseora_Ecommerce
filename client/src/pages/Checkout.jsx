@@ -104,11 +104,11 @@ export default function Checkout() {
     const timer = setTimeout(() => {
       apiFetch("/promotions/cart-preview", {
         method: "POST",
-        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
       }).then((response) => { if (!cancelled) setPricing(response.data); }).catch(() => { if (!cancelled) setPricing(null); });
     }, 180);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [checkoutItems, paymentMethod, appliedCoupon]);
+  }, [checkoutItems, paymentMethod, appliedCoupon, form.customerEmail, form.customerPhone]);
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
@@ -124,7 +124,7 @@ export default function Checkout() {
     if (!code) return;
     setCouponError(""); setCouponMessage("");
     try {
-      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
+      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
       setAppliedCoupon(code); setDiscountAmount(Number(response.data.couponDiscountAmount || 0)); setPricing(response.data); setCouponMessage(`Coupon ${code} applied.`);
     } catch (err) { setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message); }
   }

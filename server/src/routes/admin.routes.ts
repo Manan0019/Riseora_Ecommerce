@@ -19,10 +19,43 @@ router.get(
   }),
 );
 
+const defaultSuitabilityOptions = ["Men", "Women", "Unisex", "All"];
+
+router.get(
+  "/suitability-options",
+  asyncHandler(async (_req, res) => {
+    const count = await prisma.suitabilityOption.count();
+    if (count === 0) {
+      await prisma.suitabilityOption.createMany({
+        data: defaultSuitabilityOptions.map((name, index) => ({ name, sortOrder: (index + 1) * 10 })),
+        skipDuplicates: true,
+      });
+    }
+    const items = await prisma.suitabilityOption.findMany({ where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] });
+    res.json({ success: true, data: items });
+  }),
+);
+
+router.post(
+  "/suitability-options",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ name: z.string().trim().min(1).max(80) }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid suitability value" });
+    const existing = await prisma.suitabilityOption.findFirst({ where: { name: { equals: parsed.data.name, mode: "insensitive" } } });
+    if (existing) {
+      if (!existing.isActive) await prisma.suitabilityOption.update({ where: { id: existing.id }, data: { isActive: true } });
+      return res.json({ success: true, data: { ...existing, isActive: true }, existing: true });
+    }
+    const last = await prisma.suitabilityOption.findFirst({ orderBy: { sortOrder: "desc" }, select: { sortOrder: true } });
+    const item = await prisma.suitabilityOption.create({ data: { name: parsed.data.name, sortOrder: (last?.sortOrder ?? 0) + 10 } });
+    res.status(201).json({ success: true, data: item });
+  }),
+);
+
 const categorySchema = z.object({
   name: z.string().trim().min(2).max(100),
   slug: z.string().trim().optional(),
-  description: z.string().trim().max(500).optional().or(z.literal("")),
+  description: z.string().trim().max(12000).optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid category image URL"),
   sortOrder: z.number().int().min(0).max(100000).optional(),
 });
@@ -56,11 +89,11 @@ const productSchema = z.object({
   slug: z.string().trim().optional(),
   shortDescription: z.string().trim().optional().or(z.literal("")),
   description: z.string().trim().optional().or(z.literal("")),
-  benefits: z.string().trim().max(5000).optional().or(z.literal("")),
-  ingredients: z.string().trim().max(8000).optional().or(z.literal("")),
-  howToUse: z.string().trim().max(5000).optional().or(z.literal("")),
+  benefits: z.string().trim().max(20000).optional().or(z.literal("")),
+  ingredients: z.string().trim().max(24000).optional().or(z.literal("")),
+  howToUse: z.string().trim().max(20000).optional().or(z.literal("")),
   suitableFor: z.string().trim().max(2000).optional().or(z.literal("")),
-  faq: z.array(z.object({ question: z.string().trim().min(2).max(300), answer: z.string().trim().min(2).max(3000) })).max(20).default([]),
+  faq: z.array(z.object({ question: z.string().trim().min(2).max(300), answer: z.string().trim().min(2).max(12000) })).max(20).default([]),
   isFeatured: z.boolean().default(false),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   maxPurchaseQuantity: z.number().int().min(1).max(10000).nullable().optional(),
@@ -268,6 +301,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
       }
       if (order.couponCode) {
         await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
+        await tx.couponRedemption.deleteMany({ where: { orderId: order.id } });
       }
       if (order.payment?.status === "PENDING") {
         await tx.payment.update({ where: { orderId: order.id }, data: { status: "CANCELLED" } });
@@ -352,7 +386,7 @@ router.post(
 
     const updated = await prisma.$transaction(async (tx) => {
       for (const item of order.items) if (item.variantId) await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
-      if (order.couponCode) await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
+      if (order.couponCode) { await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } }); await tx.couponRedemption.deleteMany({ where: { orderId: order.id } }); }
       await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date() } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
       await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
@@ -406,20 +440,40 @@ router.patch(
 
 const couponSchema = z.object({
   code: z.string().trim().min(3).max(40),
-  description: z.string().trim().optional().or(z.literal("")),
+  description: z.string().trim().max(500).optional().or(z.literal("")),
   discountType: z.enum(["PERCENTAGE", "FIXED"]),
   discountValue: z.number().positive(),
+  scope: z.enum(["ORDER", "PRODUCT", "CATEGORY"]).default("ORDER"),
+  application: z.enum(["ORDER_TOTAL", "ELIGIBLE_ITEMS"]).default("ORDER_TOTAL"),
+  productIds: z.array(z.string().uuid()).max(200).default([]),
+  categoryIds: z.array(z.string().uuid()).max(100).default([]),
   minOrderAmount: z.number().nonnegative().optional(),
   maxDiscountAmount: z.number().nonnegative().optional(),
   usageLimit: z.number().int().positive().optional(),
+  perCustomerUsageLimit: z.number().int().positive().nullable().optional(),
   startsAt: z.string().datetime().optional(),
   endsAt: z.string().datetime().optional(),
 });
 
+const couponInclude = {
+  products: { include: { product: { select: { id: true, name: true, slug: true } } } },
+  categories: { include: { category: { select: { id: true, name: true, slug: true } } } },
+} as const;
+
+function couponWriteData(data: z.infer<typeof couponSchema>) {
+  const startsAt = data.startsAt ? new Date(data.startsAt) : null;
+  const endsAt = data.endsAt ? new Date(data.endsAt) : null;
+  if (startsAt && endsAt && endsAt <= startsAt) throw new Error("COUPON_DATE_RANGE");
+  if (data.discountType === "PERCENTAGE" && data.discountValue > 100) throw new Error("COUPON_PERCENTAGE");
+  if (data.scope === "PRODUCT" && data.productIds.length === 0) throw new Error("COUPON_TARGET_REQUIRED");
+  if (data.scope === "CATEGORY" && data.categoryIds.length === 0) throw new Error("COUPON_TARGET_REQUIRED");
+  return { startsAt, endsAt };
+}
+
 router.get(
   "/coupons",
   asyncHandler(async (_req, res) => {
-    const coupons = await prisma.coupon.findMany({ orderBy: { createdAt: "desc" } });
+    const coupons = await prisma.coupon.findMany({ include: couponInclude, orderBy: { createdAt: "desc" } });
     res.json({ success: true, data: coupons });
   }),
 );
@@ -429,25 +483,59 @@ router.post(
   asyncHandler(async (req, res) => {
     const parsed = couponSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon", errors: parsed.error.flatten() });
-    if (parsed.data.discountType === "PERCENTAGE" && parsed.data.discountValue > 100) return res.status(400).json({ success: false, message: "Percentage discount cannot exceed 100%" });
-    const startsAt = parsed.data.startsAt ? new Date(parsed.data.startsAt) : null;
-    const endsAt = parsed.data.endsAt ? new Date(parsed.data.endsAt) : null;
-    if (startsAt && endsAt && endsAt <= startsAt) return res.status(400).json({ success: false, message: "Coupon end date must be after the start date" });
-
+    let dates;
+    try { dates = couponWriteData(parsed.data); } catch (error) {
+      const code = error instanceof Error ? error.message : "";
+      if (code === "COUPON_DATE_RANGE") return res.status(400).json({ success: false, message: "Coupon end date must be after the start date" });
+      if (code === "COUPON_PERCENTAGE") return res.status(400).json({ success: false, message: "Percentage discount cannot exceed 100%" });
+      if (code === "COUPON_TARGET_REQUIRED") return res.status(400).json({ success: false, message: "Select at least one target product or category" });
+      throw error;
+    }
+    const data = parsed.data;
     const coupon = await prisma.coupon.create({
       data: {
-        code: parsed.data.code.toUpperCase(),
-        description: parsed.data.description || null,
-        discountType: parsed.data.discountType,
-        discountValue: parsed.data.discountValue,
-        minOrderAmount: parsed.data.minOrderAmount ?? null,
-        maxDiscountAmount: parsed.data.maxDiscountAmount ?? null,
-        usageLimit: parsed.data.usageLimit ?? null,
-        startsAt,
-        endsAt,
+        code: data.code.toUpperCase(), description: data.description || null, discountType: data.discountType, discountValue: data.discountValue,
+        scope: data.scope, application: data.application, minOrderAmount: data.minOrderAmount ?? null, maxDiscountAmount: data.maxDiscountAmount ?? null,
+        usageLimit: data.usageLimit ?? null, perCustomerUsageLimit: data.perCustomerUsageLimit === undefined ? 1 : data.perCustomerUsageLimit, startsAt: dates.startsAt, endsAt: dates.endsAt,
+        products: data.scope === "PRODUCT" ? { create: data.productIds.map((productId) => ({ productId })) } : undefined,
+        categories: data.scope === "CATEGORY" ? { create: data.categoryIds.map((categoryId) => ({ categoryId })) } : undefined,
       },
+      include: couponInclude,
     });
     res.status(201).json({ success: true, data: coupon });
+  }),
+);
+
+router.put(
+  "/coupons/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = couponSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon", errors: parsed.error.flatten() });
+    let dates;
+    try { dates = couponWriteData(parsed.data); } catch (error) {
+      const code = error instanceof Error ? error.message : "";
+      if (code === "COUPON_DATE_RANGE") return res.status(400).json({ success: false, message: "Coupon end date must be after the start date" });
+      if (code === "COUPON_PERCENTAGE") return res.status(400).json({ success: false, message: "Percentage discount cannot exceed 100%" });
+      if (code === "COUPON_TARGET_REQUIRED") return res.status(400).json({ success: false, message: "Select at least one target product or category" });
+      throw error;
+    }
+    const data = parsed.data;
+    const coupon = await prisma.$transaction(async (tx) => {
+      await tx.couponProduct.deleteMany({ where: { couponId: req.params.id } });
+      await tx.couponCategory.deleteMany({ where: { couponId: req.params.id } });
+      return tx.coupon.update({
+        where: { id: req.params.id },
+        data: {
+          code: data.code.toUpperCase(), description: data.description || null, discountType: data.discountType, discountValue: data.discountValue,
+          scope: data.scope, application: data.application, minOrderAmount: data.minOrderAmount ?? null, maxDiscountAmount: data.maxDiscountAmount ?? null,
+          usageLimit: data.usageLimit ?? null, perCustomerUsageLimit: data.perCustomerUsageLimit === undefined ? 1 : data.perCustomerUsageLimit, startsAt: dates.startsAt, endsAt: dates.endsAt,
+          products: data.scope === "PRODUCT" ? { create: data.productIds.map((productId) => ({ productId })) } : undefined,
+          categories: data.scope === "CATEGORY" ? { create: data.categoryIds.map((categoryId) => ({ categoryId })) } : undefined,
+        },
+        include: couponInclude,
+      });
+    });
+    res.json({ success: true, data: coupon });
   }),
 );
 
@@ -456,7 +544,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon update" });
-    const coupon = await prisma.coupon.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    const coupon = await prisma.coupon.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive }, include: couponInclude });
     res.json({ success: true, data: coupon });
   }),
 );
@@ -519,13 +607,20 @@ const bannerSchema = z.object({
   placement: z.enum(["HOME_HERO", "HOME_STRIP"]).default("HOME_HERO"),
   eyebrow: z.string().trim().max(80).optional().or(z.literal("")),
   title: z.string().trim().min(2).max(180),
-  description: z.string().trim().max(500).optional().or(z.literal("")),
+  description: z.string().trim().max(12000).optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
   mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
   ctaText: z.string().trim().max(60).optional().or(z.literal("")),
   ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
   background: z.string().trim().max(40).optional().or(z.literal("")),
   textColor: z.string().trim().max(40).optional().or(z.literal("")),
+  titleFontFamily: z.enum(["Inter", "Georgia", "Arial", "Verdana", "Times New Roman", "Trebuchet MS"]).optional().or(z.literal("")),
+  titleFontWeight: z.number().int().min(400).max(900).optional(),
+  titleFontStyle: z.enum(["normal", "italic"]).optional(),
+  titleTextAlign: z.enum(["left", "center", "right"]).optional(),
+  titleSize: z.enum(["M", "L", "XL", "XXL"]).optional(),
+  descriptionFontFamily: z.enum(["Inter", "Georgia", "Arial", "Verdana", "Times New Roman", "Trebuchet MS"]).optional().or(z.literal("")),
+  descriptionTextAlign: z.enum(["left", "center", "right", "justify"]).optional(),
   priority: z.number().int().min(0).max(1000).optional(),
   startsAt: z.string().datetime().nullable().optional(),
   endsAt: z.string().datetime().nullable().optional(),
@@ -559,6 +654,13 @@ router.post(
         ctaLink: parsed.data.ctaLink || null,
         background: parsed.data.background || null,
         textColor: parsed.data.textColor || null,
+        titleFontFamily: parsed.data.titleFontFamily || null,
+        titleFontWeight: parsed.data.titleFontWeight ?? 900,
+        titleFontStyle: parsed.data.titleFontStyle ?? "normal",
+        titleTextAlign: parsed.data.titleTextAlign ?? "left",
+        titleSize: parsed.data.titleSize ?? "XL",
+        descriptionFontFamily: parsed.data.descriptionFontFamily || null,
+        descriptionTextAlign: parsed.data.descriptionTextAlign ?? "left",
         priority: parsed.data.priority ?? 0,
         startsAt,
         endsAt,
@@ -572,13 +674,20 @@ const bannerUpdateSchema = z.object({
   placement: z.enum(["HOME_HERO", "HOME_STRIP"]).optional(),
   eyebrow: z.string().trim().max(80).optional().or(z.literal("")),
   title: z.string().trim().min(2).max(180).optional(),
-  description: z.string().trim().max(500).optional().or(z.literal("")),
+  description: z.string().trim().max(12000).optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
   mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
   ctaText: z.string().trim().max(60).optional().or(z.literal("")),
   ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
   background: z.string().trim().max(40).optional().or(z.literal("")),
   textColor: z.string().trim().max(40).optional().or(z.literal("")),
+  titleFontFamily: z.enum(["Inter", "Georgia", "Arial", "Verdana", "Times New Roman", "Trebuchet MS"]).optional().or(z.literal("")),
+  titleFontWeight: z.number().int().min(400).max(900).optional(),
+  titleFontStyle: z.enum(["normal", "italic"]).optional(),
+  titleTextAlign: z.enum(["left", "center", "right"]).optional(),
+  titleSize: z.enum(["M", "L", "XL", "XXL"]).optional(),
+  descriptionFontFamily: z.enum(["Inter", "Georgia", "Arial", "Verdana", "Times New Roman", "Trebuchet MS"]).optional().or(z.literal("")),
+  descriptionTextAlign: z.enum(["left", "center", "right", "justify"]).optional(),
   priority: z.number().int().min(0).max(10000).optional(),
   startsAt: z.string().datetime().nullable().optional(),
   endsAt: z.string().datetime().nullable().optional(),
@@ -592,7 +701,7 @@ router.patch(
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid banner update", errors: parsed.success ? undefined : parsed.error.flatten() });
 
     const data: any = { ...parsed.data };
-    for (const key of ["eyebrow", "description", "imageUrl", "mobileImageUrl", "ctaText", "ctaLink", "background", "textColor"]) {
+    for (const key of ["eyebrow", "description", "imageUrl", "mobileImageUrl", "ctaText", "ctaLink", "background", "textColor", "titleFontFamily", "descriptionFontFamily"]) {
       if (key in data && data[key] === "") data[key] = null;
     }
     if ("startsAt" in data) data.startsAt = data.startsAt ? new Date(data.startsAt) : null;

@@ -30,6 +30,7 @@ export type OrderItemAvgAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
   lineTotal: runtime.Decimal | null
+  discountAmount: runtime.Decimal | null
   gstRate: runtime.Decimal | null
 }
 
@@ -37,6 +38,7 @@ export type OrderItemSumAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
   lineTotal: runtime.Decimal | null
+  discountAmount: runtime.Decimal | null
   gstRate: runtime.Decimal | null
 }
 
@@ -50,6 +52,7 @@ export type OrderItemMinAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
   lineTotal: runtime.Decimal | null
+  discountAmount: runtime.Decimal | null
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   promotionLabel: string | null
@@ -67,6 +70,7 @@ export type OrderItemMaxAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
   lineTotal: runtime.Decimal | null
+  discountAmount: runtime.Decimal | null
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   promotionLabel: string | null
@@ -84,6 +88,7 @@ export type OrderItemCountAggregateOutputType = {
   quantity: number
   unitPrice: number
   lineTotal: number
+  discountAmount: number
   hsnCode: number
   gstRate: number
   promotionLabel: number
@@ -97,6 +102,7 @@ export type OrderItemAvgAggregateInputType = {
   quantity?: true
   unitPrice?: true
   lineTotal?: true
+  discountAmount?: true
   gstRate?: true
 }
 
@@ -104,6 +110,7 @@ export type OrderItemSumAggregateInputType = {
   quantity?: true
   unitPrice?: true
   lineTotal?: true
+  discountAmount?: true
   gstRate?: true
 }
 
@@ -117,6 +124,7 @@ export type OrderItemMinAggregateInputType = {
   quantity?: true
   unitPrice?: true
   lineTotal?: true
+  discountAmount?: true
   hsnCode?: true
   gstRate?: true
   promotionLabel?: true
@@ -134,6 +142,7 @@ export type OrderItemMaxAggregateInputType = {
   quantity?: true
   unitPrice?: true
   lineTotal?: true
+  discountAmount?: true
   hsnCode?: true
   gstRate?: true
   promotionLabel?: true
@@ -151,6 +160,7 @@ export type OrderItemCountAggregateInputType = {
   quantity?: true
   unitPrice?: true
   lineTotal?: true
+  discountAmount?: true
   hsnCode?: true
   gstRate?: true
   promotionLabel?: true
@@ -255,6 +265,7 @@ export type OrderItemGroupByOutputType = {
   quantity: number
   unitPrice: runtime.Decimal
   lineTotal: runtime.Decimal
+  discountAmount: runtime.Decimal
   hsnCode: string | null
   gstRate: runtime.Decimal
   promotionLabel: string | null
@@ -295,6 +306,7 @@ export type OrderItemWhereInput = {
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
@@ -315,6 +327,7 @@ export type OrderItemOrderByWithRelationInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   promotionLabel?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -338,6 +351,7 @@ export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
@@ -358,6 +372,7 @@ export type OrderItemOrderByWithAggregationInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   promotionLabel?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -383,6 +398,7 @@ export type OrderItemScalarWhereWithAggregatesInput = {
   quantity?: Prisma.IntWithAggregatesFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.StringNullableWithAggregatesFilter<"OrderItem"> | string | null
@@ -398,6 +414,7 @@ export type OrderItemCreateInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -418,6 +435,7 @@ export type OrderItemUncheckedCreateInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -434,6 +452,7 @@ export type OrderItemUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -454,6 +473,7 @@ export type OrderItemUncheckedUpdateInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -472,6 +492,7 @@ export type OrderItemCreateManyInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -487,6 +508,7 @@ export type OrderItemUpdateManyMutationInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -504,6 +526,7 @@ export type OrderItemUncheckedUpdateManyInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -531,6 +554,7 @@ export type OrderItemCountOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   promotionLabel?: Prisma.SortOrder
@@ -542,6 +566,7 @@ export type OrderItemAvgOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
 }
 
@@ -555,6 +580,7 @@ export type OrderItemMaxOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   promotionLabel?: Prisma.SortOrder
@@ -572,6 +598,7 @@ export type OrderItemMinOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   promotionLabel?: Prisma.SortOrder
@@ -583,6 +610,7 @@ export type OrderItemSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
   lineTotal?: Prisma.SortOrder
+  discountAmount?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
 }
 
@@ -697,6 +725,7 @@ export type OrderItemCreateWithoutVariantInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -715,6 +744,7 @@ export type OrderItemUncheckedCreateWithoutVariantInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -762,6 +792,7 @@ export type OrderItemScalarWhereInput = {
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.StringNullableFilter<"OrderItem"> | string | null
   gstRate?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.StringNullableFilter<"OrderItem"> | string | null
@@ -777,6 +808,7 @@ export type OrderItemCreateWithoutOrderInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -795,6 +827,7 @@ export type OrderItemUncheckedCreateWithoutOrderInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -837,6 +870,7 @@ export type OrderItemCreateWithoutReturnItemsInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -856,6 +890,7 @@ export type OrderItemUncheckedCreateWithoutReturnItemsInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -887,6 +922,7 @@ export type OrderItemUpdateWithoutReturnItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -906,6 +942,7 @@ export type OrderItemUncheckedUpdateWithoutReturnItemsInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -922,6 +959,7 @@ export type OrderItemCreateManyVariantInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -937,6 +975,7 @@ export type OrderItemUpdateWithoutVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -955,6 +994,7 @@ export type OrderItemUncheckedUpdateWithoutVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -972,6 +1012,7 @@ export type OrderItemUncheckedUpdateManyWithoutVariantInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -988,6 +1029,7 @@ export type OrderItemCreateManyOrderInput = {
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: string | null
@@ -1003,6 +1045,7 @@ export type OrderItemUpdateWithoutOrderInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1021,6 +1064,7 @@ export type OrderItemUncheckedUpdateWithoutOrderInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1038,6 +1082,7 @@ export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   lineTotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   promotionLabel?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1086,6 +1131,7 @@ export type OrderItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   quantity?: boolean
   unitPrice?: boolean
   lineTotal?: boolean
+  discountAmount?: boolean
   hsnCode?: boolean
   gstRate?: boolean
   promotionLabel?: boolean
@@ -1107,6 +1153,7 @@ export type OrderItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   quantity?: boolean
   unitPrice?: boolean
   lineTotal?: boolean
+  discountAmount?: boolean
   hsnCode?: boolean
   gstRate?: boolean
   promotionLabel?: boolean
@@ -1126,6 +1173,7 @@ export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   quantity?: boolean
   unitPrice?: boolean
   lineTotal?: boolean
+  discountAmount?: boolean
   hsnCode?: boolean
   gstRate?: boolean
   promotionLabel?: boolean
@@ -1145,6 +1193,7 @@ export type OrderItemSelectScalar = {
   quantity?: boolean
   unitPrice?: boolean
   lineTotal?: boolean
+  discountAmount?: boolean
   hsnCode?: boolean
   gstRate?: boolean
   promotionLabel?: boolean
@@ -1152,7 +1201,7 @@ export type OrderItemSelectScalar = {
   createdAt?: boolean
 }
 
-export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "productName" | "variantName" | "sku" | "quantity" | "unitPrice" | "lineTotal" | "hsnCode" | "gstRate" | "promotionLabel" | "isComplimentary" | "createdAt", ExtArgs["result"]["orderItem"]>
+export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "variantId" | "productName" | "variantName" | "sku" | "quantity" | "unitPrice" | "lineTotal" | "discountAmount" | "hsnCode" | "gstRate" | "promotionLabel" | "isComplimentary" | "createdAt", ExtArgs["result"]["orderItem"]>
 export type OrderItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   variant?: boolean | Prisma.OrderItem$variantArgs<ExtArgs>
@@ -1185,6 +1234,7 @@ export type $OrderItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     quantity: number
     unitPrice: runtime.Decimal
     lineTotal: runtime.Decimal
+    discountAmount: runtime.Decimal
     hsnCode: string | null
     gstRate: runtime.Decimal
     promotionLabel: string | null
@@ -1625,6 +1675,7 @@ export interface OrderItemFieldRefs {
   readonly quantity: Prisma.FieldRef<"OrderItem", 'Int'>
   readonly unitPrice: Prisma.FieldRef<"OrderItem", 'Decimal'>
   readonly lineTotal: Prisma.FieldRef<"OrderItem", 'Decimal'>
+  readonly discountAmount: Prisma.FieldRef<"OrderItem", 'Decimal'>
   readonly hsnCode: Prisma.FieldRef<"OrderItem", 'String'>
   readonly gstRate: Prisma.FieldRef<"OrderItem", 'Decimal'>
   readonly promotionLabel: Prisma.FieldRef<"OrderItem", 'String'>

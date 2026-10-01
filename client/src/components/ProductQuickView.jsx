@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { createPortal } from "react-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -85,7 +86,7 @@ export default function ProductQuickView({ product, open, onClose }) {
     navigate("/checkout?mode=buy-now");
   }
 
-  return <div className="phase16-quick-layer" role="dialog" aria-modal="true" aria-label={`Quick view ${current.name}`}>
+  return createPortal(<div className="phase16-quick-layer phase19-quick-layer" role="dialog" aria-modal="true" aria-label={`Quick view ${current.name}`}>
     <button className="phase16-quick-backdrop" type="button" onClick={onClose} aria-label="Close quick view" />
     <section className="phase16-quick-view">
       <div className="phase16-quick-head"><div><small>QUICK VIEW</small><strong>{current.name}</strong></div><button type="button" onClick={onClose} aria-label="Close"><Icon name="close" size={20} /></button></div>
@@ -110,5 +111,5 @@ export default function ProductQuickView({ product, open, onClose }) {
         </div>
       </div>}
     </section>
-  </div>;
+  </div>, document.body);
 }

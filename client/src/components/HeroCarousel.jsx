@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { Icon } from "./Icons";
+import RichText from "./RichText";
 
 export default function HeroCarousel({ banners = [] }) {
   const slides = useMemo(() => banners.filter(Boolean), [banners]);
@@ -63,8 +64,8 @@ export default function HeroCarousel({ banners = [] }) {
             <div className="container campaign-hero-grid">
               <div className="campaign-copy">
                 <p className="hero-kicker">{hero.eyebrow || "RISEORA HERBALS"}</p>
-                <h1>{hero.title}</h1>
-                {hero.description && <p>{hero.description}</p>}
+                <h1 className={`phase19-hero-title size-${String(hero.titleSize || "XL").toLowerCase()}`} style={{ fontFamily: hero.titleFontFamily || "Inter", fontWeight: Number(hero.titleFontWeight || 900), fontStyle: hero.titleFontStyle || "normal", textAlign: hero.titleTextAlign || "left" }}>{hero.title}</h1>
+                {hero.description && <div className="phase19-hero-description" style={{ fontFamily: hero.descriptionFontFamily || "Inter", textAlign: hero.descriptionTextAlign || "left" }}><RichText value={hero.description} /></div>}
                 <div className="campaign-actions">
                   <Link className="black-button" to={hero.ctaLink || "/shop"}>{hero.ctaText || "SHOP NOW"}</Link>
                   <Link className="underlined-link" to="/offers">VIEW OFFERS</Link>

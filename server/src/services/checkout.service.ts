@@ -18,12 +18,15 @@ export type CheckoutInput = {
 
 type SnapshotItem = {
   variantId: string;
+  productId: string;
+  categoryId: string;
   productName: string;
   variantName: string;
   sku: string;
   quantity: number;
   unitPrice: number;
   lineTotal: number;
+  discountAmount: number;
   hsnCode: string | null;
   gstRate: number;
   promotionLabel?: string | null;
@@ -34,12 +37,28 @@ function round2(value: number) {
   return Math.round((value + Number.EPSILON) * 100) / 100;
 }
 
+function allocateLineDiscount(items: SnapshotItem[], requestedDiscount: number, isEligible: (item: SnapshotItem) => boolean = () => true) {
+  const indexes = items.map((item, index) => ({ item, index })).filter(({ item }) => isEligible(item) && item.lineTotal - item.discountAmount > 0);
+  const baseTotal = round2(indexes.reduce((sum, { item }) => sum + Math.max(0, item.lineTotal - item.discountAmount), 0));
+  const target = Math.min(Math.max(0, round2(requestedDiscount)), baseTotal);
+  if (target <= 0 || baseTotal <= 0 || indexes.length === 0) return 0;
+
+  let allocated = 0;
+  indexes.forEach(({ item }, position) => {
+    const remaining = Math.max(0, round2(item.lineTotal - item.discountAmount));
+    const share = position === indexes.length - 1 ? round2(target - allocated) : round2(target * (remaining / baseTotal));
+    item.discountAmount = round2(item.discountAmount + Math.min(remaining, Math.max(0, share)));
+    allocated = round2(allocated + Math.min(remaining, Math.max(0, share)));
+  });
+  return allocated;
+}
+
 function makeOrderNumber() {
   const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
   return `RISE-${date}-${randomBytes(3).toString("hex").toUpperCase()}`;
 }
 
-export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE") {
+export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE", userId: string | null = null) {
   const requestedIds = [...new Set(input.items.map((item) => item.variantId))];
   const variants = await prisma.productVariant.findMany({
     where: { id: { in: requestedIds }, isActive: true, product: { isActive: true } },
@@ -70,12 +89,15 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
     const unitPrice = Number(variant.sellingPrice);
     return {
       variantId: variant.id,
+      productId: variant.productId,
+      categoryId: variant.product.categoryId,
       productName: variant.product.name,
       variantName: variant.name,
       sku: variant.sku,
       quantity: item.quantity,
       unitPrice,
       lineTotal: round2(unitPrice * item.quantity),
+      discountAmount: 0,
       hsnCode: variant.hsnCode ?? null,
       gstRate: Number(variant.gstRate || 0),
       promotionLabel: null,
@@ -87,28 +109,61 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
   const merchandising = await evaluateBestMerchandisingDeal(input.items, subtotal);
   const freeItems: SnapshotItem[] = merchandising.freeItems.map((item: any) => ({
     variantId: item.variant.id,
+    productId: item.variant.productId,
+    categoryId: item.variant.product.categoryId,
     productName: item.variant.product.name,
     variantName: item.variant.name,
     sku: item.variant.sku,
     quantity: item.quantity,
     unitPrice: 0,
     lineTotal: 0,
+    discountAmount: 0,
     hsnCode: item.variant.hsnCode ?? null,
     gstRate: Number(item.variant.gstRate || 0),
     promotionLabel: item.promotionLabel || merchandising.deal?.name || "Riseora offer",
     isComplimentary: true,
   }));
 
-  const automaticDiscountAmount = round2(merchandising.automaticDiscountAmount || 0);
+  const requestedAutomaticDiscount = round2(merchandising.automaticDiscountAmount || 0);
+  const automaticDiscountAmount = allocateLineDiscount(paidItems, requestedAutomaticDiscount);
   const couponBase = Math.max(0, round2(subtotal - automaticDiscountAmount));
-  let coupon = null;
+  let coupon: any = null;
   let couponDiscountAmount = 0;
+  let couponEligible = (_item: SnapshotItem) => true;
   if (input.couponCode) {
-    coupon = await prisma.coupon.findUnique({ where: { code: input.couponCode.toUpperCase() } });
+    coupon = await prisma.coupon.findUnique({
+      where: { code: input.couponCode.toUpperCase() },
+      include: { products: true, categories: true },
+    });
     if (!coupon) throw new Error("COUPON_NOT_FOUND");
-    const evaluation = evaluateCoupon(coupon as unknown as CouponLike, couponBase);
+
+    const customerLimit = coupon.perCustomerUsageLimit == null ? null : Number(coupon.perCustomerUsageLimit);
+    const email = (input.customerEmail || "").trim().toLowerCase();
+    const phone = (input.customerPhone || "").trim();
+    if (customerLimit !== null && (userId || email || phone)) {
+      const identityWhere: any = userId ? { userId } : email ? { customerEmail: { equals: email, mode: "insensitive" as const } } : { customerPhone: phone };
+      const sessionIdentityWhere: any = userId ? { userId } : email ? { customerEmail: { equals: email, mode: "insensitive" as const } } : { customerPhone: phone };
+      const redemptionCount = await prisma.couponRedemption.count({ where: { couponId: coupon.id, ...identityWhere } });
+      const pendingCount = await prisma.checkoutSession.count({
+        where: { couponCode: coupon.code, status: "PENDING", ...sessionIdentityWhere },
+      });
+      if (redemptionCount + pendingCount >= customerLimit) throw new Error(`COUPON_INVALID:This coupon can be used ${customerLimit} time${customerLimit === 1 ? "" : "s"} per customer`);
+    }
+
+    const productTargets = new Set(coupon.products.map((item: any) => item.productId));
+    const categoryTargets = new Set(coupon.categories.map((item: any) => item.categoryId));
+    couponEligible = (item: SnapshotItem) => {
+      if (coupon.scope === "PRODUCT") return productTargets.has(item.productId);
+      if (coupon.scope === "CATEGORY") return categoryTargets.has(item.categoryId);
+      return true;
+    };
+    const eligibleItems = paidItems.filter(couponEligible);
+    if (eligibleItems.length === 0) throw new Error("COUPON_INVALID:This coupon does not apply to the products in your cart");
+    const eligibleSubtotalAfterAutomatic = round2(eligibleItems.reduce((sum, item) => sum + Math.max(0, item.lineTotal - item.discountAmount), 0));
+    const discountBase = coupon.application === "ELIGIBLE_ITEMS" ? Math.min(couponBase, eligibleSubtotalAfterAutomatic) : couponBase;
+    const evaluation = evaluateCoupon(coupon as unknown as CouponLike, couponBase, discountBase);
     if (!evaluation.valid) throw new Error(`COUPON_INVALID:${evaluation.message}`);
-    couponDiscountAmount = evaluation.discountAmount;
+    couponDiscountAmount = allocateLineDiscount(paidItems, evaluation.discountAmount, coupon.application === "ELIGIBLE_ITEMS" ? couponEligible : () => true);
   }
   const discountAmount = round2(automaticDiscountAmount + couponDiscountAmount);
   const settings = await getStoreSettings();
@@ -130,7 +185,31 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
   };
 }
 
-async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { items: SnapshotItem[]; coupon: Awaited<ReturnType<typeof prisma.coupon.findUnique>> }) {
+async function assertCouponCustomerLimitInTransaction(
+  tx: Prisma.TransactionClient,
+  coupon: any,
+  userId: string | null,
+  customerEmail?: string | null,
+  customerPhone?: string | null,
+) {
+  if (!coupon || coupon.perCustomerUsageLimit == null) return;
+  const limit = Number(coupon.perCustomerUsageLimit);
+  const email = String(customerEmail || "").trim().toLowerCase();
+  const phone = String(customerPhone || "").trim();
+  const identityKey = userId ? `user:${userId}` : email ? `email:${email}` : phone ? `phone:${phone}` : "";
+  if (!identityKey) return;
+
+  // Serialize redemptions/reservations for the same coupon + customer so rapid duplicate checkouts cannot bypass the limit.
+  const lockKey = `${coupon.id}:${identityKey}`;
+  await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${lockKey}))`;
+  const identityWhere: any = userId ? { userId } : email ? { customerEmail: { equals: email, mode: "insensitive" } } : { customerPhone: phone };
+  const sessionIdentityWhere: any = userId ? { userId } : email ? { customerEmail: { equals: email, mode: "insensitive" } } : { customerPhone: phone };
+  const redemptionCount = await tx.couponRedemption.count({ where: { couponId: coupon.id, ...identityWhere } });
+  const pendingCount = await tx.checkoutSession.count({ where: { couponCode: coupon.code, status: "PENDING", ...sessionIdentityWhere } });
+  if (redemptionCount + pendingCount >= limit) throw new Error(`COUPON_INVALID:This coupon can be used ${limit} time${limit === 1 ? "" : "s"} per customer`);
+}
+
+async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { items: SnapshotItem[]; coupon: any }) {
   if (input.coupon) {
     if (input.coupon.usageLimit !== null) {
       const updated = await tx.coupon.updateMany({ where: { id: input.coupon.id, isActive: true, usageCount: { lt: input.coupon.usageLimit } }, data: { usageCount: { increment: 1 } } });
@@ -163,6 +242,7 @@ function orderItemCreate(item: SnapshotItem) {
     quantity: item.quantity,
     unitPrice: item.unitPrice,
     lineTotal: item.lineTotal,
+    discountAmount: item.discountAmount,
     hsnCode: item.hsnCode ?? null,
     gstRate: item.gstRate ?? 0,
     promotionLabel: item.promotionLabel || null,
@@ -171,10 +251,11 @@ function orderItemCreate(item: SnapshotItem) {
 }
 
 export async function createCodOrder(input: CheckoutInput, userId: string | null) {
-  const prepared = await prepareCheckout(input, "COD");
+  const prepared = await prepareCheckout(input, "COD", userId);
   const order = await prisma.$transaction(async (tx) => {
+    await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
     await reserveCouponAndStock(tx, prepared);
-    return tx.order.create({
+    const created = await tx.order.create({
       data: {
         orderNumber: makeOrderNumber(), userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
         customerPhone: input.customerPhone, shippingAddress: input.shippingAddress, paymentMethod: "COD", couponCode: prepared.coupon?.code ?? null,
@@ -186,15 +267,20 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
       },
       include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
     });
+    if (prepared.coupon) {
+      await tx.couponRedemption.create({ data: { couponId: prepared.coupon.id, orderId: created.id, userId, customerEmail: input.customerEmail?.trim().toLowerCase() || null, customerPhone: input.customerPhone?.trim() || null } });
+    }
+    return created;
   });
   void sendOrderPlacedNotifications(order).catch((error) => console.error("Order notification failed", error));
   return order;
 }
 
 export async function createOnlineCheckoutReservation(input: CheckoutInput, userId: string | null) {
-  const prepared = await prepareCheckout(input, "ONLINE");
+  const prepared = await prepareCheckout(input, "ONLINE", userId);
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   return prisma.$transaction(async (tx) => {
+    await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
     await reserveCouponAndStock(tx, prepared);
     return tx.checkoutSession.create({
       data: {
@@ -264,6 +350,10 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
       include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
     });
     await tx.checkoutSession.update({ where: { id: existing.id }, data: { orderId: created.id } });
+    if (existing.couponCode) {
+      const coupon = await tx.coupon.findUnique({ where: { code: existing.couponCode } });
+      if (coupon) await tx.couponRedemption.create({ data: { couponId: coupon.id, orderId: created.id, userId: existing.userId, customerEmail: existing.customerEmail?.trim().toLowerCase() || null, customerPhone: existing.customerPhone?.trim() || null } });
+    }
     return created;
   });
   void sendOrderPlacedNotifications(order).catch((error) => console.error("Order notification failed", error));
