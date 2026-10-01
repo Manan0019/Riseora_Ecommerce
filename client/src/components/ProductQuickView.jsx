@@ -5,6 +5,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
+import OptimizedImage from "./OptimizedImage";
 
 export default function ProductQuickView({ product, open, onClose }) {
   const navigate = useNavigate();
@@ -93,10 +94,10 @@ export default function ProductQuickView({ product, open, onClose }) {
       {error ? <div className="phase16-quick-error"><p className="alert error">{error}</p><Link className="button button-secondary" to={`/product/${current.slug}`} onClick={onClose}>OPEN PRODUCT</Link></div> : <div className="phase16-quick-grid">
         <div className="phase16-quick-media">
           <div className="phase16-quick-image">
-            {imageItem?.url ? <img src={mediaUrl(imageItem.url)} alt={imageItem.altText || current.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}
+            {imageItem?.url ? <OptimizedImage src={mediaUrl(imageItem.url)} alt={imageItem.altText || current.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}
             {images.length > 1 && <><button className="phase16-quick-arrow prev" onClick={() => changeImage(-1)} aria-label="Previous image"><Icon name="arrow" size={18} /></button><button className="phase16-quick-arrow next" onClick={() => changeImage(1)} aria-label="Next image"><Icon name="arrow" size={18} /></button><span className="phase16-quick-count">{activeImage + 1}/{images.length}</span></>}
           </div>
-          {images.length > 1 && <div className="phase16-quick-thumbs">{images.slice(0, 7).map((item, index) => <button key={item.id || `${item.url}-${index}`} className={index === activeImage ? "active" : ""} onClick={() => setActiveImage(index)}><img src={mediaUrl(item.url)} alt="" /></button>)}</div>}
+          {images.length > 1 && <div className="phase16-quick-thumbs">{images.slice(0, 7).map((item, index) => <button key={item.id || `${item.url}-${index}`} className={index === activeImage ? "active" : ""} onClick={() => setActiveImage(index)}><OptimizedImage src={mediaUrl(item.url)} alt="" /></button>)}</div>}
         </div>
         <div className="phase16-quick-copy">
           {loading && <small className="phase16-quick-loading">Refreshing product details…</small>}

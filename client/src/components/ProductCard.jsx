@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
 import ProductQuickView from "./ProductQuickView";
+import OptimizedImage from "./OptimizedImage";
 
 export default function ProductCard({ product, compact = false }) {
   const { addItem } = useCart();
@@ -68,7 +69,7 @@ export default function ProductCard({ product, compact = false }) {
             {discount > 0 && <span className="sale-badge">{discount}% OFF</span>}
           </div>
           {image ? (
-            <img
+            <OptimizedImage
               key={`${product.id}-${activeImage}`}
               className="product-image product-image-transition"
               src={image}

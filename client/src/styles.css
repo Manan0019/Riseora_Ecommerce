@@ -2296,3 +2296,7 @@ textarea { min-height: 105px; resize: vertical; }
 .phase25-owned-note { display: block; margin-top: -2px; }
 .product-editor input:disabled,.product-editor select:disabled,.phase18-category-form input:disabled { background: #f1f4f0; color: #718078; cursor: not-allowed; }
 .state-toggle:disabled { opacity: .56; cursor: not-allowed; }
+
+
+/* Phase25 image resilience */
+.image-fallback { min-height: 120px; background: linear-gradient(135deg, var(--sage-2), var(--cream)); border-radius: inherit; }

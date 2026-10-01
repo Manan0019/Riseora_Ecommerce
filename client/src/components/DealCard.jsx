@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { Icon } from "./Icons";
+import OptimizedImage from "./OptimizedImage";
 
 function dealImage(deal) {
   if (deal.imageUrl) return mediaUrl(deal.imageUrl);
@@ -32,7 +33,7 @@ export default function DealCard({ deal, compact = false }) {
   }
 
   return <article className={`deal-card ${compact ? "compact" : ""}`}>
-    <div className="deal-media">{image ? <img src={image} alt={deal.name} loading="lazy" /> : <div className="deal-media-fallback">R</div>}<span>{deal.badge || (deal.type === "BUNDLE_DISCOUNT" ? "COMBO" : deal.type === "BUY_X_GET_Y" ? "BUY & GET" : "FREE GIFT")}</span></div>
+    <div className="deal-media">{image ? <OptimizedImage src={image} alt={deal.name} loading="lazy" /> : <div className="deal-media-fallback">R</div>}<span>{deal.badge || (deal.type === "BUNDLE_DISCOUNT" ? "COMBO" : deal.type === "BUY_X_GET_Y" ? "BUY & GET" : "FREE GIFT")}</span></div>
     <div className="deal-body">
       <p className="phase3-eyebrow">RISEORA DEAL</p>
       <h3>{deal.name}</h3>

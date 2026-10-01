@@ -4,6 +4,7 @@ import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { Icon } from "./Icons";
 import OfferProgress from "./OfferProgress";
+import OptimizedImage from "./OptimizedImage";
 
 export default function MiniCartDrawer() {
   const { drawerOpen, closeCart, items, subtotal, updateQuantity, removeItem } = useCart();
@@ -36,7 +37,7 @@ export default function MiniCartDrawer() {
               {items.map((item) => (
                 <article key={item.variantId}>
                   <Link to={`/product/${item.productSlug}`} onClick={closeCart} className="phase14-cart-thumb">
-                    {item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt={item.productName} /> : <span>R</span>}
+                    {item.imageUrl ? <OptimizedImage src={mediaUrl(item.imageUrl)} alt={item.productName} /> : <span>R</span>}
                   </Link>
                   <div className="phase14-cart-item-copy">
                     <Link to={`/product/${item.productSlug}`} onClick={closeCart}><strong>{item.productName}</strong></Link>
