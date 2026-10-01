@@ -50,6 +50,8 @@ export type ProductMinAggregateOutputType = {
   badge: string | null
   maxPurchaseQuantity: number | null
   codAllowed: boolean | null
+  erpId: string | null
+  erpManaged: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -70,6 +72,8 @@ export type ProductMaxAggregateOutputType = {
   badge: string | null
   maxPurchaseQuantity: number | null
   codAllowed: boolean | null
+  erpId: string | null
+  erpManaged: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -91,6 +95,8 @@ export type ProductCountAggregateOutputType = {
   badge: number
   maxPurchaseQuantity: number
   codAllowed: number
+  erpId: number
+  erpManaged: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -121,6 +127,8 @@ export type ProductMinAggregateInputType = {
   badge?: true
   maxPurchaseQuantity?: true
   codAllowed?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -141,6 +149,8 @@ export type ProductMaxAggregateInputType = {
   badge?: true
   maxPurchaseQuantity?: true
   codAllowed?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -162,6 +172,8 @@ export type ProductCountAggregateInputType = {
   badge?: true
   maxPurchaseQuantity?: true
   codAllowed?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -270,6 +282,8 @@ export type ProductGroupByOutputType = {
   badge: string | null
   maxPurchaseQuantity: number | null
   codAllowed: boolean
+  erpId: string | null
+  erpManaged: boolean
   createdAt: Date
   updatedAt: Date
   _count: ProductCountAggregateOutputType | null
@@ -314,6 +328,8 @@ export type ProductWhereInput = {
   badge?: Prisma.StringNullableFilter<"Product"> | string | null
   maxPurchaseQuantity?: Prisma.IntNullableFilter<"Product"> | number | null
   codAllowed?: Prisma.BoolFilter<"Product"> | boolean
+  erpId?: Prisma.StringNullableFilter<"Product"> | string | null
+  erpManaged?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
@@ -341,6 +357,8 @@ export type ProductOrderByWithRelationInput = {
   badge?: Prisma.SortOrderInput | Prisma.SortOrder
   maxPurchaseQuantity?: Prisma.SortOrderInput | Prisma.SortOrder
   codAllowed?: Prisma.SortOrder
+  erpId?: Prisma.SortOrderInput | Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   category?: Prisma.CategoryOrderByWithRelationInput
@@ -354,6 +372,7 @@ export type ProductOrderByWithRelationInput = {
 export type ProductWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   slug?: string
+  erpId?: string
   AND?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
   OR?: Prisma.ProductWhereInput[]
   NOT?: Prisma.ProductWhereInput | Prisma.ProductWhereInput[]
@@ -371,6 +390,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   badge?: Prisma.StringNullableFilter<"Product"> | string | null
   maxPurchaseQuantity?: Prisma.IntNullableFilter<"Product"> | number | null
   codAllowed?: Prisma.BoolFilter<"Product"> | boolean
+  erpManaged?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
@@ -379,7 +399,7 @@ export type ProductWhereUniqueInput = Prisma.AtLeast<{
   reviews?: Prisma.ReviewListRelationFilter
   questions?: Prisma.ProductQuestionListRelationFilter
   couponLinks?: Prisma.CouponProductListRelationFilter
-}, "id" | "slug">
+}, "id" | "slug" | "erpId">
 
 export type ProductOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -398,6 +418,8 @@ export type ProductOrderByWithAggregationInput = {
   badge?: Prisma.SortOrderInput | Prisma.SortOrder
   maxPurchaseQuantity?: Prisma.SortOrderInput | Prisma.SortOrder
   codAllowed?: Prisma.SortOrder
+  erpId?: Prisma.SortOrderInput | Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProductCountOrderByAggregateInput
@@ -427,6 +449,8 @@ export type ProductScalarWhereWithAggregatesInput = {
   badge?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
   maxPurchaseQuantity?: Prisma.IntNullableWithAggregatesFilter<"Product"> | number | null
   codAllowed?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
+  erpId?: Prisma.StringNullableWithAggregatesFilter<"Product"> | string | null
+  erpManaged?: Prisma.BoolWithAggregatesFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Product"> | Date | string
 }
@@ -447,6 +471,8 @@ export type ProductCreateInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -474,6 +500,8 @@ export type ProductUncheckedCreateInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -499,6 +527,8 @@ export type ProductUpdateInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -526,6 +556,8 @@ export type ProductUncheckedUpdateInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -552,6 +584,8 @@ export type ProductCreateManyInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -572,6 +606,8 @@ export type ProductUpdateManyMutationInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -593,6 +629,8 @@ export type ProductUncheckedUpdateManyInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -624,6 +662,8 @@ export type ProductCountOrderByAggregateInput = {
   badge?: Prisma.SortOrder
   maxPurchaseQuantity?: Prisma.SortOrder
   codAllowed?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -648,6 +688,8 @@ export type ProductMaxOrderByAggregateInput = {
   badge?: Prisma.SortOrder
   maxPurchaseQuantity?: Prisma.SortOrder
   codAllowed?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -668,6 +710,8 @@ export type ProductMinOrderByAggregateInput = {
   badge?: Prisma.SortOrder
   maxPurchaseQuantity?: Prisma.SortOrder
   codAllowed?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -817,6 +861,8 @@ export type ProductCreateWithoutCategoryInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantCreateNestedManyWithoutProductInput
@@ -842,6 +888,8 @@ export type ProductUncheckedCreateWithoutCategoryInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -897,6 +945,8 @@ export type ProductScalarWhereInput = {
   badge?: Prisma.StringNullableFilter<"Product"> | string | null
   maxPurchaseQuantity?: Prisma.IntNullableFilter<"Product"> | number | null
   codAllowed?: Prisma.BoolFilter<"Product"> | boolean
+  erpId?: Prisma.StringNullableFilter<"Product"> | string | null
+  erpManaged?: Prisma.BoolFilter<"Product"> | boolean
   createdAt?: Prisma.DateTimeFilter<"Product"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Product"> | Date | string
 }
@@ -917,6 +967,8 @@ export type ProductCreateWithoutVariantsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -943,6 +995,8 @@ export type ProductUncheckedCreateWithoutVariantsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   images?: Prisma.ProductImageUncheckedCreateNestedManyWithoutProductInput
@@ -983,6 +1037,8 @@ export type ProductUpdateWithoutVariantsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -1009,6 +1065,8 @@ export type ProductUncheckedUpdateWithoutVariantsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   images?: Prisma.ProductImageUncheckedUpdateManyWithoutProductNestedInput
@@ -1033,6 +1091,8 @@ export type ProductCreateWithoutImagesInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -1059,6 +1119,8 @@ export type ProductUncheckedCreateWithoutImagesInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -1099,6 +1161,8 @@ export type ProductUpdateWithoutImagesInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -1125,6 +1189,8 @@ export type ProductUncheckedUpdateWithoutImagesInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -1149,6 +1215,8 @@ export type ProductCreateWithoutCouponLinksInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -1175,6 +1243,8 @@ export type ProductUncheckedCreateWithoutCouponLinksInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -1215,6 +1285,8 @@ export type ProductUpdateWithoutCouponLinksInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -1241,6 +1313,8 @@ export type ProductUncheckedUpdateWithoutCouponLinksInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -1265,6 +1339,8 @@ export type ProductCreateWithoutReviewsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -1291,6 +1367,8 @@ export type ProductUncheckedCreateWithoutReviewsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -1331,6 +1409,8 @@ export type ProductUpdateWithoutReviewsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -1357,6 +1437,8 @@ export type ProductUncheckedUpdateWithoutReviewsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -1381,6 +1463,8 @@ export type ProductCreateWithoutQuestionsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutProductsInput
@@ -1407,6 +1491,8 @@ export type ProductUncheckedCreateWithoutQuestionsInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   variants?: Prisma.ProductVariantUncheckedCreateNestedManyWithoutProductInput
@@ -1447,6 +1533,8 @@ export type ProductUpdateWithoutQuestionsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutProductsNestedInput
@@ -1473,6 +1561,8 @@ export type ProductUncheckedUpdateWithoutQuestionsInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -1497,6 +1587,8 @@ export type ProductCreateManyCategoryInput = {
   badge?: string | null
   maxPurchaseQuantity?: number | null
   codAllowed?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1517,6 +1609,8 @@ export type ProductUpdateWithoutCategoryInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUpdateManyWithoutProductNestedInput
@@ -1542,6 +1636,8 @@ export type ProductUncheckedUpdateWithoutCategoryInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   variants?: Prisma.ProductVariantUncheckedUpdateManyWithoutProductNestedInput
@@ -1567,6 +1663,8 @@ export type ProductUncheckedUpdateManyWithoutCategoryInput = {
   badge?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   maxPurchaseQuantity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   codAllowed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1655,6 +1753,8 @@ export type ProductSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   badge?: boolean
   maxPurchaseQuantity?: boolean
   codAllowed?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -1683,6 +1783,8 @@ export type ProductSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   badge?: boolean
   maxPurchaseQuantity?: boolean
   codAllowed?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -1705,6 +1807,8 @@ export type ProductSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   badge?: boolean
   maxPurchaseQuantity?: boolean
   codAllowed?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
@@ -1727,11 +1831,13 @@ export type ProductSelectScalar = {
   badge?: boolean
   maxPurchaseQuantity?: boolean
   codAllowed?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "name" | "slug" | "shortDescription" | "description" | "benefits" | "ingredients" | "howToUse" | "suitableFor" | "faq" | "isActive" | "isFeatured" | "badge" | "maxPurchaseQuantity" | "codAllowed" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
+export type ProductOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "categoryId" | "name" | "slug" | "shortDescription" | "description" | "benefits" | "ingredients" | "howToUse" | "suitableFor" | "faq" | "isActive" | "isFeatured" | "badge" | "maxPurchaseQuantity" | "codAllowed" | "erpId" | "erpManaged" | "createdAt" | "updatedAt", ExtArgs["result"]["product"]>
 export type ProductInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   variants?: boolean | Prisma.Product$variantsArgs<ExtArgs>
@@ -1775,6 +1881,8 @@ export type $ProductPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     badge: string | null
     maxPurchaseQuantity: number | null
     codAllowed: boolean
+    erpId: string | null
+    erpManaged: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["product"]>
@@ -2222,6 +2330,8 @@ export interface ProductFieldRefs {
   readonly badge: Prisma.FieldRef<"Product", 'String'>
   readonly maxPurchaseQuantity: Prisma.FieldRef<"Product", 'Int'>
   readonly codAllowed: Prisma.FieldRef<"Product", 'Boolean'>
+  readonly erpId: Prisma.FieldRef<"Product", 'String'>
+  readonly erpManaged: Prisma.FieldRef<"Product", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"Product", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Product", 'DateTime'>
 }

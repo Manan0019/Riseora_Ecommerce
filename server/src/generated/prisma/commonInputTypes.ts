@@ -684,6 +684,57 @@ export type EnumStockAlertStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
 }
 
+export type EnumErpSyncDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncDirection | Prisma.EnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel> | $Enums.ErpSyncDirection
+}
+
+export type EnumErpSyncKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncKind | Prisma.EnumErpSyncKindFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel> | $Enums.ErpSyncKind
+}
+
+export type EnumErpSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncStatus | Prisma.EnumErpSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel> | $Enums.ErpSyncStatus
+}
+
+export type EnumErpSyncDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncDirection | Prisma.EnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncDirectionWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel>
+}
+
+export type EnumErpSyncKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncKind | Prisma.EnumErpSyncKindFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncKindWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel>
+}
+
+export type EnumErpSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncStatus | Prisma.EnumErpSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel>
+}
+
 export type NestedUuidFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1307,6 +1358,57 @@ export type NestedEnumStockAlertStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumErpSyncDirectionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncDirection | Prisma.EnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel> | $Enums.ErpSyncDirection
+}
+
+export type NestedEnumErpSyncKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncKind | Prisma.EnumErpSyncKindFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel> | $Enums.ErpSyncKind
+}
+
+export type NestedEnumErpSyncStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncStatus | Prisma.EnumErpSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel> | $Enums.ErpSyncStatus
+}
+
+export type NestedEnumErpSyncDirectionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncDirection | Prisma.EnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncDirectionWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncDirection
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncDirectionFilter<$PrismaModel>
+}
+
+export type NestedEnumErpSyncKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncKind | Prisma.EnumErpSyncKindFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncKind[] | Prisma.ListEnumErpSyncKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncKindWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncKindFilter<$PrismaModel>
+}
+
+export type NestedEnumErpSyncStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ErpSyncStatus | Prisma.EnumErpSyncStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ErpSyncStatus[] | Prisma.ListEnumErpSyncStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumErpSyncStatusWithAggregatesFilter<$PrismaModel> | $Enums.ErpSyncStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumErpSyncStatusFilter<$PrismaModel>
 }
 
 

@@ -85,7 +85,9 @@ export const ModelName = {
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
   NewsletterSubscriber: 'NewsletterSubscriber',
-  StockAlert: 'StockAlert'
+  StockAlert: 'StockAlert',
+  ErpSyncState: 'ErpSyncState',
+  ErpSyncLog: 'ErpSyncLog'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -162,6 +164,8 @@ export const CategoryScalarFieldEnum = {
   imageUrl: 'imageUrl',
   sortOrder: 'sortOrder',
   isActive: 'isActive',
+  erpId: 'erpId',
+  erpManaged: 'erpManaged',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -186,6 +190,8 @@ export const ProductScalarFieldEnum = {
   badge: 'badge',
   maxPurchaseQuantity: 'maxPurchaseQuantity',
   codAllowed: 'codAllowed',
+  erpId: 'erpId',
+  erpManaged: 'erpManaged',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -209,6 +215,8 @@ export const ProductVariantScalarFieldEnum = {
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
   isActive: 'isActive',
+  erpId: 'erpId',
+  erpManaged: 'erpManaged',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -774,6 +782,41 @@ export const StockAlertScalarFieldEnum = {
 } as const
 
 export type StockAlertScalarFieldEnum = (typeof StockAlertScalarFieldEnum)[keyof typeof StockAlertScalarFieldEnum]
+
+
+export const ErpSyncStateScalarFieldEnum = {
+  id: 'id',
+  lastCatalogSyncAt: 'lastCatalogSyncAt',
+  lastCatalogSyncId: 'lastCatalogSyncId',
+  lastOrderPullAt: 'lastOrderPullAt',
+  lastOrderAckAt: 'lastOrderAckAt',
+  lastAcknowledgedCursor: 'lastAcknowledgedCursor',
+  lastClientId: 'lastClientId',
+  lastError: 'lastError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ErpSyncStateScalarFieldEnum = (typeof ErpSyncStateScalarFieldEnum)[keyof typeof ErpSyncStateScalarFieldEnum]
+
+
+export const ErpSyncLogScalarFieldEnum = {
+  id: 'id',
+  direction: 'direction',
+  kind: 'kind',
+  status: 'status',
+  syncId: 'syncId',
+  clientId: 'clientId',
+  receivedCount: 'receivedCount',
+  createdCount: 'createdCount',
+  updatedCount: 'updatedCount',
+  skippedCount: 'skippedCount',
+  failedCount: 'failedCount',
+  message: 'message',
+  createdAt: 'createdAt'
+} as const
+
+export type ErpSyncLogScalarFieldEnum = (typeof ErpSyncLogScalarFieldEnum)[keyof typeof ErpSyncLogScalarFieldEnum]
 
 
 export const SortOrder = {

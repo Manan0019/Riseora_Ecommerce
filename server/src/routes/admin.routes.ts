@@ -214,6 +214,11 @@ router.patch(
       codAllowed: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product update" });
+    const existingProduct = await prisma.product.findUnique({ where: { id: req.params.id }, select: { erpManaged: true } });
+    if (!existingProduct) return res.status(404).json({ success: false, message: "Product not found" });
+    if (existingProduct.erpManaged && parsed.data.isActive !== undefined) {
+      return res.status(409).json({ success: false, message: "This product is managed by Riseora ERP. Change its active state in ERP." });
+    }
     const product = await prisma.product.update({ where: { id: req.params.id }, data: parsed.data });
     res.json({ success: true, data: product });
   }),
@@ -861,8 +866,12 @@ router.patch(
     if (parsed.data.mrp !== undefined && parsed.data.sellingPrice !== undefined && parsed.data.sellingPrice > parsed.data.mrp) {
       return res.status(400).json({ success: false, message: "Selling price cannot be higher than MRP" });
     }
-    const before = await prisma.productVariant.findUnique({ where: { id: req.params.id }, select: { stockQuantity: true } });
+    const before = await prisma.productVariant.findUnique({ where: { id: req.params.id }, select: { stockQuantity: true, erpManaged: true } });
     if (!before) return res.status(404).json({ success: false, message: "Variant not found" });
+    if (before.erpManaged) {
+      const erpOwnedFields = ["stockQuantity", "sellingPrice", "mrp", "isActive"].filter((key) => (parsed.data as any)[key] !== undefined);
+      if (erpOwnedFields.length) return res.status(409).json({ success: false, message: "This variant is managed by Riseora ERP. Update stock, price and active state in ERP; only the website low-stock warning can be edited here." });
+    }
     const variant = await prisma.productVariant.update({ where: { id: req.params.id }, data: parsed.data });
     if (before.stockQuantity <= 0 && variant.stockQuantity > 0) {
       void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
@@ -882,6 +891,11 @@ router.patch(
       isActive: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid category update" });
+    const existingCategory = await prisma.category.findUnique({ where: { id: req.params.id }, select: { erpManaged: true } });
+    if (!existingCategory) return res.status(404).json({ success: false, message: "Category not found" });
+    if (existingCategory.erpManaged && (parsed.data.name !== undefined || parsed.data.isActive !== undefined)) {
+      return res.status(409).json({ success: false, message: "This category is managed by Riseora ERP. Change its name or active state in ERP; website image, description and display order remain editable here." });
+    }
     const category = await prisma.category.update({
       where: { id: req.params.id },
       data: {
@@ -905,21 +919,46 @@ router.put(
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product", errors: parsed.error.flatten() });
 
     const product = await prisma.$transaction(async (tx) => {
-      const existing = await tx.product.findUnique({ where: { id: req.params.id }, select: { id: true } });
+      const existing = await tx.product.findUnique({
+        where: { id: req.params.id },
+        select: { id: true, erpManaged: true, categoryId: true, name: true, slug: true, isActive: true },
+      });
       if (!existing) throw new Error("PRODUCT_NOT_FOUND");
 
       await tx.productImage.deleteMany({ where: { productId: existing.id } });
 
-      const existingVariants = await tx.productVariant.findMany({ where: { productId: existing.id }, select: { id: true } });
+      const existingVariants = await tx.productVariant.findMany({
+        where: { productId: existing.id },
+        select: {
+          id: true, erpManaged: true, name: true, sku: true, size: true, unit: true,
+          mrp: true, sellingPrice: true, costPrice: true, stockQuantity: true,
+          lowStockThreshold: true, weightGrams: true, hsnCode: true, gstRate: true, isActive: true,
+        },
+      });
       const existingIds = new Set(existingVariants.map((variant) => variant.id));
       const submittedIds = new Set(parsed.data.variants.flatMap((variant) => variant.id ? [variant.id] : []));
       if ([...submittedIds].some((id) => !existingIds.has(id))) throw new Error("INVALID_VARIANT_ID");
 
       const removedIds = [...existingIds].filter((id) => !submittedIds.has(id));
-      if (removedIds.length) await tx.productVariant.updateMany({ where: { id: { in: removedIds } }, data: { isActive: false } });
+      if (removedIds.length) await tx.productVariant.updateMany({ where: { id: { in: removedIds }, erpManaged: false }, data: { isActive: false } });
 
       for (const variant of parsed.data.variants) {
-        const data = {
+        const currentVariant = variant.id ? existingVariants.find((item) => item.id === variant.id) : undefined;
+        const data = currentVariant?.erpManaged ? {
+          name: currentVariant.name,
+          sku: currentVariant.sku,
+          size: currentVariant.size,
+          unit: currentVariant.unit,
+          mrp: currentVariant.mrp,
+          sellingPrice: currentVariant.sellingPrice,
+          costPrice: currentVariant.costPrice,
+          stockQuantity: currentVariant.stockQuantity,
+          lowStockThreshold: variant.lowStockThreshold,
+          weightGrams: currentVariant.weightGrams,
+          hsnCode: currentVariant.hsnCode,
+          gstRate: currentVariant.gstRate,
+          isActive: currentVariant.isActive,
+        } : {
           name: variant.name,
           sku: variant.sku,
           size: variant.size || null,
@@ -938,12 +977,13 @@ router.put(
         else await tx.productVariant.create({ data: { ...data, productId: existing.id } });
       }
 
+      const effectiveProductName = existing.erpManaged ? existing.name : parsed.data.name;
       return tx.product.update({
         where: { id: existing.id },
         data: {
-          categoryId: parsed.data.categoryId,
-          name: parsed.data.name,
-          slug: slugify(parsed.data.slug || parsed.data.name),
+          categoryId: existing.erpManaged ? existing.categoryId : parsed.data.categoryId,
+          name: effectiveProductName,
+          slug: existing.erpManaged ? existing.slug : slugify(parsed.data.slug || parsed.data.name),
           shortDescription: parsed.data.shortDescription || null,
           description: parsed.data.description || null,
           benefits: parsed.data.benefits || null,
@@ -952,13 +992,13 @@ router.put(
           suitableFor: parsed.data.suitableFor || null,
           faq: parsed.data.faq as any,
           isFeatured: parsed.data.isFeatured,
-          isActive: parsed.data.isActive,
+          isActive: existing.erpManaged ? existing.isActive : parsed.data.isActive,
           badge: parsed.data.badge || null,
           maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
           codAllowed: parsed.data.codAllowed,
           images: {
-          create: normalizedProductImages(parsed.data.images, parsed.data.name),
-        },
+            create: normalizedProductImages(parsed.data.images, effectiveProductName),
+          },
         },
         include: { category: true, images: { orderBy: { sortOrder: "asc" } }, variants: { where: { isActive: true }, orderBy: { createdAt: "asc" } } },
       });

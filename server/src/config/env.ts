@@ -35,6 +35,13 @@ const schema = z.object({
   CART_RECOVERY_SECOND_DELAY_MINUTES: z.coerce.number().int().min(60).max(20160).default(1440),
   BACKUP_DIR: optionalString,
   BACKUP_RETENTION_COUNT: z.coerce.number().int().min(1).max(100).default(14),
+  ERP_SYNC_ENABLED: envBoolean.default(false),
+  ERP_SYNC_API_KEY: optionalString,
+  ERP_SYNC_MAX_BATCH: z.coerce.number().int().min(10).max(1000).default(500),
+}).superRefine((value, ctx) => {
+  if (value.ERP_SYNC_ENABLED && (!value.ERP_SYNC_API_KEY || value.ERP_SYNC_API_KEY.length < 32)) {
+    ctx.addIssue({ code: "custom", path: ["ERP_SYNC_API_KEY"], message: "ERP_SYNC_API_KEY must be at least 32 characters when ERP sync is enabled" });
+  }
 });
 
 export const env = schema.parse(process.env);

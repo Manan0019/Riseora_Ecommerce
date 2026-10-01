@@ -216,3 +216,13 @@ export type NewsletterSubscriber = Prisma.NewsletterSubscriberModel
  * 
  */
 export type StockAlert = Prisma.StockAlertModel
+/**
+ * Model ErpSyncState
+ * 
+ */
+export type ErpSyncState = Prisma.ErpSyncStateModel
+/**
+ * Model ErpSyncLog
+ * 
+ */
+export type ErpSyncLog = Prisma.ErpSyncLogModel

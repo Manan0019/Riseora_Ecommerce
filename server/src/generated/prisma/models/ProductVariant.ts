@@ -62,6 +62,8 @@ export type ProductVariantMinAggregateOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   isActive: boolean | null
+  erpId: string | null
+  erpManaged: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -82,6 +84,8 @@ export type ProductVariantMaxAggregateOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   isActive: boolean | null
+  erpId: string | null
+  erpManaged: boolean | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -102,6 +106,8 @@ export type ProductVariantCountAggregateOutputType = {
   hsnCode: number
   gstRate: number
   isActive: number
+  erpId: number
+  erpManaged: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -144,6 +150,8 @@ export type ProductVariantMinAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -164,6 +172,8 @@ export type ProductVariantMaxAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -184,6 +194,8 @@ export type ProductVariantCountAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  erpId?: true
+  erpManaged?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -291,6 +303,8 @@ export type ProductVariantGroupByOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal
   isActive: boolean
+  erpId: string | null
+  erpManaged: boolean
   createdAt: Date
   updatedAt: Date
   _count: ProductVariantCountAggregateOutputType | null
@@ -334,6 +348,8 @@ export type ProductVariantWhereInput = {
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  erpId?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
+  erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
@@ -357,6 +373,8 @@ export type ProductVariantOrderByWithRelationInput = {
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  erpId?: Prisma.SortOrderInput | Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   product?: Prisma.ProductOrderByWithRelationInput
@@ -367,6 +385,7 @@ export type ProductVariantOrderByWithRelationInput = {
 export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   sku?: string
+  erpId?: string
   AND?: Prisma.ProductVariantWhereInput | Prisma.ProductVariantWhereInput[]
   OR?: Prisma.ProductVariantWhereInput[]
   NOT?: Prisma.ProductVariantWhereInput | Prisma.ProductVariantWhereInput[]
@@ -383,12 +402,13 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
   orderItems?: Prisma.OrderItemListRelationFilter
   stockAlerts?: Prisma.StockAlertListRelationFilter
-}, "id" | "sku">
+}, "id" | "sku" | "erpId">
 
 export type ProductVariantOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -406,6 +426,8 @@ export type ProductVariantOrderByWithAggregationInput = {
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  erpId?: Prisma.SortOrderInput | Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ProductVariantCountOrderByAggregateInput
@@ -434,6 +456,8 @@ export type ProductVariantScalarWhereWithAggregatesInput = {
   hsnCode?: Prisma.StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalWithAggregatesFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
+  erpId?: Prisma.StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
+  erpManaged?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
 }
@@ -453,6 +477,8 @@ export type ProductVariantCreateInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
@@ -476,6 +502,8 @@ export type ProductVariantUncheckedCreateInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
@@ -497,6 +525,8 @@ export type ProductVariantUpdateInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -520,6 +550,8 @@ export type ProductVariantUncheckedUpdateInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
@@ -542,6 +574,8 @@ export type ProductVariantCreateManyInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -561,6 +595,8 @@ export type ProductVariantUpdateManyMutationInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -581,6 +617,8 @@ export type ProductVariantUncheckedUpdateManyInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -611,6 +649,8 @@ export type ProductVariantCountOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -641,6 +681,8 @@ export type ProductVariantMaxOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -661,6 +703,8 @@ export type ProductVariantMinOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  erpId?: Prisma.SortOrder
+  erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -788,6 +832,8 @@ export type ProductVariantCreateWithoutProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
@@ -809,6 +855,8 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
@@ -860,6 +908,8 @@ export type ProductVariantScalarWhereInput = {
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  erpId?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
+  erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
 }
@@ -879,6 +929,8 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
@@ -901,6 +953,8 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
@@ -937,6 +991,8 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -959,6 +1015,8 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
@@ -979,6 +1037,8 @@ export type ProductVariantCreateWithoutStockAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutVariantsInput
@@ -1001,6 +1061,8 @@ export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
@@ -1037,6 +1099,8 @@ export type ProductVariantUpdateWithoutStockAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
@@ -1059,6 +1123,8 @@ export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
@@ -1079,6 +1145,8 @@ export type ProductVariantCreateManyProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -1098,6 +1166,8 @@ export type ProductVariantUpdateWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
@@ -1119,6 +1189,8 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
@@ -1140,6 +1212,8 @@ export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1200,6 +1274,8 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
@@ -1224,6 +1300,8 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
@@ -1245,6 +1323,8 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
@@ -1266,11 +1346,13 @@ export type ProductVariantSelectScalar = {
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  erpId?: boolean
+  erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "weightGrams" | "hsnCode" | "gstRate" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "weightGrams" | "hsnCode" | "gstRate" | "isActive" | "erpId" | "erpManaged" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   orderItems?: boolean | Prisma.ProductVariant$orderItemsArgs<ExtArgs>
@@ -1307,6 +1389,8 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     hsnCode: string | null
     gstRate: runtime.Decimal
     isActive: boolean
+    erpId: string | null
+    erpManaged: boolean
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["productVariant"]>
@@ -1750,6 +1834,8 @@ export interface ProductVariantFieldRefs {
   readonly hsnCode: Prisma.FieldRef<"ProductVariant", 'String'>
   readonly gstRate: Prisma.FieldRef<"ProductVariant", 'Decimal'>
   readonly isActive: Prisma.FieldRef<"ProductVariant", 'Boolean'>
+  readonly erpId: Prisma.FieldRef<"ProductVariant", 'String'>
+  readonly erpManaged: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
 }

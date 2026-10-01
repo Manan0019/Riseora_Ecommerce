@@ -17,6 +17,7 @@ const nav = [
   { to: "/admin/returns", label: "Returns", icon: "truck" },
   { to: "/admin/audience", label: "Audience", icon: "mail" },
   { to: "/admin/settings", label: "Settings", icon: "shield" },
+  { to: "/admin/erp-sync", label: "ERP Sync", icon: "refresh" },
   { to: "/admin/system", label: "System", icon: "dashboard" },
 ];
 const mobilePrimaryPaths = new Set(["/admin", "/admin/orders", "/admin/catalog", "/admin/inventory"]);

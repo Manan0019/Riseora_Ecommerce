@@ -164,3 +164,28 @@ export const MerchandisingDealType = {
 } as const
 
 export type MerchandisingDealType = (typeof MerchandisingDealType)[keyof typeof MerchandisingDealType]
+
+
+export const ErpSyncDirection = {
+  ERP_TO_ECOMMERCE: 'ERP_TO_ECOMMERCE',
+  ECOMMERCE_TO_ERP: 'ECOMMERCE_TO_ERP'
+} as const
+
+export type ErpSyncDirection = (typeof ErpSyncDirection)[keyof typeof ErpSyncDirection]
+
+
+export const ErpSyncKind = {
+  CATALOG: 'CATALOG',
+  ORDERS: 'ORDERS'
+} as const
+
+export type ErpSyncKind = (typeof ErpSyncKind)[keyof typeof ErpSyncKind]
+
+
+export const ErpSyncStatus = {
+  SUCCESS: 'SUCCESS',
+  PARTIAL: 'PARTIAL',
+  FAILED: 'FAILED'
+} as const
+
+export type ErpSyncStatus = (typeof ErpSyncStatus)[keyof typeof ErpSyncStatus]

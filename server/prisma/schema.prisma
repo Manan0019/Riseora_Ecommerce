@@ -116,6 +116,22 @@ enum MerchandisingDealType {
   GIFT_WITH_PURCHASE
 }
 
+enum ErpSyncDirection {
+  ERP_TO_ECOMMERCE
+  ECOMMERCE_TO_ERP
+}
+
+enum ErpSyncKind {
+  CATALOG
+  ORDERS
+}
+
+enum ErpSyncStatus {
+  SUCCESS
+  PARTIAL
+  FAILED
+}
+
 
 model User {
   id           String   @id @default(uuid()) @db.Uuid
@@ -189,6 +205,8 @@ model Category {
   imageUrl    String?
   sortOrder   Int     @default(0)
   isActive    Boolean @default(true)
+  erpId       String? @unique
+  erpManaged  Boolean @default(false)
 
   products Product[]
   couponLinks CouponCategory[]
@@ -217,6 +235,8 @@ model Product {
   badge            String?
   maxPurchaseQuantity Int?
   codAllowed          Boolean @default(true)
+  erpId               String? @unique
+  erpManaged          Boolean @default(false)
 
   variants ProductVariant[]
   images   ProductImage[]
@@ -251,6 +271,8 @@ model ProductVariant {
   hsnCode           String?
   gstRate           Decimal  @default(0) @db.Decimal(5, 2)
   isActive          Boolean  @default(true)
+  erpId             String?  @unique
+  erpManaged        Boolean  @default(false)
 
   orderItems OrderItem[]
   stockAlerts StockAlert[]
@@ -951,3 +973,41 @@ model StockAlert {
   @@index([status, createdAt])
   @@index([email])
 }
+
+model ErpSyncState {
+  id String @id @default("primary")
+
+  lastCatalogSyncAt       DateTime?
+  lastCatalogSyncId       String?
+  lastOrderPullAt         DateTime?
+  lastOrderAckAt          DateTime?
+  lastAcknowledgedCursor  String?
+  lastClientId            String?
+  lastError               String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ErpSyncLog {
+  id String @id @default(uuid()) @db.Uuid
+
+  direction ErpSyncDirection
+  kind      ErpSyncKind
+  status    ErpSyncStatus
+  syncId    String? @unique
+  clientId  String?
+
+  receivedCount Int @default(0)
+  createdCount  Int @default(0)
+  updatedCount  Int @default(0)
+  skippedCount  Int @default(0)
+  failedCount   Int @default(0)
+  message       String?
+
+  createdAt DateTime @default(now())
+
+  @@index([kind, createdAt])
+  @@index([status, createdAt])
+}
+

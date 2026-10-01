@@ -2248,3 +2248,51 @@ textarea { min-height: 105px; resize: vertical; }
 .phase24-backup-list b { color: #425348; white-space: nowrap; }
 @media (max-width: 980px) { .phase24-health-grid, .phase24-integration-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } }
 @media (max-width: 600px) { .phase24-system-heading { align-items: stretch; } .phase24-system-heading .button { width: 100%; } .phase24-health-grid, .phase24-integration-grid { grid-template-columns: 1fr; } .phase24-health-grid article { min-height: 118px; } .phase24-runtime { white-space: normal; } }
+
+/* Phase 25 — Riseora ERP synchronization */
+.phase25-heading { align-items: flex-end; }
+.phase25-heading .button { display: inline-flex; align-items: center; gap: 7px; }
+.phase25-summary-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 12px; margin-bottom: 16px; }
+.phase25-summary-grid article { min-height: 142px; padding: 18px; border: 1px solid rgba(31,74,53,.13); border-radius: 18px; background: linear-gradient(145deg,#fff,#f6f9f5); display: grid; align-content: space-between; gap: 8px; }
+.phase25-summary-grid small { color: #718078; font-size: .72rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.phase25-summary-grid strong { color: #173326; font-size: 1.35rem; }
+.phase25-summary-grid article > span:not(.phase25-status) { color: #6d7b72; font-size: .78rem; line-height: 1.35; }
+.phase25-status { width: max-content; max-width: 100%; padding: 6px 9px; border-radius: 999px; font-size: .7rem; font-weight: 900; letter-spacing: .04em; }
+.phase25-status.ok { background: #e4f4e8; color: #176a3a; }
+.phase25-status.warn { background: #fff0d7; color: #8a5718; }
+.phase25-panel { margin-bottom: 16px; }
+.phase25-batch { padding: 7px 10px; border: 1px solid #dfe6de; border-radius: 999px; color: #607066; background: #f9fbf8; font-size: .73rem; font-weight: 800; white-space: nowrap; }
+.phase25-checkpoints { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+.phase25-checkpoints > div { min-width: 0; padding: 14px; border: 1px solid #e4e9e3; border-radius: 14px; background: #fbfcfa; display: grid; gap: 5px; }
+.phase25-checkpoints small { color: #718078; font-size: .69rem; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+.phase25-checkpoints strong { color: #243c30; overflow-wrap: anywhere; }
+.phase25-checkpoints span { color: #78847c; font-size: .76rem; overflow-wrap: anywhere; }
+.phase25-error { display: flex; gap: 10px; margin-top: 12px; padding: 12px 14px; border: 1px solid #efc7bf; border-radius: 13px; background: #fff4f1; color: #8e3828; }
+.phase25-error p { margin: 3px 0 0; font-size: .82rem; line-height: 1.45; overflow-wrap: anywhere; }
+.phase25-rules { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin-top: 12px; }
+.phase25-rules > div { display: flex; align-items: flex-start; gap: 11px; padding: 14px; border: 1px solid #e3e8e1; border-radius: 14px; background: #fbfcfa; color: #31513e; }
+.phase25-rules span { min-width: 0; display: grid; gap: 3px; }
+.phase25-rules strong { color: #213c2d; }
+.phase25-rules small { color: #6f7c73; line-height: 1.45; }
+.phase25-log-list { display: grid; margin-top: 8px; }
+.phase25-log-list > div:not(.admin-empty) { display: grid; grid-template-columns: 12px minmax(150px,1fr) auto minmax(160px,1.2fr); align-items: center; gap: 12px; padding: 12px 2px; border-bottom: 1px solid #edf0ec; }
+.phase25-log-dot { width: 9px; height: 9px; border-radius: 999px; background: #9ca7a0; }
+.phase25-log-dot.success { background: #339461; box-shadow: 0 0 0 4px rgba(51,148,97,.1); }
+.phase25-log-dot.partial { background: #c4882c; box-shadow: 0 0 0 4px rgba(196,136,44,.1); }
+.phase25-log-dot.failed { background: #c65241; box-shadow: 0 0 0 4px rgba(198,82,65,.1); }
+.phase25-log-main { min-width: 0; display: grid; gap: 3px; }
+.phase25-log-main small,.phase25-log-message,.phase25-log-counts small { color: #77837b; font-size: .75rem; }
+.phase25-log-counts { display: grid; justify-items: end; gap: 1px; }
+.phase25-log-counts b { color: #314a3a; }
+.phase25-log-message { overflow-wrap: anywhere; }
+@media (max-width: 1050px) { .phase25-summary-grid,.phase25-checkpoints { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 760px) { .phase25-rules { grid-template-columns: 1fr; } .phase25-log-list > div:not(.admin-empty) { grid-template-columns: 12px minmax(0,1fr) auto; } .phase25-log-message { grid-column: 2 / -1; } }
+@media (max-width: 600px) { .phase25-heading { align-items: stretch; } .phase25-heading .button { width: 100%; justify-content: center; } .phase25-summary-grid,.phase25-checkpoints { grid-template-columns: 1fr; } .phase25-summary-grid article { min-height: 118px; } .phase25-batch { white-space: normal; } }
+.phase25-erp-badge { display: inline-flex; margin-left: 7px; padding: 2px 6px; border-radius: 999px; background: #e7f2ea; color: #2d7650; font-size: .62rem; font-style: normal; font-weight: 900; letter-spacing: .05em; vertical-align: middle; }
+.inventory-row input:disabled { background: #f1f4f0; color: #718078; cursor: not-allowed; }
+.phase25-owned-banner { display: flex; align-items: flex-start; gap: 10px; margin: 0 0 14px; padding: 12px 14px; border: 1px solid #cfe0d3; border-radius: 14px; background: #f1f8f2; color: #315c42; }
+.phase25-owned-banner span { display: grid; gap: 2px; }
+.phase25-owned-banner small,.phase25-owned-note { color: #66796c; font-size: .76rem; line-height: 1.45; }
+.phase25-owned-note { display: block; margin-top: -2px; }
+.product-editor input:disabled,.product-editor select:disabled,.phase18-category-form input:disabled { background: #f1f4f0; color: #718078; cursor: not-allowed; }
+.state-toggle:disabled { opacity: .56; cursor: not-allowed; }

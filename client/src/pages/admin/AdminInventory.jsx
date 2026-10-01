@@ -46,5 +46,12 @@ function InventoryRow({ variant, onSave }) {
 
   useEffect(() => { setStock(String(variant.stockQuantity)); setThreshold(String(variant.lowStockThreshold)); setPrice(String(Number(variant.sellingPrice))); }, [variant]);
 
-  return <article className={low ? "inventory-row low" : "inventory-row"}><div className="inventory-product"><span className="inventory-status-dot" /><div><strong>{variant.product.name}</strong><span>{variant.name} • {variant.sku}</span></div></div><label>Stock<input type="number" min="0" value={stock} onChange={(e) => setStock(e.target.value)} /></label><label>Low at<input type="number" min="0" value={threshold} onChange={(e) => setThreshold(e.target.value)} /></label><label>Price ₹<input type="number" min="1" step="0.01" value={price} onChange={(e) => setPrice(e.target.value)} /></label><button className="state-toggle active" onClick={() => onSave(variant, { stockQuantity: Number(stock), lowStockThreshold: Number(threshold), sellingPrice: Number(price) })}>Save</button></article>;
+  const erpManaged = variant.erpManaged === true;
+  return <article className={low ? "inventory-row low" : "inventory-row"}>
+    <div className="inventory-product"><span className="inventory-status-dot" /><div><strong>{variant.product.name}{erpManaged && <em className="phase25-erp-badge">ERP</em>}</strong><span>{variant.name} • {variant.sku}</span></div></div>
+    <label>Stock<input type="number" min="0" value={stock} disabled={erpManaged} onChange={(e) => setStock(e.target.value)} /></label>
+    <label>Low at<input type="number" min="0" value={threshold} onChange={(e) => setThreshold(e.target.value)} /></label>
+    <label>Price ₹<input type="number" min="1" step="0.01" value={price} disabled={erpManaged} onChange={(e) => setPrice(e.target.value)} /></label>
+    <button className="state-toggle active" onClick={() => onSave(variant, erpManaged ? { lowStockThreshold: Number(threshold) } : { stockQuantity: Number(stock), lowStockThreshold: Number(threshold), sellingPrice: Number(price) })}>{erpManaged ? "Save alert" : "Save"}</button>
+  </article>;
 }
