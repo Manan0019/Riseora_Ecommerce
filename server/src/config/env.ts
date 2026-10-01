@@ -33,6 +33,8 @@ const schema = z.object({
   CART_RECOVERY_ENABLED: envBoolean.default(false),
   CART_RECOVERY_FIRST_DELAY_MINUTES: z.coerce.number().int().min(15).max(10080).default(120),
   CART_RECOVERY_SECOND_DELAY_MINUTES: z.coerce.number().int().min(60).max(20160).default(1440),
+  BACKUP_DIR: optionalString,
+  BACKUP_RETENTION_COUNT: z.coerce.number().int().min(1).max(100).default(14),
 });
 
 export const env = schema.parse(process.env);

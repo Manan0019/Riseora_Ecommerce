@@ -12,7 +12,13 @@
     "prisma:migrate": "prisma migrate dev",
     "prisma:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "prisma:seed": "prisma db seed"
+    "prisma:seed": "prisma db seed",
+    "predev": "prisma generate",
+    "prebuild": "prisma generate",
+    "pretypecheck": "prisma generate",
+    "verify:phase23": "prisma generate && tsc --noEmit",
+    "start:production": "node --env-file=.env.production dist/index.js",
+    "verify:phase24": "prisma generate && tsc --noEmit && npm run build"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.0.0",

@@ -1,16 +1,69 @@
 {
   "project": "Riseora E-Commerce",
-  "phase": "8 - Launch Readiness, SEO, Audience & PWA",
-  "direction": "mobile-first D2C storefront with admin operations and production-launch foundations",
+  "phase": "23 - Repeat Purchase & Private Wishlist Sharing",
+  "direction": "mobile-first D2C storefront with production-ready customer retention, admin operations and safe checkout foundations",
   "customer": [
-    "campaign-led mobile storefront", "search", "categories", "offers", "wishlist", "reviews", "cart", "COD and optional Razorpay checkout", "order tracking", "returns", "invoices", "About", "Contact", "newsletter", "PWA install support"
+    "campaign-led mobile storefront",
+    "predictive search",
+    "categories and offers",
+    "wishlist",
+    "private expiring wishlist sharing",
+    "visual reviews and product Q&A",
+    "cart and direct buy-now",
+    "buy again from delivered orders using current catalog data",
+    "COD and optional Razorpay checkout",
+    "PIN serviceability and delivery zones",
+    "order tracking",
+    "returns",
+    "invoices",
+    "About",
+    "Contact",
+    "newsletter",
+    "PWA install support"
   ],
   "admin": [
-    "catalog", "image upload", "inventory", "orders", "fulfilment", "customers", "promotions", "returns", "store/tax/shipping settings", "contact inbox", "newsletter audience", "SEO/social settings"
+    "catalog",
+    "image upload",
+    "inventory",
+    "orders",
+    "fulfilment",
+    "customers",
+    "promotions and coupon controls",
+    "merchandising",
+    "review and product-Q&A moderation",
+    "returns",
+    "delivery zones",
+    "store/tax/shipping/COD settings",
+    "contact inbox",
+    "newsletter audience",
+    "SEO/social settings"
   ],
-  "launch_foundations": [
-    "dynamic SEO metadata", "JSON-LD", "sitemap", "robots", "consent-gated GA4/Meta Pixel", "route code splitting", "service worker", "configurable CORS", "rate limiting", "same-origin production serving", "Docker starter"
+  "phase23": {
+    "features": [
+      "delivered-order reorder preview using current active variants, prices, stock and purchase limits",
+      "account buy-again rail from delivered purchase history",
+      "30-day private wishlist share links containing product IDs only",
+      "active-product refresh when opening a shared wishlist",
+      "public share creation rate limiting and strict share-token validation"
+    ],
+    "migration": "20261001170000_phase23_repeat_purchase_shared_wishlist",
+    "verification": "npm run verify:phase23"
+  },
+  "database_changes": [
+    "WishlistShare"
   ],
-  "database_changes": ["ContactMessageStatus", "ContactMessage", "NewsletterSubscriber", "StoreSetting SEO/social/about/contact fields"],
-  "erp_sync": "deferred until standalone ecommerce production workflows are stable"
+  "erp_sync": "deferred until standalone ecommerce production workflows are stable",
+  "latestPhase": 24,
+  "phase24": {
+    "name": "Production Release & Deployment Readiness",
+    "features": [
+      "liveness/readiness health endpoints",
+      "admin system health dashboard",
+      "database backup creation/history",
+      "production preflight",
+      "safe CLI restore",
+      "Windows production scripts",
+      "Docker health/backups"
+    ]
+  }
 }

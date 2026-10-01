@@ -23,6 +23,7 @@ import engagementRoutes from "./routes/engagement.routes";
 import audienceRoutes from "./routes/audience.routes";
 import seoRoutes from "./routes/seo.routes";
 import wishlistRoutes from "./routes/wishlist.routes";
+import adminSystemRoutes, { publicSystemRoutes } from "./routes/system.routes";
 import { publicDealRoutes, adminDealRoutes } from "./routes/deal.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
 import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
@@ -54,15 +55,7 @@ app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, limit: 500, standardHeader
 
 app.use("/api/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 40, standardHeaders: "draft-8", legacyHeaders: false }), authRoutes);
 
-app.get("/api/health", async (_req, res) => {
-  try {
-    await prisma.$queryRaw`SELECT 1`;
-    res.json({ success: true, message: "Riseora E-Commerce API is running", database: "connected", uptimeSeconds: Math.round(process.uptime()) });
-  } catch (error) {
-    console.error("Health check failed:", error);
-    res.status(503).json({ success: false, message: "Database connection failed" });
-  }
-});
+app.use("/api", publicSystemRoutes);
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);
@@ -80,6 +73,7 @@ app.use("/api/admin/uploads", uploadRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/admin", adminDealRoutes);
 app.use("/api/admin", adminOpsRoutes);
+app.use("/api/admin", adminSystemRoutes);
 app.use("/api/admin", audienceRoutes);
 app.use("/", seoRoutes);
 app.use("/api", notFound);

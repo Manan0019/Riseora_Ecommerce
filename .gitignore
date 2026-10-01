@@ -37,3 +37,9 @@ server/prisma/dev.db
 # Local product uploads (development only)
 server/uploads/products/*
 !server/uploads/products/.gitkeep
+
+# database backups
+server/backups/*
+!server/backups/.gitkeep
+backups/*
+!backups/.gitkeep

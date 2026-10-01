@@ -480,3 +480,9 @@ npm run build
 ```
 
 See `PHASE23_REPEAT_PURCHASE_SHARED_WISHLIST.md` for the runtime checklist.
+
+## Phase 24 — Production Release & Deployment Readiness
+
+Phase 24 adds production liveness/readiness endpoints, an Admin → System health/backup dashboard, PostgreSQL backup/restore tooling, production env preflight, safe Windows deployment scripts and Docker health/backup persistence.
+
+Start with `README_PHASE24_FIRST.txt` and `PHASE24_PRODUCTION_RELEASE.md`. Runtime production PASS requires the Phase 24 verification/deployment scripts to complete successfully in the target Windows/hosting environment.

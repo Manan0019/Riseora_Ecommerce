@@ -14,7 +14,15 @@
     "db:deploy": "npm run prisma:deploy --workspace server",
     "db:seed": "npm run prisma:seed --workspace server",
     "db:studio": "npm run prisma:studio --workspace server",
-    "start": "npm run start --workspace server"
+    "start": "npm run start --workspace server",
+    "typecheck": "npm run typecheck --workspace server",
+    "verify:phase23": "npm run db:generate && npm run typecheck --workspace server && npm run build",
+    "preflight:production": "node scripts/phase24-preflight.mjs",
+    "db:backup": "node scripts/db-backup.mjs",
+    "db:restore": "node scripts/db-restore.mjs",
+    "deploy:production": "node scripts/phase24-production-deploy.mjs",
+    "start:production": "npm run start:production --workspace server",
+    "verify:phase24": "npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

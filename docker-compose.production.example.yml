@@ -8,5 +8,13 @@ services:
       - "5000:5000"
     volumes:
       - riseora_uploads:/app/server/uploads
+      - riseora_backups:/app/server/backups
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:5000/api/health/ready').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 volumes:
   riseora_uploads:
+  riseora_backups:

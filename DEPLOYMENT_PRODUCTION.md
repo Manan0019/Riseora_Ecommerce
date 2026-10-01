@@ -1,64 +1,73 @@
-# Riseora Production Deployment Preparation
+# Riseora Production Deployment
 
-The e-commerce system remains standalone. ERP synchronization stays deferred until production web workflows are verified.
+The e-commerce application remains standalone. ERP synchronization is still deferred until production web workflows are verified.
 
-## Recommended launch shape
-For the first production release, a **single HTTPS origin** is easiest:
-- Node/Express serves `/api/*`, `/sitemap.xml`, `/robots.txt` and the built Vite SPA
-- PostgreSQL runs as a managed/separately backed-up database
-- Cloudinary stores uploaded product imagery
-- Razorpay handles online payments
-- Resend handles transactional email
+## Recommended release shape
+Use one canonical HTTPS origin:
+- Express serves `/api/*`, `/sitemap.xml`, `/robots.txt` and the built Vite SPA.
+- PostgreSQL is separately backed up.
+- Cloudinary stores production product/media uploads when configured.
+- Razorpay handles online payments.
+- Resend handles transactional email.
 
-Set `SERVE_CLIENT=true`, `PUBLIC_SITE_URL=https://www.your-domain.com`, and keep `CLIENT_URL` on the same canonical origin.
+Set `SERVE_CLIENT=true` and use the same canonical HTTPS origin for `CLIENT_URL` and `PUBLIC_SITE_URL` unless your hosting architecture explicitly separates them.
+
+## Phase 24 deployment commands
+
+Prepare missing env files only:
+
+```bat
+PREPARE_PRODUCTION_ENV.bat
+```
+
+Verify env + builds without touching the production database:
+
+```bat
+PHASE24_VERIFY_PRODUCTION.bat
+```
+
+Safe deployment with pre-migration backup:
+
+```bat
+PRODUCTION_DEPLOY.bat
+```
+
+Start the built server:
+
+```bat
+PRODUCTION_START.bat
+```
+
+## Health endpoints
+- `/api/health/live` — Node process liveness
+- `/api/health/ready` — PostgreSQL readiness
+- `/api/health` — backwards-compatible health response
+
+Use `/api/health/ready` for load-balancer/container readiness checks.
 
 ## Production controls
 - `NODE_ENV=production`
-- strong unique `JWT_SECRET`
-- HTTPS only
+- unique `JWT_SECRET` (48+ characters recommended; never example text)
+- HTTPS only for public URLs
 - `TRUST_PROXY=true` only behind a trusted reverse proxy/load balancer
-- explicit `CLIENT_URL` / `ALLOWED_ORIGINS`
-- production PostgreSQL application user with only required privileges
-- Cloudinary enabled before relying on uploaded images
-- Razorpay webhook secret configured on the HTTPS endpoint
-- transactional email domain verified
-- database backups + tested restore procedure
-- do not commit `.env`
+- explicit canonical origins
+- production PostgreSQL user with required privileges only
+- Razorpay webhook secret configured before enabling live payments
+- Cloudinary enabled before relying on durable uploaded media
+- verified transactional-email sender
+- PostgreSQL client tools available for backup/restore
+- database backups retained and copied off-machine
+- tested restore into a disposable database
+- never commit `.env.production`
 - deploy migrations with `prisma migrate deploy`, not `migrate dev`
 
-## Build/deploy order
-```text
-1. Provision production PostgreSQL
-2. Configure server/.env.production
-3. Configure client production VITE_* variables
-4. npm install
-5. npm run db:generate
-6. npm run db:deploy
-7. npm run build
-8. Start server/dist with SERVE_CLIENT=true
-9. Verify /api/health
-10. Verify /robots.txt and /sitemap.xml
-11. Test COD checkout
-12. Test Razorpay in test mode
-13. Test emails and Cloudinary
-14. Test fulfilment, invoice and return/refund
-15. Validate contact/newsletter inbox
-16. Verify analytics is OFF before consent and ON after consent
-17. Verify mobile install/PWA behavior
-18. Only then switch payment credentials to live
-```
+## Backup safety
+`PRODUCTION_DEPLOY.bat` stops if the pre-deployment backup fails. Browser admin may create backups, but database restore is intentionally CLI-only via `RESTORE_DATABASE.bat`.
 
-## SEO launch checklist
-- canonical `siteUrl` in Admin → Settings
-- SEO title + description
-- About and Contact content
-- product images + descriptions
-- real policy text
-- social links
-- Search Console / analytics only after domain ownership is established
+See `PHASE24_PRODUCTION_RELEASE.md` for the complete acceptance checklist and restore procedure.
 
-## Legal/business data
-Owner/accountant must confirm legal business name, GSTIN, invoice address, HSN/SAC, GST rates, shipping/COD rules and all legal/policy copy.
+## SEO / business launch checks
+Before public launch confirm canonical URL, SEO metadata, real policy content, legal name, GSTIN, invoice address, HSN/GST rates, shipping/COD rules, support contacts, Search Console/analytics configuration and consent behavior.
 
 ## ERP later
-Never expose the ERP database publicly. Future sync should use authenticated APIs/jobs with shared SKU identity and explicit conflict handling.
+Never expose the ERP database publicly. Future synchronization should use authenticated APIs/jobs with shared SKU identity, idempotency and explicit conflict handling.
