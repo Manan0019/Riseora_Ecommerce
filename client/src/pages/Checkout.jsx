@@ -54,8 +54,9 @@ export default function Checkout() {
   const [selectedAddressId, setSelectedAddressId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("COD");
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
+  const [codEligibility, setCodEligibility] = useState({ eligible: true, reasons: [], openCodOrders: 0, openCodOrderLimit: null, prepaidOnlyProducts: [] });
   const [recoveryOptIn, setRecoveryOptIn] = useState(false);
-  const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7 });
+  const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0, codEnabled: true, codMinOrderAmount: null, codMaxOrderAmount: null, maxOpenCodOrdersPerCustomer: null, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, returnsEnabled: true, returnWindowDays: 7 });
   const [pricing, setPricing] = useState(null);
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
@@ -97,6 +98,24 @@ export default function Checkout() {
     }, 1200);
     return () => clearTimeout(timer);
   }, [form.customerEmail, form.customerName, form.customerPhone, checkoutItems, checkoutSubtotal, recoveryOptIn, activeRecoveryKey]);
+
+  useEffect(() => {
+    if (!checkoutItems.length) return;
+    let cancelled = false;
+    const timer = setTimeout(() => {
+      apiFetch("/orders/cod-eligibility", {
+        method: "POST",
+        body: JSON.stringify({ customerEmail: /^\S+@\S+\.\S+$/.test(form.customerEmail.trim()) ? form.customerEmail.trim() : "", customerPhone: form.customerPhone.trim().length >= 8 ? form.customerPhone.trim() : "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+      }).then((response) => {
+        if (cancelled) return;
+        setCodEligibility(response.data);
+        if (!response.data.eligible && onlinePaymentsEnabled) setPaymentMethod("ONLINE");
+      }).catch(() => {
+        if (!cancelled) setCodEligibility({ eligible: false, reasons: ["COD availability could not be verified right now."], openCodOrders: 0, openCodOrderLimit: null, prepaidOnlyProducts: [] });
+      });
+    }, 180);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [checkoutItems, form.customerEmail, form.customerPhone, onlinePaymentsEnabled]);
 
   useEffect(() => {
     if (!checkoutItems.length) { setPricing(null); return; }
@@ -234,9 +253,11 @@ export default function Checkout() {
           <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
           <div className="payment-choice-grid">
             {onlinePaymentsEnabled && <button type="button" className={paymentMethod === "ONLINE" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("ONLINE")}><span><Icon name="shield" size={20} /></span><div><strong>Pay online</strong><p>UPI, cards, netbanking & supported wallets.</p></div><b>{paymentMethod === "ONLINE" ? "✓" : ""}</b></button>}
-            <button type="button" className={paymentMethod === "COD" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>Pay when your order arrives.</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button>
+            <button type="button" disabled={!codEligibility.eligible} className={`${paymentMethod === "COD" ? "payment-box selected" : "payment-box"}${!codEligibility.eligible ? " disabled" : ""}`} onClick={() => codEligibility.eligible && setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>{codEligibility.eligible ? "Pay when your order arrives." : "Not available for this order."}</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button>
           </div>
-          <button className="button wide checkout-submit" disabled={submitting}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
+          {!codEligibility.eligible && <div className="phase20-cod-unavailable"><Icon name="shield" size={18} /><div><strong>COD unavailable for this order</strong>{codEligibility.reasons.map((reason) => <small key={reason}>{reason}</small>)}{onlinePaymentsEnabled && <small>Your cart and coupon stay unchanged when you switch to secure online payment.</small>}</div></div>}
+          <div className="phase20-checkout-trust"><span><Icon name="shield" size={16} /> Server-validated prices</span><span><Icon name="truck" size={16} /> Tracked fulfilment</span><span><Icon name="refresh" size={16} /> {storeConfig.returnsEnabled === false ? "Return policy" : `${storeConfig.returnWindowDays ?? 7}-day return window`}</span></div>
+          <button className="button wide checkout-submit" disabled={submitting || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled)}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
         </form>
 
         <aside className="summary-card checkout-summary">
@@ -252,7 +273,7 @@ export default function Checkout() {
           <div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div>
         </aside>
       </div>
-      <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={submitting}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
+      <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={submitting || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled)}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
     </div>
   );
 }

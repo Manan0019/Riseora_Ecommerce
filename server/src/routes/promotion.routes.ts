@@ -86,6 +86,7 @@ router.post(
         const [, productName, limit] = message.split(":");
         return res.status(400).json({ success: false, message: `${productName} is limited to ${limit} per order.` });
       }
+      if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
       throw error;

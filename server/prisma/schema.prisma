@@ -215,6 +215,7 @@ model Product {
   isFeatured       Boolean @default(false)
   badge            String?
   maxPurchaseQuantity Int?
+  codAllowed          Boolean @default(true)
 
   variants ProductVariant[]
   images   ProductImage[]
@@ -477,6 +478,10 @@ model StoreSetting {
   freeShippingThreshold Decimal? @db.Decimal(12, 2)
   flatShippingFee       Decimal  @default(0) @db.Decimal(12, 2)
   codFee                Decimal  @default(0) @db.Decimal(12, 2)
+  codEnabled            Boolean  @default(true)
+  codMinOrderAmount     Decimal? @db.Decimal(12, 2)
+  codMaxOrderAmount     Decimal? @db.Decimal(12, 2)
+  maxOpenCodOrdersPerCustomer Int?
   dispatchWithinDays    Int      @default(2)
   deliveryMinDays       Int      @default(3)
   deliveryMaxDays       Int      @default(7)

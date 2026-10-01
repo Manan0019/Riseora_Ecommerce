@@ -58,6 +58,77 @@ function makeOrderNumber() {
   return `RISE-${date}-${randomBytes(3).toString("hex").toUpperCase()}`;
 }
 
+
+type CodEligibility = {
+  eligible: boolean;
+  reasons: string[];
+  merchandiseSubtotal: number;
+  openCodOrders: number;
+  openCodOrderLimit: number | null;
+  prepaidOnlyProducts: string[];
+};
+
+async function evaluateCodEligibility(args: {
+  input: CheckoutInput;
+  userId: string | null;
+  variants: any[];
+  merchandiseSubtotal: number;
+  settings: any;
+}): Promise<CodEligibility> {
+  const { input, userId, variants, merchandiseSubtotal, settings } = args;
+  const reasons: string[] = [];
+  if (!settings.codEnabled) reasons.push("Cash on Delivery is currently unavailable. Please pay online.");
+
+  const minAmount = settings.codMinOrderAmount == null ? null : Number(settings.codMinOrderAmount);
+  const maxAmount = settings.codMaxOrderAmount == null ? null : Number(settings.codMaxOrderAmount);
+  if (minAmount !== null && merchandiseSubtotal < minAmount) reasons.push(`Cash on Delivery is available from ₹${Math.ceil(minAmount)} merchandise value.`);
+  if (maxAmount !== null && merchandiseSubtotal > maxAmount) reasons.push(`Cash on Delivery is available up to ₹${Math.floor(maxAmount)} merchandise value. Please pay online for this order.`);
+
+  const prepaidOnlyProducts = [...new Set(variants.filter((variant) => variant.product?.codAllowed === false).map((variant) => String(variant.product?.name || "Product")))];
+  if (prepaidOnlyProducts.length) {
+    const names = prepaidOnlyProducts.slice(0, 2).join(", ");
+    reasons.push(`${names}${prepaidOnlyProducts.length > 2 ? " and other items are" : prepaidOnlyProducts.length === 1 ? " is" : " are"} prepaid only.`);
+  }
+
+  const openLimit = settings.maxOpenCodOrdersPerCustomer == null ? null : Number(settings.maxOpenCodOrdersPerCustomer);
+  let openCodOrders = 0;
+  if (openLimit !== null) {
+    const email = String(input.customerEmail || "").trim().toLowerCase();
+    const phone = String(input.customerPhone || "").trim();
+    const identities: any[] = [];
+    if (userId) identities.push({ userId });
+    if (email) identities.push({ customerEmail: { equals: email, mode: "insensitive" } });
+    if (phone) identities.push({ customerPhone: phone });
+    if (identities.length) {
+      openCodOrders = await prisma.order.count({
+        where: {
+          paymentMethod: "COD",
+          status: { in: ["PENDING", "CONFIRMED", "PROCESSING", "SHIPPED"] },
+          OR: identities,
+        },
+      });
+      if (openCodOrders >= openLimit) {
+        reasons.push(`You already have ${openCodOrders} active Cash on Delivery order${openCodOrders === 1 ? "" : "s"}. Please use online payment or wait for an existing COD order to complete.`);
+      }
+    }
+  }
+
+  return { eligible: reasons.length === 0, reasons, merchandiseSubtotal, openCodOrders, openCodOrderLimit: openLimit, prepaidOnlyProducts };
+}
+
+export async function getCodEligibility(input: CheckoutInput, userId: string | null = null): Promise<CodEligibility> {
+  const requestedIds = [...new Set(input.items.map((item) => item.variantId))];
+  const variants = await prisma.productVariant.findMany({
+    where: { id: { in: requestedIds }, isActive: true, product: { isActive: true } },
+    include: { product: true },
+  });
+  if (variants.length !== requestedIds.length) throw new Error("PRODUCT_UNAVAILABLE");
+  const variantMap = new Map<string, any>(variants.map((variant: any) => [variant.id, variant]));
+  const merchandiseSubtotal = round2(input.items.reduce((sum, item) => sum + Number(variantMap.get(item.variantId)!.sellingPrice) * item.quantity, 0));
+  const settings = await getStoreSettings();
+  return evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal, settings });
+}
+
 export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE", userId: string | null = null) {
   const requestedIds = [...new Set(input.items.map((item) => item.variantId))];
   const variants = await prisma.productVariant.findMany({
@@ -167,6 +238,8 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
   }
   const discountAmount = round2(automaticDiscountAmount + couponDiscountAmount);
   const settings = await getStoreSettings();
+  const codEligibility = await evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal: subtotal, settings });
+  if (paymentMethod === "COD" && !codEligibility.eligible) throw new Error(`COD_UNAVAILABLE:${codEligibility.reasons[0]}`);
   const merchandiseAfterDiscount = Math.max(0, round2(subtotal - discountAmount));
   const shippingFee = calculateShippingFee({ merchandiseAfterDiscount, paymentMethod, settings });
 
@@ -181,6 +254,7 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
     automaticPromotionType: merchandising.deal?.type ?? null,
     promotionValue: Number(merchandising.promotionValue || 0),
     totalAmount: Math.max(0, round2(subtotal + shippingFee - discountAmount)),
+    codEligibility,
     coupon,
   };
 }

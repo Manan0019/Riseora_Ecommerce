@@ -420,3 +420,18 @@ npm run build
 ```
 
 See `PHASE19_CONTENT_COUPON_CONTROLS.md` for the runtime checklist.
+
+
+## Phase 20 — COD Safety & Checkout Trust
+
+Phase 20 adds owner-configurable Cash on Delivery safeguards, prepaid-only product controls, active-COD-order limits per customer identity, server-side COD enforcement, customer-facing COD eligibility reasons and compact checkout trust messaging.
+
+Apply the included migration with:
+
+```powershell
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+See `PHASE20_COD_SAFETY_CHECKOUT_TRUST.md` for the runtime checklist.

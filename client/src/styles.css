@@ -2091,3 +2091,18 @@ textarea { min-height: 105px; resize: vertical; }
   .phase19-campaign-style-copy { padding: 16px; }
   .phase19-campaign-style-copy h3 { font-size: min(34px,9vw) !important; }
 }
+
+
+/* Phase 20 — COD safeguards & checkout trust */
+.phase20-cod-settings{margin:18px 0;padding:18px;border:1px solid rgba(31,74,53,.18);border-radius:18px;background:linear-gradient(180deg,rgba(245,250,246,.95),rgba(255,255,255,.98))}
+.phase20-cod-settings .editor-section-head{margin-top:0}
+.phase20-payment-rule-card{display:flex;flex-direction:column;gap:7px;margin:12px 0 18px;padding:14px 16px;border:1px solid rgba(31,74,53,.16);border-radius:16px;background:#f8fbf8}
+.phase20-payment-rule-card.prepaid{border-color:rgba(153,91,36,.24);background:#fff8ef}
+.phase20-payment-rule-card small{color:var(--muted,#66736b);line-height:1.45}
+.phase20-cod-unavailable{display:flex;gap:10px;align-items:flex-start;margin:12px 0 2px;padding:13px 14px;border:1px solid rgba(145,87,34,.24);border-radius:14px;background:#fff8ef;color:#65411f}
+.phase20-cod-unavailable>div{display:grid;gap:4px}.phase20-cod-unavailable small{display:block;line-height:1.4}
+.phase20-checkout-trust{display:flex;flex-wrap:wrap;gap:8px 14px;margin:14px 0;color:#425249;font-size:.82rem}.phase20-checkout-trust span{display:inline-flex;align-items:center;gap:6px}
+.payment-box.disabled{opacity:.52;cursor:not-allowed;filter:saturate(.6)}
+.phase20-prepaid-note{display:flex;align-items:flex-start;gap:8px;margin:8px 0 14px;padding:11px 13px;border:1px solid rgba(145,87,34,.2);border-radius:13px;background:#fff9f1;color:#65411f;font-size:.9rem}
+.phase20-prepaid-note span{display:grid;gap:2px}.phase20-quick-prepaid{display:flex;align-items:center;gap:6px;margin-top:8px;color:#83521f;font-size:.78rem;font-weight:800}
+@media (max-width:720px){.phase20-cod-settings{padding:14px}.phase20-checkout-trust{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.76rem}.phase20-checkout-trust span:last-child{grid-column:1/-1}.phase20-cod-unavailable{font-size:.9rem}}

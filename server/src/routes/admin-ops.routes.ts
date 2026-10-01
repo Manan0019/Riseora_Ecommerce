@@ -27,6 +27,10 @@ const settingsSchema = z.object({
   freeShippingThreshold: z.number().nonnegative().nullable().optional(),
   flatShippingFee: z.number().nonnegative().optional(),
   codFee: z.number().nonnegative().optional(),
+  codEnabled: z.boolean().optional(),
+  codMinOrderAmount: z.number().nonnegative().nullable().optional(),
+  codMaxOrderAmount: z.number().nonnegative().nullable().optional(),
+  maxOpenCodOrdersPerCustomer: z.number().int().min(1).max(100).nullable().optional(),
   dispatchWithinDays: z.number().int().min(0).max(30).optional(),
   deliveryMinDays: z.number().int().min(1).max(45).optional(),
   deliveryMaxDays: z.number().int().min(1).max(60).optional(),
@@ -70,7 +74,12 @@ router.patch(
     if (!parsed.success || Object.keys(parsed.data).length === 0) {
       return res.status(400).json({ success: false, message: "Invalid store settings", errors: parsed.success ? undefined : parsed.error.flatten() });
     }
-    await getStoreSettings();
+    const currentSettings = await getStoreSettings();
+    const nextCodMin = parsed.data.codMinOrderAmount !== undefined ? parsed.data.codMinOrderAmount : currentSettings.codMinOrderAmount == null ? null : Number(currentSettings.codMinOrderAmount);
+    const nextCodMax = parsed.data.codMaxOrderAmount !== undefined ? parsed.data.codMaxOrderAmount : currentSettings.codMaxOrderAmount == null ? null : Number(currentSettings.codMaxOrderAmount);
+    if (nextCodMin != null && nextCodMax != null && nextCodMin > nextCodMax) {
+      return res.status(400).json({ success: false, message: "COD minimum amount cannot be higher than the COD maximum amount" });
+    }
     const settings = await prisma.storeSetting.update({ where: { id: "primary" }, data: parsed.data });
     res.json({ success: true, data: settings });
   }),

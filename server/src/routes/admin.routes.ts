@@ -97,6 +97,7 @@ const productSchema = z.object({
   isFeatured: z.boolean().default(false),
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   maxPurchaseQuantity: z.number().int().min(1).max(10000).nullable().optional(),
+  codAllowed: z.boolean().default(true),
   images: z
     .array(
       z.object({
@@ -173,6 +174,7 @@ router.post(
         isFeatured: parsed.data.isFeatured,
         badge: parsed.data.badge || null,
         maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
+        codAllowed: parsed.data.codAllowed,
         images: {
           create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },
@@ -209,6 +211,7 @@ router.patch(
       isActive: z.boolean().optional(),
       isFeatured: z.boolean().optional(),
       badge: z.string().trim().max(40).nullable().optional(),
+      codAllowed: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product update" });
     const product = await prisma.product.update({ where: { id: req.params.id }, data: parsed.data });
@@ -952,6 +955,7 @@ router.put(
           isActive: parsed.data.isActive,
           badge: parsed.data.badge || null,
           maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
+          codAllowed: parsed.data.codAllowed,
           images: {
           create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },

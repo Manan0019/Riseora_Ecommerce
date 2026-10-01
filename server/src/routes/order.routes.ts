@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { optionalAuth, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
-import { createCodOrder } from "../services/checkout.service";
+import { createCodOrder, getCodEligibility } from "../services/checkout.service";
 
 const router = Router();
 
@@ -25,6 +25,35 @@ const createOrderSchema = z.object({
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
+const codEligibilitySchema = z.object({
+  customerEmail: z.string().trim().email().optional().or(z.literal("")),
+  customerPhone: z.string().trim().max(20).optional().or(z.literal("")),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
+});
+
+router.post(
+  "/cod-eligibility",
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = codEligibilitySchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid COD eligibility request" });
+    try {
+      const result = await getCodEligibility({
+        customerName: "Eligibility check",
+        customerEmail: parsed.data.customerEmail || "",
+        customerPhone: parsed.data.customerPhone || "",
+        shippingAddress: { line1: "Eligibility", city: "Eligibility", state: "Gujarat", postalCode: "000000", country: "India" },
+        items: parsed.data.items,
+      }, req.user?.id ?? null);
+      res.json({ success: true, data: result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "COD_ELIGIBILITY_FAILED";
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(400).json({ success: false, message: "One or more products are unavailable" });
+      throw error;
+    }
+  }),
+);
+
 router.post(
   "/",
   optionalAuth,
@@ -41,6 +70,7 @@ router.post(
         const [, productName, limit] = message.split(":");
         return res.status(400).json({ success: false, message: `${productName} is limited to ${limit} per order.` });
       }
+      if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
       if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });
