@@ -5,6 +5,7 @@ import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
 import { sendOrderPlacedNotifications } from "./notification.service";
 import { calculateShippingFee, getStoreSettings } from "./store.service";
+import { getShippingQuote, normalizePostalCode, resolveShippingZone } from "./shipping-zone.service";
 import { evaluateBestMerchandisingDeal } from "./merchandising.service";
 
 export type CheckoutInput = {
@@ -66,6 +67,8 @@ type CodEligibility = {
   openCodOrders: number;
   openCodOrderLimit: number | null;
   prepaidOnlyProducts: string[];
+  shippingZoneName: string | null;
+  deliveryServiceable: boolean | null;
 };
 
 async function evaluateCodEligibility(args: {
@@ -74,10 +77,13 @@ async function evaluateCodEligibility(args: {
   variants: any[];
   merchandiseSubtotal: number;
   settings: any;
+  delivery?: Awaited<ReturnType<typeof resolveShippingZone>> | null;
 }): Promise<CodEligibility> {
-  const { input, userId, variants, merchandiseSubtotal, settings } = args;
+  const { input, userId, variants, merchandiseSubtotal, settings, delivery = null } = args;
   const reasons: string[] = [];
   if (!settings.codEnabled) reasons.push("Cash on Delivery is currently unavailable. Please pay online.");
+  if (delivery && !delivery.serviceable) reasons.push(delivery.reason || "Delivery is not available for this PIN code.");
+  if (delivery?.serviceable && delivery.codAllowed === false) reasons.push(`${delivery.zoneName || "This delivery area"} is prepaid only. Cash on Delivery is unavailable for this PIN code.`);
 
   const minAmount = settings.codMinOrderAmount == null ? null : Number(settings.codMinOrderAmount);
   const maxAmount = settings.codMaxOrderAmount == null ? null : Number(settings.codMaxOrderAmount);
@@ -113,7 +119,7 @@ async function evaluateCodEligibility(args: {
     }
   }
 
-  return { eligible: reasons.length === 0, reasons, merchandiseSubtotal, openCodOrders, openCodOrderLimit: openLimit, prepaidOnlyProducts };
+  return { eligible: reasons.length === 0, reasons, merchandiseSubtotal, openCodOrders, openCodOrderLimit: openLimit, prepaidOnlyProducts, shippingZoneName: delivery?.zoneName ?? null, deliveryServiceable: delivery ? delivery.serviceable : null };
 }
 
 export async function getCodEligibility(input: CheckoutInput, userId: string | null = null): Promise<CodEligibility> {
@@ -126,10 +132,12 @@ export async function getCodEligibility(input: CheckoutInput, userId: string | n
   const variantMap = new Map<string, any>(variants.map((variant: any) => [variant.id, variant]));
   const merchandiseSubtotal = round2(input.items.reduce((sum, item) => sum + Number(variantMap.get(item.variantId)!.sellingPrice) * item.quantity, 0));
   const settings = await getStoreSettings();
-  return evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal, settings });
+  const postalCode = normalizePostalCode(input.shippingAddress?.postalCode);
+  const delivery = /^\d{6}$/.test(postalCode) ? await resolveShippingZone(postalCode, settings) : null;
+  return evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal, settings, delivery });
 }
 
-export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE", userId: string | null = null) {
+export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD" | "ONLINE", userId: string | null = null, options: { enforceServiceability?: boolean } = {}) {
   const requestedIds = [...new Set(input.items.map((item) => item.variantId))];
   const variants = await prisma.productVariant.findMany({
     where: { id: { in: requestedIds }, isActive: true, product: { isActive: true } },
@@ -238,10 +246,22 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
   }
   const discountAmount = round2(automaticDiscountAmount + couponDiscountAmount);
   const settings = await getStoreSettings();
-  const codEligibility = await evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal: subtotal, settings });
-  if (paymentMethod === "COD" && !codEligibility.eligible) throw new Error(`COD_UNAVAILABLE:${codEligibility.reasons[0]}`);
   const merchandiseAfterDiscount = Math.max(0, round2(subtotal - discountAmount));
-  const shippingFee = calculateShippingFee({ merchandiseAfterDiscount, paymentMethod, settings });
+  const postalCode = normalizePostalCode(input.shippingAddress?.postalCode);
+  const validPostalCode = /^\d{6}$/.test(postalCode);
+  const enforceServiceability = options.enforceServiceability !== false;
+  const delivery = validPostalCode
+    ? await getShippingQuote({ postalCode, merchandiseAfterDiscount, paymentMethod, settings })
+    : {
+        postalCode, serviceable: !enforceServiceability, matched: false, strict: Boolean(settings.requireServiceablePostalCode), zoneId: null, zoneName: null, city: null, state: null, codAllowed: true,
+        dispatchWithinDays: Math.max(0, Number(settings.dispatchWithinDays ?? 2)), deliveryMinDays: Math.max(1, Number(settings.deliveryMinDays ?? 3)), deliveryMaxDays: Math.max(Number(settings.deliveryMinDays ?? 3), Number(settings.deliveryMaxDays ?? 7)),
+        shippingFeeOverride: null, freeShippingThresholdOverride: null, reason: "Enter a valid 6-digit PIN code.",
+        shippingFee: calculateShippingFee({ merchandiseAfterDiscount, paymentMethod, settings }),
+      };
+  if (enforceServiceability && !delivery.serviceable) throw new Error(`PIN_UNSERVICEABLE:${delivery.reason}`);
+  const codEligibility = await evaluateCodEligibility({ input, userId, variants, merchandiseSubtotal: subtotal, settings, delivery });
+  if (paymentMethod === "COD" && !codEligibility.eligible) throw new Error(`COD_UNAVAILABLE:${codEligibility.reasons[0]}`);
+  const shippingFee = delivery.shippingFee;
 
   return {
     items: [...paidItems, ...freeItems],
@@ -255,6 +275,7 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
     promotionValue: Number(merchandising.promotionValue || 0),
     totalAmount: Math.max(0, round2(subtotal + shippingFee - discountAmount)),
     codEligibility,
+    delivery,
     coupon,
   };
 }
@@ -332,7 +353,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
     const created = await tx.order.create({
       data: {
         orderNumber: makeOrderNumber(), userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
-        customerPhone: input.customerPhone, shippingAddress: input.shippingAddress, paymentMethod: "COD", couponCode: prepared.coupon?.code ?? null,
+        customerPhone: input.customerPhone, shippingAddress: input.shippingAddress, shippingZoneName: prepared.delivery.zoneName, deliveryEstimate: { postalCode: prepared.delivery.postalCode, dispatchWithinDays: prepared.delivery.dispatchWithinDays, deliveryMinDays: prepared.delivery.deliveryMinDays, deliveryMaxDays: prepared.delivery.deliveryMaxDays }, paymentMethod: "COD", couponCode: prepared.coupon?.code ?? null,
         automaticPromotionName: prepared.automaticPromotionName, automaticDiscountAmount: prepared.automaticDiscountAmount,
         subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount, totalAmount: prepared.totalAmount,
         items: { create: prepared.items.map(orderItemCreate) },
@@ -359,7 +380,7 @@ export async function createOnlineCheckoutReservation(input: CheckoutInput, user
     return tx.checkoutSession.create({
       data: {
         userId, customerName: input.customerName, customerEmail: input.customerEmail || null, customerPhone: input.customerPhone,
-        shippingAddress: input.shippingAddress, couponCode: prepared.coupon?.code ?? null,
+        shippingAddress: input.shippingAddress, shippingZoneName: prepared.delivery.zoneName, deliveryEstimate: { postalCode: prepared.delivery.postalCode, dispatchWithinDays: prepared.delivery.dispatchWithinDays, deliveryMinDays: prepared.delivery.deliveryMinDays, deliveryMaxDays: prepared.delivery.deliveryMaxDays }, couponCode: prepared.coupon?.code ?? null,
         automaticPromotionName: prepared.automaticPromotionName, automaticDiscountAmount: prepared.automaticDiscountAmount,
         subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount, totalAmount: prepared.totalAmount,
         amountPaise: Math.round(prepared.totalAmount * 100), items: prepared.items as unknown as Prisma.InputJsonValue,
@@ -413,7 +434,7 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
     const created = await tx.order.create({
       data: {
         orderNumber: makeOrderNumber(), userId: existing.userId, customerName: existing.customerName, customerEmail: existing.customerEmail,
-        customerPhone: existing.customerPhone, shippingAddress: existing.shippingAddress as Prisma.InputJsonValue,
+        customerPhone: existing.customerPhone, shippingAddress: existing.shippingAddress as Prisma.InputJsonValue, shippingZoneName: existing.shippingZoneName, deliveryEstimate: existing.deliveryEstimate == null ? undefined : existing.deliveryEstimate as Prisma.InputJsonValue,
         paymentMethod: "ONLINE", couponCode: existing.couponCode,
         automaticPromotionName: existing.automaticPromotionName, automaticDiscountAmount: existing.automaticDiscountAmount,
         subtotal: existing.subtotal, shippingFee: existing.shippingFee, discountAmount: existing.discountAmount, totalAmount: existing.totalAmount, status: "CONFIRMED",

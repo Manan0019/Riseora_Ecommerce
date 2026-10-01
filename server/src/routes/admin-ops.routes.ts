@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
+import { normalizePostalPrefixes } from "../services/shipping-zone.service";
 import { getInvoiceWithOrder } from "../services/invoice.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { sendReturnStatusNotification } from "../services/notification.service";
@@ -35,6 +36,7 @@ const settingsSchema = z.object({
   deliveryMinDays: z.number().int().min(1).max(45).optional(),
   deliveryMaxDays: z.number().int().min(1).max(60).optional(),
   lowStockUrgencyThreshold: z.number().int().min(1).max(100).optional(),
+  requireServiceablePostalCode: z.boolean().optional(),
   returnsEnabled: z.boolean().optional(),
   returnWindowDays: z.number().int().min(0).max(90).optional(),
   returnPolicy: z.string().trim().max(10000).nullable().optional(),
@@ -82,6 +84,86 @@ router.patch(
     }
     const settings = await prisma.storeSetting.update({ where: { id: "primary" }, data: parsed.data });
     res.json({ success: true, data: settings });
+  }),
+);
+
+const shippingZoneSchema = z.object({
+  name: z.string().trim().min(2).max(100),
+  postalPrefixes: z.array(z.string().trim().regex(/^\d{2,6}$/)).min(1).max(200),
+  city: z.string().trim().max(100).nullable().optional(),
+  state: z.string().trim().max(100).nullable().optional(),
+  shippingFee: z.number().nonnegative().nullable().optional(),
+  freeShippingThreshold: z.number().nonnegative().nullable().optional(),
+  codAllowed: z.boolean().default(true),
+  deliveryMinDays: z.number().int().min(1).max(45).nullable().optional(),
+  deliveryMaxDays: z.number().int().min(1).max(60).nullable().optional(),
+  priority: z.number().int().min(0).max(9999).default(0),
+  isActive: z.boolean().default(true),
+});
+const shippingZonePatchSchema = z.object({
+  name: z.string().trim().min(2).max(100).optional(),
+  postalPrefixes: z.array(z.string().trim().regex(/^\d{2,6}$/)).min(1).max(200).optional(),
+  city: z.string().trim().max(100).nullable().optional(),
+  state: z.string().trim().max(100).nullable().optional(),
+  shippingFee: z.number().nonnegative().nullable().optional(),
+  freeShippingThreshold: z.number().nonnegative().nullable().optional(),
+  codAllowed: z.boolean().optional(),
+  deliveryMinDays: z.number().int().min(1).max(45).nullable().optional(),
+  deliveryMaxDays: z.number().int().min(1).max(60).nullable().optional(),
+  priority: z.number().int().min(0).max(9999).optional(),
+  isActive: z.boolean().optional(),
+});
+
+router.get(
+  "/shipping-zones",
+  asyncHandler(async (_req, res) => {
+    const zones = await prisma.shippingZone.findMany({ orderBy: [{ priority: "desc" }, { name: "asc" }] });
+    res.json({ success: true, data: zones });
+  }),
+);
+
+router.post(
+  "/shipping-zones",
+  asyncHandler(async (req, res) => {
+    const parsed = shippingZoneSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid delivery zone", errors: parsed.error.flatten() });
+    const prefixes = normalizePostalPrefixes(parsed.data.postalPrefixes);
+    if (!prefixes.length) return res.status(400).json({ success: false, message: "Add at least one valid PIN prefix" });
+    const minDays = parsed.data.deliveryMinDays ?? null;
+    const maxDays = parsed.data.deliveryMaxDays ?? null;
+    if (minDays != null && maxDays != null && minDays > maxDays) return res.status(400).json({ success: false, message: "Delivery minimum days cannot exceed maximum days" });
+    const zone = await prisma.shippingZone.create({ data: { ...parsed.data, postalPrefixes: prefixes, city: parsed.data.city || null, state: parsed.data.state || null } });
+    res.status(201).json({ success: true, data: zone });
+  }),
+);
+
+router.patch(
+  "/shipping-zones/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = shippingZonePatchSchema.safeParse(req.body);
+    if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid delivery-zone update", errors: parsed.success ? undefined : parsed.error.flatten() });
+    const data: any = { ...parsed.data };
+    if (parsed.data.postalPrefixes) {
+      data.postalPrefixes = normalizePostalPrefixes(parsed.data.postalPrefixes);
+      if (!data.postalPrefixes.length) return res.status(400).json({ success: false, message: "Add at least one valid PIN prefix" });
+    }
+    if (parsed.data.city !== undefined) data.city = parsed.data.city || null;
+    if (parsed.data.state !== undefined) data.state = parsed.data.state || null;
+    const existing = await prisma.shippingZone.findUnique({ where: { id: req.params.id } });
+    if (!existing) return res.status(404).json({ success: false, message: "Delivery zone not found" });
+    const minDays = parsed.data.deliveryMinDays !== undefined ? parsed.data.deliveryMinDays : existing.deliveryMinDays;
+    const maxDays = parsed.data.deliveryMaxDays !== undefined ? parsed.data.deliveryMaxDays : existing.deliveryMaxDays;
+    if (minDays != null && maxDays != null && minDays > maxDays) return res.status(400).json({ success: false, message: "Delivery minimum days cannot exceed maximum days" });
+    const zone = await prisma.shippingZone.update({ where: { id: req.params.id }, data });
+    res.json({ success: true, data: zone });
+  }),
+);
+
+router.delete(
+  "/shipping-zones/:id",
+  asyncHandler(async (req, res) => {
+    await prisma.shippingZone.delete({ where: { id: req.params.id } });
+    res.json({ success: true });
   }),
 );
 
@@ -159,6 +241,7 @@ router.get(
         state: address?.state || "",
         postalCode: address?.postalCode || "",
         country: address?.country || "India",
+        shippingZoneName: order.shippingZoneName || "",
         paymentMethod: order.paymentMethod,
         codAmount: order.paymentMethod === "COD" ? Number(order.totalAmount) : 0,
         totalAmount: Number(order.totalAmount),

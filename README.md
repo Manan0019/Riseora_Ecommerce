@@ -435,3 +435,20 @@ npm run build
 ```
 
 See `PHASE20_COD_SAFETY_CHECKOUT_TRUST.md` for the runtime checklist.
+
+## Phase 21 — PIN Serviceability & Delivery Zones
+
+Phase 21 turns the earlier generic PIN preference into a real server-enforced delivery system. Admin can define active PIN-prefix zones with optional shipping-fee, free-shipping, COD and ETA overrides. Product Details and Checkout can verify a six-digit Indian PIN, and Checkout stores the matched zone/ETA snapshot on new orders.
+
+The strict serviceability switch is **OFF by default**. Keep it off while building your zone list; unmatched PIN codes continue using the store-wide shipping rules. Turn it on only after the serviceable area is fully configured.
+
+Apply the included migration with:
+
+```powershell
+npm run db:deploy
+npm run db:generate
+npm run build
+```
+
+See `PHASE21_DELIVERY_ZONES_SERVICEABILITY.md` for zone-matching examples and the runtime checklist.
+

@@ -36,9 +36,15 @@ export function calculateShippingFee(input: {
     flatShippingFee: unknown;
     codFee: unknown;
   };
+  shippingOverride?: number | null;
+  freeShippingThresholdOverride?: number | null;
 }) {
-  const threshold = input.settings.freeShippingThreshold == null ? null : Number(input.settings.freeShippingThreshold);
-  const flat = Math.max(0, Number(input.settings.flatShippingFee || 0));
+  const threshold = input.freeShippingThresholdOverride != null
+    ? Number(input.freeShippingThresholdOverride)
+    : input.settings.freeShippingThreshold == null ? null : Number(input.settings.freeShippingThreshold);
+  const flat = input.shippingOverride != null
+    ? Math.max(0, Number(input.shippingOverride))
+    : Math.max(0, Number(input.settings.flatShippingFee || 0));
   const codFee = input.paymentMethod === "COD" ? Math.max(0, Number(input.settings.codFee || 0)) : 0;
   const baseShipping = threshold !== null && input.merchandiseAfterDiscount >= threshold ? 0 : flat;
   return Number((baseShipping + codFee).toFixed(2));

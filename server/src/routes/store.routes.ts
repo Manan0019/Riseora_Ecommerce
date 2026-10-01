@@ -1,6 +1,8 @@
 import { Router } from "express";
+import { z } from "zod";
 import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
+import { getShippingQuote } from "../services/shipping-zone.service";
 
 const router = Router();
 
@@ -27,6 +29,7 @@ router.get(
         deliveryMinDays: settings.deliveryMinDays,
         deliveryMaxDays: Math.max(settings.deliveryMinDays, settings.deliveryMaxDays),
         lowStockUrgencyThreshold: settings.lowStockUrgencyThreshold,
+        requireServiceablePostalCode: settings.requireServiceablePostalCode,
         returnsEnabled: settings.returnsEnabled,
         returnWindowDays: settings.returnWindowDays,
         returnPolicy: settings.returnPolicy,
@@ -49,6 +52,44 @@ router.get(
         facebookUrl: settings.facebookUrl,
         youtubeUrl: settings.youtubeUrl,
         whatsappNumber: settings.whatsappNumber,
+      },
+    });
+  }),
+);
+
+router.get(
+  "/serviceability",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      postalCode: z.string().trim().regex(/^\d{6}$/),
+      subtotal: z.coerce.number().nonnegative().optional().default(0),
+      paymentMethod: z.enum(["COD", "ONLINE"]).optional().default("ONLINE"),
+    }).safeParse(req.query);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid 6-digit PIN code" });
+    const settings = await getStoreSettings();
+    const quote = await getShippingQuote({
+      postalCode: parsed.data.postalCode,
+      merchandiseAfterDiscount: parsed.data.subtotal,
+      paymentMethod: parsed.data.paymentMethod,
+      settings,
+    });
+    res.json({
+      success: true,
+      data: {
+        postalCode: quote.postalCode,
+        serviceable: quote.serviceable,
+        matched: quote.matched,
+        strict: quote.strict,
+        zoneName: quote.zoneName,
+        city: quote.city,
+        state: quote.state,
+        codAllowed: quote.codAllowed,
+        dispatchWithinDays: quote.dispatchWithinDays,
+        deliveryMinDays: quote.deliveryMinDays,
+        deliveryMaxDays: quote.deliveryMaxDays,
+        shippingFee: quote.shippingFee,
+        freeShippingThreshold: quote.freeShippingThresholdOverride == null ? (settings.freeShippingThreshold == null ? null : Number(settings.freeShippingThreshold)) : quote.freeShippingThresholdOverride,
+        reason: quote.reason,
       },
     });
   }),

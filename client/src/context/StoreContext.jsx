@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { apiFetch, mediaUrl } from "../api/http";
 
 const StoreContext = createContext(null);
-const fallback = { storeName: "Riseora Herbals", brandTagline: "Everyday herbal care, thoughtfully made.", freeShippingThreshold: 599, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, lowStockUrgencyThreshold: 5 };
+const fallback = { storeName: "Riseora Herbals", brandTagline: "Everyday herbal care, thoughtfully made.", freeShippingThreshold: 599, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, lowStockUrgencyThreshold: 5, requireServiceablePostalCode: false };
 
 export function StoreProvider({ children }) {
   const [store, setStore] = useState(fallback);

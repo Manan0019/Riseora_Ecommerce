@@ -58,6 +58,8 @@ export default function Checkout() {
   const [recoveryOptIn, setRecoveryOptIn] = useState(false);
   const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0, codEnabled: true, codMinOrderAmount: null, codMaxOrderAmount: null, maxOpenCodOrdersPerCustomer: null, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, returnsEnabled: true, returnWindowDays: 7 });
   const [pricing, setPricing] = useState(null);
+  const [deliveryQuote, setDeliveryQuote] = useState(null);
+  const [deliveryChecking, setDeliveryChecking] = useState(false);
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
@@ -71,6 +73,32 @@ export default function Checkout() {
     apiFetch("/payments/config").then((response) => setOnlinePaymentsEnabled(Boolean(response.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false));
     apiFetch("/store/config").then((response) => setStoreConfig(response.data)).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    const pin = String(form.postalCode || "").replace(/\D/g, "").slice(0, 6);
+    if (!/^\d{6}$/.test(pin)) { setDeliveryQuote(null); setDeliveryChecking(false); return; }
+    let cancelled = false;
+    setDeliveryChecking(true);
+    const timer = setTimeout(() => {
+      apiFetch(`/store/serviceability?postalCode=${encodeURIComponent(pin)}&subtotal=${encodeURIComponent(checkoutSubtotal)}&paymentMethod=${paymentMethod}`)
+        .then((response) => {
+          if (cancelled) return;
+          const quote = response.data;
+          setDeliveryQuote(quote);
+          if (quote?.matched && (quote.city || quote.state)) {
+            setForm((current) => ({
+              ...current,
+              city: current.city.trim() ? current.city : (quote.city || current.city),
+              state: (!current.state.trim() || current.state === "Gujarat") && quote.state ? quote.state : current.state,
+            }));
+          }
+          try { localStorage.setItem("riseora_delivery_pin", pin); } catch {}
+        })
+        .catch((err) => { if (!cancelled) setDeliveryQuote({ serviceable: false, matched: false, reason: err.message || "Delivery availability could not be checked." }); })
+        .finally(() => { if (!cancelled) setDeliveryChecking(false); });
+    }, 220);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [form.postalCode, checkoutSubtotal, paymentMethod]);
 
   useEffect(() => {
     if (!user) return;
@@ -105,7 +133,7 @@ export default function Checkout() {
     const timer = setTimeout(() => {
       apiFetch("/orders/cod-eligibility", {
         method: "POST",
-        body: JSON.stringify({ customerEmail: /^\S+@\S+\.\S+$/.test(form.customerEmail.trim()) ? form.customerEmail.trim() : "", customerPhone: form.customerPhone.trim().length >= 8 ? form.customerPhone.trim() : "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+        body: JSON.stringify({ customerEmail: /^\S+@\S+\.\S+$/.test(form.customerEmail.trim()) ? form.customerEmail.trim() : "", customerPhone: form.customerPhone.trim().length >= 8 ? form.customerPhone.trim() : "", postalCode: /^\d{6}$/.test(form.postalCode) ? form.postalCode : "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
       }).then((response) => {
         if (cancelled) return;
         setCodEligibility(response.data);
@@ -115,7 +143,7 @@ export default function Checkout() {
       });
     }, 180);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [checkoutItems, form.customerEmail, form.customerPhone, onlinePaymentsEnabled]);
+  }, [checkoutItems, form.customerEmail, form.customerPhone, form.postalCode, onlinePaymentsEnabled]);
 
   useEffect(() => {
     if (!checkoutItems.length) { setPricing(null); return; }
@@ -123,15 +151,15 @@ export default function Checkout() {
     const timer = setTimeout(() => {
       apiFetch("/promotions/cart-preview", {
         method: "POST",
-        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
+        body: JSON.stringify({ paymentMethod, couponCode: appliedCoupon || "", customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", postalCode: /^\d{6}$/.test(form.postalCode) ? form.postalCode : "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }),
       }).then((response) => { if (!cancelled) setPricing(response.data); }).catch(() => { if (!cancelled) setPricing(null); });
     }, 180);
     return () => { cancelled = true; clearTimeout(timer); };
-  }, [checkoutItems, paymentMethod, appliedCoupon, form.customerEmail, form.customerPhone]);
+  }, [checkoutItems, paymentMethod, appliedCoupon, form.customerEmail, form.customerPhone, form.postalCode]);
 
   function selectSavedAddress(item) {
     setSelectedAddressId(item.id);
-    setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: item.postalCode || "" }));
+    setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: String(item.postalCode || "").replace(/\D/g, "").slice(0, 6) }));
   }
 
   if (checkoutItems.length === 0) return <Navigate to={buyNowMode ? "/shop" : "/cart"} replace />;
@@ -143,7 +171,7 @@ export default function Checkout() {
     if (!code) return;
     setCouponError(""); setCouponMessage("");
     try {
-      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
+      const response = await apiFetch("/promotions/cart-preview", { method: "POST", body: JSON.stringify({ couponCode: code, paymentMethod, customerEmail: form.customerEmail || "", customerPhone: form.customerPhone || "", postalCode: /^\d{6}$/.test(form.postalCode) ? form.postalCode : "", items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }) });
       setAppliedCoupon(code); setDiscountAmount(Number(response.data.couponDiscountAmount || 0)); setPricing(response.data); setCouponMessage(`Coupon ${code} applied.`);
     } catch (err) { setAppliedCoupon(""); setDiscountAmount(0); setCouponError(err.message); }
   }
@@ -225,11 +253,15 @@ export default function Checkout() {
   const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee;
   const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee);
   const freeItems = pricing?.freeItems || [];
-  const dispatchDays = Math.max(0, Number(storeConfig.dispatchWithinDays ?? 2));
-  const deliveryMinDays = Math.max(1, Number(storeConfig.deliveryMinDays ?? 3));
-  const deliveryMaxDays = Math.max(deliveryMinDays, Number(storeConfig.deliveryMaxDays ?? 7));
+  const effectiveDelivery = pricing?.delivery || deliveryQuote;
+  const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2));
+  const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3));
+  const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7));
   const estimatedFrom = formatEta(dispatchDays + deliveryMinDays);
   const estimatedTo = formatEta(dispatchDays + deliveryMaxDays);
+  const postalCodeValid = /^\d{6}$/.test(form.postalCode);
+  const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false;
+  const checkoutDisabled = submitting || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
 
   return (
     <div className="container page-space checkout-page">
@@ -247,8 +279,16 @@ export default function Checkout() {
           <label>Address<input required name="line1" value={form.line1} onChange={update} autoComplete="address-line1" /></label>
           <label>Address line 2<input name="line2" value={form.line2} onChange={update} autoComplete="address-line2" /></label>
           <label>Landmark<input name="landmark" value={form.landmark} onChange={update} /></label>
-          <div className="form-grid three"><label>City<input required name="city" value={form.city} onChange={update} autoComplete="address-level2" /></label><label>State<input required name="state" value={form.state} onChange={update} autoComplete="address-level1" /></label><label>PIN code<input required name="postalCode" value={form.postalCode} onChange={update} inputMode="numeric" autoComplete="postal-code" /></label></div>
-          <div className="phase17-checkout-delivery"><Icon name="truck" size={19} /><div><strong>Typical delivery {estimatedFrom}–{estimatedTo}</strong><small>Usually dispatched within {dispatchDays} day{dispatchDays === 1 ? "" : "s"}. Final courier serviceability depends on the delivery PIN code.</small></div></div>
+          <div className="form-grid three"><label>City<input required name="city" value={form.city} onChange={update} autoComplete="address-level2" /></label><label>State<input required name="state" value={form.state} onChange={update} autoComplete="address-level1" /></label><label>PIN code<input required name="postalCode" value={form.postalCode} onChange={(e) => setForm((current) => ({ ...current, postalCode: e.target.value.replace(/\D/g, "").slice(0, 6) }))} inputMode="numeric" pattern="[0-9]{6}" maxLength="6" autoComplete="postal-code" /></label></div>
+          <div className="phase17-checkout-delivery"><Icon name="truck" size={19} /><div><strong>Typical delivery {estimatedFrom}–{estimatedTo}</strong><small>Usually dispatched within {dispatchDays} day{dispatchDays === 1 ? "" : "s"}. Delivery rules are verified against the PIN code before order placement.</small></div></div>
+          <div className={`phase21-checkout-zone ${deliveryBlocked ? "unavailable" : postalCodeValid && deliveryQuote?.serviceable ? "available" : "pending"}`}>
+            <Icon name={deliveryBlocked ? "alert" : "location"} size={18} />
+            <div>
+              <strong>{deliveryChecking ? "Checking delivery area…" : !postalCodeValid ? "Enter a 6-digit PIN code" : deliveryBlocked ? "Delivery unavailable" : deliveryQuote?.matched ? `Delivering via ${deliveryQuote.zoneName}` : "Delivery PIN verified"}</strong>
+              <small>{deliveryChecking ? "Riseora is checking shipping, ETA and COD availability." : !postalCodeValid ? "Shipping fee, delivery time and COD availability are calculated from your PIN." : deliveryQuote?.reason || "Store-wide delivery rules apply to this PIN code."}</small>
+              {postalCodeValid && deliveryQuote?.serviceable && <span>{Number(pricing?.shippingFee ?? deliveryQuote.shippingFee ?? 0) > 0 ? `Current shipping ₹${Number(pricing?.shippingFee ?? deliveryQuote.shippingFee).toFixed(0)}` : "Free shipping"} • {deliveryQuote.codAllowed ? "COD supported in this area" : "Prepaid-only area"}</span>}
+            </div>
+          </div>
 
           <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
           <div className="payment-choice-grid">
@@ -257,7 +297,7 @@ export default function Checkout() {
           </div>
           {!codEligibility.eligible && <div className="phase20-cod-unavailable"><Icon name="shield" size={18} /><div><strong>COD unavailable for this order</strong>{codEligibility.reasons.map((reason) => <small key={reason}>{reason}</small>)}{onlinePaymentsEnabled && <small>Your cart and coupon stay unchanged when you switch to secure online payment.</small>}</div></div>}
           <div className="phase20-checkout-trust"><span><Icon name="shield" size={16} /> Server-validated prices</span><span><Icon name="truck" size={16} /> Tracked fulfilment</span><span><Icon name="refresh" size={16} /> {storeConfig.returnsEnabled === false ? "Return policy" : `${storeConfig.returnWindowDays ?? 7}-day return window`}</span></div>
-          <button className="button wide checkout-submit" disabled={submitting || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled)}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
+          <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
         </form>
 
         <aside className="summary-card checkout-summary">
@@ -273,7 +313,7 @@ export default function Checkout() {
           <div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div>
         </aside>
       </div>
-      <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={submitting || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled)}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
+      <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={checkoutDisabled}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
     </div>
   );
 }

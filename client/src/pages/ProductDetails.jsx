@@ -64,6 +64,8 @@ export default function ProductDetails() {
   const [fbtSelected, setFbtSelected] = useState([]);
   const [deliveryPin, setDeliveryPin] = useState(readSavedPin);
   const [deliveryMessage, setDeliveryMessage] = useState("");
+  const [deliveryQuote, setDeliveryQuote] = useState(null);
+  const [deliveryBusy, setDeliveryBusy] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const galleryTouchStart = useRef(null);
 
@@ -137,13 +139,27 @@ export default function ProductDetails() {
     for (const item of fbtChosen) { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); if (v) addItem(item, v, 1); }
   }
 
-  function saveDeliveryPin(event) {
+  async function saveDeliveryPin(event) {
     event.preventDefault();
     const value = deliveryPin.replace(/\D/g, "").slice(0, 6);
-    setDeliveryPin(value);
+    setDeliveryPin(value); setDeliveryQuote(null);
     if (!/^\d{6}$/.test(value)) { setDeliveryMessage("Enter a valid 6-digit PIN code."); return; }
-    try { localStorage.setItem("riseora_delivery_pin", value); } catch { /* optional preference */ }
-    setDeliveryMessage(`Typical estimate for PIN ${value}: ${estimatedFrom}–${estimatedTo}. Final serviceability is confirmed by the courier.`);
+    setDeliveryBusy(true); setDeliveryMessage("");
+    try {
+      const response = await apiFetch(`/store/serviceability?postalCode=${encodeURIComponent(value)}&subtotal=${encodeURIComponent(Number(variant?.sellingPrice || 0) * Math.max(1, quantity))}&paymentMethod=ONLINE`);
+      const quote = response.data;
+      setDeliveryQuote(quote);
+      try { localStorage.setItem("riseora_delivery_pin", value); } catch { /* optional preference */ }
+      if (!quote.serviceable) setDeliveryMessage(quote.reason || "Delivery is not available for this PIN code yet.");
+      else {
+        const from = formatEta(Number(quote.dispatchWithinDays || 0) + Number(quote.deliveryMinDays || 1));
+        const to = formatEta(Number(quote.dispatchWithinDays || 0) + Number(quote.deliveryMaxDays || quote.deliveryMinDays || 1));
+        const shipping = Number(quote.shippingFee || 0) > 0 ? `Shipping ₹${Number(quote.shippingFee).toFixed(0)}` : "Free shipping";
+        const cod = quote.codAllowed ? "COD available" : "Prepaid only";
+        setDeliveryMessage(`${quote.zoneName ? `${quote.zoneName} • ` : ""}${from}–${to} • ${shipping} • ${cod}`);
+      }
+    } catch (err) { setDeliveryMessage(err.message || "Delivery availability could not be checked right now."); }
+    finally { setDeliveryBusy(false); }
   }
 
   async function shareProduct() {
@@ -200,8 +216,9 @@ export default function ProductDetails() {
           {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
           <section className="phase17-delivery-card">
             <div className="phase17-delivery-head"><span><Icon name="truck" size={20} /></span><div><strong>Delivery estimate</strong><small>Usually dispatches within {dispatchDays} day{dispatchDays === 1 ? "" : "s"} · typical arrival {estimatedFrom}–{estimatedTo}</small></div><button type="button" onClick={shareProduct} aria-label="Share product"><Icon name="share" size={18} /></button></div>
-            <form className="phase17-pin-check" onSubmit={saveDeliveryPin}><input value={deliveryPin} onChange={(e) => setDeliveryPin(e.target.value.replace(/\D/g, "").slice(0, 6))} inputMode="numeric" placeholder="Enter 6-digit PIN" aria-label="Delivery PIN code" /><button type="submit">SAVE PIN</button></form>
-            {deliveryMessage && <small className="phase17-delivery-message">{deliveryMessage}</small>}
+            <form className="phase17-pin-check" onSubmit={saveDeliveryPin}><input value={deliveryPin} onChange={(e) => { setDeliveryPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryQuote(null); setDeliveryMessage(""); }} inputMode="numeric" placeholder="Enter 6-digit PIN" aria-label="Delivery PIN code" /><button type="submit" disabled={deliveryBusy}>{deliveryBusy ? "CHECKING…" : "CHECK PIN"}</button></form>
+            {deliveryMessage && <small className={`phase17-delivery-message${deliveryQuote && !deliveryQuote.serviceable ? " unavailable" : ""}`}>{deliveryMessage}</small>}
+            {deliveryQuote?.matched && <small className="phase21-zone-hint">Matched delivery zone: <strong>{deliveryQuote.zoneName}</strong>{deliveryQuote.city || deliveryQuote.state ? ` • ${[deliveryQuote.city, deliveryQuote.state].filter(Boolean).join(", ")}` : ""}</small>}
             {shareMessage && <small className="phase17-share-message">{shareMessage}</small>}
           </section>
           <div className="detail-benefit-grid"><span><Icon name="shield" size={19} /><b>Secure checkout</b><small>Protected purchase</small></span><span><Icon name="clock" size={19} /><b>{deliveryMinDays}–{deliveryMaxDays} day delivery</b><small>Typical estimate</small></span><span><Icon name="leaf" size={19} /><b>Herbal care</b><small>Everyday routine</small></span></div>

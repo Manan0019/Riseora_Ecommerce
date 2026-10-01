@@ -54,6 +54,7 @@ const cartPreviewSchema = z.object({
   couponCode: z.string().trim().max(40).optional().or(z.literal("")),
   customerEmail: z.string().trim().email().optional().or(z.literal("")),
   customerPhone: z.string().trim().max(24).optional().or(z.literal("")),
+  postalCode: z.string().trim().regex(/^\d{6}$/).optional().or(z.literal("")),
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
@@ -66,9 +67,9 @@ router.post(
     try {
       const prepared = await prepareCheckout({
         customerName: "Preview", customerEmail: parsed.data.customerEmail || "", customerPhone: parsed.data.customerPhone || "", couponCode: parsed.data.couponCode || "",
-        shippingAddress: { line1: "Preview", city: "Preview", state: "Gujarat", postalCode: "0000", country: "India" },
+        shippingAddress: { line1: "Preview", city: "Preview", state: "Gujarat", postalCode: parsed.data.postalCode || "", country: "India" },
         items: parsed.data.items,
-      }, parsed.data.paymentMethod, req.user?.id ?? null);
+      }, parsed.data.paymentMethod, req.user?.id ?? null, { enforceServiceability: Boolean(parsed.data.postalCode) });
       res.json({
         success: true,
         data: {
@@ -76,6 +77,7 @@ router.post(
           couponDiscountAmount: prepared.couponDiscountAmount, automaticDiscountAmount: prepared.automaticDiscountAmount,
           automaticPromotionName: prepared.automaticPromotionName, automaticPromotionType: prepared.automaticPromotionType,
           promotionValue: prepared.promotionValue, totalAmount: prepared.totalAmount,
+          delivery: { serviceable: prepared.delivery.serviceable, matched: prepared.delivery.matched, zoneName: prepared.delivery.zoneName, city: prepared.delivery.city, state: prepared.delivery.state, codAllowed: prepared.delivery.codAllowed, dispatchWithinDays: prepared.delivery.dispatchWithinDays, deliveryMinDays: prepared.delivery.deliveryMinDays, deliveryMaxDays: prepared.delivery.deliveryMaxDays },
           freeItems: prepared.items.filter((item) => item.isComplimentary),
         },
       });
@@ -86,6 +88,7 @@ router.post(
         const [, productName, limit] = message.split(":");
         return res.status(400).json({ success: false, message: `${productName} is limited to ${limit} per order.` });
       }
+      if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(400).json({ success: false, message: message.slice("PIN_UNSERVICEABLE:".length) });
       if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
