@@ -1,0 +1,8 @@
+:root {
+ --riseora-green:#173b2a;
+ --riseora-gold:#b08d57;
+ --riseora-cream:#faf5eb;
+}
+.riseora-hero{
+ background:var(--riseora-cream);
+}
