@@ -1,0 +1,12 @@
+CREATE TYPE "NotificationType" AS ENUM ('GENERAL','ORDER','PRICE_DROP','STOCK_ALERT','CAMPAIGN');
+
+CREATE TABLE "Notification" (
+"id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+"userId" UUID NOT NULL,
+"title" TEXT NOT NULL,
+"message" TEXT NOT NULL,
+"type" "NotificationType" NOT NULL DEFAULT 'GENERAL',
+"isRead" BOOLEAN NOT NULL DEFAULT false,
+"createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+CONSTRAINT "Notification_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE
+);
