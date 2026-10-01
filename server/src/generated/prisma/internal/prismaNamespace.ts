@@ -412,6 +412,7 @@ export const ModelName = {
   CheckoutSession: 'CheckoutSession',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
+  ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
   ReturnRequest: 'ReturnRequest',
@@ -424,6 +425,7 @@ export const ModelName = {
   Offer: 'Offer',
   MerchandisingDeal: 'MerchandisingDeal',
   Review: 'Review',
+  ProductQuestion: 'ProductQuestion',
   Banner: 'Banner',
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
@@ -444,7 +446,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert"
+    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1558,6 +1560,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ShippingZone: {
+      payload: Prisma.$ShippingZonePayload<ExtArgs>
+      fields: Prisma.ShippingZoneFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ShippingZoneFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ShippingZoneFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        findFirst: {
+          args: Prisma.ShippingZoneFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ShippingZoneFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        findMany: {
+          args: Prisma.ShippingZoneFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>[]
+        }
+        create: {
+          args: Prisma.ShippingZoneCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        createMany: {
+          args: Prisma.ShippingZoneCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ShippingZoneCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>[]
+        }
+        delete: {
+          args: Prisma.ShippingZoneDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        update: {
+          args: Prisma.ShippingZoneUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        deleteMany: {
+          args: Prisma.ShippingZoneDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ShippingZoneUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ShippingZoneUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>[]
+        }
+        upsert: {
+          args: Prisma.ShippingZoneUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ShippingZonePayload>
+        }
+        aggregate: {
+          args: Prisma.ShippingZoneAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateShippingZone>
+        }
+        groupBy: {
+          args: Prisma.ShippingZoneGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShippingZoneGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ShippingZoneCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ShippingZoneCountAggregateOutputType> | number
+        }
+      }
+    }
     ShippingPartner: {
       payload: Prisma.$ShippingPartnerPayload<ExtArgs>
       fields: Prisma.ShippingPartnerFieldRefs
@@ -2446,6 +2522,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ProductQuestion: {
+      payload: Prisma.$ProductQuestionPayload<ExtArgs>
+      fields: Prisma.ProductQuestionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ProductQuestionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ProductQuestionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        findFirst: {
+          args: Prisma.ProductQuestionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ProductQuestionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        findMany: {
+          args: Prisma.ProductQuestionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>[]
+        }
+        create: {
+          args: Prisma.ProductQuestionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        createMany: {
+          args: Prisma.ProductQuestionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ProductQuestionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>[]
+        }
+        delete: {
+          args: Prisma.ProductQuestionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        update: {
+          args: Prisma.ProductQuestionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ProductQuestionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ProductQuestionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ProductQuestionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ProductQuestionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ProductQuestionPayload>
+        }
+        aggregate: {
+          args: Prisma.ProductQuestionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateProductQuestion>
+        }
+        groupBy: {
+          args: Prisma.ProductQuestionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductQuestionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ProductQuestionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ProductQuestionCountAggregateOutputType> | number
+        }
+      }
+    }
     Banner: {
       payload: Prisma.$BannerPayload<ExtArgs>
       fields: Prisma.BannerFieldRefs
@@ -2936,6 +3086,7 @@ export const ProductScalarFieldEnum = {
   isFeatured: 'isFeatured',
   badge: 'badge',
   maxPurchaseQuantity: 'maxPurchaseQuantity',
+  codAllowed: 'codAllowed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2987,6 +3138,8 @@ export const OrderScalarFieldEnum = {
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
   shippingAddress: 'shippingAddress',
+  shippingZoneName: 'shippingZoneName',
+  deliveryEstimate: 'deliveryEstimate',
   status: 'status',
   paymentMethod: 'paymentMethod',
   couponCode: 'couponCode',
@@ -3079,6 +3232,8 @@ export const CheckoutSessionScalarFieldEnum = {
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
   shippingAddress: 'shippingAddress',
+  shippingZoneName: 'shippingZoneName',
+  deliveryEstimate: 'deliveryEstimate',
   couponCode: 'couponCode',
   automaticPromotionName: 'automaticPromotionName',
   automaticDiscountAmount: 'automaticDiscountAmount',
@@ -3133,10 +3288,15 @@ export const StoreSettingScalarFieldEnum = {
   freeShippingThreshold: 'freeShippingThreshold',
   flatShippingFee: 'flatShippingFee',
   codFee: 'codFee',
+  codEnabled: 'codEnabled',
+  codMinOrderAmount: 'codMinOrderAmount',
+  codMaxOrderAmount: 'codMaxOrderAmount',
+  maxOpenCodOrdersPerCustomer: 'maxOpenCodOrdersPerCustomer',
   dispatchWithinDays: 'dispatchWithinDays',
   deliveryMinDays: 'deliveryMinDays',
   deliveryMaxDays: 'deliveryMaxDays',
   lowStockUrgencyThreshold: 'lowStockUrgencyThreshold',
+  requireServiceablePostalCode: 'requireServiceablePostalCode',
   returnsEnabled: 'returnsEnabled',
   returnWindowDays: 'returnWindowDays',
   returnPolicy: 'returnPolicy',
@@ -3164,6 +3324,26 @@ export const StoreSettingScalarFieldEnum = {
 } as const
 
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const ShippingZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  postalPrefixes: 'postalPrefixes',
+  city: 'city',
+  state: 'state',
+  shippingFee: 'shippingFee',
+  freeShippingThreshold: 'freeShippingThreshold',
+  codAllowed: 'codAllowed',
+  deliveryMinDays: 'deliveryMinDays',
+  deliveryMaxDays: 'deliveryMaxDays',
+  isActive: 'isActive',
+  priority: 'priority',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingZoneScalarFieldEnum = (typeof ShippingZoneScalarFieldEnum)[keyof typeof ShippingZoneScalarFieldEnum]
 
 
 export const ShippingPartnerScalarFieldEnum = {
@@ -3361,6 +3541,7 @@ export const ReviewScalarFieldEnum = {
   rating: 'rating',
   title: 'title',
   comment: 'comment',
+  images: 'images',
   isApproved: 'isApproved',
   verifiedPurchase: 'verifiedPurchase',
   createdAt: 'createdAt',
@@ -3368,6 +3549,21 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ProductQuestionScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  userId: 'userId',
+  question: 'question',
+  answer: 'answer',
+  isPublished: 'isPublished',
+  answeredAt: 'answeredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductQuestionScalarFieldEnum = (typeof ProductQuestionScalarFieldEnum)[keyof typeof ProductQuestionScalarFieldEnum]
 
 
 export const BannerScalarFieldEnum = {
@@ -4003,6 +4199,7 @@ export type GlobalOmitConfig = {
   checkoutSession?: Prisma.CheckoutSessionOmit
   paymentWebhookEvent?: Prisma.PaymentWebhookEventOmit
   storeSetting?: Prisma.StoreSettingOmit
+  shippingZone?: Prisma.ShippingZoneOmit
   shippingPartner?: Prisma.ShippingPartnerOmit
   invoice?: Prisma.InvoiceOmit
   returnRequest?: Prisma.ReturnRequestOmit
@@ -4015,6 +4212,7 @@ export type GlobalOmitConfig = {
   offer?: Prisma.OfferOmit
   merchandisingDeal?: Prisma.MerchandisingDealOmit
   review?: Prisma.ReviewOmit
+  productQuestion?: Prisma.ProductQuestionOmit
   banner?: Prisma.BannerOmit
   cartRecoverySession?: Prisma.CartRecoverySessionOmit
   contactMessage?: Prisma.ContactMessageOmit

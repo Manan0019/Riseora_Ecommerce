@@ -93,6 +93,11 @@ export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
  */
 export type StoreSetting = Prisma.StoreSettingModel
 /**
+ * Model ShippingZone
+ * 
+ */
+export type ShippingZone = Prisma.ShippingZoneModel
+/**
  * Model ShippingPartner
  * 
  */
@@ -152,6 +157,11 @@ export type MerchandisingDeal = Prisma.MerchandisingDealModel
  * 
  */
 export type Review = Prisma.ReviewModel
+/**
+ * Model ProductQuestion
+ * 
+ */
+export type ProductQuestion = Prisma.ProductQuestionModel
 /**
  * Model Banner
  * 

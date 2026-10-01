@@ -267,6 +267,7 @@ export type UserWhereInput = {
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  productQuestions?: Prisma.ProductQuestionListRelationFilter
   checkoutSessions?: Prisma.CheckoutSessionListRelationFilter
   returnRequests?: Prisma.ReturnRequestListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
@@ -288,6 +289,7 @@ export type UserOrderByWithRelationInput = {
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
+  productQuestions?: Prisma.ProductQuestionOrderByRelationAggregateInput
   checkoutSessions?: Prisma.CheckoutSessionOrderByRelationAggregateInput
   returnRequests?: Prisma.ReturnRequestOrderByRelationAggregateInput
   passwordResetTokens?: Prisma.PasswordResetTokenOrderByRelationAggregateInput
@@ -312,6 +314,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  productQuestions?: Prisma.ProductQuestionListRelationFilter
   checkoutSessions?: Prisma.CheckoutSessionListRelationFilter
   returnRequests?: Prisma.ReturnRequestListRelationFilter
   passwordResetTokens?: Prisma.PasswordResetTokenListRelationFilter
@@ -369,6 +372,7 @@ export type UserCreateInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -390,6 +394,7 @@ export type UserUncheckedCreateInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -411,6 +416,7 @@ export type UserUpdateInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -432,6 +438,7 @@ export type UserUncheckedUpdateInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -674,6 +681,20 @@ export type UserUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsInput, Prisma.UserUpdateWithoutReviewsInput>, Prisma.UserUncheckedUpdateWithoutReviewsInput>
 }
 
+export type UserCreateNestedOneWithoutProductQuestionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductQuestionsInput, Prisma.UserUncheckedCreateWithoutProductQuestionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductQuestionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutProductQuestionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutProductQuestionsInput, Prisma.UserUncheckedCreateWithoutProductQuestionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutProductQuestionsInput
+  upsert?: Prisma.UserUpsertWithoutProductQuestionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutProductQuestionsInput, Prisma.UserUpdateWithoutProductQuestionsInput>, Prisma.UserUncheckedUpdateWithoutProductQuestionsInput>
+}
+
 export type UserCreateWithoutPasswordResetTokensInput = {
   id?: string
   firstName: string
@@ -689,6 +710,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
@@ -709,6 +731,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
@@ -745,6 +768,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
@@ -765,6 +789,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
@@ -784,6 +809,7 @@ export type UserCreateWithoutAddressesInput = {
   updatedAt?: Date | string
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -804,6 +830,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   updatedAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -840,6 +867,7 @@ export type UserUpdateWithoutAddressesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -860,6 +888,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -880,6 +909,7 @@ export type UserCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -900,6 +930,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -936,6 +967,7 @@ export type UserUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -956,6 +988,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -977,6 +1010,7 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
@@ -997,6 +1031,7 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
@@ -1033,6 +1068,7 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
@@ -1053,6 +1089,7 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
@@ -1073,6 +1110,7 @@ export type UserCreateWithoutReturnRequestsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
@@ -1093,6 +1131,7 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
@@ -1129,6 +1168,7 @@ export type UserUpdateWithoutReturnRequestsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
@@ -1149,6 +1189,7 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
   couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
@@ -1169,6 +1210,7 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -1189,6 +1231,7 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1225,6 +1268,7 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -1245,6 +1289,7 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1264,6 +1309,7 @@ export type UserCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
@@ -1284,6 +1330,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
@@ -1320,6 +1367,7 @@ export type UserUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
@@ -1340,6 +1388,107 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutProductQuestionsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  isActive?: boolean
+  tokenVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutProductQuestionsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  isActive?: boolean
+  tokenVersion?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutProductQuestionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductQuestionsInput, Prisma.UserUncheckedCreateWithoutProductQuestionsInput>
+}
+
+export type UserUpsertWithoutProductQuestionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutProductQuestionsInput, Prisma.UserUncheckedUpdateWithoutProductQuestionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutProductQuestionsInput, Prisma.UserUncheckedCreateWithoutProductQuestionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutProductQuestionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutProductQuestionsInput, Prisma.UserUncheckedUpdateWithoutProductQuestionsInput>
+}
+
+export type UserUpdateWithoutProductQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutProductQuestionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
   passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -1355,6 +1504,7 @@ export type UserCountOutputType = {
   addresses: number
   orders: number
   reviews: number
+  productQuestions: number
   checkoutSessions: number
   returnRequests: number
   passwordResetTokens: number
@@ -1365,6 +1515,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   addresses?: boolean | UserCountOutputTypeCountAddressesArgs
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
+  productQuestions?: boolean | UserCountOutputTypeCountProductQuestionsArgs
   checkoutSessions?: boolean | UserCountOutputTypeCountCheckoutSessionsArgs
   returnRequests?: boolean | UserCountOutputTypeCountReturnRequestsArgs
   passwordResetTokens?: boolean | UserCountOutputTypeCountPasswordResetTokensArgs
@@ -1400,6 +1551,13 @@ export type UserCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Ext
  */
 export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ReviewWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountProductQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductQuestionWhereInput
 }
 
 /**
@@ -1446,6 +1604,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
+  productQuestions?: boolean | Prisma.User$productQuestionsArgs<ExtArgs>
   checkoutSessions?: boolean | Prisma.User$checkoutSessionsArgs<ExtArgs>
   returnRequests?: boolean | Prisma.User$returnRequestsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
@@ -1500,6 +1659,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
+  productQuestions?: boolean | Prisma.User$productQuestionsArgs<ExtArgs>
   checkoutSessions?: boolean | Prisma.User$checkoutSessionsArgs<ExtArgs>
   returnRequests?: boolean | Prisma.User$returnRequestsArgs<ExtArgs>
   passwordResetTokens?: boolean | Prisma.User$passwordResetTokensArgs<ExtArgs>
@@ -1515,6 +1675,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
+    productQuestions: Prisma.$ProductQuestionPayload<ExtArgs>[]
     checkoutSessions: Prisma.$CheckoutSessionPayload<ExtArgs>[]
     returnRequests: Prisma.$ReturnRequestPayload<ExtArgs>[]
     passwordResetTokens: Prisma.$PasswordResetTokenPayload<ExtArgs>[]
@@ -1929,6 +2090,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   addresses<T extends Prisma.User$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productQuestions<T extends Prisma.User$productQuestionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$productQuestionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductQuestionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   checkoutSessions<T extends Prisma.User$checkoutSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$checkoutSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CheckoutSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   returnRequests<T extends Prisma.User$returnRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$returnRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReturnRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   passwordResetTokens<T extends Prisma.User$passwordResetTokensArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$passwordResetTokensArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PasswordResetTokenPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2435,6 +2597,30 @@ export type User$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
   take?: number
   skip?: number
   distinct?: Prisma.ReviewScalarFieldEnum | Prisma.ReviewScalarFieldEnum[]
+}
+
+/**
+ * User.productQuestions
+ */
+export type User$productQuestionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductQuestion
+   */
+  select?: Prisma.ProductQuestionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductQuestion
+   */
+  omit?: Prisma.ProductQuestionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductQuestionInclude<ExtArgs> | null
+  where?: Prisma.ProductQuestionWhereInput
+  orderBy?: Prisma.ProductQuestionOrderByWithRelationInput | Prisma.ProductQuestionOrderByWithRelationInput[]
+  cursor?: Prisma.ProductQuestionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductQuestionScalarFieldEnum | Prisma.ProductQuestionScalarFieldEnum[]
 }
 
 /**

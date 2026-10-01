@@ -66,6 +66,7 @@ export const ModelName = {
   CheckoutSession: 'CheckoutSession',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
+  ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
   ReturnRequest: 'ReturnRequest',
@@ -78,6 +79,7 @@ export const ModelName = {
   Offer: 'Offer',
   MerchandisingDeal: 'MerchandisingDeal',
   Review: 'Review',
+  ProductQuestion: 'ProductQuestion',
   Banner: 'Banner',
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
@@ -182,6 +184,7 @@ export const ProductScalarFieldEnum = {
   isFeatured: 'isFeatured',
   badge: 'badge',
   maxPurchaseQuantity: 'maxPurchaseQuantity',
+  codAllowed: 'codAllowed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -233,6 +236,8 @@ export const OrderScalarFieldEnum = {
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
   shippingAddress: 'shippingAddress',
+  shippingZoneName: 'shippingZoneName',
+  deliveryEstimate: 'deliveryEstimate',
   status: 'status',
   paymentMethod: 'paymentMethod',
   couponCode: 'couponCode',
@@ -325,6 +330,8 @@ export const CheckoutSessionScalarFieldEnum = {
   customerEmail: 'customerEmail',
   customerPhone: 'customerPhone',
   shippingAddress: 'shippingAddress',
+  shippingZoneName: 'shippingZoneName',
+  deliveryEstimate: 'deliveryEstimate',
   couponCode: 'couponCode',
   automaticPromotionName: 'automaticPromotionName',
   automaticDiscountAmount: 'automaticDiscountAmount',
@@ -379,10 +386,15 @@ export const StoreSettingScalarFieldEnum = {
   freeShippingThreshold: 'freeShippingThreshold',
   flatShippingFee: 'flatShippingFee',
   codFee: 'codFee',
+  codEnabled: 'codEnabled',
+  codMinOrderAmount: 'codMinOrderAmount',
+  codMaxOrderAmount: 'codMaxOrderAmount',
+  maxOpenCodOrdersPerCustomer: 'maxOpenCodOrdersPerCustomer',
   dispatchWithinDays: 'dispatchWithinDays',
   deliveryMinDays: 'deliveryMinDays',
   deliveryMaxDays: 'deliveryMaxDays',
   lowStockUrgencyThreshold: 'lowStockUrgencyThreshold',
+  requireServiceablePostalCode: 'requireServiceablePostalCode',
   returnsEnabled: 'returnsEnabled',
   returnWindowDays: 'returnWindowDays',
   returnPolicy: 'returnPolicy',
@@ -410,6 +422,26 @@ export const StoreSettingScalarFieldEnum = {
 } as const
 
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const ShippingZoneScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  postalPrefixes: 'postalPrefixes',
+  city: 'city',
+  state: 'state',
+  shippingFee: 'shippingFee',
+  freeShippingThreshold: 'freeShippingThreshold',
+  codAllowed: 'codAllowed',
+  deliveryMinDays: 'deliveryMinDays',
+  deliveryMaxDays: 'deliveryMaxDays',
+  isActive: 'isActive',
+  priority: 'priority',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ShippingZoneScalarFieldEnum = (typeof ShippingZoneScalarFieldEnum)[keyof typeof ShippingZoneScalarFieldEnum]
 
 
 export const ShippingPartnerScalarFieldEnum = {
@@ -607,6 +639,7 @@ export const ReviewScalarFieldEnum = {
   rating: 'rating',
   title: 'title',
   comment: 'comment',
+  images: 'images',
   isApproved: 'isApproved',
   verifiedPurchase: 'verifiedPurchase',
   createdAt: 'createdAt',
@@ -614,6 +647,21 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const ProductQuestionScalarFieldEnum = {
+  id: 'id',
+  productId: 'productId',
+  userId: 'userId',
+  question: 'question',
+  answer: 'answer',
+  isPublished: 'isPublished',
+  answeredAt: 'answeredAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductQuestionScalarFieldEnum = (typeof ProductQuestionScalarFieldEnum)[keyof typeof ProductQuestionScalarFieldEnum]
 
 
 export const BannerScalarFieldEnum = {
