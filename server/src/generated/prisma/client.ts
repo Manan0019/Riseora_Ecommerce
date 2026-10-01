@@ -117,6 +117,11 @@ export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
  */
 export type StoreSetting = Prisma.StoreSettingModel
 /**
+ * Model WishlistShare
+ * 
+ */
+export type WishlistShare = Prisma.WishlistShareModel
+/**
  * Model ShippingZone
  * 
  */

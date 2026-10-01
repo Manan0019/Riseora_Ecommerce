@@ -412,6 +412,7 @@ export const ModelName = {
   CheckoutSession: 'CheckoutSession',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
+  WishlistShare: 'WishlistShare',
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
@@ -446,7 +447,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert"
+    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1557,6 +1558,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.StoreSettingCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.StoreSettingCountAggregateOutputType> | number
+        }
+      }
+    }
+    WishlistShare: {
+      payload: Prisma.$WishlistSharePayload<ExtArgs>
+      fields: Prisma.WishlistShareFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WishlistShareFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WishlistShareFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        findFirst: {
+          args: Prisma.WishlistShareFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WishlistShareFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        findMany: {
+          args: Prisma.WishlistShareFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>[]
+        }
+        create: {
+          args: Prisma.WishlistShareCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        createMany: {
+          args: Prisma.WishlistShareCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WishlistShareCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>[]
+        }
+        delete: {
+          args: Prisma.WishlistShareDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        update: {
+          args: Prisma.WishlistShareUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        deleteMany: {
+          args: Prisma.WishlistShareDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WishlistShareUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WishlistShareUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>[]
+        }
+        upsert: {
+          args: Prisma.WishlistShareUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistSharePayload>
+        }
+        aggregate: {
+          args: Prisma.WishlistShareAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWishlistShare>
+        }
+        groupBy: {
+          args: Prisma.WishlistShareGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WishlistShareGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WishlistShareCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WishlistShareCountAggregateOutputType> | number
         }
       }
     }
@@ -3326,6 +3401,18 @@ export const StoreSettingScalarFieldEnum = {
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
 
 
+export const WishlistShareScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  title: 'title',
+  productIds: 'productIds',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type WishlistShareScalarFieldEnum = (typeof WishlistShareScalarFieldEnum)[keyof typeof WishlistShareScalarFieldEnum]
+
+
 export const ShippingZoneScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -4199,6 +4286,7 @@ export type GlobalOmitConfig = {
   checkoutSession?: Prisma.CheckoutSessionOmit
   paymentWebhookEvent?: Prisma.PaymentWebhookEventOmit
   storeSetting?: Prisma.StoreSettingOmit
+  wishlistShare?: Prisma.WishlistShareOmit
   shippingZone?: Prisma.ShippingZoneOmit
   shippingPartner?: Prisma.ShippingPartnerOmit
   invoice?: Prisma.InvoiceOmit

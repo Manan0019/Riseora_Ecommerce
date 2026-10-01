@@ -66,6 +66,7 @@ export const ModelName = {
   CheckoutSession: 'CheckoutSession',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
+  WishlistShare: 'WishlistShare',
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
@@ -422,6 +423,18 @@ export const StoreSettingScalarFieldEnum = {
 } as const
 
 export type StoreSettingScalarFieldEnum = (typeof StoreSettingScalarFieldEnum)[keyof typeof StoreSettingScalarFieldEnum]
+
+
+export const WishlistShareScalarFieldEnum = {
+  id: 'id',
+  token: 'token',
+  title: 'title',
+  productIds: 'productIds',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type WishlistShareScalarFieldEnum = (typeof WishlistShareScalarFieldEnum)[keyof typeof WishlistShareScalarFieldEnum]
 
 
 export const ShippingZoneScalarFieldEnum = {
