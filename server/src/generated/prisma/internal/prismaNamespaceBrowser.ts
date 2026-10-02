@@ -264,6 +264,7 @@ export type ProductImageScalarFieldEnum = (typeof ProductImageScalarFieldEnum)[k
 export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
+  checkoutRequestKey: 'checkoutRequestKey',
   userId: 'userId',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
@@ -391,6 +392,7 @@ export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeo
 
 export const CheckoutSessionScalarFieldEnum = {
   id: 'id',
+  checkoutRequestKey: 'checkoutRequestKey',
   userId: 'userId',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
@@ -412,6 +414,10 @@ export const CheckoutSessionScalarFieldEnum = {
   providerOrderId: 'providerOrderId',
   providerPaymentId: 'providerPaymentId',
   stockReserved: 'stockReserved',
+  paymentAttemptCount: 'paymentAttemptCount',
+  lastPaymentStatus: 'lastPaymentStatus',
+  lastPaymentError: 'lastPaymentError',
+  lastPaymentActivityAt: 'lastPaymentActivityAt',
   orderId: 'orderId',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',

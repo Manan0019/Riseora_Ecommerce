@@ -56,10 +56,13 @@
     "OrderCancellationRequest",
     "ShipmentEvent",
     "ReturnEvidence",
-    "ReturnStatusHistory"
+    "ReturnStatusHistory",
+    "Order.checkoutRequestKey",
+    "CheckoutSession.checkoutRequestKey",
+    "CheckoutSession payment recovery telemetry"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 32,
+  "latestPhase": 33,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -179,5 +182,21 @@
     ],
     "migration": "20261002143000_phase32_post_purchase_ops_v2",
     "verification": "npm run verify:phase32"
+  },
+  "phase33": {
+    "name": "Checkout & Payment Reliability V2",
+    "features": [
+      "idempotent checkout request keys prevent duplicate COD orders during retries/double submits",
+      "recoverable Razorpay checkout sessions survive modal dismiss and delayed UPI confirmation",
+      "customer payment retry, status check and explicit reservation cancellation controls",
+      "authoritative webhook capture can finalize a dismissed payment session instead of racing a client-side cancel",
+      "payment failed webhook no longer destroys the reusable provider order immediately",
+      "signed-in customers can save new checkout delivery addresses with type/default preference",
+      "upgraded order-success experience with payment, delivery and next-step guidance",
+      "Admin Payments operations screen for pending reservations, webhook health and manual safe release",
+      "phase verification checks payment recovery invariants and legacy analytics path regression"
+    ],
+    "migration": "20261002165000_phase33_checkout_payment_reliability",
+    "verification": "npm run verify:phase33"
   }
 }

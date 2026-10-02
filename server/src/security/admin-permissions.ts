@@ -32,7 +32,7 @@ export function permissionForAdminPath(originalUrl: string): AdminPermission {
   if (pathname.startsWith("/settings")) return "SETTINGS";
   if (pathname.startsWith("/erp-sync")) return "ERP";
   if (pathname.startsWith("/system")) return "SYSTEM";
-  if (["/orders", "/dispatch", "/invoices", "/returns", "/cancellations", "/shipping-zones", "/shipping-partners"].some((prefix) => pathname.startsWith(prefix))) return "OPERATIONS";
+  if (["/orders", "/dispatch", "/invoices", "/returns", "/cancellations", "/shipping-zones", "/shipping-partners", "/payments"].some((prefix) => pathname.startsWith(prefix))) return "OPERATIONS";
   if (pathname.startsWith("/customers")) return "CUSTOMERS";
   if (["/categories", "/products", "/inventory", "/suitability-options", "/uploads"].some((prefix) => pathname.startsWith(prefix))) return "CATALOG";
   if (["/reviews", "/product-questions"].some((prefix) => pathname.startsWith(prefix))) return "CONTENT";

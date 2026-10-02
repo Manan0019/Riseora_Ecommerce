@@ -8,12 +8,14 @@ import { createOrderPlacedInAppNotification } from "./notification-center.servic
 import { calculateShippingFee, getStoreSettings } from "./store.service";
 import { getShippingQuote, normalizePostalCode, resolveShippingZone } from "./shipping-zone.service";
 import { evaluateBestMerchandisingDeal } from "./merchandising.service";
+import { findCapturedRazorpayPaymentForOrder } from "./payment.service";
 
 export type CheckoutInput = {
   customerName: string;
   customerEmail?: string;
   customerPhone: string;
   couponCode?: string;
+  checkoutRequestKey?: string;
   shippingAddress: { line1: string; line2?: string; landmark?: string; city: string; state: string; postalCode: string; country: string };
   items: { variantId: string; quantity: number }[];
 };
@@ -347,13 +349,29 @@ function orderItemCreate(item: SnapshotItem) {
 }
 
 export async function createCodOrder(input: CheckoutInput, userId: string | null) {
+  const requestKey = input.checkoutRequestKey?.trim() || null;
+  if (requestKey) {
+    const existing = await prisma.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
+    if (existing) return existing;
+    const pendingOnline = await prisma.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
+    if (pendingOnline?.status === "PENDING") throw new Error("ONLINE_CHECKOUT_PENDING");
+  }
+
   const prepared = await prepareCheckout(input, "COD", userId);
-  const order = await prisma.$transaction(async (tx) => {
+  const result = await prisma.$transaction(async (tx) => {
+    if (requestKey) {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${requestKey}))`;
+      const existing = await tx.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
+      if (existing) return { order: existing, created: false };
+      const pendingOnline = await tx.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
+      if (pendingOnline?.status === "PENDING") throw new Error("ONLINE_CHECKOUT_PENDING");
+    }
+
     await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
     await reserveCouponAndStock(tx, prepared);
     const created = await tx.order.create({
       data: {
-        orderNumber: makeOrderNumber(), userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
+        orderNumber: makeOrderNumber(), checkoutRequestKey: requestKey, userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
         customerPhone: input.customerPhone, shippingAddress: input.shippingAddress, shippingZoneName: prepared.delivery.zoneName, deliveryEstimate: { postalCode: prepared.delivery.postalCode, dispatchWithinDays: prepared.delivery.dispatchWithinDays, deliveryMinDays: prepared.delivery.deliveryMinDays, deliveryMaxDays: prepared.delivery.deliveryMaxDays }, paymentMethod: "COD", couponCode: prepared.coupon?.code ?? null,
         automaticPromotionName: prepared.automaticPromotionName, automaticDiscountAmount: prepared.automaticDiscountAmount,
         subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount, totalAmount: prepared.totalAmount,
@@ -363,30 +381,54 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
       },
       include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
     });
-    if (prepared.coupon) {
-      await tx.couponRedemption.create({ data: { couponId: prepared.coupon.id, orderId: created.id, userId, customerEmail: input.customerEmail?.trim().toLowerCase() || null, customerPhone: input.customerPhone?.trim() || null } });
-    }
-    return created;
+    if (prepared.coupon) await tx.couponRedemption.create({ data: { couponId: prepared.coupon.id, orderId: created.id, userId, customerEmail: input.customerEmail?.trim().toLowerCase() || null, customerPhone: input.customerPhone?.trim() || null } });
+    return { order: created, created: true };
   });
-  void sendOrderPlacedNotifications(order).catch((error) => console.error("Order notification failed", error));
-  void createOrderPlacedInAppNotification(order).catch((error) => console.error("In-app order notification failed", error));
-  return order;
+  if (result.created) {
+    void sendOrderPlacedNotifications(result.order).catch((error) => console.error("Order notification failed", error));
+    void createOrderPlacedInAppNotification(result.order).catch((error) => console.error("In-app order notification failed", error));
+  }
+  return result.order;
 }
 
 export async function createOnlineCheckoutReservation(input: CheckoutInput, userId: string | null) {
+  const requestKey = input.checkoutRequestKey?.trim() || null;
+  if (requestKey) {
+    const existingOrder = await prisma.order.findUnique({ where: { checkoutRequestKey: requestKey } });
+    if (existingOrder) throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+    const existing = await prisma.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
+    if (existing) {
+      if (existing.status === "PENDING" && existing.expiresAt > new Date()) return existing;
+      if (existing.status === "PAID") return existing;
+      throw new Error("CHECKOUT_REQUEST_CLOSED");
+    }
+  }
+
   const prepared = await prepareCheckout(input, "ONLINE", userId);
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   return prisma.$transaction(async (tx) => {
+    if (requestKey) {
+      await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${requestKey}))`;
+      const existingOrder = await tx.order.findUnique({ where: { checkoutRequestKey: requestKey } });
+      if (existingOrder) throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+      const existing = await tx.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
+      if (existing) {
+        if (existing.status === "PENDING" && existing.expiresAt > new Date()) return existing;
+        if (existing.status === "PAID") return existing;
+        throw new Error("CHECKOUT_REQUEST_CLOSED");
+      }
+    }
     await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
     await reserveCouponAndStock(tx, prepared);
     return tx.checkoutSession.create({
       data: {
+        checkoutRequestKey: requestKey,
         userId, customerName: input.customerName, customerEmail: input.customerEmail || null, customerPhone: input.customerPhone,
         shippingAddress: input.shippingAddress, shippingZoneName: prepared.delivery.zoneName, deliveryEstimate: { postalCode: prepared.delivery.postalCode, dispatchWithinDays: prepared.delivery.dispatchWithinDays, deliveryMinDays: prepared.delivery.deliveryMinDays, deliveryMaxDays: prepared.delivery.deliveryMaxDays }, couponCode: prepared.coupon?.code ?? null,
         automaticPromotionName: prepared.automaticPromotionName, automaticDiscountAmount: prepared.automaticDiscountAmount,
         subtotal: prepared.subtotal, shippingFee: prepared.shippingFee, discountAmount: prepared.discountAmount, totalAmount: prepared.totalAmount,
         amountPaise: Math.round(prepared.totalAmount * 100), items: prepared.items as unknown as Prisma.InputJsonValue,
-        expiresAt, stockReserved: true,
+        expiresAt, stockReserved: true, lastPaymentStatus: "RESERVED", lastPaymentActivityAt: new Date(),
       },
     });
   });
@@ -398,10 +440,17 @@ function parseItems(value: Prisma.JsonValue): SnapshotItem[] {
 }
 
 export async function releaseCheckoutSession(sessionId: string) {
+  const before = await prisma.checkoutSession.findUnique({ where: { id: sessionId } });
+  if (!before || before.status !== "PENDING") return before;
+  if (before.providerOrderId) {
+    const captured = await findCapturedRazorpayPaymentForOrder(before.providerOrderId);
+    if (captured?.id) return finalizeOnlineCheckout({ sessionId: before.id, providerOrderId: before.providerOrderId, providerPaymentId: captured.id });
+  }
+
   return prisma.$transaction(async (tx) => {
     const session = await tx.checkoutSession.findUnique({ where: { id: sessionId } });
     if (!session || session.status !== "PENDING") return session;
-    const changed = await tx.checkoutSession.updateMany({ where: { id: session.id, status: "PENDING" }, data: { status: "CANCELLED", stockReserved: false } });
+    const changed = await tx.checkoutSession.updateMany({ where: { id: session.id, status: "PENDING" }, data: { status: "CANCELLED", stockReserved: false, lastPaymentStatus: "CANCELLED", lastPaymentActivityAt: new Date() } });
     if (changed.count !== 1) return tx.checkoutSession.findUnique({ where: { id: session.id } });
     if (session.stockReserved) {
       const quantities = new Map<string, number>();
@@ -426,7 +475,7 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
   if (existing.providerOrderId !== input.providerOrderId) throw new Error("PAYMENT_ORDER_MISMATCH");
 
   const order = await prisma.$transaction(async (tx) => {
-    const locked = await tx.checkoutSession.updateMany({ where: { id: existing.id, status: "PENDING" }, data: { status: "PAID", providerPaymentId: input.providerPaymentId, stockReserved: false } });
+    const locked = await tx.checkoutSession.updateMany({ where: { id: existing.id, status: "PENDING" }, data: { status: "PAID", providerPaymentId: input.providerPaymentId, stockReserved: false, lastPaymentStatus: "VERIFIED", lastPaymentError: null, lastPaymentActivityAt: new Date() } });
     if (locked.count !== 1) {
       const processed = await tx.checkoutSession.findUnique({ where: { id: existing.id }, include: { order: { include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } } } });
       if (processed?.status === "PAID" && processed.order) return processed.order;
@@ -435,7 +484,7 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
     const items = parseItems(existing.items);
     const created = await tx.order.create({
       data: {
-        orderNumber: makeOrderNumber(), userId: existing.userId, customerName: existing.customerName, customerEmail: existing.customerEmail,
+        orderNumber: makeOrderNumber(), checkoutRequestKey: existing.checkoutRequestKey, userId: existing.userId, customerName: existing.customerName, customerEmail: existing.customerEmail,
         customerPhone: existing.customerPhone, shippingAddress: existing.shippingAddress as Prisma.InputJsonValue, shippingZoneName: existing.shippingZoneName, deliveryEstimate: existing.deliveryEstimate == null ? undefined : existing.deliveryEstimate as Prisma.InputJsonValue,
         paymentMethod: "ONLINE", couponCode: existing.couponCode,
         automaticPromotionName: existing.automaticPromotionName, automaticDiscountAmount: existing.automaticDiscountAmount,

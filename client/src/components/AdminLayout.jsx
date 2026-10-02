@@ -11,6 +11,7 @@ const nav = [
   { to: "/admin/reports", label: "Reports", icon: "sparkles", permission: "DASHBOARD" },
   { to: "/admin/inventory", label: "Inventory", icon: "tag", permission: "CATALOG" },
   { to: "/admin/orders", label: "Orders", icon: "orders", permission: "OPERATIONS" },
+  { to: "/admin/payments", label: "Payments", icon: "shield", permission: "OPERATIONS" },
   { to: "/admin/customers", label: "Customers", icon: "user", permission: "CUSTOMERS" },
   { to: "/admin/promotions", label: "Promotions", icon: "tag", permission: "MARKETING" },
   { to: "/admin/merchandising", label: "Merchandising", icon: "sparkles", permission: "MARKETING" },

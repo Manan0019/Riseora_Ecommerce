@@ -67,3 +67,17 @@ export async function refundRazorpayPayment(providerPaymentId: string, amountPai
   }
   return body as { id: string; payment_id?: string; amount?: number; status?: string };
 }
+
+
+export async function findCapturedRazorpayPaymentForOrder(providerOrderId: string) {
+  if (!env.RAZORPAY_KEY_ID || !env.RAZORPAY_KEY_SECRET) throw new Error("ONLINE_PAYMENTS_NOT_CONFIGURED");
+  const authorization = Buffer.from(`${env.RAZORPAY_KEY_ID}:${env.RAZORPAY_KEY_SECRET}`).toString("base64");
+  const response = await fetch(`https://api.razorpay.com/v1/orders/${encodeURIComponent(providerOrderId)}/payments`, { headers: { Authorization: `Basic ${authorization}` } });
+  const body = (await response.json().catch(() => ({}))) as { items?: Array<Record<string, unknown>> };
+  if (!response.ok || !Array.isArray(body.items)) {
+    console.error("Razorpay payment lookup failed", response.status, body);
+    throw new Error("PAYMENT_PROVIDER_LOOKUP_FAILED");
+  }
+  const captured = body.items.find((item) => item.status === "captured" && typeof item.id === "string");
+  return captured ? { id: String(captured.id), status: String(captured.status), amount: Number(captured.amount || 0) } : null;
+}

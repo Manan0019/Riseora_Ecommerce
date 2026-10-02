@@ -13,6 +13,7 @@ const createOrderSchema = z.object({
   customerEmail: z.string().trim().email().optional().or(z.literal("")),
   customerPhone: z.string().trim().min(8).max(20),
   couponCode: z.string().trim().max(40).optional().or(z.literal("")),
+  checkoutRequestKey: z.string().uuid().optional(),
   shippingAddress: z.object({
     line1: z.string().trim().min(3),
     line2: z.string().trim().optional().or(z.literal("")),
@@ -74,6 +75,7 @@ router.post(
       }
       if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(400).json({ success: false, message: message.slice("PIN_UNSERVICEABLE:".length) });
       if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
+      if (message === "ONLINE_CHECKOUT_PENDING") return res.status(409).json({ success: false, message: "An online payment reservation is still active for this checkout. Retry, check or cancel that payment before switching to COD." });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
       if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });

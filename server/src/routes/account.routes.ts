@@ -342,4 +342,31 @@ router.delete(
   }),
 );
 
+
+router.post(
+  "/addresses/from-checkout",
+  asyncHandler(async (req, res) => {
+    const parsed = addressSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid checkout address", errors: parsed.error.flatten() });
+    const normalizedPostal = parsed.data.postalCode.replace(/\D/g, "");
+    const existing = await prisma.address.findFirst({
+      where: {
+        userId: req.user!.id,
+        line1: { equals: parsed.data.line1, mode: "insensitive" },
+        city: { equals: parsed.data.city, mode: "insensitive" },
+        postalCode: normalizedPostal,
+      },
+    });
+    if (existing) return res.json({ success: true, data: existing, duplicate: true });
+
+    const count = await prisma.address.count({ where: { userId: req.user!.id } });
+    const makeDefault = parsed.data.isDefault || count === 0;
+    const address = await prisma.$transaction(async (tx) => {
+      if (makeDefault) await tx.address.updateMany({ where: { userId: req.user!.id }, data: { isDefault: false } });
+      return tx.address.create({ data: { userId: req.user!.id, ...parsed.data, postalCode: normalizedPostal, isDefault: makeDefault } });
+    });
+    res.status(201).json({ success: true, data: address });
+  }),
+);
+
 export default router;
