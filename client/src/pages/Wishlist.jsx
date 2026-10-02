@@ -6,7 +6,7 @@ import { Icon } from "../components/Icons";
 import { apiFetch } from "../api/http";
 
 export default function Wishlist() {
-  const { items } = useWishlist();
+  const { items, syncing, accountSynced } = useWishlist();
   const [sharing, setSharing] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -37,10 +37,11 @@ export default function Wishlist() {
 
   return (
     <div className="container page-space wishlist-page">
+      {accountSynced && <div className="phase35-wishlist-sync"><Icon name="refresh" size={16}/><span><strong>Synced to your Riseora account</strong><small>Your saved products now follow you across signed-in devices.</small></span></div>}
       <div className="shop-title-row phase23-wishlist-head"><div><p className="eyebrow">SAVED FOR LATER</p><h1>Your wishlist</h1><p className="muted">Keep favourites close while you decide.</p></div>{items.length > 0 && <button className="button button-secondary phase23-share-wishlist" type="button" onClick={shareWishlist} disabled={sharing}><Icon name="share" size={17} /> {sharing ? "Creating link…" : "Share wishlist"}</button>}</div>
       {message && <p className="alert success">{message}</p>}
       {error && <p className="alert error">{error}</p>}
-      {items.length === 0 ? (
+      {syncing ? <div className="skeleton-card tall" /> : items.length === 0 ? (
         <div className="empty-state premium-empty"><span className="empty-icon"><Icon name="heart" /></span><h3>No favourites yet</h3><p>Tap the heart on any product to save it here.</p><Link className="button" to="/shop">Explore products</Link></div>
       ) : <><div className="phase23-share-note"><strong>Share privately</strong><span>Shared links contain product choices only—no account, email or address details—and expire after 30 days.</span></div><div className="product-grid shop-grid">{items.map((product) => <ProductCard key={product.id} product={product} compact />)}</div></>}
     </div>

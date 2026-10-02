@@ -3,13 +3,14 @@ import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useCompare } from "../context/CompareContext";
 import { Icon } from "./Icons";
 import ProductQuickView from "./ProductQuickView";
-import OptimizedImage from "./OptimizedImage";
 
 export default function ProductCard({ product, compact = false }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
+  const { toggle: toggleCompare, has: comparing, count: compareCount, max: compareMax } = useCompare();
   const [activeImage, setActiveImage] = useState(0);
   const [hovering, setHovering] = useState(false);
   const [quickOpen, setQuickOpen] = useState(false);
@@ -59,6 +60,7 @@ export default function ProductCard({ product, compact = false }) {
   const mrp = Number(variant?.mrp || 0);
   const discount = mrp > sellingPrice && mrp > 0 ? Math.round(((mrp - sellingPrice) / mrp) * 100) : 0;
   const wished = has(product.id);
+  const isComparing = comparing(product.id);
 
   return <>
     <article className={`product-card mc-product-card phase16-product-card ${compact ? "compact" : ""}`} onMouseEnter={beginSlideshow} onMouseLeave={stopSlideshow}>
@@ -69,7 +71,7 @@ export default function ProductCard({ product, compact = false }) {
             {discount > 0 && <span className="sale-badge">{discount}% OFF</span>}
           </div>
           {image ? (
-            <OptimizedImage
+            <img
               key={`${product.id}-${activeImage}`}
               className="product-image product-image-transition"
               src={image}
@@ -94,6 +96,9 @@ export default function ProductCard({ product, compact = false }) {
         </button>
         <button className="phase16-quick-trigger" type="button" onClick={() => setQuickOpen(true)} aria-label={`Quick view ${product.name}`} title="Quick view">
           <Icon name="eye" size={18} /> <span>QUICK VIEW</span>
+        </button>
+        <button className={isComparing ? "phase35-compare-trigger active" : "phase35-compare-trigger"} type="button" onClick={() => toggleCompare(product)} disabled={!isComparing && compareCount >= compareMax} aria-label={isComparing ? `Remove ${product.name} from comparison` : `Compare ${product.name}`} title={!isComparing && compareCount >= compareMax ? `Compare up to ${compareMax} products` : "Compare"}>
+          <Icon name="compare" size={16} /> <span>{isComparing ? "ADDED" : "COMPARE"}</span>
         </button>
       </div>
       <div className="product-card-body">

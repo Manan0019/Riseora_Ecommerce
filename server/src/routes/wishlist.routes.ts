@@ -3,6 +3,7 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
+import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 
 const router = Router();
@@ -30,6 +31,81 @@ function withRating(product: any) {
   const { reviews: _reviews, ...rest } = product;
   return { ...rest, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
 }
+
+
+const syncWishlistSchema = z.object({
+  productIds: z.array(z.string().uuid()).max(80).default([]),
+});
+
+const wishlistProductInclude = {
+  category: true,
+  images: { orderBy: { sortOrder: "asc" as const } },
+  variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" as const } },
+  reviews: { where: { isApproved: true }, select: { rating: true } },
+};
+
+async function accountWishlist(userId: string) {
+  const rows = await prisma.wishlistItem.findMany({
+    where: { userId, product: { isActive: true } },
+    include: { product: { include: wishlistProductInclude } },
+    orderBy: { createdAt: "desc" },
+  });
+  return rows.map((row) => withRating(row.product));
+}
+
+router.get(
+  "/",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    return res.json({ success: true, data: await accountWishlist(req.user!.id) });
+  }),
+);
+
+router.post(
+  "/sync",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = syncWishlistSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid wishlist sync payload" });
+    const ids = [...new Set(parsed.data.productIds)];
+    if (ids.length) {
+      const available = await prisma.product.findMany({ where: { id: { in: ids }, isActive: true }, select: { id: true } });
+      if (available.length) {
+        await prisma.wishlistItem.createMany({
+          data: available.map((product) => ({ userId: req.user!.id, productId: product.id })),
+          skipDuplicates: true,
+        });
+      }
+    }
+    return res.json({ success: true, data: await accountWishlist(req.user!.id) });
+  }),
+);
+
+router.put(
+  "/items/:productId",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const productId = String(req.params.productId);
+    const product = await prisma.product.findFirst({ where: { id: productId, isActive: true }, select: { id: true } });
+    if (!product) return res.status(404).json({ success: false, message: "Product not found" });
+    await prisma.wishlistItem.upsert({
+      where: { userId_productId: { userId: req.user!.id, productId } },
+      create: { userId: req.user!.id, productId },
+      update: {},
+    });
+    return res.json({ success: true, data: await accountWishlist(req.user!.id) });
+  }),
+);
+
+router.delete(
+  "/items/:productId",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const productId = String(req.params.productId);
+    await prisma.wishlistItem.deleteMany({ where: { userId: req.user!.id, productId } });
+    return res.json({ success: true, data: await accountWishlist(req.user!.id) });
+  }),
+);
 
 router.post(
   "/share",

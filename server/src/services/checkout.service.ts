@@ -29,6 +29,7 @@ type SnapshotItem = {
   sku: string;
   quantity: number;
   unitPrice: number;
+  unitCost: number | null;
   lineTotal: number;
   discountAmount: number;
   hsnCode: string | null;
@@ -178,6 +179,7 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
       sku: variant.sku,
       quantity: item.quantity,
       unitPrice,
+      unitCost: variant.costPrice == null ? null : Number(variant.costPrice),
       lineTotal: round2(unitPrice * item.quantity),
       discountAmount: 0,
       hsnCode: variant.hsnCode ?? null,
@@ -198,6 +200,7 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
     sku: item.variant.sku,
     quantity: item.quantity,
     unitPrice: 0,
+    unitCost: item.variant.costPrice == null ? null : Number(item.variant.costPrice),
     lineTotal: 0,
     discountAmount: 0,
     hsnCode: item.variant.hsnCode ?? null,
@@ -339,6 +342,7 @@ function orderItemCreate(item: SnapshotItem) {
     sku: item.sku,
     quantity: item.quantity,
     unitPrice: item.unitPrice,
+    unitCost: item.unitCost,
     lineTotal: item.lineTotal,
     discountAmount: item.discountAmount,
     hsnCode: item.hsnCode ?? null,

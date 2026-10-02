@@ -59,10 +59,12 @@
     "ReturnStatusHistory",
     "Order.checkoutRequestKey",
     "CheckoutSession.checkoutRequestKey",
-    "CheckoutSession payment recovery telemetry"
+    "CheckoutSession payment recovery telemetry",
+    "OrderItem.unitCost checkout-time cost snapshot",
+    "WishlistItem account-synced saved products"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 33,
+  "latestPhase": 35,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -198,5 +200,35 @@
     ],
     "migration": "20261002165000_phase33_checkout_payment_reliability",
     "verification": "npm run verify:phase33"
+  },
+  "phase34": {
+    "name": "Admin Control Center & Business Intelligence V2",
+    "features": [
+      "desktop Admin sidebar is viewport-fixed with independent navigation scrolling so the green rail never turns white while content scrolls",
+      "enhanced Admin dashboard with today-vs-yesterday deltas, 7-day sales pulse, inventory valuation and operational attention queue",
+      "checkout-time OrderItem unit-cost snapshots protect future margin history from later cost-price edits",
+      "existing order items are one-time backfilled from current variant cost where available",
+      "Business Intelligence reports add prior-period comparison, gross profit/margin, cost coverage, refund/cancellation rates and repeat-customer rate",
+      "product profitability and category contribution reporting",
+      "inventory cost/retail valuation, potential margin and slow-stock detection",
+      "tabbed Admin Reports workspace with 7/30/90/365-day presets and expanded CSV export",
+      "phase audit verifies full-height Admin rail, cost snapshot wiring and BI markers"
+    ],
+    "migration": "20261002190000_phase34_admin_bi_cost_snapshot",
+    "verification": "npm run verify:phase34"
+  },
+  "phase35": {
+    "name": "Storefront Discovery & Cross-Device Wishlist V2",
+    "features": [
+      "signed-in wishlist persists in PostgreSQL and automatically merges guest saved products on login/register",
+      "guest wishlist remains local and account wishlist is not leaked back to a signed-out browser session",
+      "multi-term storefront search matches product name, category, benefits, ingredients, suitability and SKU with relevance ordering",
+      "dynamic Shop by Need and ingredient facets from live catalog content plus shareable URL filter state",
+      "three-product comparison tray and side-by-side comparison workspace",
+      "comparison includes live price, rating, suitability, benefits, ingredients, pack availability, COD status and direct cart/wishlist actions",
+      "phase audit verifies Prisma wishlist persistence, discovery endpoints and comparison wiring"
+    ],
+    "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
+    "verification": "npm run verify:phase35"
   }
 }

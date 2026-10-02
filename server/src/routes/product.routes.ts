@@ -13,12 +13,66 @@ function withRating<T extends { reviews?: Array<{ rating: number }> }>(product: 
   return { ...rest, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
 }
 
+function plainText(value: unknown) {
+  return String(value || "")
+    .replace(/<\/(li|p|div|h[1-6])>/gi, "\n")
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function listTokens(value: unknown) {
+  const prepared = String(value || "")
+    .replace(/<\/(li|p|div|h[1-6])>/gi, "\n")
+    .replace(/<br\s*\/?\s*>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&");
+  return [...new Set(prepared.split(/[\n,;|•]+/).map((item) => item.replace(/\s+/g, " ").trim()).filter((item) => item.length >= 2 && item.length <= 50))];
+}
+
+function searchClauses(term: string) {
+  return [
+    { name: { contains: term, mode: "insensitive" as const } },
+    { shortDescription: { contains: term, mode: "insensitive" as const } },
+    { description: { contains: term, mode: "insensitive" as const } },
+    { benefits: { contains: term, mode: "insensitive" as const } },
+    { ingredients: { contains: term, mode: "insensitive" as const } },
+    { suitableFor: { contains: term, mode: "insensitive" as const } },
+    { category: { name: { contains: term, mode: "insensitive" as const } } },
+    { variants: { some: { sku: { contains: term, mode: "insensitive" as const } } } },
+  ];
+}
+
+function relevanceScore(product: any, query: string) {
+  if (!query) return 0;
+  const q = query.toLowerCase();
+  const terms = q.split(/\s+/).filter(Boolean);
+  const name = String(product.name || "").toLowerCase();
+  const category = String(product.category?.name || "").toLowerCase();
+  const searchable = [name, category, product.shortDescription, plainText(product.benefits), plainText(product.ingredients), product.suitableFor, ...(product.variants || []).map((v: any) => v.sku)].join(" ").toLowerCase();
+  let score = name === q ? 120 : name.startsWith(q) ? 90 : name.includes(q) ? 65 : searchable.includes(q) ? 40 : 0;
+  for (const term of terms) {
+    if (name.startsWith(term)) score += 18;
+    else if (name.includes(term)) score += 12;
+    else if (category.includes(term)) score += 8;
+    else if (searchable.includes(term)) score += 4;
+  }
+  if (product.isFeatured) score += 2;
+  return score;
+}
+
 router.get(
   "/",
   asyncHandler(async (req, res) => {
     const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
     const category = typeof req.query.category === "string" ? req.query.category.trim() : "";
     const badge = typeof req.query.badge === "string" ? req.query.badge.trim() : "";
+    const suitableFor = typeof req.query.suitableFor === "string" ? req.query.suitableFor.trim() : "";
+    const ingredient = typeof req.query.ingredient === "string" ? req.query.ingredient.trim() : "";
     const featured = req.query.featured === "true";
     const inStock = req.query.inStock === "true";
     const sort = typeof req.query.sort === "string" ? req.query.sort : "featured";
@@ -40,17 +94,12 @@ router.get(
         ...(featured ? { isFeatured: true } : {}),
         ...(category ? { category: { slug: category, isActive: true } } : {}),
         ...(badge ? { badge: { equals: badge, mode: "insensitive" } } : {}),
+        ...(suitableFor ? { suitableFor: { contains: suitableFor, mode: "insensitive" } } : {}),
+        ...(ingredient ? { ingredients: { contains: ingredient, mode: "insensitive" } } : {}),
         ...(inStock || minPrice !== null || maxPrice !== null ? { variants: { some: variantFilter } } : {}),
         ...(search
           ? {
-              OR: [
-                { name: { contains: search, mode: "insensitive" } },
-                { shortDescription: { contains: search, mode: "insensitive" } },
-                { description: { contains: search, mode: "insensitive" } },
-                { benefits: { contains: search, mode: "insensitive" } },
-                { ingredients: { contains: search, mode: "insensitive" } },
-                { variants: { some: { sku: { contains: search, mode: "insensitive" } } } },
-              ],
+              AND: search.split(/\s+/).filter(Boolean).slice(0, 5).map((term) => ({ OR: searchClauses(term) })),
             }
           : {}),
       },
@@ -66,6 +115,10 @@ router.get(
 
     const enriched = products.map(withRating);
     enriched.sort((a: any, b: any) => {
+      if (search && sort === "featured") {
+        const relevance = relevanceScore(b, search) - relevanceScore(a, search);
+        if (relevance) return relevance;
+      }
       const ap = Number(a.variants?.[0]?.sellingPrice || 0);
       const bp = Number(b.variants?.[0]?.sellingPrice || 0);
       if (sort === "price_asc") return ap - bp;
@@ -76,6 +129,52 @@ router.get(
     });
 
     res.json({ success: true, data: enriched });
+  }),
+);
+
+
+router.get(
+  "/discovery/facets",
+  asyncHandler(async (_req, res) => {
+    const [categories, suitabilityOptions, products, priceRows] = await Promise.all([
+      prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true, imageUrl: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
+      prisma.suitabilityOption.findMany({ where: { isActive: true }, select: { id: true, name: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
+      prisma.product.findMany({ where: { isActive: true, ingredients: { not: null } }, select: { ingredients: true } }),
+      prisma.productVariant.findMany({ where: { isActive: true, product: { isActive: true } }, select: { sellingPrice: true } }),
+    ]);
+    const ingredientCounts = new Map<string, { name: string; count: number }>();
+    for (const product of products) {
+      for (const name of listTokens(product.ingredients)) {
+        const key = name.toLowerCase();
+        const row = ingredientCounts.get(key) || { name, count: 0 };
+        row.count += 1; ingredientCounts.set(key, row);
+      }
+    }
+    const ingredients = [...ingredientCounts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)).slice(0, 24);
+    const prices = priceRows.map((row) => Number(row.sellingPrice)).filter(Number.isFinite);
+    return res.json({ success: true, data: {
+      categories, suitability: suitabilityOptions, ingredients,
+      price: { min: prices.length ? Math.floor(Math.min(...prices)) : 0, max: prices.length ? Math.ceil(Math.max(...prices)) : 0 },
+    } });
+  }),
+);
+
+router.get(
+  "/compare",
+  asyncHandler(async (req, res) => {
+    const ids = typeof req.query.ids === "string" ? [...new Set(req.query.ids.split(",").map((id) => id.trim()).filter(Boolean))].slice(0, 3) : [];
+    if (!ids.length) return res.json({ success: true, data: [] });
+    const products = await prisma.product.findMany({
+      where: { id: { in: ids }, isActive: true },
+      include: {
+        category: true,
+        images: { orderBy: { sortOrder: "asc" } },
+        variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
+        reviews: { where: { isApproved: true }, select: { rating: true } },
+      },
+    });
+    const map = new Map(products.map((product) => [product.id, withRating(product)]));
+    return res.json({ success: true, data: ids.map((id) => map.get(id)).filter(Boolean) });
   }),
 );
 
@@ -95,6 +194,7 @@ router.get(
             { shortDescription: { contains: query, mode: "insensitive" } },
             { benefits: { contains: query, mode: "insensitive" } },
             { ingredients: { contains: query, mode: "insensitive" } },
+            { suitableFor: { contains: query, mode: "insensitive" } },
             { category: { name: { contains: query, mode: "insensitive" } } },
             { variants: { some: { sku: { contains: query, mode: "insensitive" } } } },
           ],

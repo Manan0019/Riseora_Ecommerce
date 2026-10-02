@@ -357,6 +357,7 @@ export const OrderItemScalarFieldEnum = {
   sku: 'sku',
   quantity: 'quantity',
   unitPrice: 'unitPrice',
+  unitCost: 'unitCost',
   lineTotal: 'lineTotal',
   discountAmount: 'discountAmount',
   hsnCode: 'hsnCode',

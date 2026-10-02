@@ -835,44 +835,84 @@ router.delete(
 router.get(
   "/dashboard",
   asyncHandler(async (_req, res) => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const now = new Date();
+    const today = new Date(now); today.setHours(0, 0, 0, 0);
+    const yesterday = new Date(today); yesterday.setDate(yesterday.getDate() - 1);
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const sevenDaysAgo = new Date(today); sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
 
-    const [productCount, customerCount, openOrderCount, todayOrderCount, todaySales, recentOrders, variants, pendingReturnCount, pendingCancellationCount] = await Promise.all([
-      prisma.product.count(),
-      prisma.user.count({ where: { role: "CUSTOMER" } }),
+    const [
+      productCount, customerCount, openOrderCount, todayOrders, yesterdayOrders, monthOrders,
+      recentOrders, variants, pendingReturnCount, pendingCancellationCount, pendingPayments, last7Orders,
+    ] = await Promise.all([
+      prisma.product.count({ where: { isActive: true } }),
+      prisma.user.count({ where: { role: "CUSTOMER", isActive: true } }),
       prisma.order.count({ where: { status: { in: ["PENDING", "CONFIRMED", "PROCESSING"] } } }),
-      prisma.order.count({ where: { createdAt: { gte: today } } }),
-      prisma.order.aggregate({ where: { createdAt: { gte: today }, status: { not: "CANCELLED" } }, _sum: { totalAmount: true } }),
+      prisma.order.findMany({ where: { createdAt: { gte: today }, status: { not: "CANCELLED" } }, select: { id: true, totalAmount: true } }),
+      prisma.order.findMany({ where: { createdAt: { gte: yesterday, lt: today }, status: { not: "CANCELLED" } }, select: { id: true, totalAmount: true } }),
+      prisma.order.findMany({ where: { createdAt: { gte: monthStart }, status: { not: "CANCELLED" } }, select: { id: true, totalAmount: true } }),
       prisma.order.findMany({
         take: 6,
         orderBy: { createdAt: "desc" },
-        select: { id: true, orderNumber: true, customerName: true, status: true, totalAmount: true, createdAt: true },
+        select: { id: true, orderNumber: true, customerName: true, status: true, totalAmount: true, createdAt: true, paymentMethod: true },
       }),
       prisma.productVariant.findMany({
         where: { isActive: true, product: { isActive: true } },
-        include: { product: { select: { id: true, name: true } } },
+        select: { id: true, name: true, sku: true, stockQuantity: true, lowStockThreshold: true, sellingPrice: true, costPrice: true, product: { select: { id: true, name: true } } },
         orderBy: { stockQuantity: "asc" },
       }),
       prisma.returnRequest.count({ where: { status: { in: ["REQUESTED", "APPROVED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED"] } } }),
       prisma.orderCancellationRequest.count({ where: { status: "REQUESTED" } }),
+      prisma.checkoutSession.count({ where: { status: "PENDING" } }),
+      prisma.order.findMany({ where: { createdAt: { gte: sevenDaysAgo }, status: { not: "CANCELLED" } }, select: { createdAt: true, totalAmount: true } }),
     ]);
 
+    const sum = (orders: { totalAmount: any }[]) => orders.reduce((total, order) => total + Number(order.totalAmount || 0), 0);
+    const todaySales = sum(todayOrders);
+    const yesterdaySales = sum(yesterdayOrders);
+    const monthSales = sum(monthOrders);
+    const percentChange = (current: number, previous: number) => previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
+
     const lowStock = variants.filter((variant) => variant.stockQuantity <= variant.lowStockThreshold);
+    const outOfStock = variants.filter((variant) => variant.stockQuantity <= 0);
+    const inventoryCostValue = variants.reduce((total, variant) => total + variant.stockQuantity * Number(variant.costPrice || 0), 0);
+    const inventoryRetailValue = variants.reduce((total, variant) => total + variant.stockQuantity * Number(variant.sellingPrice || 0), 0);
+    const missingCostCount = variants.filter((variant) => variant.costPrice == null).length;
+
+    const trendMap = new Map<string, { date: string; orders: number; sales: number }>();
+    for (let offset = 0; offset < 7; offset += 1) {
+      const day = new Date(sevenDaysAgo); day.setDate(day.getDate() + offset);
+      const key = day.toISOString().slice(0, 10);
+      trendMap.set(key, { date: key, orders: 0, sales: 0 });
+    }
+    for (const order of last7Orders) {
+      const key = order.createdAt.toISOString().slice(0, 10);
+      const row = trendMap.get(key);
+      if (row) { row.orders += 1; row.sales += Number(order.totalAmount || 0); }
+    }
+
+    const attention = [
+      ...(pendingCancellationCount ? [{ type: "danger", label: `${pendingCancellationCount} cancellation request${pendingCancellationCount === 1 ? "" : "s"} waiting`, to: "/admin/cancellations" }] : []),
+      ...(pendingReturnCount ? [{ type: "warning", label: `${pendingReturnCount} active return${pendingReturnCount === 1 ? "" : "s"}`, to: "/admin/returns" }] : []),
+      ...(pendingPayments ? [{ type: "info", label: `${pendingPayments} online payment reservation${pendingPayments === 1 ? "" : "s"} pending`, to: "/admin/payments" }] : []),
+      ...(outOfStock.length ? [{ type: "danger", label: `${outOfStock.length} variant${outOfStock.length === 1 ? "" : "s"} out of stock`, to: "/admin/inventory" }] : []),
+      ...(missingCostCount ? [{ type: "info", label: `${missingCostCount} variant${missingCostCount === 1 ? "" : "s"} missing cost price`, to: "/admin/inventory" }] : []),
+    ].slice(0, 6);
 
     res.json({
       success: true,
       data: {
-        productCount,
-        customerCount,
-        openOrderCount,
-        todayOrderCount,
-        todaySales: Number(todaySales._sum.totalAmount ?? 0),
-        lowStockCount: lowStock.length,
-        pendingReturnCount,
-        pendingCancellationCount,
-        recentOrders,
-        lowStock: lowStock.slice(0, 6),
+        productCount, customerCount, openOrderCount,
+        todayOrderCount: todayOrders.length, todaySales,
+        yesterdayOrderCount: yesterdayOrders.length, yesterdaySales,
+        todaySalesChange: percentChange(todaySales, yesterdaySales),
+        todayOrderChange: percentChange(todayOrders.length, yesterdayOrders.length),
+        monthOrderCount: monthOrders.length, monthSales,
+        lowStockCount: lowStock.length, outOfStockCount: outOfStock.length,
+        inventoryCostValue, inventoryRetailValue, missingCostCount,
+        pendingReturnCount, pendingCancellationCount, pendingPayments,
+        recentOrders, lowStock: lowStock.slice(0, 6),
+        last7Days: [...trendMap.values()], attention,
       },
     });
   }),
@@ -1236,6 +1276,11 @@ function reportDateRange(query: any) {
   return { from, to };
 }
 
+function percentageChange(current: number, previous: number) {
+  if (previous === 0) return current > 0 ? 100 : 0;
+  return ((current - previous) / previous) * 100;
+}
+
 router.get(
   "/reports",
   asyncHandler(async (req, res) => {
@@ -1246,46 +1291,100 @@ router.get(
       return res.status(400).json({ success: false, message: message === "REPORT_RANGE_TOO_LARGE" ? "Choose a report range of 370 days or less" : "Invalid report date range" });
     }
 
-    const [orders, newCustomers] = await Promise.all([
-      prisma.order.findMany({
-        where: { createdAt: { gte: range.from, lte: range.to } },
-        include: {
-          items: true,
-          payment: true,
-          returnRequests: { select: { status: true, refundAmount: true } },
-        },
-        orderBy: { createdAt: "asc" },
-      }),
+    const duration = range.to.getTime() - range.from.getTime() + 1;
+    const previousTo = new Date(range.from.getTime() - 1);
+    const previousFrom = new Date(previousTo.getTime() - duration + 1);
+    const orderInclude = {
+      items: { include: { variant: { select: { costPrice: true, product: { select: { category: { select: { name: true } } } } } } } },
+      payment: true,
+      returnRequests: { select: { status: true, refundAmount: true, items: { select: { quantity: true, orderItemId: true } } } },
+    } as const;
+
+    const [orders, previousOrders, newCustomers, previousNewCustomers, inventoryVariants] = await Promise.all([
+      prisma.order.findMany({ where: { createdAt: { gte: range.from, lte: range.to } }, include: orderInclude, orderBy: { createdAt: "asc" } }),
+      prisma.order.findMany({ where: { createdAt: { gte: previousFrom, lte: previousTo } }, include: orderInclude, orderBy: { createdAt: "asc" } }),
       prisma.user.count({ where: { role: "CUSTOMER", createdAt: { gte: range.from, lte: range.to } } }),
+      prisma.user.count({ where: { role: "CUSTOMER", createdAt: { gte: previousFrom, lte: previousTo } } }),
+      prisma.productVariant.findMany({
+        where: { isActive: true, product: { isActive: true } },
+        select: { id: true, sku: true, name: true, stockQuantity: true, lowStockThreshold: true, costPrice: true, sellingPrice: true, product: { select: { name: true, category: { select: { name: true } } } } },
+      }),
     ]);
 
-    const activeOrders = orders.filter((order) => order.status !== "CANCELLED");
     const money = (value: unknown) => Number(value || 0);
+    const active = (rows: typeof orders) => rows.filter((order) => order.status !== "CANCELLED");
     const orderRefund = (order: any) => {
       if (order.payment) return money(order.payment.refundedAmount);
       return (order.returnRequests || []).filter((item: any) => item.status === "REFUNDED").reduce((sum: number, item: any) => sum + money(item.refundAmount), 0);
     };
+    const itemCost = (item: any) => item.unitCost != null ? money(item.unitCost) : money(item.variant?.costPrice);
+    const orderCogs = (order: any) => {
+      const base = order.items.reduce((sum: number, item: any) => sum + itemCost(item) * item.quantity, 0);
+      const byId = new Map(order.items.map((item: any) => [item.id, item]));
+      const returned = (order.returnRequests || []).filter((request: any) => request.status === "REFUNDED").reduce((sum: number, request: any) => sum + request.items.reduce((lineSum: number, row: any) => {
+        const item: any = byId.get(row.orderItemId);
+        return lineSum + (item ? itemCost(item) * row.quantity : 0);
+      }, 0), 0);
+      return Math.max(0, base - returned);
+    };
 
-    const grossOrderValue = activeOrders.reduce((sum, order) => sum + money(order.totalAmount), 0);
-    const refundedValue = activeOrders.reduce((sum, order) => sum + orderRefund(order), 0);
-    const netOrderValue = Math.max(0, grossOrderValue - refundedValue);
-    const unitsOrdered = activeOrders.reduce((sum, order) => sum + order.items.reduce((lineSum, item) => lineSum + item.quantity, 0), 0);
-    const averageOrderValue = activeOrders.length ? grossOrderValue / activeOrders.length : 0;
+    function summarize(rows: typeof orders, customerAdds: number) {
+      const activeOrders = active(rows);
+      const grossOrderValue = activeOrders.reduce((sum, order) => sum + money(order.totalAmount), 0);
+      const refundedValue = activeOrders.reduce((sum, order) => sum + orderRefund(order), 0);
+      const netOrderValue = Math.max(0, grossOrderValue - refundedValue);
+      const cogs = activeOrders.reduce((sum, order) => sum + orderCogs(order), 0);
+      const grossProfit = netOrderValue - cogs;
+      const unitsOrdered = activeOrders.reduce((sum, order) => sum + order.items.reduce((lineSum, item) => lineSum + item.quantity, 0), 0);
+      const averageOrderValue = activeOrders.length ? grossOrderValue / activeOrders.length : 0;
+      const deliveredOrders = rows.filter((order) => order.status === "DELIVERED").length;
+      const cancelledOrders = rows.filter((order) => order.status === "CANCELLED").length;
+      const refundedOrders = activeOrders.filter((order) => orderRefund(order) > 0).length;
+      return {
+        totalOrders: rows.length, activeOrders: activeOrders.length, grossOrderValue, refundedValue, netOrderValue, cogs, grossProfit,
+        grossMarginPct: netOrderValue > 0 ? (grossProfit / netOrderValue) * 100 : 0,
+        averageOrderValue, unitsOrdered, deliveredOrders, cancelledOrders, refundedOrders, newCustomers: customerAdds,
+        cancellationRatePct: rows.length ? (cancelledOrders / rows.length) * 100 : 0,
+        refundRatePct: grossOrderValue > 0 ? (refundedValue / grossOrderValue) * 100 : 0,
+      };
+    }
+
+    const summary = summarize(orders, newCustomers);
+    const previousSummary = summarize(previousOrders, previousNewCustomers);
+    const activeOrders = active(orders);
+
+    const registeredBuyerIds = [...new Set(activeOrders.map((order) => order.userId).filter(Boolean))] as string[];
+    const priorRegistered = registeredBuyerIds.length ? await prisma.order.groupBy({
+      by: ["userId"],
+      where: { userId: { in: registeredBuyerIds }, createdAt: { lt: range.from }, status: { not: "CANCELLED" } },
+      _count: { _all: true },
+    }) : [];
+    const repeatCustomerIds = new Set(priorRegistered.map((row) => row.userId).filter(Boolean));
+    const repeatCustomers = registeredBuyerIds.filter((id) => repeatCustomerIds.has(id)).length;
+    const repeatCustomerRatePct = registeredBuyerIds.length ? (repeatCustomers / registeredBuyerIds.length) * 100 : 0;
 
     const daily = new Map<string, any>();
+    for (let cursor = new Date(range.from); cursor <= range.to; cursor.setUTCDate(cursor.getUTCDate() + 1)) {
+      const key = cursor.toISOString().slice(0, 10);
+      daily.set(key, { date: key, orders: 0, gross: 0, refunds: 0, net: 0, cogs: 0, profit: 0, units: 0 });
+    }
     const products = new Map<string, any>();
+    const categories = new Map<string, any>();
     const coupons = new Map<string, any>();
     const customers = new Map<string, any>();
     const payments = new Map<string, any>();
     const statuses = new Map<string, number>();
+    let costedOrderItemUnits = 0;
+    let totalOrderItemUnits = 0;
 
     for (const order of orders) {
       statuses.set(order.status, (statuses.get(order.status) || 0) + 1);
       if (order.status === "CANCELLED") continue;
       const date = order.createdAt.toISOString().slice(0, 10);
-      const row = daily.get(date) || { date, orders: 0, gross: 0, refunds: 0, net: 0, units: 0 };
+      const row = daily.get(date) || { date, orders: 0, gross: 0, refunds: 0, net: 0, cogs: 0, profit: 0, units: 0 };
       const refund = orderRefund(order);
-      row.orders += 1; row.gross += money(order.totalAmount); row.refunds += refund; row.net += Math.max(0, money(order.totalAmount) - refund);
+      const cogs = orderCogs(order);
+      row.orders += 1; row.gross += money(order.totalAmount); row.refunds += refund; row.net += Math.max(0, money(order.totalAmount) - refund); row.cogs += cogs; row.profit += Math.max(0, money(order.totalAmount) - refund) - cogs;
       row.units += order.items.reduce((sum, item) => sum + item.quantity, 0);
       daily.set(date, row);
 
@@ -1303,21 +1402,56 @@ router.get(
       customer.orders += 1; customer.value += money(order.totalAmount); customers.set(customerKey, customer);
 
       for (const item of order.items) {
+        totalOrderItemUnits += item.quantity;
+        const unitCost = itemCost(item);
+        if (item.unitCost != null || item.variant?.costPrice != null) costedOrderItemUnits += item.quantity;
         const key = item.sku || `${item.productName}/${item.variantName || ""}`;
-        const product = products.get(key) || { sku: item.sku, productName: item.productName, variantName: item.variantName, units: 0, value: 0 };
-        product.units += item.quantity; product.value += money(item.lineTotal); products.set(key, product);
+        const product = products.get(key) || { sku: item.sku, productName: item.productName, variantName: item.variantName, units: 0, value: 0, cogs: 0, profit: 0 };
+        product.units += item.quantity; product.value += money(item.lineTotal) - money(item.discountAmount); product.cogs += unitCost * item.quantity; product.profit = product.value - product.cogs; products.set(key, product);
+
+        const categoryName = item.variant?.product?.category?.name || "Uncategorized / archived";
+        const category = categories.get(categoryName) || { category: categoryName, units: 0, value: 0, cogs: 0, profit: 0 };
+        category.units += item.quantity; category.value += money(item.lineTotal) - money(item.discountAmount); category.cogs += unitCost * item.quantity; category.profit = category.value - category.cogs; categories.set(categoryName, category);
       }
     }
 
+    const soldVariantIds = new Set(activeOrders.flatMap((order) => order.items.map((item) => item.variantId).filter(Boolean)));
+    const inventory = inventoryVariants.reduce((acc, variant) => {
+      const cost = money(variant.costPrice); const retail = money(variant.sellingPrice);
+      acc.units += variant.stockQuantity;
+      acc.costValue += variant.stockQuantity * cost;
+      acc.retailValue += variant.stockQuantity * retail;
+      if (variant.stockQuantity <= 0) acc.outOfStock += 1;
+      else if (variant.stockQuantity <= variant.lowStockThreshold) acc.lowStock += 1;
+      if (variant.costPrice == null) acc.missingCost += 1;
+      return acc;
+    }, { units: 0, costValue: 0, retailValue: 0, lowStock: 0, outOfStock: 0, missingCost: 0 });
+
+    const slowStockAll = inventoryVariants
+      .filter((variant) => variant.stockQuantity > 0 && !soldVariantIds.has(variant.id))
+      .map((variant) => ({ id: variant.id, sku: variant.sku, productName: variant.product.name, variantName: variant.name, stock: variant.stockQuantity, costValue: variant.stockQuantity * money(variant.costPrice), retailValue: variant.stockQuantity * money(variant.sellingPrice) }))
+      .sort((a, b) => b.costValue - a.costValue || b.stock - a.stock);
+    const slowStock = slowStockAll.slice(0, 12);
+
     const result = {
       range: { from: range.from.toISOString().slice(0, 10), to: range.to.toISOString().slice(0, 10) },
-      summary: {
-        totalOrders: orders.length, activeOrders: activeOrders.length, grossOrderValue, refundedValue, netOrderValue, averageOrderValue, unitsOrdered,
-        deliveredOrders: orders.filter((order) => order.status === "DELIVERED").length, newCustomers,
+      previousRange: { from: previousFrom.toISOString().slice(0, 10), to: previousTo.toISOString().slice(0, 10) },
+      summary: { ...summary, repeatCustomers, repeatCustomerRatePct, costCoveragePct: totalOrderItemUnits ? (costedOrderItemUnits / totalOrderItemUnits) * 100 : 100 },
+      comparison: {
+        netOrderValuePct: percentageChange(summary.netOrderValue, previousSummary.netOrderValue),
+        grossProfitPct: percentageChange(summary.grossProfit, previousSummary.grossProfit),
+        activeOrdersPct: percentageChange(summary.activeOrders, previousSummary.activeOrders),
+        averageOrderValuePct: percentageChange(summary.averageOrderValue, previousSummary.averageOrderValue),
+        newCustomersPct: percentageChange(summary.newCustomers, previousSummary.newCustomers),
       },
+      previousSummary,
+      inventory: { ...inventory, potentialMarginValue: inventory.retailValue - inventory.costValue, slowStockCount: slowStockAll.length },
+      slowStock,
       daily: [...daily.values()],
-      topProducts: [...products.values()].sort((a, b) => b.value - a.value).slice(0, 20),
-      topCustomers: [...customers.values()].sort((a, b) => b.value - a.value).slice(0, 20),
+      topProducts: [...products.values()].sort((a, b) => b.value - a.value).slice(0, 30),
+      profitableProducts: [...products.values()].sort((a, b) => b.profit - a.profit).slice(0, 20),
+      categoryPerformance: [...categories.values()].sort((a, b) => b.value - a.value),
+      topCustomers: [...customers.values()].sort((a, b) => b.value - a.value).slice(0, 30),
       couponPerformance: [...coupons.values()].sort((a, b) => b.orderValue - a.orderValue),
       paymentSplit: [...payments.values()].sort((a, b) => b.value - a.value),
       statusSplit: [...statuses.entries()].map(([status, count]) => ({ status, count })).sort((a, b) => b.count - a.count),

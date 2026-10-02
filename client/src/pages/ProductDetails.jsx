@@ -4,6 +4,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
 import { useWishlist } from "../context/WishlistContext";
+import { useCompare } from "../context/CompareContext";
 import { useStore } from "../context/StoreContext";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
@@ -50,6 +51,7 @@ export default function ProductDetails() {
   const { addItem, startBuyNow } = useCart();
   const { user } = useAuth();
   const { toggle, has } = useWishlist();
+  const { toggle: toggleCompare, has: comparing, count: compareCount, max: compareMax } = useCompare();
   const { store } = useStore();
   const [product, setProduct] = useState(null);
   const [variantId, setVariantId] = useState("");
@@ -151,6 +153,7 @@ export default function ProductDetails() {
     if (startBuyNow(product, variant, Math.min(quantity, maxSelectableQuantity))) navigate("/checkout?mode=buy-now");
   };
   const wished = has(product.id);
+  const isComparing = comparing(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
   const publicQuestions = Array.isArray(product.questions) ? product.questions : [];
   const publicReviews = Array.isArray(product.reviews) ? product.reviews : [];
@@ -275,7 +278,7 @@ export default function ProductDetails() {
     <div className="product-detail-page phase3-detail phase9-detail-page">
       <div className="container product-detail">
         <div className="detail-media phase3-media phase9-product-gallery">
-          <div className="detail-image-frame phase12-detail-image-frame" onTouchStart={onGalleryTouchStart} onTouchEnd={onGalleryTouchEnd}>{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button>{image ? <img key={`${product.id}-${activeImage}`} className="phase12-detail-main-image" src={image} alt={imageItem?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}{imageCount > 1 && <><button className="phase12-gallery-arrow prev" type="button" onClick={() => changeImage(-1)} aria-label="Previous product image"><span><Icon name="arrow" size={20} /></span></button><button className="phase12-gallery-arrow next" type="button" onClick={() => changeImage(1)} aria-label="Next product image"><Icon name="arrow" size={20} /></button><span className="phase12-gallery-counter">{activeImage + 1} / {imageCount}</span></>}</div>
+          <div className="detail-image-frame phase12-detail-image-frame" onTouchStart={onGalleryTouchStart} onTouchEnd={onGalleryTouchEnd}>{product.badge && <span className="detail-badge">{product.badge}</span>}<button className={wished ? "detail-wish active" : "detail-wish"} onClick={() => toggle(product)}><Icon name="heart" size={20} /></button><button className={isComparing ? "phase35-detail-compare active" : "phase35-detail-compare"} type="button" onClick={() => toggleCompare(product)} disabled={!isComparing && compareCount >= compareMax}><Icon name="compare" size={17} /> {isComparing ? "ADDED TO COMPARE" : "COMPARE"}</button>{image ? <img key={`${product.id}-${activeImage}`} className="phase12-detail-main-image" src={image} alt={imageItem?.altText || product.name} /> : <div className="image-placeholder large"><span>R</span><small>Riseora</small></div>}{imageCount > 1 && <><button className="phase12-gallery-arrow prev" type="button" onClick={() => changeImage(-1)} aria-label="Previous product image"><span><Icon name="arrow" size={20} /></span></button><button className="phase12-gallery-arrow next" type="button" onClick={() => changeImage(1)} aria-label="Next product image"><Icon name="arrow" size={20} /></button><span className="phase12-gallery-counter">{activeImage + 1} / {imageCount}</span></>}</div>
           {product.images?.length > 1 && <div className="phase9-gallery-thumbs">{product.images.map((item, index) => <button key={item.id || index} className={activeImage === index ? "active" : ""} onClick={() => setActiveImage(index)}><img src={mediaUrl(item.url)} alt={item.altText || `${product.name} ${index + 1}`} /></button>)}</div>}
         </div>
         <div className="detail-content phase3-detail-content">

@@ -38,6 +38,7 @@ export default function AdminLayout() {
   const mobilePrimary = visibleNav.filter((item) => mobilePrimaryPaths.has(item.to));
   const mobileMore = visibleNav.filter((item) => !mobilePrimaryPaths.has(item.to));
   const moreActive = useMemo(() => mobileMore.some((item) => pathname === item.to || pathname.startsWith(`${item.to}/`)), [pathname]);
+  const activeNav = useMemo(() => visibleNav.find((item) => pathname === item.to || (item.to !== "/admin" && pathname.startsWith(`${item.to}/`))) || visibleNav[0], [pathname, visibleNav]);
 
   useEffect(() => { setMoreOpen(false); }, [pathname]);
   useEffect(() => {
@@ -56,7 +57,8 @@ export default function AdminLayout() {
           <BrandLogo compact admin />
           <div><strong>RISEORA</strong><small>ADMIN</small></div>
         </div>
-        <nav className="admin-nav">
+        <div className="phase34-admin-nav-label">WORKSPACE</div>
+        <nav className="admin-nav" aria-label="Admin workspace">
           {visibleNav.map((item) => <NavLink key={item.to} to={item.to} end={item.end}><Icon name={item.icon} size={20} /><span>{item.label}</span></NavLink>)}
         </nav>
         <div className="admin-sidebar-bottom">
@@ -67,7 +69,7 @@ export default function AdminLayout() {
 
       <div className="admin-main">
         <header className="admin-topbar phase15-admin-topbar">
-          <div><span className="admin-mobile-brand">RISEORA ADMIN</span><strong>{user?.firstName ? `Hi, ${user.firstName}` : "Store admin"}</strong><small className="phase31-admin-role">{ADMIN_ROLE_LABELS[adminRole]}</small></div>
+          <div><span className="admin-mobile-brand">RISEORA ADMIN</span><strong>{user?.firstName ? `Hi, ${user.firstName}` : "Store admin"}</strong><small className="phase31-admin-role">{ADMIN_ROLE_LABELS[adminRole]}{activeNav?.label ? ` · ${activeNav.label}` : ""}</small></div>
           <a href="/" className="admin-view-store">View store</a>
         </header>
         <main className="admin-content"><div key={pathname} className="phase18-route-frame"><Outlet /></div></main>

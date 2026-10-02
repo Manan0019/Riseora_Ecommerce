@@ -5,6 +5,7 @@ import Header from "./Header";
 import MobileBottomNav from "./MobileBottomNav";
 import { AnalyticsConsent } from "./AnalyticsBridge";
 import MiniCartDrawer from "./MiniCartDrawer";
+import CompareTray from "./CompareTray";
 
 function RouteScrollManager() {
   const { pathname } = useLocation();
@@ -26,6 +27,7 @@ export default function Layout() {
       <Footer />
       <MobileBottomNav />
       <MiniCartDrawer />
+      <CompareTray />
       <AnalyticsConsent />
     </div>
   );
