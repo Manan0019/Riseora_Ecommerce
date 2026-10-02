@@ -119,7 +119,7 @@ adminDealRoutes.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isActive: z.boolean().optional(), isFeatured: z.boolean().optional(), priority: z.number().int().min(0).max(1000).optional() }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid deal update" });
-    const deal = await prisma.merchandisingDeal.update({ where: { id: req.params.id }, data: parsed.data });
+    const deal = await prisma.merchandisingDeal.update({ where: { id: String(req.params.id) }, data: parsed.data });
     res.json({ success: true, data: deal });
   }),
 );
@@ -127,7 +127,7 @@ adminDealRoutes.patch(
 adminDealRoutes.delete(
   "/deals/:id",
   asyncHandler(async (req, res) => {
-    await prisma.merchandisingDeal.delete({ where: { id: req.params.id } });
+    await prisma.merchandisingDeal.delete({ where: { id: String(req.params.id) } });
     res.json({ success: true });
   }),
 );

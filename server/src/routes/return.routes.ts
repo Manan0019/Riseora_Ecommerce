@@ -37,7 +37,7 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     const item = await prisma.returnRequest.findFirst({
-      where: { id: req.params.id, userId: req.user!.id },
+      where: { id: String(req.params.id), userId: req.user!.id },
       include: {
         order: { include: { shipment: true } },
         items: { include: { orderItem: true } },
@@ -128,7 +128,7 @@ router.post(
   "/:id/cancel",
   asyncHandler(async (req, res) => {
     const updated = await prisma.returnRequest.updateMany({
-      where: { id: req.params.id, userId: req.user!.id, status: "REQUESTED" },
+      where: { id: String(req.params.id), userId: req.user!.id, status: "REQUESTED" },
       data: { status: "CANCELLED" },
     });
     if (updated.count !== 1) return res.status(409).json({ success: false, message: "This return can no longer be cancelled" });

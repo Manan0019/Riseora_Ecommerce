@@ -30,7 +30,7 @@ function activeDealWhere(now: Date) {
       { OR: [{ startsAt: null }, { startsAt: { lte: now } }] },
       { OR: [{ endsAt: null }, { endsAt: { gte: now } }] },
     ],
-  } as const;
+  };
 }
 
 export async function getActiveDeals() {

@@ -157,6 +157,17 @@ export const StockAlertStatus = {
 export type StockAlertStatus = (typeof StockAlertStatus)[keyof typeof StockAlertStatus]
 
 
+export const NotificationType = {
+  GENERAL: 'GENERAL',
+  ORDER: 'ORDER',
+  PRICE_DROP: 'PRICE_DROP',
+  STOCK_ALERT: 'STOCK_ALERT',
+  CAMPAIGN: 'CAMPAIGN'
+} as const
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
 export const MerchandisingDealType = {
   BUNDLE_DISCOUNT: 'BUNDLE_DISCOUNT',
   BUY_X_GET_Y: 'BUY_X_GET_Y',

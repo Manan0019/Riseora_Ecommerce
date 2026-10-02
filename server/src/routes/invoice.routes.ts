@@ -11,7 +11,7 @@ router.get(
   "/my/:orderNumber",
   asyncHandler(async (req, res) => {
     const order = await prisma.order.findFirst({
-      where: { orderNumber: req.params.orderNumber, userId: req.user!.id },
+      where: { orderNumber: String(req.params.orderNumber), userId: req.user!.id },
       select: { id: true },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });

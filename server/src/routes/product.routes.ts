@@ -138,7 +138,7 @@ router.get(
   "/:slug/recommendations",
   asyncHandler(async (req, res) => {
     const current = await prisma.product.findUnique({
-      where: { slug: req.params.slug },
+      where: { slug: String(req.params.slug) },
       select: { id: true, categoryId: true, isActive: true },
     });
     if (!current?.isActive) return res.status(404).json({ success: false, message: "Product not found" });
@@ -191,7 +191,7 @@ router.get(
   "/:slug",
   asyncHandler(async (req, res) => {
     const product = await prisma.product.findUnique({
-      where: { slug: req.params.slug },
+      where: { slug: String(req.params.slug) },
       include: {
         category: true,
         images: { orderBy: { sortOrder: "asc" } },
@@ -233,22 +233,22 @@ router.post(
     const parsed = reviewSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid review", errors: parsed.error.flatten() });
 
-    const product = await prisma.product.findUnique({ where: { id: req.params.id }, select: { id: true } });
+    const product = await prisma.product.findUnique({ where: { id: String(req.params.id) }, select: { id: true } });
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
 
     const purchased = await prisma.orderItem.findFirst({
       where: {
         order: { userId: req.user!.id, status: "DELIVERED" },
-        variant: { productId: req.params.id },
+        variant: { productId: String(req.params.id) },
       },
       select: { id: true },
     });
 
     const review = await prisma.review.upsert({
-      where: { userId_productId: { userId: req.user!.id, productId: req.params.id } },
+      where: { userId_productId: { userId: req.user!.id, productId: String(req.params.id) } },
       create: {
         userId: req.user!.id,
-        productId: req.params.id,
+        productId: String(req.params.id),
         rating: parsed.data.rating,
         title: parsed.data.title || null,
         comment: parsed.data.comment,
@@ -282,7 +282,7 @@ router.post(
     const parsed = questionSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Please enter a clear product question", errors: parsed.error.flatten() });
 
-    const product = await prisma.product.findFirst({ where: { id: req.params.id, isActive: true }, select: { id: true, name: true } });
+    const product = await prisma.product.findFirst({ where: { id: String(req.params.id), isActive: true }, select: { id: true, name: true } });
     if (!product) return res.status(404).json({ success: false, message: "Product not found" });
 
     const recentDuplicate = await prisma.productQuestion.findFirst({

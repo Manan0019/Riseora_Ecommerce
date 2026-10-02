@@ -53,7 +53,7 @@
     "WishlistShare"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 24,
+  "latestPhase": 27,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -65,5 +65,28 @@
       "Windows production scripts",
       "Docker health/backups"
     ]
+  },
+  "phase26": {
+    "name": "Notification Center Foundation",
+    "status": "completed-and-repaired-in-phase27",
+    "features": [
+      "notification database migration",
+      "notification service foundation"
+    ]
+  },
+  "phase27": {
+    "name": "Customer Retention Intelligence & Notification Center",
+    "features": [
+      "complete Prisma Notification model and indexes",
+      "customer notification bell, unread badge, popover and full notification page",
+      "mark-one, mark-all and dismiss notification APIs",
+      "automatic in-app notifications for placed orders, fulfilment changes and returns",
+      "admin customer segments from live order behaviour",
+      "admin targeted in-app campaigns with audience preview",
+      "retention-oriented database indexes for customer/order segmentation",
+      "Express 5 route-param TypeScript stabilization across API routes"
+    ],
+    "migration": "20261002060000_phase27_retention_notification_center",
+    "verification": "npm run verify:phase27"
   }
 }

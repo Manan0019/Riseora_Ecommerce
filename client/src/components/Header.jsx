@@ -7,6 +7,7 @@ import { useWishlist } from "../context/WishlistContext";
 import { Icon } from "./Icons";
 import BrandLogo from "./BrandLogo";
 import { useStore } from "../context/StoreContext";
+import NotificationBell from "./NotificationBell";
 
 const SEARCH_KEY = "riseora_recent_searches";
 const RECENT_PRODUCT_KEY = "riseora_recent_products";
@@ -107,6 +108,7 @@ export default function Header() {
           <div className="nav-actions">
             <button className="icon-action" onClick={() => setSearchOpen(true)} aria-label="Search"><Icon name="search" size={21} /></button>
             <Link className="icon-action desktop-wishlist-action" to="/wishlist" aria-label="Wishlist"><Icon name="heart" size={20} />{wishlistCount > 0 && <b>{wishlistCount > 9 ? "9+" : wishlistCount}</b>}</Link>
+            <NotificationBell />
             {user?.role === "ADMIN" && <Link className="admin-shortcut" to="/admin">Admin</Link>}
             <Link className="icon-action account-action" to={user ? "/account" : "/login"} aria-label={user ? "My account" : "Login"}><Icon name="user" size={20} /><span>{user ? user.firstName : "Login"}</span></Link>
             {user && <button className="icon-action logout-action" onClick={logout} aria-label="Logout"><Icon name="logout" size={19} /></button>}

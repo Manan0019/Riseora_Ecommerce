@@ -75,7 +75,7 @@ router.post(
 router.get(
   "/shared/:token",
   asyncHandler(async (req, res) => {
-    const parsedToken = tokenSchema.safeParse(req.params.token);
+    const parsedToken = tokenSchema.safeParse(String(req.params.token));
     if (!parsedToken.success) {
       return res.status(404).json({ success: false, message: "This shared wishlist has expired or is unavailable" });
     }

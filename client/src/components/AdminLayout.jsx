@@ -16,6 +16,7 @@ const nav = [
   { to: "/admin/reviews", label: "Reviews", icon: "star" },
   { to: "/admin/returns", label: "Returns", icon: "truck" },
   { to: "/admin/audience", label: "Audience", icon: "mail" },
+  { to: "/admin/retention", label: "Retention", icon: "bell" },
   { to: "/admin/settings", label: "Settings", icon: "shield" },
   { to: "/admin/erp-sync", label: "ERP Sync", icon: "refresh" },
   { to: "/admin/system", label: "System", icon: "dashboard" },

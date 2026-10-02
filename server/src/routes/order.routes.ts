@@ -95,7 +95,7 @@ router.get(
   "/my/:orderNumber",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const order = await prisma.order.findFirst({ where: { orderNumber: req.params.orderNumber, userId: req.user!.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
+    const order = await prisma.order.findFirst({ where: { orderNumber: String(req.params.orderNumber), userId: req.user!.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     res.json({ success: true, data: order });
   }),

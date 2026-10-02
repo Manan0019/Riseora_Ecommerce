@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
 import { sendOrderPlacedNotifications } from "./notification.service";
+import { createOrderPlacedInAppNotification } from "./notification-center.service";
 import { calculateShippingFee, getStoreSettings } from "./store.service";
 import { getShippingQuote, normalizePostalCode, resolveShippingZone } from "./shipping-zone.service";
 import { evaluateBestMerchandisingDeal } from "./merchandising.service";
@@ -368,6 +369,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
     return created;
   });
   void sendOrderPlacedNotifications(order).catch((error) => console.error("Order notification failed", error));
+  void createOrderPlacedInAppNotification(order).catch((error) => console.error("In-app order notification failed", error));
   return order;
 }
 
@@ -452,6 +454,7 @@ export async function finalizeOnlineCheckout(input: { sessionId: string; provide
     return created;
   });
   void sendOrderPlacedNotifications(order).catch((error) => console.error("Order notification failed", error));
+  void createOrderPlacedInAppNotification(order).catch((error) => console.error("In-app order notification failed", error));
   return order;
 }
 

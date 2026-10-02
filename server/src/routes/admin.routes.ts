@@ -7,6 +7,7 @@ import { slugify } from "../utils/slugify";
 import { sendOrderStatusNotification } from "../services/notification.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
+import { createOrderStatusInAppNotification } from "../services/notification-center.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -214,12 +215,12 @@ router.patch(
       codAllowed: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product update" });
-    const existingProduct = await prisma.product.findUnique({ where: { id: req.params.id }, select: { erpManaged: true } });
+    const existingProduct = await prisma.product.findUnique({ where: { id: String(req.params.id) }, select: { erpManaged: true } });
     if (!existingProduct) return res.status(404).json({ success: false, message: "Product not found" });
     if (existingProduct.erpManaged && parsed.data.isActive !== undefined) {
       return res.status(409).json({ success: false, message: "This product is managed by Riseora ERP. Change its active state in ERP." });
     }
-    const product = await prisma.product.update({ where: { id: req.params.id }, data: parsed.data });
+    const product = await prisma.product.update({ where: { id: String(req.params.id) }, data: parsed.data });
     res.json({ success: true, data: product });
   }),
 );
@@ -245,7 +246,7 @@ router.get(
   "/orders/:id",
   asyncHandler(async (req, res) => {
     const order = await prisma.order.findUnique({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       include: {
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         items: true,
@@ -375,7 +376,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
 router.post(
   "/orders/:id/refund",
   asyncHandler(async (req, res) => {
-    const order = await prisma.order.findUnique({ where: { id: req.params.id }, include: { items: true, payment: true, shipment: true } });
+    const order = await prisma.order.findUnique({ where: { id: String(req.params.id) }, include: { items: true, payment: true, shipment: true } });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     if (["SHIPPED", "DELIVERED", "CANCELLED"].includes(order.status)) return res.status(400).json({ success: false, message: "This order can no longer be refunded from the dashboard" });
     if (order.paymentMethod !== "ONLINE" || !order.payment?.providerPaymentId || order.payment.status !== "PAID") return res.status(400).json({ success: false, message: "This order does not have a refundable online payment" });
@@ -400,7 +401,10 @@ router.post(
       await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
       return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
     });
-    if (updated) void sendOrderStatusNotification(updated).catch((error) => console.error("Refund email failed", error));
+    if (updated) {
+      void sendOrderStatusNotification(updated).catch((error) => console.error("Refund email failed", error));
+      void createOrderStatusInAppNotification(updated).catch((error) => console.error("Refund in-app notification failed", error));
+    }
     res.json({ success: true, data: updated });
   }),
 );
@@ -411,8 +415,11 @@ router.patch(
     const parsed = fulfilmentSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid fulfilment update", errors: parsed.error.flatten() });
     try {
-      const order = await updateFulfilment(req.params.id, parsed.data);
-      if (order) void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
+      const order = await updateFulfilment(String(req.params.id), parsed.data);
+      if (order) {
+        void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
+        void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
+      }
       res.json({ success: true, data: order });
     } catch (error) {
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
@@ -431,8 +438,11 @@ router.patch(
     const parsed = z.object({ status: z.enum(orderStatuses) }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid order status" });
     try {
-      const order = await updateFulfilment(req.params.id, { status: parsed.data.status });
-      if (order) void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
+      const order = await updateFulfilment(String(req.params.id), { status: parsed.data.status });
+      if (order) {
+        void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
+        void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
+      }
       res.json({ success: true, data: order });
     } catch (error) {
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
@@ -529,10 +539,10 @@ router.put(
     }
     const data = parsed.data;
     const coupon = await prisma.$transaction(async (tx) => {
-      await tx.couponProduct.deleteMany({ where: { couponId: req.params.id } });
-      await tx.couponCategory.deleteMany({ where: { couponId: req.params.id } });
+      await tx.couponProduct.deleteMany({ where: { couponId: String(req.params.id) } });
+      await tx.couponCategory.deleteMany({ where: { couponId: String(req.params.id) } });
       return tx.coupon.update({
-        where: { id: req.params.id },
+        where: { id: String(req.params.id) },
         data: {
           code: data.code.toUpperCase(), description: data.description || null, discountType: data.discountType, discountValue: data.discountValue,
           scope: data.scope, application: data.application, minOrderAmount: data.minOrderAmount ?? null, maxDiscountAmount: data.maxDiscountAmount ?? null,
@@ -552,7 +562,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid coupon update" });
-    const coupon = await prisma.coupon.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive }, include: couponInclude });
+    const coupon = await prisma.coupon.update({ where: { id: String(req.params.id) }, data: { isActive: parsed.data.isActive }, include: couponInclude });
     res.json({ success: true, data: coupon });
   }),
 );
@@ -605,7 +615,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid offer update" });
-    const offer = await prisma.offer.update({ where: { id: req.params.id }, data: { isActive: parsed.data.isActive } });
+    const offer = await prisma.offer.update({ where: { id: String(req.params.id) }, data: { isActive: parsed.data.isActive } });
     res.json({ success: true, data: offer });
   }),
 );
@@ -716,7 +726,7 @@ router.patch(
     if ("endsAt" in data) data.endsAt = data.endsAt ? new Date(data.endsAt) : null;
     if (data.startsAt && data.endsAt && data.endsAt <= data.startsAt) return res.status(400).json({ success: false, message: "Banner end date must be after the start date" });
 
-    const banner = await prisma.banner.update({ where: { id: req.params.id }, data });
+    const banner = await prisma.banner.update({ where: { id: String(req.params.id) }, data });
     res.json({ success: true, data: banner });
   }),
 );
@@ -724,7 +734,7 @@ router.patch(
 router.delete(
   "/banners/:id",
   asyncHandler(async (req, res) => {
-    await prisma.banner.delete({ where: { id: req.params.id } });
+    await prisma.banner.delete({ where: { id: String(req.params.id) } });
     res.json({ success: true });
   }),
 );
@@ -823,7 +833,7 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid customer update" });
-    const user = await prisma.user.findFirst({ where: { id: req.params.id, role: "CUSTOMER" } });
+    const user = await prisma.user.findFirst({ where: { id: String(req.params.id), role: "CUSTOMER" } });
     if (!user) return res.status(404).json({ success: false, message: "Customer not found" });
     const updated = await prisma.user.update({ where: { id: user.id }, data: { isActive: parsed.data.isActive } });
     res.json({ success: true, data: { id: updated.id, isActive: updated.isActive } });
@@ -866,13 +876,13 @@ router.patch(
     if (parsed.data.mrp !== undefined && parsed.data.sellingPrice !== undefined && parsed.data.sellingPrice > parsed.data.mrp) {
       return res.status(400).json({ success: false, message: "Selling price cannot be higher than MRP" });
     }
-    const before = await prisma.productVariant.findUnique({ where: { id: req.params.id }, select: { stockQuantity: true, erpManaged: true } });
+    const before = await prisma.productVariant.findUnique({ where: { id: String(req.params.id) }, select: { stockQuantity: true, erpManaged: true } });
     if (!before) return res.status(404).json({ success: false, message: "Variant not found" });
     if (before.erpManaged) {
       const erpOwnedFields = ["stockQuantity", "sellingPrice", "mrp", "isActive"].filter((key) => (parsed.data as any)[key] !== undefined);
       if (erpOwnedFields.length) return res.status(409).json({ success: false, message: "This variant is managed by Riseora ERP. Update stock, price and active state in ERP; only the website low-stock warning can be edited here." });
     }
-    const variant = await prisma.productVariant.update({ where: { id: req.params.id }, data: parsed.data });
+    const variant = await prisma.productVariant.update({ where: { id: String(req.params.id) }, data: parsed.data });
     if (before.stockQuantity <= 0 && variant.stockQuantity > 0) {
       void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
     }
@@ -891,13 +901,13 @@ router.patch(
       isActive: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid category update" });
-    const existingCategory = await prisma.category.findUnique({ where: { id: req.params.id }, select: { erpManaged: true } });
+    const existingCategory = await prisma.category.findUnique({ where: { id: String(req.params.id) }, select: { erpManaged: true } });
     if (!existingCategory) return res.status(404).json({ success: false, message: "Category not found" });
     if (existingCategory.erpManaged && (parsed.data.name !== undefined || parsed.data.isActive !== undefined)) {
       return res.status(409).json({ success: false, message: "This category is managed by Riseora ERP. Change its name or active state in ERP; website image, description and display order remain editable here." });
     }
     const category = await prisma.category.update({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       data: {
         ...(parsed.data.name !== undefined ? { name: parsed.data.name, slug: slugify(parsed.data.name) } : {}),
         ...(parsed.data.description !== undefined ? { description: parsed.data.description } : {}),
@@ -920,7 +930,7 @@ router.put(
 
     const product = await prisma.$transaction(async (tx) => {
       const existing = await tx.product.findUnique({
-        where: { id: req.params.id },
+        where: { id: String(req.params.id) },
         select: { id: true, erpManaged: true, categoryId: true, name: true, slug: true, isActive: true },
       });
       if (!existing) throw new Error("PRODUCT_NOT_FOUND");
@@ -1045,7 +1055,7 @@ router.patch(
     const parsed = z.object({ isApproved: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid review update" });
     const data = await prisma.review.update({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       data: { isApproved: parsed.data.isApproved },
       include: { user: { select: { firstName: true, lastName: true, email: true } }, product: { select: { name: true, slug: true } } },
     });
@@ -1056,7 +1066,7 @@ router.patch(
 router.delete(
   "/reviews/:id",
   asyncHandler(async (req, res) => {
-    await prisma.review.delete({ where: { id: req.params.id } });
+    await prisma.review.delete({ where: { id: String(req.params.id) } });
     res.json({ success: true });
   }),
 );
@@ -1096,7 +1106,7 @@ router.patch(
       isPublished: z.boolean().optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid question update" });
-    const current = await prisma.productQuestion.findUnique({ where: { id: req.params.id } });
+    const current = await prisma.productQuestion.findUnique({ where: { id: String(req.params.id) } });
     if (!current) return res.status(404).json({ success: false, message: "Question not found" });
     const answer = parsed.data.answer !== undefined ? (parsed.data.answer || null) : current.answer;
     const publish = parsed.data.isPublished !== undefined ? parsed.data.isPublished : current.isPublished;
@@ -1113,7 +1123,7 @@ router.patch(
 router.delete(
   "/product-questions/:id",
   asyncHandler(async (req, res) => {
-    await prisma.productQuestion.delete({ where: { id: req.params.id } });
+    await prisma.productQuestion.delete({ where: { id: String(req.params.id) } });
     res.json({ success: true });
   }),
 );

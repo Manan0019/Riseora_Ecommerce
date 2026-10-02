@@ -110,6 +110,14 @@ enum StockAlertStatus {
   CANCELLED
 }
 
+enum NotificationType {
+  GENERAL
+  ORDER
+  PRICE_DROP
+  STOCK_ALERT
+  CAMPAIGN
+}
+
 enum MerchandisingDealType {
   BUNDLE_DISCOUNT
   BUY_X_GET_Y
@@ -152,9 +160,12 @@ model User {
   returnRequests ReturnRequest[]
   passwordResetTokens PasswordResetToken[]
   couponRedemptions CouponRedemption[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([role, isActive, createdAt])
 }
 
 
@@ -341,6 +352,7 @@ model Order {
   @@index([userId])
   @@index([status])
   @@index([createdAt])
+  @@index([userId, status, createdAt])
 }
 
 model OrderStatusHistory {
@@ -542,6 +554,29 @@ model StoreSetting {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+
+model Notification {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String @db.Uuid
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  title    String
+  message  String
+  type     NotificationType @default(GENERAL)
+  ctaLabel String?
+  ctaUrl   String?
+  metadata Json?
+  dedupeKey String? @unique
+
+  isRead Boolean @default(false)
+  readAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead, createdAt])
+  @@index([userId, createdAt])
 }
 
 model WishlistShare {

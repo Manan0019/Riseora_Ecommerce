@@ -111,6 +111,7 @@ export default function Account() {
       <div className="account-shortcuts">
         <Link to="/orders"><Icon name="orders" /><span><strong>My orders</strong><small>Track and review purchases</small></span><b>›</b></Link>
         <Link to="/wishlist"><Icon name="heart" /><span><strong>Wishlist</strong><small>Your saved products</small></span><b>›</b></Link>
+        <Link to="/notifications"><Icon name="bell" /><span><strong>Notifications</strong><small>Orders and Riseora updates</small></span><b>›</b></Link>
         <Link to="/returns"><Icon name="truck" /><span><strong>Returns & refunds</strong><small>Track return requests and refunds</small></span><b>›</b></Link>
       </div>
 

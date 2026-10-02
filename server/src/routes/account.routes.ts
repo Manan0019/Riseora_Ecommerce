@@ -145,7 +145,7 @@ router.patch(
     const parsed = addressSchema.partial().safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid address update", errors: parsed.error.flatten() });
 
-    const existing = await prisma.address.findFirst({ where: { id: req.params.id, userId: req.user!.id } });
+    const existing = await prisma.address.findFirst({ where: { id: String(req.params.id), userId: req.user!.id } });
     if (!existing) return res.status(404).json({ success: false, message: "Address not found" });
 
     const address = await prisma.$transaction(async (tx) => {
@@ -167,7 +167,7 @@ router.patch(
 router.delete(
   "/addresses/:id",
   asyncHandler(async (req, res) => {
-    const existing = await prisma.address.findFirst({ where: { id: req.params.id, userId: req.user!.id } });
+    const existing = await prisma.address.findFirst({ where: { id: String(req.params.id), userId: req.user!.id } });
     if (!existing) return res.status(404).json({ success: false, message: "Address not found" });
 
     await prisma.$transaction(async (tx) => {
@@ -230,7 +230,7 @@ router.post(
   "/reorder/:orderNumber",
   asyncHandler(async (req, res) => {
     const order = await prisma.order.findFirst({
-      where: { orderNumber: req.params.orderNumber, userId: req.user!.id },
+      where: { orderNumber: String(req.params.orderNumber), userId: req.user!.id },
       include: { items: true },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });

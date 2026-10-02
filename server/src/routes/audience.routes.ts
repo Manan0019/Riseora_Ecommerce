@@ -31,7 +31,7 @@ router.patch("/contact-messages/:id", asyncHandler(async (req, res) => {
     adminNote: z.string().trim().max(2000).nullable().optional(),
   }).safeParse(req.body);
   if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid message update" });
-  const data = await prisma.contactMessage.update({ where: { id: req.params.id }, data: parsed.data });
+  const data = await prisma.contactMessage.update({ where: { id: String(req.params.id) }, data: parsed.data });
   res.json({ success: true, data });
 }));
 
@@ -50,7 +50,7 @@ router.patch("/newsletter/:id", asyncHandler(async (req, res) => {
   const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid subscriber update" });
   const data = await prisma.newsletterSubscriber.update({
-    where: { id: req.params.id },
+    where: { id: String(req.params.id) },
     data: { isActive: parsed.data.isActive, unsubscribedAt: parsed.data.isActive ? null : new Date(), ...(parsed.data.isActive ? { subscribedAt: new Date() } : {}) },
   });
   res.json({ success: true, data });
@@ -72,7 +72,7 @@ router.get("/cart-recoveries", asyncHandler(async (req, res) => {
 }));
 
 router.post("/cart-recoveries/:id/send", asyncHandler(async (req, res) => {
-  const result = await sendCartRecoveryReminder(req.params.id, true);
+  const result = await sendCartRecoveryReminder(String(req.params.id), true);
   if (!result.sent) return res.status(400).json({ success: false, message: result.reason || "Recovery reminder was not sent" });
   res.json({ success: true, data: result, message: `Recovery reminder ${result.reminderNumber} sent.` });
 }));
@@ -81,7 +81,7 @@ router.patch("/cart-recoveries/:id", asyncHandler(async (req, res) => {
   const parsed = z.object({ status: z.enum(["ACTIVE", "DISMISSED"]) }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart recovery update" });
   const data = await prisma.cartRecoverySession.update({
-    where: { id: req.params.id },
+    where: { id: String(req.params.id) },
     data: { status: parsed.data.status, ...(parsed.data.status === "ACTIVE" ? { expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) } : {}) },
   });
   res.json({ success: true, data });
@@ -105,7 +105,7 @@ router.patch("/stock-alerts/:id", asyncHandler(async (req, res) => {
   const parsed = z.object({ status: z.enum(["PENDING", "CANCELLED"]) }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid stock alert update" });
   const data = await prisma.stockAlert.update({
-    where: { id: req.params.id },
+    where: { id: String(req.params.id) },
     data: { status: parsed.data.status, ...(parsed.data.status === "PENDING" ? { notifiedAt: null, subscribedAt: new Date() } : {}) },
   });
   res.json({ success: true, data });

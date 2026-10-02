@@ -8,6 +8,7 @@ import { normalizePostalPrefixes } from "../services/shipping-zone.service";
 import { getInvoiceWithOrder } from "../services/invoice.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { sendReturnStatusNotification } from "../services/notification.service";
+import { createReturnStatusInAppNotification } from "../services/notification-center.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -149,12 +150,12 @@ router.patch(
     }
     if (parsed.data.city !== undefined) data.city = parsed.data.city || null;
     if (parsed.data.state !== undefined) data.state = parsed.data.state || null;
-    const existing = await prisma.shippingZone.findUnique({ where: { id: req.params.id } });
+    const existing = await prisma.shippingZone.findUnique({ where: { id: String(req.params.id) } });
     if (!existing) return res.status(404).json({ success: false, message: "Delivery zone not found" });
     const minDays = parsed.data.deliveryMinDays !== undefined ? parsed.data.deliveryMinDays : existing.deliveryMinDays;
     const maxDays = parsed.data.deliveryMaxDays !== undefined ? parsed.data.deliveryMaxDays : existing.deliveryMaxDays;
     if (minDays != null && maxDays != null && minDays > maxDays) return res.status(400).json({ success: false, message: "Delivery minimum days cannot exceed maximum days" });
-    const zone = await prisma.shippingZone.update({ where: { id: req.params.id }, data });
+    const zone = await prisma.shippingZone.update({ where: { id: String(req.params.id) }, data });
     res.json({ success: true, data: zone });
   }),
 );
@@ -162,7 +163,7 @@ router.patch(
 router.delete(
   "/shipping-zones/:id",
   asyncHandler(async (req, res) => {
-    await prisma.shippingZone.delete({ where: { id: req.params.id } });
+    await prisma.shippingZone.delete({ where: { id: String(req.params.id) } });
     res.json({ success: true });
   }),
 );
@@ -209,7 +210,7 @@ router.patch(
       sortOrder: z.number().int().min(0).max(999).optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid courier update" });
-    const partner = await prisma.shippingPartner.update({ where: { id: req.params.id }, data: parsed.data });
+    const partner = await prisma.shippingPartner.update({ where: { id: String(req.params.id) }, data: parsed.data });
     res.json({ success: true, data: partner });
   }),
 );
@@ -257,7 +258,7 @@ router.get(
   "/invoices/:orderId",
   asyncHandler(async (req, res) => {
     try {
-      const data = await getInvoiceWithOrder(req.params.orderId);
+      const data = await getInvoiceWithOrder(String(req.params.orderId));
       res.json({ success: true, data });
     } catch (error) {
       const message = error instanceof Error ? error.message : "INVOICE_FAILED";
@@ -291,7 +292,7 @@ router.get(
   "/returns/:id",
   asyncHandler(async (req, res) => {
     const item = await prisma.returnRequest.findUnique({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       include: {
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         order: { include: { payment: true, shipment: true } },
@@ -333,7 +334,7 @@ router.patch(
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid return update", errors: parsed.error.flatten() });
 
     const current = await prisma.returnRequest.findUnique({
-      where: { id: req.params.id },
+      where: { id: String(req.params.id) },
       include: { items: true, order: { include: { payment: true } }, user: true },
     });
     if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
@@ -405,6 +406,7 @@ router.patch(
         });
       });
       void sendReturnStatusNotification(updated).catch((error) => console.error("Return refund email failed", error));
+      void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return refund in-app notification failed", error));
       return res.json({ success: true, data: updated });
     }
 
@@ -434,6 +436,7 @@ router.patch(
       });
     });
     void sendReturnStatusNotification(updated).catch((error) => console.error("Return status email failed", error));
+    void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return status in-app notification failed", error));
     res.json({ success: true, data: updated });
   }),
 );

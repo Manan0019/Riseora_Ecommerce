@@ -98,7 +98,7 @@ router.post("/stock-alerts", publicWriteLimit, asyncHandler(async (req, res) => 
 }));
 
 router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (req, res) => {
-  const parsed = z.string().uuid().safeParse(req.params.cartToken);
+  const parsed = z.string().uuid().safeParse(String(req.params.cartToken));
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid recovery link" });
 
   const session = await prisma.cartRecoverySession.findFirst({
