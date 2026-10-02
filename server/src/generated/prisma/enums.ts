@@ -128,6 +128,32 @@ export const ReturnStatus = {
 export type ReturnStatus = (typeof ReturnStatus)[keyof typeof ReturnStatus]
 
 
+export const CancellationRequestStatus = {
+  REQUESTED: 'REQUESTED',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  COMPLETED: 'COMPLETED',
+  WITHDRAWN: 'WITHDRAWN'
+} as const
+
+export type CancellationRequestStatus = (typeof CancellationRequestStatus)[keyof typeof CancellationRequestStatus]
+
+
+export const ShipmentEventType = {
+  LABEL_CREATED: 'LABEL_CREATED',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  OUT_FOR_DELIVERY: 'OUT_FOR_DELIVERY',
+  DELIVERED: 'DELIVERED',
+  EXCEPTION: 'EXCEPTION',
+  RTO_INITIATED: 'RTO_INITIATED',
+  RTO_DELIVERED: 'RTO_DELIVERED',
+  NOTE: 'NOTE'
+} as const
+
+export type ShipmentEventType = (typeof ShipmentEventType)[keyof typeof ShipmentEventType]
+
+
 export const RefundMethod = {
   ORIGINAL_PAYMENT: 'ORIGINAL_PAYMENT',
   BANK_TRANSFER: 'BANK_TRANSFER',

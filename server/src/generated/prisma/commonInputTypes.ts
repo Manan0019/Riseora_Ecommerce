@@ -497,6 +497,40 @@ export type EnumPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumPaymentMethodFilter<$PrismaModel>
 }
 
+export type EnumShipmentEventTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShipmentEventType | Prisma.EnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel> | $Enums.ShipmentEventType
+}
+
+export type EnumShipmentEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShipmentEventType | Prisma.EnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShipmentEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.ShipmentEventType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel>
+}
+
+export type EnumCancellationRequestStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationRequestStatus | Prisma.EnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel> | $Enums.CancellationRequestStatus
+}
+
+export type EnumCancellationRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationRequestStatus | Prisma.EnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCancellationRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.CancellationRequestStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel>
+}
+
 export type EnumPaymentStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.PaymentStatus | Prisma.EnumPaymentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.PaymentStatus[] | Prisma.ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -1222,6 +1256,40 @@ export type NestedEnumPaymentMethodWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentMethodFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentMethodFilter<$PrismaModel>
+}
+
+export type NestedEnumShipmentEventTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShipmentEventType | Prisma.EnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel> | $Enums.ShipmentEventType
+}
+
+export type NestedEnumShipmentEventTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ShipmentEventType | Prisma.EnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ShipmentEventType[] | Prisma.ListEnumShipmentEventTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumShipmentEventTypeWithAggregatesFilter<$PrismaModel> | $Enums.ShipmentEventType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumShipmentEventTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumCancellationRequestStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationRequestStatus | Prisma.EnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel> | $Enums.CancellationRequestStatus
+}
+
+export type NestedEnumCancellationRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.CancellationRequestStatus | Prisma.EnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.CancellationRequestStatus[] | Prisma.ListEnumCancellationRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumCancellationRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.CancellationRequestStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumCancellationRequestStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {

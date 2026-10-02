@@ -62,6 +62,8 @@ export const ModelName = {
   Order: 'Order',
   OrderStatusHistory: 'OrderStatusHistory',
   Shipment: 'Shipment',
+  ShipmentEvent: 'ShipmentEvent',
+  OrderCancellationRequest: 'OrderCancellationRequest',
   OrderItem: 'OrderItem',
   Payment: 'Payment',
   CheckoutSession: 'CheckoutSession',
@@ -74,6 +76,8 @@ export const ModelName = {
   Invoice: 'Invoice',
   ReturnRequest: 'ReturnRequest',
   ReturnRequestItem: 'ReturnRequestItem',
+  ReturnEvidence: 'ReturnEvidence',
+  ReturnStatusHistory: 'ReturnStatusHistory',
   Coupon: 'Coupon',
   CouponProduct: 'CouponProduct',
   CouponCategory: 'CouponCategory',
@@ -301,6 +305,7 @@ export const ShipmentScalarFieldEnum = {
   carrier: 'carrier',
   trackingNumber: 'trackingNumber',
   trackingUrl: 'trackingUrl',
+  estimatedDeliveryAt: 'estimatedDeliveryAt',
   shippedAt: 'shippedAt',
   deliveredAt: 'deliveredAt',
   createdAt: 'createdAt',
@@ -308,6 +313,38 @@ export const ShipmentScalarFieldEnum = {
 } as const
 
 export type ShipmentScalarFieldEnum = (typeof ShipmentScalarFieldEnum)[keyof typeof ShipmentScalarFieldEnum]
+
+
+export const ShipmentEventScalarFieldEnum = {
+  id: 'id',
+  shipmentId: 'shipmentId',
+  type: 'type',
+  title: 'title',
+  note: 'note',
+  location: 'location',
+  customerVisible: 'customerVisible',
+  eventAt: 'eventAt',
+  createdAt: 'createdAt'
+} as const
+
+export type ShipmentEventScalarFieldEnum = (typeof ShipmentEventScalarFieldEnum)[keyof typeof ShipmentEventScalarFieldEnum]
+
+
+export const OrderCancellationRequestScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  userId: 'userId',
+  status: 'status',
+  reason: 'reason',
+  customerNote: 'customerNote',
+  adminNote: 'adminNote',
+  requestedAt: 'requestedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderCancellationRequestScalarFieldEnum = (typeof OrderCancellationRequestScalarFieldEnum)[keyof typeof OrderCancellationRequestScalarFieldEnum]
 
 
 export const OrderItemScalarFieldEnum = {
@@ -580,6 +617,31 @@ export const ReturnRequestItemScalarFieldEnum = {
 } as const
 
 export type ReturnRequestItemScalarFieldEnum = (typeof ReturnRequestItemScalarFieldEnum)[keyof typeof ReturnRequestItemScalarFieldEnum]
+
+
+export const ReturnEvidenceScalarFieldEnum = {
+  id: 'id',
+  returnRequestId: 'returnRequestId',
+  url: 'url',
+  publicId: 'publicId',
+  originalName: 'originalName',
+  createdAt: 'createdAt'
+} as const
+
+export type ReturnEvidenceScalarFieldEnum = (typeof ReturnEvidenceScalarFieldEnum)[keyof typeof ReturnEvidenceScalarFieldEnum]
+
+
+export const ReturnStatusHistoryScalarFieldEnum = {
+  id: 'id',
+  returnRequestId: 'returnRequestId',
+  status: 'status',
+  note: 'note',
+  source: 'source',
+  customerVisible: 'customerVisible',
+  createdAt: 'createdAt'
+} as const
+
+export type ReturnStatusHistoryScalarFieldEnum = (typeof ReturnStatusHistoryScalarFieldEnum)[keyof typeof ReturnStatusHistoryScalarFieldEnum]
 
 
 export const CouponScalarFieldEnum = {

@@ -73,6 +73,16 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  */
 export type Shipment = Prisma.ShipmentModel
 /**
+ * Model ShipmentEvent
+ * 
+ */
+export type ShipmentEvent = Prisma.ShipmentEventModel
+/**
+ * Model OrderCancellationRequest
+ * 
+ */
+export type OrderCancellationRequest = Prisma.OrderCancellationRequestModel
+/**
  * Model OrderItem
  * 
  */
@@ -132,6 +142,16 @@ export type ReturnRequest = Prisma.ReturnRequestModel
  * 
  */
 export type ReturnRequestItem = Prisma.ReturnRequestItemModel
+/**
+ * Model ReturnEvidence
+ * 
+ */
+export type ReturnEvidence = Prisma.ReturnEvidenceModel
+/**
+ * Model ReturnStatusHistory
+ * 
+ */
+export type ReturnStatusHistory = Prisma.ReturnStatusHistoryModel
 /**
  * Model Coupon
  * 
