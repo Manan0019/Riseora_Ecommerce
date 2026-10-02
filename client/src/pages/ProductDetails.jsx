@@ -66,6 +66,10 @@ export default function ProductDetails() {
   const [stockEmail, setStockEmail] = useState("");
   const [stockAlertMessage, setStockAlertMessage] = useState("");
   const [stockAlertBusy, setStockAlertBusy] = useState(false);
+  const [priceEmail, setPriceEmail] = useState("");
+  const [priceTarget, setPriceTarget] = useState("");
+  const [priceAlertMessage, setPriceAlertMessage] = useState("");
+  const [priceAlertBusy, setPriceAlertBusy] = useState(false);
   const [related, setRelated] = useState([]);
   const [frequentlyBought, setFrequentlyBought] = useState([]);
   const [productDeals, setProductDeals] = useState([]);
@@ -100,8 +104,8 @@ export default function ProductDetails() {
     });
   }
   useEffect(() => { setError(""); loadProduct().catch((err) => setError(err.message)); }, [slug]);
-  useEffect(() => { if (user?.email) setStockEmail(user.email); }, [user?.email]);
-  useEffect(() => { setStockAlertMessage(""); }, [variantId]);
+  useEffect(() => { if (user?.email) { setStockEmail(user.email); setPriceEmail(user.email); } }, [user?.email]);
+  useEffect(() => { setStockAlertMessage(""); setPriceAlertMessage(""); setPriceTarget(""); }, [variantId]);
   useEffect(() => {
     const ids = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2).map((item) => item.id);
     setFbtSelected(ids);
@@ -236,6 +240,26 @@ export default function ProductDetails() {
     finally { setStockAlertBusy(false); }
   }
 
+  async function submitPriceAlert(event) {
+    event.preventDefault();
+    if (!variant) return;
+    setPriceAlertBusy(true); setPriceAlertMessage("");
+    try {
+      const target = String(priceTarget || "").trim();
+      const response = await apiFetch("/price-alerts", {
+        method: "POST",
+        body: JSON.stringify({
+          variantId: variant.id,
+          email: priceEmail,
+          name: user?.firstName || "",
+          targetPrice: target ? Number(target) : null,
+        }),
+      });
+      setPriceAlertMessage(response.message || "Price alert saved.");
+    } catch (err) { setPriceAlertMessage(err.message); }
+    finally { setPriceAlertBusy(false); }
+  }
+
   const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || richTextToPlain(product.description) || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
 
   return <><Seo title={product.name} description={product.shortDescription || richTextToPlain(product.description)} image={image} type="product" jsonLd={productJson} />
@@ -257,6 +281,7 @@ export default function ProductDetails() {
           {product.codAllowed === false && <div className="phase20-prepaid-note"><Icon name="shield" size={16} /><span><strong>Prepaid only</strong> Cash on Delivery is not available when this product is in the order.</span></div>}
           <div className="desktop-buy-block phase17-desktop-buy"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={maxSelectableQuantity} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(maxSelectableQuantity, Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(maxSelectableQuantity, value + 1))}>+</button></div><div className="phase17-buy-actions"><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
           {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
+          {variant && <form className="phase29-price-alert" onSubmit={submitPriceAlert}><div className="phase29-price-alert-copy"><span className="phase3-eyebrow">PRICE WATCH</span><h3>Waiting for a better price?</h3><p>We can email you if <strong>{variant.name}</strong> drops below today’s ₹{Number(variant.sellingPrice).toFixed(0)} price. Set a target or leave it blank for any drop.</p></div><div className="phase29-price-alert-fields"><input type="email" required value={priceEmail} onChange={(e) => setPriceEmail(e.target.value)} placeholder="you@example.com" aria-label="Price alert email" /><div className="phase29-target-price"><span>₹</span><input type="number" min="1" max={Math.max(1, Math.floor(Number(variant.sellingPrice) - 1))} step="1" value={priceTarget} onChange={(e) => setPriceTarget(e.target.value)} placeholder="Target price" aria-label="Target price" /></div><button className="button button-secondary" disabled={priceAlertBusy}>{priceAlertBusy ? "SAVING…" : "WATCH PRICE"}</button></div>{priceAlertMessage && <small className="phase29-price-alert-message">{priceAlertMessage}</small>}</form>}
           <section className="phase17-delivery-card">
             <div className="phase17-delivery-head"><span><Icon name="truck" size={20} /></span><div><strong>Delivery estimate</strong><small>Usually dispatches within {dispatchDays} day{dispatchDays === 1 ? "" : "s"} · typical arrival {estimatedFrom}–{estimatedTo}</small></div><button type="button" onClick={shareProduct} aria-label="Share product"><Icon name="share" size={18} /></button></div>
             <form className="phase17-pin-check" onSubmit={saveDeliveryPin}><input value={deliveryPin} onChange={(e) => { setDeliveryPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryQuote(null); setDeliveryMessage(""); }} inputMode="numeric" placeholder="Enter 6-digit PIN" aria-label="Delivery PIN code" /><button type="submit" disabled={deliveryBusy}>{deliveryBusy ? "CHECKING…" : "CHECK PIN"}</button></form>

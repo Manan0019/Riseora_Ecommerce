@@ -3,8 +3,10 @@ import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
+import { optionalAuth } from "../middleware/auth";
 
 const router = Router();
+router.use(optionalAuth);
 const publicWriteLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 12, standardHeaders: "draft-8", legacyHeaders: false });
 const cartRecoveryLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false });
 
@@ -97,6 +99,45 @@ router.post("/stock-alerts", publicWriteLimit, asyncHandler(async (req, res) => 
   res.json({ success: true, message: `We'll email you when ${variant.product.name} (${variant.name}) is available again.` });
 }));
 
+
+const priceAlertSchema = z.object({
+  variantId: z.string().uuid(),
+  email: z.string().trim().email().max(200),
+  name: z.string().trim().max(120).optional().or(z.literal("")),
+  targetPrice: z.number().positive().max(10000000).nullable().optional(),
+});
+
+router.post("/price-alerts", publicWriteLimit, asyncHandler(async (req, res) => {
+  const parsed = priceAlertSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid email address and target price" });
+
+  const variant = await prisma.productVariant.findFirst({
+    where: { id: parsed.data.variantId, isActive: true, product: { isActive: true } },
+    include: { product: true },
+  });
+  if (!variant) return res.status(404).json({ success: false, message: "Product option not found" });
+
+  const currentPrice = Number(variant.sellingPrice);
+  const targetPrice = parsed.data.targetPrice == null ? null : Number(parsed.data.targetPrice);
+  if (targetPrice != null && targetPrice >= currentPrice) {
+    return res.status(400).json({ success: false, message: `Target price must be below the current ₹${currentPrice.toFixed(0)} price.` });
+  }
+
+  const email = parsed.data.email.toLowerCase();
+  await prisma.priceAlert.upsert({
+    where: { variantId_email: { variantId: variant.id, email } },
+    create: { variantId: variant.id, email, name: parsed.data.name || null, subscribedPrice: currentPrice, targetPrice },
+    update: { name: parsed.data.name || null, subscribedPrice: currentPrice, targetPrice, status: "PENDING", subscribedAt: new Date(), notifiedAt: null },
+  });
+
+  res.json({
+    success: true,
+    message: targetPrice == null
+      ? `We'll alert you if ${variant.product.name} (${variant.name}) drops below ₹${currentPrice.toFixed(0)}.`
+      : `We'll alert you if ${variant.product.name} (${variant.name}) reaches ₹${targetPrice.toFixed(0)} or lower.`,
+  });
+}));
+
 router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (req, res) => {
   const parsed = z.string().uuid().safeParse(String(req.params.cartToken));
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid recovery link" });
@@ -145,16 +186,16 @@ router.post("/cart-recovery", cartRecoveryLimit, asyncHandler(async (req, res) =
     ? await prisma.cartRecoverySession.upsert({
         where: { cartToken: parsed.data.cartToken },
         create: {
-          cartToken: parsed.data.cartToken, email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
+          cartToken: parsed.data.cartToken, userId: req.user?.id || null, email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
           items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt, lastSeenAt: new Date(),
         },
         update: {
-          email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
+          userId: req.user?.id || undefined, email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null,
           items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt, lastSeenAt: new Date(), status: "ACTIVE", orderNumber: null,
         },
       })
     : await prisma.cartRecoverySession.create({
-        data: { email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null, items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt },
+        data: { userId: req.user?.id || null, email: parsed.data.email.toLowerCase(), name: parsed.data.name || null, phone: parsed.data.phone || null, items: parsed.data.items as any, subtotal: parsed.data.subtotal, recoveryOptIn: parsed.data.recoveryOptIn, expiresAt },
       });
   res.json({ success: true, data: { cartToken: data.cartToken } });
 }));

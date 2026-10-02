@@ -25,6 +25,7 @@ import seoRoutes from "./routes/seo.routes";
 import wishlistRoutes from "./routes/wishlist.routes";
 import notificationRoutes from "./routes/notification.routes";
 import retentionRoutes from "./routes/retention.routes";
+import lifecycleRoutes from "./routes/lifecycle.routes";
 import adminSystemRoutes, { publicSystemRoutes } from "./routes/system.routes";
 import erpSyncRoutes from "./routes/erp-sync.routes";
 import adminErpRoutes from "./routes/admin-erp.routes";
@@ -32,6 +33,7 @@ import { publicDealRoutes, adminDealRoutes } from "./routes/deal.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
 import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
 import { processCartRecoveryReminders } from "./services/cart-recovery.service";
+import { notifyEligiblePriceAlerts } from "./services/price-alert.service";
 
 const app = express();
 if (env.TRUST_PROXY) app.set("trust proxy", 1);
@@ -83,6 +85,7 @@ app.use("/api/admin", adminSystemRoutes);
 app.use("/api/admin", adminErpRoutes);
 app.use("/api/admin", audienceRoutes);
 app.use("/api/admin/retention", retentionRoutes);
+app.use("/api/admin/lifecycle", lifecycleRoutes);
 app.use("/", seoRoutes);
 app.use("/api", notFound);
 
@@ -102,6 +105,7 @@ const server = app.listen(env.PORT, () => {
   console.log(`Riseora API running on http://localhost:${env.PORT}`);
   void releaseExpiredCheckoutSessions().catch((error) => console.error("Checkout cleanup failed", error));
   void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
+  void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
 });
 
 const checkoutCleanupTimer = setInterval(() => {
@@ -111,6 +115,7 @@ checkoutCleanupTimer.unref();
 
 const cartRecoveryTimer = setInterval(() => {
   void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
+  void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
 }, 10 * 60 * 1000);
 cartRecoveryTimer.unref();
 

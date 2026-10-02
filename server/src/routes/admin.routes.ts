@@ -7,6 +7,7 @@ import { slugify } from "../utils/slugify";
 import { sendOrderStatusNotification } from "../services/notification.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
+import { notifyPriceAlertsForVariant } from "../services/price-alert.service";
 import { createOrderStatusInAppNotification } from "../services/notification-center.service";
 
 const router = Router();
@@ -886,6 +887,7 @@ router.patch(
     if (before.stockQuantity <= 0 && variant.stockQuantity > 0) {
       void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
     }
+    void notifyPriceAlertsForVariant(variant.id).catch((error) => console.error("Price alert notification failed", error));
     res.json({ success: true, data: variant });
   }),
 );
@@ -1016,6 +1018,7 @@ router.put(
 
     for (const variant of product.variants) {
       if (variant.stockQuantity > 0) void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
+      void notifyPriceAlertsForVariant(variant.id).catch((error) => console.error("Price alert notification failed", error));
     }
     res.json({ success: true, data: product });
   }),

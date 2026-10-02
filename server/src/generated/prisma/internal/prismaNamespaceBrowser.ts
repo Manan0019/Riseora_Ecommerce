@@ -87,6 +87,7 @@ export const ModelName = {
   ContactMessage: 'ContactMessage',
   NewsletterSubscriber: 'NewsletterSubscriber',
   StockAlert: 'StockAlert',
+  PriceAlert: 'PriceAlert',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -801,6 +802,23 @@ export const StockAlertScalarFieldEnum = {
 } as const
 
 export type StockAlertScalarFieldEnum = (typeof StockAlertScalarFieldEnum)[keyof typeof StockAlertScalarFieldEnum]
+
+
+export const PriceAlertScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  email: 'email',
+  name: 'name',
+  subscribedPrice: 'subscribedPrice',
+  targetPrice: 'targetPrice',
+  status: 'status',
+  subscribedAt: 'subscribedAt',
+  notifiedAt: 'notifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PriceAlertScalarFieldEnum = (typeof PriceAlertScalarFieldEnum)[keyof typeof PriceAlertScalarFieldEnum]
 
 
 export const ErpSyncStateScalarFieldEnum = {

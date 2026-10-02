@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { Prisma } from "../generated/prisma/client";
 
 export type InAppNotificationType = "GENERAL" | "ORDER" | "PRICE_DROP" | "STOCK_ALERT" | "CAMPAIGN";
 
@@ -9,7 +10,7 @@ type CreateNotificationInput = {
   type?: InAppNotificationType;
   ctaLabel?: string | null;
   ctaUrl?: string | null;
-  metadata?: Record<string, unknown> | null;
+  metadata?: Prisma.InputJsonValue | null;
   dedupeKey?: string | null;
 };
 
@@ -21,7 +22,7 @@ export async function createUserNotification(input: CreateNotificationInput) {
     type: input.type || "GENERAL",
     ctaLabel: input.ctaLabel || null,
     ctaUrl: input.ctaUrl || null,
-    metadata: input.metadata || undefined,
+    metadata: input.metadata === null ? Prisma.JsonNull : (input.metadata ?? undefined),
     dedupeKey: input.dedupeKey || null,
   };
   if (input.dedupeKey) {

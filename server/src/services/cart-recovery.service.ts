@@ -1,6 +1,7 @@
 import { env } from "../config/env";
 import { prisma } from "../config/prisma";
 import { sendCartRecoveryEmail } from "./notification.service";
+import { createUserNotification } from "./notification-center.service";
 
 function canSendEmail() {
   return Boolean(env.CART_RECOVERY_ENABLED && env.RESEND_API_KEY && env.EMAIL_FROM);
@@ -30,6 +31,18 @@ export async function sendCartRecoveryReminder(id: string, force = false) {
     where: { id: session.id },
     data: { reminderCount: { increment: 1 }, lastReminderAt: new Date() },
   });
+  if (session.userId) {
+    await createUserNotification({
+      userId: session.userId,
+      title: reminderNumber > 1 ? "Your Riseora cart is still waiting" : "You left something in your Riseora cart",
+      message: `Your saved cart is worth ₹${Number(session.subtotal || 0).toFixed(0)}. Prices and stock are checked again when you return.`,
+      type: "CAMPAIGN",
+      ctaLabel: "Restore cart",
+      ctaUrl: `/recover-cart/${session.cartToken}`,
+      metadata: { cartRecoveryId: session.id, reminderNumber },
+      dedupeKey: `cart-recovery/${session.id}/${reminderNumber}`,
+    }).catch((error) => console.error("Cart recovery in-app notification failed", error));
+  }
   return { sent: true, reminderNumber };
 }
 

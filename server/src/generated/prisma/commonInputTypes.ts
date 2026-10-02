@@ -701,6 +701,23 @@ export type EnumStockAlertStatusWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
 }
 
+export type EnumPriceAlertStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PriceAlertStatus | Prisma.EnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel> | $Enums.PriceAlertStatus
+}
+
+export type EnumPriceAlertStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PriceAlertStatus | Prisma.EnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPriceAlertStatusWithAggregatesFilter<$PrismaModel> | $Enums.PriceAlertStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
+}
+
 export type EnumErpSyncDirectionFilter<$PrismaModel = never> = {
   equals?: $Enums.ErpSyncDirection | Prisma.EnumErpSyncDirectionFieldRefInput<$PrismaModel>
   in?: $Enums.ErpSyncDirection[] | Prisma.ListEnumErpSyncDirectionFieldRefInput<$PrismaModel>
@@ -1392,6 +1409,23 @@ export type NestedEnumStockAlertStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumStockAlertStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumPriceAlertStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PriceAlertStatus | Prisma.EnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel> | $Enums.PriceAlertStatus
+}
+
+export type NestedEnumPriceAlertStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PriceAlertStatus | Prisma.EnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PriceAlertStatus[] | Prisma.ListEnumPriceAlertStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPriceAlertStatusWithAggregatesFilter<$PrismaModel> | $Enums.PriceAlertStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumErpSyncDirectionFilter<$PrismaModel = never> = {

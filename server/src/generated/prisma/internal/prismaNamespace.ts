@@ -433,6 +433,7 @@ export const ModelName = {
   ContactMessage: 'ContactMessage',
   NewsletterSubscriber: 'NewsletterSubscriber',
   StockAlert: 'StockAlert',
+  PriceAlert: 'PriceAlert',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -450,7 +451,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3118,6 +3119,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PriceAlert: {
+      payload: Prisma.$PriceAlertPayload<ExtArgs>
+      fields: Prisma.PriceAlertFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PriceAlertFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PriceAlertFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        findFirst: {
+          args: Prisma.PriceAlertFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PriceAlertFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        findMany: {
+          args: Prisma.PriceAlertFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>[]
+        }
+        create: {
+          args: Prisma.PriceAlertCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        createMany: {
+          args: Prisma.PriceAlertCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PriceAlertCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>[]
+        }
+        delete: {
+          args: Prisma.PriceAlertDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        update: {
+          args: Prisma.PriceAlertUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        deleteMany: {
+          args: Prisma.PriceAlertDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PriceAlertUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PriceAlertUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>[]
+        }
+        upsert: {
+          args: Prisma.PriceAlertUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PriceAlertPayload>
+        }
+        aggregate: {
+          args: Prisma.PriceAlertAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePriceAlert>
+        }
+        groupBy: {
+          args: Prisma.PriceAlertGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PriceAlertGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PriceAlertCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PriceAlertCountAggregateOutputType> | number
+        }
+      }
+    }
     ErpSyncState: {
       payload: Prisma.$ErpSyncStatePayload<ExtArgs>
       fields: Prisma.ErpSyncStateFieldRefs
@@ -4001,6 +4076,23 @@ export const StockAlertScalarFieldEnum = {
 export type StockAlertScalarFieldEnum = (typeof StockAlertScalarFieldEnum)[keyof typeof StockAlertScalarFieldEnum]
 
 
+export const PriceAlertScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  email: 'email',
+  name: 'name',
+  subscribedPrice: 'subscribedPrice',
+  targetPrice: 'targetPrice',
+  status: 'status',
+  subscribedAt: 'subscribedAt',
+  notifiedAt: 'notifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PriceAlertScalarFieldEnum = (typeof PriceAlertScalarFieldEnum)[keyof typeof PriceAlertScalarFieldEnum]
+
+
 export const ErpSyncStateScalarFieldEnum = {
   id: 'id',
   lastCatalogSyncAt: 'lastCatalogSyncAt',
@@ -4406,6 +4498,20 @@ export type ListEnumStockAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'PriceAlertStatus'
+ */
+export type EnumPriceAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriceAlertStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PriceAlertStatus[]'
+ */
+export type ListEnumPriceAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PriceAlertStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'ErpSyncDirection'
  */
 export type EnumErpSyncDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ErpSyncDirection'>
@@ -4647,6 +4753,7 @@ export type GlobalOmitConfig = {
   contactMessage?: Prisma.ContactMessageOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
   stockAlert?: Prisma.StockAlertOmit
+  priceAlert?: Prisma.PriceAlertOmit
   erpSyncState?: Prisma.ErpSyncStateOmit
   erpSyncLog?: Prisma.ErpSyncLogOmit
 }

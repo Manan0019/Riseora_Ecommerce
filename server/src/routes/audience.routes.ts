@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { notifyReadyStockAlerts } from "../services/stock-alert.service";
 import { sendCartRecoveryReminder } from "../services/cart-recovery.service";
 import { env } from "../config/env";
+import { notifyEligiblePriceAlerts } from "../services/price-alert.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -120,6 +121,47 @@ router.post("/stock-alerts/notify-ready", asyncHandler(async (_req, res) => {
     message: env.RESEND_API_KEY && env.EMAIL_FROM
       ? `${result.sent} back-in-stock notification${result.sent === 1 ? "" : "s"} sent.`
       : "Email delivery is not configured. Pending alerts were left untouched.",
+  });
+}));
+
+
+router.get("/price-alerts", asyncHandler(async (req, res) => {
+  const status = typeof req.query.status === "string" ? req.query.status : "";
+  const where: any = {};
+  if (["PENDING", "NOTIFIED", "CANCELLED"].includes(status)) where.status = status;
+  const data = await prisma.priceAlert.findMany({
+    where,
+    include: { variant: { include: { product: { select: { id: true, name: true, slug: true, isActive: true } } } } },
+    orderBy: { subscribedAt: "desc" },
+    take: 500,
+  });
+  res.json({ success: true, data, emailConfigured: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM) });
+}));
+
+router.patch("/price-alerts/:id", asyncHandler(async (req, res) => {
+  const parsed = z.object({ status: z.enum(["PENDING", "CANCELLED"]) }).safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid price alert update" });
+  const current = await prisma.priceAlert.findUnique({ where: { id: String(req.params.id) }, include: { variant: true } });
+  if (!current) return res.status(404).json({ success: false, message: "Price alert not found" });
+  const data = await prisma.priceAlert.update({
+    where: { id: current.id },
+    data: {
+      status: parsed.data.status,
+      ...(parsed.data.status === "PENDING" ? { subscribedPrice: current.variant.sellingPrice, notifiedAt: null, subscribedAt: new Date() } : {}),
+    },
+  });
+  res.json({ success: true, data });
+}));
+
+router.post("/price-alerts/notify-ready", asyncHandler(async (_req, res) => {
+  const result = await notifyEligiblePriceAlerts(250);
+  res.json({
+    success: true,
+    data: result,
+    emailConfigured: Boolean(env.RESEND_API_KEY && env.EMAIL_FROM),
+    message: env.RESEND_API_KEY && env.EMAIL_FROM
+      ? `${result.sent} price-drop notification${result.sent === 1 ? "" : "s"} sent.`
+      : "Email delivery is not configured. Pending price alerts were left untouched.",
   });
 }));
 

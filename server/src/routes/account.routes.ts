@@ -300,4 +300,46 @@ router.post(
   }),
 );
 
+
+router.get(
+  "/shopping-alerts",
+  asyncHandler(async (req, res) => {
+    const account = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { email: true } });
+    if (!account) return res.status(404).json({ success: false, message: "Account not found" });
+    const [stock, price] = await Promise.all([
+      prisma.stockAlert.findMany({
+        where: { email: account.email },
+        include: { variant: { include: { product: { select: { id: true, name: true, slug: true, images: { orderBy: { sortOrder: "asc" }, take: 1 } } } } } },
+        orderBy: { subscribedAt: "desc" },
+      }),
+      prisma.priceAlert.findMany({
+        where: { email: account.email },
+        include: { variant: { include: { product: { select: { id: true, name: true, slug: true, images: { orderBy: { sortOrder: "asc" }, take: 1 } } } } } },
+        orderBy: { subscribedAt: "desc" },
+      }),
+    ]);
+    res.json({ success: true, data: { stock, price } });
+  }),
+);
+
+router.delete(
+  "/shopping-alerts/:kind/:id",
+  asyncHandler(async (req, res) => {
+    const account = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { email: true } });
+    if (!account) return res.status(404).json({ success: false, message: "Account not found" });
+    const kind = String(req.params.kind);
+    const id = String(req.params.id);
+    if (kind === "stock") {
+      const result = await prisma.stockAlert.updateMany({ where: { id, email: account.email, status: { not: "NOTIFIED" } }, data: { status: "CANCELLED" } });
+      if (!result.count) return res.status(404).json({ success: false, message: "Active stock alert not found" });
+    } else if (kind === "price") {
+      const result = await prisma.priceAlert.updateMany({ where: { id, email: account.email, status: { not: "NOTIFIED" } }, data: { status: "CANCELLED" } });
+      if (!result.count) return res.status(404).json({ success: false, message: "Active price alert not found" });
+    } else {
+      return res.status(400).json({ success: false, message: "Unknown alert type" });
+    }
+    res.json({ success: true, message: "Shopping alert cancelled." });
+  }),
+);
+
 export default router;

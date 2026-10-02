@@ -2321,3 +2321,91 @@ textarea { min-height: 105px; resize: vertical; }
 .phase28-deal-hero{padding:48px 0 18px;background:linear-gradient(145deg,#f7f1e6 0%,#fffaf2 52%,#eef5ee 100%)}.phase28-deal-hero-grid{display:grid;grid-template-columns:minmax(280px,520px) minmax(0,1fr);gap:56px;align-items:center}.phase28-deal-art{position:relative;aspect-ratio:1/1;border-radius:28px;overflow:hidden;background:#efe7d9;display:grid;place-items:center;box-shadow:0 24px 70px rgba(40,58,43,.12)}.phase28-deal-art img{width:100%;height:100%;object-fit:cover}.phase28-deal-art>span{font:700 80px/1 Georgia,serif;color:#2e5a43}.phase28-deal-art>b{position:absolute;left:18px;top:18px;background:#173b2a;color:#fff;padding:9px 13px;border-radius:999px;font-size:11px;letter-spacing:.08em}.phase28-deal-copy{max-width:690px}.phase28-deal-copy h1{font-size:clamp(42px,6vw,78px);line-height:.98;margin:8px 0 18px}.phase28-deal-copy>p:not(.phase3-eyebrow){font-size:18px;line-height:1.7;color:#58625b}.phase28-deal-value{margin:26px 0;padding:20px 22px;border:1px solid rgba(23,59,42,.14);background:rgba(255,255,255,.72);border-radius:20px;display:flex;flex-direction:column;gap:5px}.phase28-deal-value strong{font-size:24px;color:#173b2a}.phase28-deal-value span{color:#626c64}.phase28-deal-hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin:24px 0 14px}.phase28-deal-copy>small{display:block;max-width:620px;line-height:1.6;color:#6d746f}.phase28-deal-breakdown{padding-top:58px}.phase28-deal-items{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}.phase28-deal-product{display:flex;gap:16px;padding:16px;border:1px solid #e7e3dc;border-radius:20px;background:#fff;align-items:center}.phase28-deal-product-image{width:112px;aspect-ratio:1/1;border-radius:16px;overflow:hidden;background:#f4f1eb;display:grid;place-items:center;position:relative;flex:0 0 auto;text-decoration:none;color:#173b2a}.phase28-deal-product-image img{width:100%;height:100%;object-fit:cover}.phase28-deal-product-image>b{position:absolute;left:8px;bottom:8px;background:#173b2a;color:#fff;padding:6px 8px;border-radius:999px;font-size:9px;letter-spacing:.08em}.phase28-deal-product>div{display:grid;gap:5px}.phase28-deal-product a{text-decoration:none;color:inherit}.phase28-deal-product small{color:#6b716c}.phase28-deal-product span{font-weight:700;color:#173b2a}.phase28-deal-terms{margin-top:24px;padding:18px 20px;border-radius:18px;background:#f7f7f3;display:grid;gap:8px;color:#59625b}.phase28-product-deals{overflow:hidden}.phase28-editing-panel{outline:2px solid rgba(23,59,42,.18);box-shadow:0 18px 50px rgba(23,59,42,.08)}.phase28-deal-admin-list article.phase28-current-edit{outline:2px solid #2f7555;background:#f2f8f4}.phase28-deal-admin-list article em{display:block;font-size:11px;font-style:normal;color:#788078;margin-top:3px}.phase28-admin-deal-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
 @media(max-width:850px){.phase28-deal-hero{padding-top:24px}.phase28-deal-hero-grid{grid-template-columns:1fr;gap:28px}.phase28-deal-art{max-width:560px;width:100%;margin:auto}.phase28-deal-copy h1{font-size:44px}.phase28-deal-items{grid-template-columns:1fr}.phase28-admin-deal-actions{justify-content:flex-start}}
 @media(max-width:560px){.phase28-deal-copy h1{font-size:38px}.phase28-deal-hero-actions .button{width:100%;justify-content:center}.phase28-deal-product{align-items:flex-start}.phase28-deal-product-image{width:90px}.phase28-offer-actions{display:grid;grid-template-columns:1fr 1fr}.phase28-offer-actions .state-toggle{text-align:center;justify-content:center}}
+
+/* Phase 29 — customer lifecycle intelligence */
+.phase29-price-alert {
+  margin-top: 16px;
+  padding: 18px;
+  border: 1px solid rgba(23, 51, 38, .14);
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(247, 243, 231, .88), rgba(255, 255, 255, .96));
+}
+.phase29-price-alert-copy h3 { margin: 4px 0 5px; font-size: 20px; }
+.phase29-price-alert-copy p { margin: 0; color: #617067; font-size: 14px; line-height: 1.5; }
+.phase29-price-alert-fields { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(130px, .7fr) auto; gap: 10px; margin-top: 14px; align-items: stretch; }
+.phase29-price-alert-fields > input,
+.phase29-target-price { min-height: 46px; border: 1px solid rgba(23, 51, 38, .16); border-radius: 12px; background: #fff; }
+.phase29-price-alert-fields > input { width: 100%; padding: 0 13px; }
+.phase29-target-price { display: flex; align-items: center; padding-left: 12px; }
+.phase29-target-price span { color: #173326; font-weight: 800; }
+.phase29-target-price input { min-width: 0; width: 100%; height: 44px; border: 0; outline: 0; background: transparent; padding: 0 10px 0 5px; }
+.phase29-price-alert-message { display: block; margin-top: 10px; color: #335c46; line-height: 1.45; }
+
+.phase29-shopping-alerts { margin: 34px 0; scroll-margin-top: 120px; }
+.phase29-alert-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.phase29-alert-panel { background: #fff; border: 1px solid rgba(23, 51, 38, .1); border-radius: 20px; padding: 20px; box-shadow: 0 16px 40px rgba(20, 43, 32, .05); }
+.phase29-alert-panel-head { display: flex; gap: 12px; align-items: center; margin-bottom: 14px; }
+.phase29-alert-panel-head > span { width: 42px; height: 42px; display: grid; place-items: center; border-radius: 50%; background: #f3efe4; color: #173326; }
+.phase29-alert-panel-head h3 { margin: 0; }
+.phase29-alert-panel-head small { color: #728078; }
+.phase29-account-alert-list { display: grid; gap: 10px; }
+.phase29-account-alert { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 12px 0; border-top: 1px solid rgba(23, 51, 38, .08); }
+.phase29-account-alert:first-child { border-top: 0; }
+.phase29-account-alert > div { min-width: 0; display: grid; gap: 2px; }
+.phase29-account-alert a { color: inherit; }
+.phase29-account-alert small { color: #738077; }
+.phase29-account-alert button { border: 0; background: transparent; color: #8a493d; text-decoration: underline; cursor: pointer; }
+.phase29-alert-state { font-size: 10px; letter-spacing: .08em; font-weight: 900; padding: 6px 8px; border-radius: 999px; background: #eee; }
+.phase29-alert-state.pending { background: #fff2ca; color: #805f00; }
+.phase29-alert-state.notified { background: #dff3e7; color: #23653d; }
+.phase29-alert-state.cancelled { background: #eee; color: #777; }
+
+.phase29-price-admin-list { display: grid; gap: 8px; }
+.phase29-price-admin-list article { display: grid; grid-template-columns: minmax(180px, 1.2fr) minmax(230px, 1.4fr) auto auto; gap: 14px; align-items: center; padding: 14px 0; border-bottom: 1px solid rgba(23, 51, 38, .08); }
+.phase29-price-admin-list article > span { display: grid; gap: 3px; }
+.phase29-price-admin-list small { color: #76827b; }
+.phase29-alert-status { font-size: 10px; letter-spacing: .08em; font-weight: 900; padding: 7px 9px; border-radius: 999px; background: #eee; }
+.phase29-alert-status.eligible { background: #e5f5dd; color: #2b6832; }
+.phase29-alert-status.pending { background: #fff2ca; color: #805f00; }
+.phase29-alert-status.notified { background: #e1f1e7; color: #28623e; }
+.phase29-alert-status.cancelled { background: #eee; color: #777; }
+
+.phase29-lifecycle-health { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-bottom: 18px; }
+.phase29-lifecycle-health article { display: flex; gap: 14px; padding: 18px; border-radius: 18px; background: #fff; border: 1px solid rgba(23, 51, 38, .1); }
+.phase29-lifecycle-health article > span { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; flex: 0 0 auto; }
+.phase29-lifecycle-health article.ready > span { background: #e3f3e8; color: #245e3a; }
+.phase29-lifecycle-health article.warning > span { background: #fff0d1; color: #845c00; }
+.phase29-lifecycle-health article.neutral > span { background: #edf0ed; color: #58655e; }
+.phase29-lifecycle-health small { display: block; letter-spacing: .1em; font-weight: 800; color: #7a877f; }
+.phase29-lifecycle-health strong { display: block; margin-top: 2px; font-size: 18px; }
+.phase29-lifecycle-health p { margin: 4px 0 0; color: #6d7a72; }
+.phase29-lifecycle-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.phase29-lifecycle-card { background: #fff; border: 1px solid rgba(23, 51, 38, .1); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; min-height: 330px; box-shadow: 0 14px 38px rgba(18, 43, 31, .05); }
+.phase29-lifecycle-card-head { display: flex; gap: 12px; align-items: center; }
+.phase29-lifecycle-card-head > span { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: #f2eee2; color: #173326; }
+.phase29-lifecycle-card-head p { margin: 0; font-size: 11px; letter-spacing: .1em; font-weight: 900; color: #77847c; }
+.phase29-lifecycle-card-head h2 { margin: 2px 0 0; font-size: 22px; }
+.phase29-lifecycle-stats { display: flex; gap: 10px; margin: 20px 0; }
+.phase29-lifecycle-stats > div { flex: 1; min-width: 0; background: #f7f5ef; border-radius: 14px; padding: 13px; }
+.phase29-lifecycle-stats strong { display: block; font-size: 25px; color: #173326; }
+.phase29-lifecycle-stats small { color: #758078; }
+.phase29-lifecycle-card > p { color: #6c7971; line-height: 1.55; margin: 0 0 18px; }
+.phase29-lifecycle-actions { margin-top: auto; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.phase29-lifecycle-actions a { color: #173326; font-weight: 800; font-size: 13px; }
+.phase29-lifecycle-notes { margin-top: 18px; }
+.phase29-rule-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.phase29-rule-grid > div { padding: 14px 16px; background: #f7f5ef; border-radius: 14px; display: grid; gap: 5px; }
+.phase29-rule-grid span { color: #6b776f; line-height: 1.5; }
+
+@media (max-width: 980px) {
+  .phase29-lifecycle-grid { grid-template-columns: 1fr; }
+  .phase29-price-admin-list article { grid-template-columns: 1fr 1fr; }
+  .phase29-alert-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 680px) {
+  .phase29-price-alert-fields { grid-template-columns: 1fr; }
+  .phase29-lifecycle-health, .phase29-rule-grid { grid-template-columns: 1fr; }
+  .phase29-price-admin-list article { grid-template-columns: 1fr; align-items: start; }
+  .phase29-account-alert { grid-template-columns: 1fr auto; }
+  .phase29-account-alert button { grid-column: 1 / -1; justify-self: start; }
+}

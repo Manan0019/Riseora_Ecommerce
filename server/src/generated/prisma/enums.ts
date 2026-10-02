@@ -157,6 +157,15 @@ export const StockAlertStatus = {
 export type StockAlertStatus = (typeof StockAlertStatus)[keyof typeof StockAlertStatus]
 
 
+export const PriceAlertStatus = {
+  PENDING: 'PENDING',
+  NOTIFIED: 'NOTIFIED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PriceAlertStatus = (typeof PriceAlertStatus)[keyof typeof PriceAlertStatus]
+
+
 export const NotificationType = {
   GENERAL: 'GENERAL',
   ORDER: 'ORDER',

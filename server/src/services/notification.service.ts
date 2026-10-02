@@ -149,3 +149,25 @@ export async function sendCartRecoveryEmail(input: {
   });
   return true;
 }
+
+export async function sendPriceDropNotification(input: {
+  email: string;
+  name?: string | null;
+  productName: string;
+  productSlug: string;
+  variantName: string;
+  previousPrice: unknown;
+  currentPrice: unknown;
+}) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
+  const url = `${base}/product/${encodeURIComponent(input.productSlug)}`;
+  const saving = Math.max(0, Number(input.previousPrice || 0) - Number(input.currentPrice || 0));
+  await send({
+    to: input.email,
+    subject: `Price drop: ${input.productName} at Riseora`,
+    idempotencyKey: `price-alert/${input.productSlug}/${input.variantName}/${input.email}/${Number(input.currentPrice || 0).toFixed(2)}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>A better price is live.</h2><p>${input.name ? `${escapeHtml(input.name)}, ` : ""}<strong>${escapeHtml(input.productName)}</strong> (${escapeHtml(input.variantName)}) has dropped from <strong>${money(input.previousPrice)}</strong> to <strong>${money(input.currentPrice)}</strong>.</p>${saving > 0 ? `<p>You save <strong>${money(saving)}</strong> versus the price when you created this alert.</p>` : ""}<p><a href="${escapeHtml(url)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">View product</a></p><p style="color:#68776e;font-size:13px">Prices and stock can change. This alert does not reserve inventory.</p></div>`,
+  });
+  return true;
+}

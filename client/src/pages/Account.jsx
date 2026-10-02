@@ -30,19 +30,26 @@ export default function Account() {
   const [saving, setSaving] = useState(false);
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [buyAgain, setBuyAgain] = useState([]);
+  const [shoppingAlerts, setShoppingAlerts] = useState({ stock: [], price: [] });
 
   async function refreshAddresses() {
     const response = await apiFetch("/account/addresses");
     setAddresses(response.data);
   }
 
+  async function refreshShoppingAlerts() {
+    const response = await apiFetch("/account/shopping-alerts");
+    setShoppingAlerts(response.data || { stock: [], price: [] });
+  }
+
   useEffect(() => {
-    Promise.all([apiFetch("/account/profile"), apiFetch("/account/addresses"), apiFetch("/account/buy-again")])
-      .then(([profileResponse, addressResponse, buyAgainResponse]) => {
+    Promise.all([apiFetch("/account/profile"), apiFetch("/account/addresses"), apiFetch("/account/buy-again"), apiFetch("/account/shopping-alerts")])
+      .then(([profileResponse, addressResponse, buyAgainResponse, alertResponse]) => {
         const current = profileResponse.data;
         setProfile({ firstName: current.firstName || "", lastName: current.lastName || "", phone: current.phone || "" });
         setAddresses(addressResponse.data);
         setBuyAgain(buyAgainResponse.data || []);
+        setShoppingAlerts(alertResponse.data || { stock: [], price: [] });
       })
       .catch((e) => setError(e.message));
   }, []);
@@ -98,6 +105,15 @@ export default function Account() {
     catch (e) { setError(e.message); }
   }
 
+  async function cancelShoppingAlert(kind, id) {
+    setError(""); setMessage("");
+    try {
+      const response = await apiFetch(`/account/shopping-alerts/${kind}/${id}`, { method: "DELETE" });
+      setMessage(response.message || "Shopping alert cancelled.");
+      await refreshShoppingAlerts();
+    } catch (e) { setError(e.message); }
+  }
+
   return (
     <div className="container page-space account-page">
       <div className="account-hero">
@@ -112,6 +128,7 @@ export default function Account() {
         <Link to="/orders"><Icon name="orders" /><span><strong>My orders</strong><small>Track and review purchases</small></span><b>›</b></Link>
         <Link to="/wishlist"><Icon name="heart" /><span><strong>Wishlist</strong><small>Your saved products</small></span><b>›</b></Link>
         <Link to="/notifications"><Icon name="bell" /><span><strong>Notifications</strong><small>Orders and Riseora updates</small></span><b>›</b></Link>
+        <a href="#shopping-alerts"><Icon name="tag" /><span><strong>Shopping alerts</strong><small>Price drops and restocks</small></span><b>›</b></a>
         <Link to="/returns"><Icon name="truck" /><span><strong>Returns & refunds</strong><small>Track return requests and refunds</small></span><b>›</b></Link>
       </div>
 
@@ -119,6 +136,15 @@ export default function Account() {
         <div className="section-heading phase23-section-heading"><div><p className="eyebrow">BUY AGAIN</p><h2>Your repeat favourites</h2><p className="muted">Fresh prices, current stock and current purchase limits are always used.</p></div><Link className="text-link" to="/orders">Past orders →</Link></div>
         <div className="phase23-product-rail">{buyAgain.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>
       </section>}
+
+
+      <section className="phase29-shopping-alerts" id="shopping-alerts">
+        <div className="section-heading phase23-section-heading"><div><p className="eyebrow">SHOPPING ALERTS</p><h2>Your price &amp; stock watches</h2><p className="muted">Manage alerts tied to your Riseora account email.</p></div></div>
+        <div className="phase29-alert-grid">
+          <article className="phase29-alert-panel"><div className="phase29-alert-panel-head"><span><Icon name="tag" /></span><div><h3>Price watches</h3><small>{shoppingAlerts.price.filter((item) => item.status === "PENDING").length} active</small></div></div><div className="phase29-account-alert-list">{shoppingAlerts.price.map((item) => <div key={item.id} className="phase29-account-alert"><div><Link to={`/product/${item.variant?.product?.slug || ""}`}><strong>{item.variant?.product?.name || "Product"}</strong></Link><small>{item.variant?.name} · current ₹{Number(item.variant?.sellingPrice || 0).toFixed(0)}</small><small>{item.targetPrice == null ? `Any drop below ₹${Number(item.subscribedPrice || 0).toFixed(0)}` : `Target ₹${Number(item.targetPrice).toFixed(0)}`}</small></div><span className={`phase29-alert-state ${String(item.status).toLowerCase()}`}>{item.status}</span>{item.status === "PENDING" && <button type="button" onClick={() => cancelShoppingAlert("price", item.id)}>Cancel</button>}</div>)}{!shoppingAlerts.price.length && <p className="muted">No price watches yet. Open any product to start one.</p>}</div></article>
+          <article className="phase29-alert-panel"><div className="phase29-alert-panel-head"><span><Icon name="bell" /></span><div><h3>Back-in-stock alerts</h3><small>{shoppingAlerts.stock.filter((item) => item.status === "PENDING").length} active</small></div></div><div className="phase29-account-alert-list">{shoppingAlerts.stock.map((item) => <div key={item.id} className="phase29-account-alert"><div><Link to={`/product/${item.variant?.product?.slug || ""}`}><strong>{item.variant?.product?.name || "Product"}</strong></Link><small>{item.variant?.name} · stock {Number(item.variant?.stockQuantity || 0)}</small></div><span className={`phase29-alert-state ${String(item.status).toLowerCase()}`}>{item.status}</span>{item.status === "PENDING" && <button type="button" onClick={() => cancelShoppingAlert("stock", item.id)}>Cancel</button>}</div>)}{!shoppingAlerts.stock.length && <p className="muted">No back-in-stock alerts yet.</p>}</div></article>
+        </div>
+      </section>
 
       <div className="account-grid">
         <form className="account-card" onSubmit={saveProfile}>

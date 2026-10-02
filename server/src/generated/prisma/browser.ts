@@ -198,6 +198,11 @@ export type NewsletterSubscriber = Prisma.NewsletterSubscriberModel
  */
 export type StockAlert = Prisma.StockAlertModel
 /**
+ * Model PriceAlert
+ * 
+ */
+export type PriceAlert = Prisma.PriceAlertModel
+/**
  * Model ErpSyncState
  * 
  */

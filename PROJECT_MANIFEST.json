@@ -50,10 +50,11 @@
     "verification": "npm run verify:phase23"
   },
   "database_changes": [
-    "WishlistShare"
+    "WishlistShare",
+    "PriceAlert"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 28,
+  "latestPhase": 29,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -104,5 +105,22 @@
     ],
     "databaseChanges": [],
     "verification": "npm run verify:phase28"
+  },
+  "phase29": {
+    "name": "Customer Lifecycle Automation & Shopping Alerts",
+    "features": [
+      "Prisma 7 JSON typing repair for Phase 27 notification metadata",
+      "customer price-drop watches with optional target price",
+      "price-drop email delivery plus in-app notification mirroring for account emails",
+      "back-in-stock email alerts mirrored to signed-in notification center",
+      "cart-recovery sessions linked to authenticated users and mirrored to in-app notifications",
+      "account shopping-alert management for stock and price watches",
+      "admin Audience price-watch demand queue with READY detection and manual processing",
+      "admin Lifecycle Automation Center for cart recovery, restock and price-drop jobs",
+      "automatic price-alert evaluation after Admin inventory/product price updates and on server lifecycle timer",
+      "anti-spam lifecycle rules: cart max two reminders and one-shot shopping alerts"
+    ],
+    "migration": "20261002093000_phase29_lifecycle_price_alerts",
+    "verification": "npm run verify:phase29"
   }
 }

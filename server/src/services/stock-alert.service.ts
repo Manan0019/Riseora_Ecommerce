@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma";
 import { sendBackInStockNotification } from "./notification.service";
+import { createUserNotification } from "./notification-center.service";
 
 async function deliver(alert: any) {
   const variant = alert.variant;
@@ -12,6 +13,19 @@ async function deliver(alert: any) {
     variantName: variant.name,
   });
   if (!sent) return false;
+  const user = await prisma.user.findUnique({ where: { email: alert.email }, select: { id: true } }).catch(() => null);
+  if (user?.id) {
+    await createUserNotification({
+      userId: user.id,
+      title: `${variant.product.name} is back in stock`,
+      message: `${variant.name} is available again. Stock can move quickly.`,
+      type: "STOCK_ALERT",
+      ctaLabel: "Shop now",
+      ctaUrl: `/product/${variant.product.slug}`,
+      metadata: { stockAlertId: alert.id, variantId: variant.id },
+      dedupeKey: `stock-alert/${alert.id}`,
+    }).catch((error) => console.error("Stock alert in-app notification failed", error));
+  }
   await prisma.stockAlert.updateMany({
     where: { id: alert.id, status: "PENDING" },
     data: { status: "NOTIFIED", notifiedAt: new Date() },
