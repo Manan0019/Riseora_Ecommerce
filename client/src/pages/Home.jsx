@@ -59,17 +59,30 @@ export default function Home() {
   const newest = products.slice(0, 8);
   const bestsellers = featured.length ? featured : trending;
 
+  const siteBase = (store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "");
   const organizationJson = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: store.storeName || "Riseora Herbals",
-    url: store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin,
+    url: siteBase,
     logo: store.logoUrl ? mediaUrl(store.logoUrl) : undefined,
     email: store.supportEmail || undefined,
+    sameAs: [store.instagramUrl, store.facebookUrl, store.youtubeUrl].filter(Boolean),
+  };
+  const websiteJson = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: store.storeName || "Riseora Herbals",
+    url: siteBase,
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${siteBase}/shop?search={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
   };
 
   return <div className="phase18-home">
-    <Seo description={store.seoDescription || store.brandTagline} jsonLd={organizationJson} />
+    <Seo description={store.seoDescription || store.brandTagline} jsonLd={[organizationJson, websiteJson]} />
 
     {categories.length > 0 && <section className="container phase3-section category-section phase18-home-categories">
       <div className="section-title-row phase18-category-title"><div><p className="phase3-eyebrow">SHOP BY CATEGORY</p><h2>Pick your routine</h2></div><Link to="/shop">VIEW ALL</Link></div>

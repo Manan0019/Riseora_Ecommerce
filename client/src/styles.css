@@ -2409,3 +2409,43 @@ textarea { min-height: 105px; resize: vertical; }
   .phase29-account-alert { grid-template-columns: 1fr auto; }
   .phase29-account-alert button { grid-column: 1 / -1; justify-self: start; }
 }
+
+/* Phase 30 — growth, SEO and consent-aware analytics */
+.footer-bottom { display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.footer-privacy-button { border:0; background:transparent; color:inherit; opacity:.78; padding:0; text-decoration:underline; text-underline-offset:3px; cursor:pointer; font:inherit; }
+.phase30-privacy-control { margin:20px 0 28px; padding:20px; border:1px solid rgba(23,51,38,.12); border-radius:18px; background:#f7f3ea; display:flex; align-items:center; justify-content:space-between; gap:18px; }
+.phase30-privacy-control p { margin:5px 0 0; color:#5f6a63; max-width:720px; }
+.phase30-growth-page { display:grid; gap:22px; }
+.phase30-growth-score-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+.phase30-growth-score-grid article { background:#fff; border:1px solid #e8e8e1; border-radius:18px; padding:20px; display:grid; gap:7px; box-shadow:0 12px 32px rgba(19,44,31,.04); }
+.phase30-growth-score-grid small { font-size:11px; letter-spacing:.11em; color:#6e776f; font-weight:800; }
+.phase30-growth-score-grid strong { font-size:32px; color:#173326; }
+.phase30-growth-score-grid span { color:#6e776f; font-size:13px; }
+.phase30-growth-panel { display:grid; gap:18px; }
+.phase30-health-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.phase30-health-list > div { border:1px solid #ecece6; border-radius:15px; padding:16px; background:#fcfcf9; }
+.phase30-health-list p { margin:7px 0 0; color:#667069; font-size:13px; }
+.phase30-status { display:inline-flex; width:max-content; align-items:center; border-radius:999px; padding:6px 9px; font-size:10px; font-weight:900; letter-spacing:.07em; }
+.phase30-status.ok { background:#e9f6ec; color:#17612f; }
+.phase30-status.warn { background:#fff1d8; color:#8b5600; }
+.phase30-feed-list { display:grid; gap:10px; }
+.phase30-feed-list > div { display:flex; align-items:center; justify-content:space-between; gap:16px; border:1px solid #ecece6; border-radius:15px; padding:14px 16px; background:#fcfcf9; }
+.phase30-feed-list > div > span { min-width:0; display:grid; gap:5px; }
+.phase30-feed-list code { display:block; overflow:hidden; text-overflow:ellipsis; color:#5e675f; }
+.phase30-feed-list > div > div { display:flex; gap:8px; flex-shrink:0; }
+.phase30-analytics-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.phase30-analytics-grid article { border:1px solid #ecece6; border-radius:15px; padding:16px; display:grid; gap:9px; background:#fcfcf9; }
+.phase30-analytics-grid strong { overflow-wrap:anywhere; }
+.phase30-analytics-grid small { color:#697169; line-height:1.5; }
+.phase30-growth-actions { display:flex; gap:10px; flex-wrap:wrap; }
+.consent-banner small { display:block; margin-top:7px; opacity:.72; }
+@media (max-width: 900px) {
+  .phase30-growth-score-grid, .phase30-analytics-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .phase30-health-list { grid-template-columns:1fr; }
+}
+@media (max-width: 640px) {
+  .phase30-growth-score-grid, .phase30-analytics-grid { grid-template-columns:1fr; }
+  .phase30-feed-list > div, .phase30-privacy-control { align-items:flex-start; flex-direction:column; }
+  .phase30-feed-list > div > div { width:100%; }
+  .phase30-feed-list .button { flex:1; }
+}

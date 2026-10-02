@@ -26,6 +26,7 @@ import wishlistRoutes from "./routes/wishlist.routes";
 import notificationRoutes from "./routes/notification.routes";
 import retentionRoutes from "./routes/retention.routes";
 import lifecycleRoutes from "./routes/lifecycle.routes";
+import growthRoutes from "./routes/growth.routes";
 import adminSystemRoutes, { publicSystemRoutes } from "./routes/system.routes";
 import erpSyncRoutes from "./routes/erp-sync.routes";
 import adminErpRoutes from "./routes/admin-erp.routes";
@@ -86,6 +87,7 @@ app.use("/api/admin", adminErpRoutes);
 app.use("/api/admin", audienceRoutes);
 app.use("/api/admin/retention", retentionRoutes);
 app.use("/api/admin/lifecycle", lifecycleRoutes);
+app.use("/api/admin/growth", growthRoutes);
 app.use("/", seoRoutes);
 app.use("/api", notFound);
 

@@ -29,6 +29,8 @@ export default function DealDetails() {
       .catch((err) => setError(err.message));
   }, [slug]);
 
+  useEffect(() => { if (deal) trackEvent("view_promotion", { promotion_id: deal.id || deal.slug, promotion_name: deal.name, creative_slot: "deal_detail" }); }, [deal?.id]);
+
   const itemValue = useMemo(() => {
     if (!deal) return 0;
     if (deal.type === "BUNDLE_DISCOUNT") return (deal.resolvedItems || []).reduce((sum, item) => sum + Number(item.variant?.sellingPrice || 0) * Number(item.quantity || 1), 0);
@@ -50,13 +52,13 @@ export default function DealDetails() {
     if (!available || deal.type === "GIFT_WITH_PURCHASE") return;
     if (addDeal(deal)) {
       setAdded(true);
-      trackEvent("merchandising_deal_add", { deal_name: deal.name, deal_type: deal.type, location: "deal_detail" });
+      trackEvent("select_promotion", { promotion_id: deal.id || deal.slug, promotion_name: deal.name, creative_slot: "deal_detail", deal_type: deal.type });
       window.setTimeout(() => setAdded(false), 1800);
     }
   }
 
   return <>
-    <Seo title={deal.name} description={deal.description || "Riseora automatic offer and combo details."} />
+    <Seo title={deal.name} description={deal.description || "Riseora automatic offer and combo details."} image={image} jsonLd={{ "@context": "https://schema.org", "@type": "Offer", name: deal.name, description: deal.description || undefined, url: window.location.href, availability: available ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", seller: { "@type": "Organization", name: "Riseora Herbals" } }} />
     <section className="phase28-deal-hero">
       <div className="container phase28-deal-hero-grid">
         <div className="phase28-deal-art">{image ? <img src={image} alt={deal.name} /> : <span>R</span>}<b>{deal.badge || "RISEORA OFFER"}</b></div>

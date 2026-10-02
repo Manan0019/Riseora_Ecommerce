@@ -1,14 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
 import OfferProgress from "../components/OfferProgress";
 import ProductCard from "../components/ProductCard";
+import { trackCommerce } from "../lib/analytics";
 
 export default function Cart() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();
   const [suggestions, setSuggestions] = useState([]);
+  const lastTrackedCart = useRef("");
+
+
+  useEffect(() => {
+    if (!items.length) return;
+    const signature = items.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|");
+    if (lastTrackedCart.current === signature) return;
+    lastTrackedCart.current = signature;
+    trackCommerce("view_cart", { items, value: subtotal });
+  }, [items, subtotal]);
 
   useEffect(() => {
     if (!items.length) { setSuggestions([]); return; }

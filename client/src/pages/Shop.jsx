@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
+import { trackEvent } from "../lib/analytics";
 
 export default function Shop() {
   const [params] = useSearchParams();
@@ -19,6 +20,7 @@ export default function Shop() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const lastTrackedSearch = useRef("");
 
   useEffect(() => { apiFetch("/categories").then((response) => setCategories(response.data)).catch(() => {}); }, []);
   useEffect(() => { setCategory(params.get("category") || ""); setSearch(params.get("search") || ""); }, [params]);
@@ -43,6 +45,13 @@ export default function Shop() {
     }, 220);
     return () => clearTimeout(timer);
   }, [query]);
+
+  useEffect(() => {
+    const term = search.trim().toLowerCase();
+    if (loading || term.length < 2 || lastTrackedSearch.current === term) return;
+    lastTrackedSearch.current = term;
+    trackEvent("search", { search_term: term.slice(0, 100), results_count: products.length });
+  }, [search, loading, products.length]);
 
   const activeFilterCount = [category, inStock, minPrice !== "", maxPrice !== "", badge].filter(Boolean).length;
   const activeCategory = categories.find((item) => item.slug === category);

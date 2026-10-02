@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
+import Seo from "../components/Seo";
+import { openAnalyticsPreferences } from "../lib/analytics";
 
 const definitions = {
   shipping: { title: "Shipping policy", field: "shippingPolicy" },
@@ -16,5 +18,5 @@ export default function Policy() {
   const [error, setError] = useState("");
   useEffect(() => { apiFetch("/store/config").then((response) => setConfig(response.data)).catch((e) => setError(e.message)); }, []);
   const paragraphs = useMemo(() => String(config?.[definition.field] || "").split(/\n{2,}/).map((item) => item.trim()).filter(Boolean), [config, definition.field]);
-  return <div className="container page-space policy-page"><Link className="back-link" to="/">← Riseora home</Link><p className="eyebrow">CUSTOMER CARE</p><h1>{definition.title}</h1>{error && <p className="alert error">{error}</p>}{!config ? <div className="skeleton-card tall" /> : paragraphs.length ? <div className="policy-copy">{paragraphs.map((text, index) => <p key={index}>{text}</p>)}</div> : <div className="empty-state"><h2>Policy content is being prepared</h2><p>Riseora admin can publish this policy from Store Settings before launch.</p></div>}</div>;
+  return <><Seo title={definition.title} description={`${definition.title} for Riseora Herbals customers.`} /><div className="container page-space policy-page"><Link className="back-link" to="/">← Riseora home</Link><p className="eyebrow">CUSTOMER CARE</p><h1>{definition.title}</h1>{type === "privacy" && <div className="phase30-privacy-control"><div><strong>Analytics preference</strong><p>You can change your optional analytics choice at any time. Essential cart, account and checkout storage remains available.</p></div><button type="button" className="button button-secondary" onClick={openAnalyticsPreferences}>Manage privacy choices</button></div>}{error && <p className="alert error">{error}</p>}{!config ? <div className="skeleton-card tall" /> : paragraphs.length ? <div className="policy-copy">{paragraphs.map((text, index) => <p key={index}>{text}</p>)}</div> : <div className="empty-state"><h2>Policy content is being prepared</h2><p>Riseora admin can publish this policy from Store Settings before launch.</p></div>}</div></>;
 }

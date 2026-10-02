@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
+import { trackCommerce, trackPurchase } from "../lib/analytics";
 
 const RECOVERY_KEY = "riseora_cart_recovery_token";
 const BUY_NOW_RECOVERY_KEY = "riseora_buy_now_recovery_token";
@@ -60,6 +61,7 @@ export default function Checkout() {
   const [pricing, setPricing] = useState(null);
   const [deliveryQuote, setDeliveryQuote] = useState(null);
   const [deliveryChecking, setDeliveryChecking] = useState(false);
+  const beginCheckoutSignature = useRef("");
   const [form, setForm] = useState({
     customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "",
     customerEmail: user?.email || "",
@@ -68,6 +70,14 @@ export default function Checkout() {
   });
 
   useEffect(() => { setAppliedCoupon(""); setDiscountAmount(0); setCouponMessage(""); }, [checkoutSubtotal]);
+
+  useEffect(() => {
+    if (!checkoutItems.length) return;
+    const signature = `${buyNowMode ? "buy" : "cart"}:${checkoutItems.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|")}`;
+    if (beginCheckoutSignature.current === signature) return;
+    beginCheckoutSignature.current = signature;
+    trackCommerce("begin_checkout", { items: checkoutItems, value: checkoutSubtotal, checkout_mode: buyNowMode ? "buy_now" : "cart" });
+  }, [checkoutItems, checkoutSubtotal, buyNowMode]);
 
   useEffect(() => {
     apiFetch("/payments/config").then((response) => setOnlinePaymentsEnabled(Boolean(response.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false));
@@ -238,6 +248,7 @@ export default function Checkout() {
           localStorage.removeItem(activeRecoveryKey);
         }
       } catch { /* recovery tracking must never block a completed order */ }
+      trackPurchase({ transactionId: order.orderNumber, items: checkoutItems, value: Number(order.totalAmount ?? pricing?.totalAmount ?? checkoutSubtotal), coupon: appliedCoupon || undefined, payment_type: paymentMethod });
       if (buyNowMode) clearBuyNow(); else clearCart();
       navigate(`/order-success/${order.orderNumber}`, { replace: true });
     } catch (err) { setError(err.message); } finally { setSubmitting(false); }

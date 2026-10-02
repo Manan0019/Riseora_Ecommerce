@@ -12,6 +12,7 @@ import RichText, { richTextToPlain } from "../components/RichText";
 import ProductFaq from "../components/ProductFaq";
 import ProductQuestions from "../components/ProductQuestions";
 import DealCard from "../components/DealCard";
+import { trackCommerce, trackEvent } from "../lib/analytics";
 
 const RECENT_KEY = "riseora_recent_products";
 
@@ -112,6 +113,10 @@ export default function ProductDetails() {
   }, [frequentlyBought]);
 
   const variant = useMemo(() => product?.variants?.find((item) => item.id === variantId), [product, variantId]);
+  useEffect(() => {
+    if (!product || !variant) return;
+    trackCommerce("view_item", { items: [{ sku: variant.sku, variantId: variant.id, productName: product.name, variantName: variant.name, price: Number(variant.sellingPrice), quantity: 1 }], value: Number(variant.sellingPrice || 0), item_category: product.category?.name || undefined });
+  }, [product?.id, variant?.id]);
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
   if (!product) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
@@ -236,6 +241,7 @@ export default function ProductDetails() {
     try {
       const response = await apiFetch("/stock-alerts", { method: "POST", body: JSON.stringify({ variantId: variant.id, email: stockEmail, name: user?.firstName || "" }) });
       setStockAlertMessage(response.message || "Back-in-stock alert saved.");
+      trackEvent("stock_alert_created", { product_id: product.id, variant_id: variant.id });
     } catch (err) { setStockAlertMessage(err.message); }
     finally { setStockAlertBusy(false); }
   }
@@ -256,13 +262,16 @@ export default function ProductDetails() {
         }),
       });
       setPriceAlertMessage(response.message || "Price alert saved.");
+      trackEvent("price_alert_created", { product_id: product.id, variant_id: variant.id, has_target_price: Boolean(target) });
     } catch (err) { setPriceAlertMessage(err.message); }
     finally { setPriceAlertBusy(false); }
   }
 
-  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || richTextToPlain(product.description) || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, offers: variant ? { "@type": "Offer", priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
+  const productUrl = `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}/product/${product.slug}`;
+  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || richTextToPlain(product.description) || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, category: product.category?.name || undefined, brand: { "@type": "Brand", name: store.storeName || "Riseora Herbals" }, url: productUrl, offers: variant ? { "@type": "Offer", url: productUrl, priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", itemCondition: "https://schema.org/NewCondition" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
+  const breadcrumbJson = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}` }, { "@type": "ListItem", position: 2, name: product.category?.name || "Shop", item: `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}/shop${product.category?.slug ? `?category=${encodeURIComponent(product.category.slug)}` : ""}` }, { "@type": "ListItem", position: 3, name: product.name, item: productUrl }] };
 
-  return <><Seo title={product.name} description={product.shortDescription || richTextToPlain(product.description)} image={image} type="product" jsonLd={productJson} />
+  return <><Seo title={product.name} description={product.shortDescription || richTextToPlain(product.description)} image={image} type="product" jsonLd={[productJson, breadcrumbJson]} />
     <div className="product-detail-page phase3-detail phase9-detail-page">
       <div className="container product-detail">
         <div className="detail-media phase3-media phase9-product-gallery">

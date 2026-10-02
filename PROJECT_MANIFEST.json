@@ -54,7 +54,7 @@
     "PriceAlert"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 29,
+  "latestPhase": 30,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -122,5 +122,23 @@
     ],
     "migration": "20261002093000_phase29_lifecycle_price_alerts",
     "verification": "npm run verify:phase29"
+  },
+  "phase30": {
+    "name": "Growth Analytics, SEO & Merchant Discovery",
+    "features": [
+      "repairs the missing client/src/lib/analytics.js delivery that caused Vite module-load failures",
+      "single consent-aware analytics runtime shared by page tracking and commerce events",
+      "GA4 ecommerce events for view item, add/remove cart, wishlist, search, begin checkout, purchase and promotions",
+      "Meta Pixel mapping for core commerce events without sending customer PII",
+      "re-openable privacy choices from the footer and Privacy Policy page",
+      "enhanced canonical, Open Graph, Twitter, robots and structured-data handling",
+      "product Brand, Offer and Breadcrumb structured data plus Organization/WebSite search schema",
+      "sitemap now includes currently-live merchandising offer pages",
+      "Google Merchant XML feed generated from active products/variants with current stock and prices",
+      "Admin Growth dashboard for SEO/catalog/feed readiness and analytics diagnostics",
+      "Google Search Console verification token support through the production client environment"
+    ],
+    "databaseChanges": [],
+    "verification": "npm run verify:phase30"
   }
 }

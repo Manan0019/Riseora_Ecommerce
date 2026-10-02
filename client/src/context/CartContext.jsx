@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { trackCommerce, trackEvent } from "../lib/analytics";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";
@@ -91,6 +92,7 @@ export function CartProvider({ children }) {
 
   function addItem(product, variant, quantity = 1) {
     setItems((current) => addLine(current, product, variant, quantity));
+    trackCommerce("add_to_cart", { items: [{ sku: variant?.sku, variantId: variant?.id, productName: product?.name, variantName: variant?.name, price: Number(variant?.sellingPrice || 0), quantity }], value: Number(variant?.sellingPrice || 0) * Number(quantity || 1), source: "cart_add" });
     setDrawerOpen(true);
   }
 
@@ -105,6 +107,8 @@ export function CartProvider({ children }) {
       }
       return next;
     });
+    const analyticsLines = source.filter((entry) => entry?.product && entry?.variant).map((entry) => ({ sku: entry.variant.sku, variantId: entry.variant.id, productName: entry.product.name, variantName: entry.variant.name, price: Number(entry.variant.sellingPrice || 0), quantity: Number(entry.quantity || 1) }));
+    trackCommerce("add_to_cart", { items: analyticsLines, source: "multi_add" });
     setDrawerOpen(true);
     return true;
   }
@@ -113,6 +117,8 @@ export function CartProvider({ children }) {
     const line = toCartLine(product, variant, quantity);
     if (!line) return false;
     setBuyNowItems([line]);
+    trackCommerce("add_to_cart", { items: [line], value: Number(line.price || 0) * Number(line.quantity || 1), source: "buy_now" });
+    trackEvent("buy_now", { item_id: line.sku || line.variantId, value: Number(line.price || 0) * Number(line.quantity || 1), currency: "INR" });
     setDrawerOpen(false);
     return true;
   }
@@ -141,6 +147,8 @@ export function CartProvider({ children }) {
       for (const addition of additions) next = addLine(next, addition.product, addition.variant, addition.quantity);
       return next;
     });
+    trackCommerce("add_to_cart", { items: additions.map((addition) => ({ sku: addition.variant.sku, variantId: addition.variant.id, productName: addition.product.name, variantName: addition.variant.name, price: Number(addition.variant.sellingPrice || 0), quantity: addition.quantity })), source: "deal" });
+    trackEvent("select_promotion", { promotion_id: deal.id || deal.slug, promotion_name: deal.name, creative_slot: "deal_add" });
     setDrawerOpen(true);
     return true;
   }
@@ -164,6 +172,8 @@ export function CartProvider({ children }) {
   }
 
   function removeItem(variantId) {
+    const line = items.find((item) => item.variantId === variantId);
+    if (line) trackCommerce("remove_from_cart", { items: [line], value: Number(line.price || 0) * Number(line.quantity || 1) });
     setItems((current) => current.filter((item) => item.variantId !== variantId));
   }
 
