@@ -15,7 +15,7 @@ router.get("/contact-messages", asyncHandler(async (req, res) => {
   const status = typeof req.query.status === "string" ? req.query.status : "";
   const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
   const where: any = {};
-  if (["NEW", "IN_PROGRESS", "RESOLVED", "SPAM"].includes(status)) where.status = status;
+  if (["NEW", "IN_PROGRESS", "WAITING_CUSTOMER", "RESOLVED", "CLOSED", "SPAM"].includes(status)) where.status = status;
   if (search) where.OR = [
     { name: { contains: search, mode: "insensitive" } },
     { email: { contains: search, mode: "insensitive" } },
@@ -28,7 +28,7 @@ router.get("/contact-messages", asyncHandler(async (req, res) => {
 
 router.patch("/contact-messages/:id", asyncHandler(async (req, res) => {
   const parsed = z.object({
-    status: z.enum(["NEW", "IN_PROGRESS", "RESOLVED", "SPAM"]).optional(),
+    status: z.enum(["NEW", "IN_PROGRESS", "WAITING_CUSTOMER", "RESOLVED", "CLOSED", "SPAM"]).optional(),
     adminNote: z.string().trim().max(2000).nullable().optional(),
   }).safeParse(req.body);
   if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid message update" });

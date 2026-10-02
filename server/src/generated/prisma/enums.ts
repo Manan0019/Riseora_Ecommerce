@@ -168,11 +168,54 @@ export type RefundMethod = (typeof RefundMethod)[keyof typeof RefundMethod]
 export const ContactMessageStatus = {
   NEW: 'NEW',
   IN_PROGRESS: 'IN_PROGRESS',
+  WAITING_CUSTOMER: 'WAITING_CUSTOMER',
   RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED',
   SPAM: 'SPAM'
 } as const
 
 export type ContactMessageStatus = (typeof ContactMessageStatus)[keyof typeof ContactMessageStatus]
+
+
+export const SupportTicketCategory = {
+  GENERAL: 'GENERAL',
+  ORDER: 'ORDER',
+  PAYMENT: 'PAYMENT',
+  DELIVERY: 'DELIVERY',
+  RETURN_REFUND: 'RETURN_REFUND',
+  PRODUCT: 'PRODUCT',
+  ACCOUNT: 'ACCOUNT',
+  REWARDS: 'REWARDS'
+} as const
+
+export type SupportTicketCategory = (typeof SupportTicketCategory)[keyof typeof SupportTicketCategory]
+
+
+export const SupportTicketPriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type SupportTicketPriority = (typeof SupportTicketPriority)[keyof typeof SupportTicketPriority]
+
+
+export const SupportMessageSender = {
+  CUSTOMER: 'CUSTOMER',
+  ADMIN: 'ADMIN',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type SupportMessageSender = (typeof SupportMessageSender)[keyof typeof SupportMessageSender]
+
+
+export const EmailDeliveryStatus = {
+  SENT: 'SENT',
+  FAILED: 'FAILED'
+} as const
+
+export type EmailDeliveryStatus = (typeof EmailDeliveryStatus)[keyof typeof EmailDeliveryStatus]
 
 
 export const CartRecoveryStatus = {
@@ -208,7 +251,8 @@ export const NotificationType = {
   ORDER: 'ORDER',
   PRICE_DROP: 'PRICE_DROP',
   STOCK_ALERT: 'STOCK_ALERT',
-  CAMPAIGN: 'CAMPAIGN'
+  CAMPAIGN: 'CAMPAIGN',
+  SUPPORT: 'SUPPORT'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]

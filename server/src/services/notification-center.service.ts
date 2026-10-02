@@ -1,7 +1,7 @@
 import { prisma } from "../config/prisma";
 import { Prisma } from "../generated/prisma/client";
 
-export type InAppNotificationType = "GENERAL" | "ORDER" | "PRICE_DROP" | "STOCK_ALERT" | "CAMPAIGN";
+export type InAppNotificationType = "GENERAL" | "ORDER" | "PRICE_DROP" | "STOCK_ALERT" | "CAMPAIGN" | "SUPPORT";
 
 type CreateNotificationInput = {
   userId: string;

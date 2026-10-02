@@ -39,7 +39,7 @@ export default function NotificationBell() {
       <div className="phase27-notification-head"><div><small>MY RISEORA</small><strong>Notifications</strong></div>{unreadCount > 0 && <button type="button" onClick={markAllRead}>Mark all read</button>}</div>
       <div className="phase27-notification-mini-list">
         {latest.map((item) => <Link key={item.id} className={item.isRead ? "" : "unread"} to={item.ctaUrl || "/notifications"} onClick={() => { if (!item.isRead) void markRead(item.id); setOpen(false); }}>
-          <span className={`phase27-notification-type ${String(item.type || "GENERAL").toLowerCase()}`}><Icon name={item.type === "ORDER" ? "package" : item.type === "CAMPAIGN" ? "sparkles" : "bell"} size={15} /></span>
+          <span className={`phase27-notification-type ${String(item.type || "GENERAL").toLowerCase()}`}><Icon name={item.type === "ORDER" ? "package" : item.type === "CAMPAIGN" ? "sparkles" : item.type === "SUPPORT" ? "mail" : "bell"} size={15} /></span>
           <p><strong>{item.title}</strong><small>{item.message}</small></p><time>{relativeTime(item.createdAt)}</time>
         </Link>)}
         {!latest.length && <div className="phase27-notification-empty"><Icon name="bell" size={24} /><strong>You’re all caught up</strong><small>Order and Riseora updates will appear here.</small></div>}

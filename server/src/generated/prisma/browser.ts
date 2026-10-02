@@ -228,6 +228,16 @@ export type CartRecoverySession = Prisma.CartRecoverySessionModel
  */
 export type ContactMessage = Prisma.ContactMessageModel
 /**
+ * Model SupportMessage
+ * 
+ */
+export type SupportMessage = Prisma.SupportMessageModel
+/**
+ * Model EmailDeliveryLog
+ * 
+ */
+export type EmailDeliveryLog = Prisma.EmailDeliveryLogModel
+/**
  * Model NewsletterSubscriber
  * 
  */

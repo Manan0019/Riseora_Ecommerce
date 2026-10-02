@@ -93,6 +93,8 @@ export const ModelName = {
   Banner: 'Banner',
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
+  SupportMessage: 'SupportMessage',
+  EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
@@ -901,18 +903,54 @@ export type CartRecoverySessionScalarFieldEnum = (typeof CartRecoverySessionScal
 
 export const ContactMessageScalarFieldEnum = {
   id: 'id',
+  ticketNumber: 'ticketNumber',
+  userId: 'userId',
   name: 'name',
   email: 'email',
   phone: 'phone',
   subject: 'subject',
   message: 'message',
+  category: 'category',
+  priority: 'priority',
+  orderNumber: 'orderNumber',
+  assignedAdminUserId: 'assignedAdminUserId',
   status: 'status',
   adminNote: 'adminNote',
+  lastActivityAt: 'lastActivityAt',
+  resolvedAt: 'resolvedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
+
+
+export const SupportMessageScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  sender: 'sender',
+  authorUserId: 'authorUserId',
+  message: 'message',
+  isInternal: 'isInternal',
+  createdAt: 'createdAt'
+} as const
+
+export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
+
+
+export const EmailDeliveryLogScalarFieldEnum = {
+  id: 'id',
+  toEmail: 'toEmail',
+  subject: 'subject',
+  template: 'template',
+  status: 'status',
+  idempotencyKey: 'idempotencyKey',
+  providerMessageId: 'providerMessageId',
+  errorMessage: 'errorMessage',
+  createdAt: 'createdAt'
+} as const
+
+export type EmailDeliveryLogScalarFieldEnum = (typeof EmailDeliveryLogScalarFieldEnum)[keyof typeof EmailDeliveryLogScalarFieldEnum]
 
 
 export const NewsletterSubscriberScalarFieldEnum = {

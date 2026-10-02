@@ -1,9 +1,12 @@
+import { randomBytes } from "node:crypto";
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
 import { optionalAuth } from "../middleware/auth";
+import { createUserNotification } from "../services/notification-center.service";
+import { sendSupportAdminNotification, sendSupportTicketReceived } from "../services/notification.service";
 
 const router = Router();
 router.use(optionalAuth);
@@ -15,16 +18,38 @@ const contactSchema = z.object({
   email: z.string().trim().email().max(200),
   phone: z.string().trim().max(30).optional().or(z.literal("")),
   subject: z.string().trim().max(160).optional().or(z.literal("")),
+  category: z.enum(["GENERAL", "ORDER", "PAYMENT", "DELIVERY", "RETURN_REFUND", "PRODUCT", "ACCOUNT", "REWARDS"]).default("GENERAL"),
+  orderNumber: z.string().trim().max(80).optional().or(z.literal("")),
   message: z.string().trim().min(10).max(4000),
 });
+
+function publicTicketNumber() {
+  const d = new Date();
+  const date = `${String(d.getUTCFullYear()).slice(-2)}${String(d.getUTCMonth() + 1).padStart(2, "0")}${String(d.getUTCDate()).padStart(2, "0")}`;
+  return `SUP-${date}-${randomBytes(3).toString("hex").toUpperCase()}`;
+}
 
 router.post("/contact", publicWriteLimit, asyncHandler(async (req, res) => {
   const parsed = contactSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Please check the contact form details", errors: parsed.error.flatten() });
-  const item = await prisma.contactMessage.create({ data: {
-    name: parsed.data.name, email: parsed.data.email.toLowerCase(), phone: parsed.data.phone || null, subject: parsed.data.subject || null, message: parsed.data.message,
-  }});
-  res.status(201).json({ success: true, data: { id: item.id }, message: "Thanks — Riseora has received your message." });
+  const number = publicTicketNumber();
+  const email = req.user?.email.toLowerCase() || parsed.data.email.toLowerCase();
+  if (req.user && parsed.data.orderNumber) {
+    const ownOrder = await prisma.order.findFirst({ where: { orderNumber: parsed.data.orderNumber, userId: req.user.id }, select: { id: true } });
+    if (!ownOrder) return res.status(400).json({ success: false, message: "That order number is not linked to your account." });
+  }
+  const item = await prisma.$transaction(async (tx) => {
+    const created = await tx.contactMessage.create({ data: {
+      ticketNumber: number, userId: req.user?.id || null, name: parsed.data.name, email, phone: parsed.data.phone || null,
+      subject: parsed.data.subject || "General support request", category: parsed.data.category, orderNumber: parsed.data.orderNumber || null, message: parsed.data.message, lastActivityAt: new Date(),
+    }});
+    await tx.supportMessage.create({ data: { ticketId: created.id, sender: "CUSTOMER", authorUserId: req.user?.id || null, message: parsed.data.message } });
+    return created;
+  });
+  void sendSupportTicketReceived({ email, name: item.name, ticketNumber: item.ticketNumber, subject: item.subject || "Support request", signedIn: Boolean(req.user) }).catch((error) => console.error("Contact receipt email failed", error));
+  void sendSupportAdminNotification({ ticketNumber: item.ticketNumber, name: item.name, email: item.email, category: item.category, subject: item.subject || "Support request", priority: item.priority }).catch((error) => console.error("Contact admin email failed", error));
+  if (req.user) void createUserNotification({ userId: req.user.id, type: "SUPPORT", title: `Support request ${item.ticketNumber} received`, message: "Your Riseora support request is open. We’ll notify you when the team replies.", ctaLabel: "Open support", ctaUrl: `/support/${item.ticketNumber}`, dedupeKey: `support-created/${item.id}` }).catch((error) => console.error("Contact in-app notification failed", error));
+  res.status(201).json({ success: true, data: { id: item.id, ticketNumber: item.ticketNumber }, message: `Thanks — Riseora has received your message. Ticket ${item.ticketNumber}.` });
 }));
 
 const newsletterSchema = z.object({

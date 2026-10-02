@@ -1,14 +1,14 @@
 export type AdminRoleName = "OWNER" | "OPERATIONS" | "CATALOG" | "MARKETING" | "SUPPORT";
-export type AdminPermission = "DASHBOARD" | "CATALOG" | "OPERATIONS" | "CUSTOMERS" | "MARKETING" | "CONTENT" | "SETTINGS" | "ERP" | "SYSTEM" | "SECURITY";
+export type AdminPermission = "DASHBOARD" | "CATALOG" | "OPERATIONS" | "CUSTOMERS" | "MARKETING" | "CONTENT" | "SETTINGS" | "ERP" | "SYSTEM" | "SECURITY" | "SUPPORT";
 
-const allPermissions: AdminPermission[] = ["DASHBOARD", "CATALOG", "OPERATIONS", "CUSTOMERS", "MARKETING", "CONTENT", "SETTINGS", "ERP", "SYSTEM", "SECURITY"];
+const allPermissions: AdminPermission[] = ["DASHBOARD", "CATALOG", "OPERATIONS", "CUSTOMERS", "MARKETING", "CONTENT", "SETTINGS", "ERP", "SYSTEM", "SECURITY", "SUPPORT"];
 
 export const ADMIN_ROLE_PERMISSIONS: Record<AdminRoleName, AdminPermission[]> = {
   OWNER: allPermissions,
-  OPERATIONS: ["DASHBOARD", "OPERATIONS", "CUSTOMERS"],
+  OPERATIONS: ["DASHBOARD", "OPERATIONS", "CUSTOMERS", "SUPPORT"],
   CATALOG: ["DASHBOARD", "CATALOG", "CONTENT"],
   MARKETING: ["DASHBOARD", "MARKETING", "CONTENT"],
-  SUPPORT: ["DASHBOARD", "OPERATIONS", "CUSTOMERS", "CONTENT"],
+  SUPPORT: ["DASHBOARD", "OPERATIONS", "CUSTOMERS", "CONTENT", "SUPPORT"],
 };
 
 export function normalizedAdminRole(value: unknown): AdminRoleName {
@@ -34,6 +34,7 @@ export function permissionForAdminPath(originalUrl: string): AdminPermission {
   if (pathname.startsWith("/system")) return "SYSTEM";
   if (["/orders", "/dispatch", "/invoices", "/returns", "/cancellations", "/shipping-zones", "/shipping-partners", "/payments"].some((prefix) => pathname.startsWith(prefix))) return "OPERATIONS";
   if (pathname.startsWith("/customers")) return "CUSTOMERS";
+  if (pathname.startsWith("/support")) return "SUPPORT";
   if (["/categories", "/products", "/inventory", "/suitability-options", "/uploads"].some((prefix) => pathname.startsWith(prefix))) return "CATALOG";
   if (["/reviews", "/product-questions"].some((prefix) => pathname.startsWith(prefix))) return "CONTENT";
   if (["/coupons", "/offers", "/banners", "/deals", "/audience", "/contact-messages", "/newsletter", "/cart-recoveries", "/stock-alerts", "/price-alerts", "/retention", "/lifecycle", "/growth", "/rewards"].some((prefix) => pathname.startsWith(prefix))) return "MARKETING";

@@ -121,8 +121,39 @@ enum RefundMethod {
 enum ContactMessageStatus {
   NEW
   IN_PROGRESS
+  WAITING_CUSTOMER
   RESOLVED
+  CLOSED
   SPAM
+}
+
+enum SupportTicketCategory {
+  GENERAL
+  ORDER
+  PAYMENT
+  DELIVERY
+  RETURN_REFUND
+  PRODUCT
+  ACCOUNT
+  REWARDS
+}
+
+enum SupportTicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum SupportMessageSender {
+  CUSTOMER
+  ADMIN
+  SYSTEM
+}
+
+enum EmailDeliveryStatus {
+  SENT
+  FAILED
 }
 
 enum CartRecoveryStatus {
@@ -150,6 +181,7 @@ enum NotificationType {
   PRICE_DROP
   STOCK_ALERT
   CAMPAIGN
+  SUPPORT
 }
 
 enum RewardTransactionType {
@@ -216,6 +248,7 @@ model User {
   rewardTransactions RewardTransaction[]
   rewardCoupons Coupon[] @relation("RewardCouponOwner")
   adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
+  supportTickets ContactMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1181,20 +1214,66 @@ model CartRecoverySession {
 model ContactMessage {
   id String @id @default(uuid()) @db.Uuid
 
+  ticketNumber String @unique
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
   name    String
   email   String
   phone   String?
   subject String?
   message String
+  category SupportTicketCategory @default(GENERAL)
+  priority SupportTicketPriority @default(NORMAL)
+  orderNumber String?
+  assignedAdminUserId String? @db.Uuid
 
   status    ContactMessageStatus @default(NEW)
   adminNote String?
+  lastActivityAt DateTime @default(now())
+  resolvedAt DateTime?
+
+  messages SupportMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([status, createdAt])
+  @@index([status, priority, lastActivityAt])
+  @@index([category, status, lastActivityAt])
   @@index([email])
+  @@index([userId, lastActivityAt])
+  @@index([assignedAdminUserId, status])
+  @@index([orderNumber])
+}
+
+model SupportMessage {
+  id String @id @default(uuid()) @db.Uuid
+  ticketId String @db.Uuid
+  ticket ContactMessage @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  sender SupportMessageSender
+  authorUserId String? @db.Uuid
+  message String
+  isInternal Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([ticketId, createdAt])
+  @@index([authorUserId, createdAt])
+}
+
+model EmailDeliveryLog {
+  id String @id @default(uuid()) @db.Uuid
+  toEmail String
+  subject String
+  template String
+  status EmailDeliveryStatus
+  idempotencyKey String?
+  providerMessageId String?
+  errorMessage String?
+  createdAt DateTime @default(now())
+
+  @@index([status, createdAt])
+  @@index([template, createdAt])
+  @@index([toEmail, createdAt])
 }
 
 model NewsletterSubscriber {

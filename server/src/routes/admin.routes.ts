@@ -846,7 +846,7 @@ router.get(
 
     const [
       productCount, customerCount, openOrderCount, todayOrders, yesterdayOrders, monthOrders,
-      recentOrders, variants, pendingReturnCount, pendingCancellationCount, pendingPayments, last7Orders,
+      recentOrders, variants, pendingReturnCount, pendingCancellationCount, pendingPayments, pendingSupportCount, last7Orders,
     ] = await Promise.all([
       prisma.product.count({ where: { isActive: true } }),
       prisma.user.count({ where: { role: "CUSTOMER", isActive: true } }),
@@ -867,6 +867,7 @@ router.get(
       prisma.returnRequest.count({ where: { status: { in: ["REQUESTED", "APPROVED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED"] } } }),
       prisma.orderCancellationRequest.count({ where: { status: "REQUESTED" } }),
       prisma.checkoutSession.count({ where: { status: "PENDING" } }),
+      prisma.contactMessage.count({ where: { status: { in: ["NEW", "IN_PROGRESS"] } } }),
       prisma.order.findMany({ where: { createdAt: { gte: sevenDaysAgo }, status: { not: "CANCELLED" } }, select: { createdAt: true, totalAmount: true } }),
     ]);
 
@@ -898,6 +899,7 @@ router.get(
       ...(pendingCancellationCount ? [{ type: "danger", label: `${pendingCancellationCount} cancellation request${pendingCancellationCount === 1 ? "" : "s"} waiting`, to: "/admin/cancellations" }] : []),
       ...(pendingReturnCount ? [{ type: "warning", label: `${pendingReturnCount} active return${pendingReturnCount === 1 ? "" : "s"}`, to: "/admin/returns" }] : []),
       ...(pendingPayments ? [{ type: "info", label: `${pendingPayments} online payment reservation${pendingPayments === 1 ? "" : "s"} pending`, to: "/admin/payments" }] : []),
+      ...(pendingSupportCount ? [{ type: "info", label: `${pendingSupportCount} support request${pendingSupportCount === 1 ? "" : "s"} need attention`, to: "/admin/support" }] : []),
       ...(outOfStock.length ? [{ type: "danger", label: `${outOfStock.length} variant${outOfStock.length === 1 ? "" : "s"} out of stock`, to: "/admin/inventory" }] : []),
       ...(missingCostCount ? [{ type: "info", label: `${missingCostCount} variant${missingCostCount === 1 ? "" : "s"} missing cost price`, to: "/admin/inventory" }] : []),
     ].slice(0, 6);
@@ -913,7 +915,7 @@ router.get(
         monthOrderCount: monthOrders.length, monthSales,
         lowStockCount: lowStock.length, outOfStockCount: outOfStock.length,
         inventoryCostValue, inventoryRetailValue, missingCostCount,
-        pendingReturnCount, pendingCancellationCount, pendingPayments,
+        pendingReturnCount, pendingCancellationCount, pendingPayments, pendingSupportCount,
         recentOrders, lowStock: lowStock.slice(0, 6),
         last7Days: [...trendMap.values()], attention,
       },

@@ -1,15 +1,7 @@
 import { env } from "../config/env";
+import { escapeEmailHtml, moneyText, renderRiseoraEmail, sendRiseoraEmail } from "./email.service";
 
-function escapeHtml(value: unknown) {
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-}
-
-function money(value: unknown) { return `₹${Number(value || 0).toFixed(0)}`; }
+const baseUrl = () => (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
 
 type OrderEmailShape = {
   orderNumber: string;
@@ -22,65 +14,42 @@ type OrderEmailShape = {
   shipment?: { carrier?: string | null; trackingNumber?: string | null; trackingUrl?: string | null } | null;
 };
 
-async function send(input: { to: string; subject: string; html: string; idempotencyKey?: string }) {
-  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return;
-  const response = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${env.RESEND_API_KEY}`,
-      "Content-Type": "application/json",
-      ...(input.idempotencyKey ? { "Idempotency-Key": input.idempotencyKey } : {}),
-    },
-    body: JSON.stringify({ from: env.EMAIL_FROM, to: [input.to], subject: input.subject, html: input.html }),
-  });
-  if (!response.ok) {
-    const body = await response.text().catch(() => "");
-    throw new Error(`Email delivery failed (${response.status}) ${body.slice(0, 300)}`);
-  }
-}
-
 export async function sendOrderPlacedNotifications(order: OrderEmailShape) {
   const tasks: Promise<unknown>[] = [];
-  if (order.customerEmail) {
-    tasks.push(send({
-      to: order.customerEmail,
-      subject: `Riseora order ${order.orderNumber} received`,
-      idempotencyKey: `order-placed/${order.orderNumber}`,
-      html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Thank you, ${escapeHtml(order.customerName)}.</h2><p>Your Riseora order <strong>${escapeHtml(order.orderNumber)}</strong> has been received.</p><p><strong>Total:</strong> ${money(order.totalAmount)}<br/><strong>Payment:</strong> ${escapeHtml(order.paymentMethod)}</p><p>We will email you again as the order moves forward.</p></div>`,
-    }));
-  }
-  if (env.ADMIN_NOTIFICATION_EMAIL) {
-    tasks.push(send({
-      to: env.ADMIN_NOTIFICATION_EMAIL,
-      subject: `New Riseora order ${order.orderNumber}`,
-      idempotencyKey: `admin-order-placed/${order.orderNumber}`,
-      html: `<div style="font-family:Arial,sans-serif"><h2>New order</h2><p><strong>${escapeHtml(order.orderNumber)}</strong></p><p>${escapeHtml(order.customerName)} · ${escapeHtml(order.customerPhone)} · ${money(order.totalAmount)}</p></div>`,
-    }));
-  }
+  if (order.customerEmail) tasks.push(sendRiseoraEmail({
+    to: order.customerEmail,
+    subject: `Riseora order ${order.orderNumber} received`,
+    template: "order-placed",
+    idempotencyKey: `order-placed/${order.orderNumber}`,
+    html: renderRiseoraEmail({ eyebrow: "ORDER RECEIVED", title: `Thank you, ${order.customerName}.`, bodyHtml: `<p>Your Riseora order <strong>${escapeEmailHtml(order.orderNumber)}</strong> has been received.</p><p><strong>Total:</strong> ${moneyText(order.totalAmount)}<br/><strong>Payment:</strong> ${escapeEmailHtml(order.paymentMethod)}</p><p>We’ll keep you updated as your order moves through preparation and delivery.</p>`, ctaLabel: "View order", ctaUrl: `${baseUrl()}/orders/${encodeURIComponent(order.orderNumber)}` }),
+  }));
+  if (env.ADMIN_NOTIFICATION_EMAIL) tasks.push(sendRiseoraEmail({
+    to: env.ADMIN_NOTIFICATION_EMAIL,
+    subject: `New Riseora order ${order.orderNumber}`,
+    template: "admin-order-placed",
+    idempotencyKey: `admin-order-placed/${order.orderNumber}`,
+    html: renderRiseoraEmail({ eyebrow: "NEW ORDER", title: order.orderNumber, bodyHtml: `<p>${escapeEmailHtml(order.customerName)} · ${escapeEmailHtml(order.customerPhone)}</p><p><strong>${moneyText(order.totalAmount)}</strong></p>`, ctaLabel: "Open Admin orders", ctaUrl: `${baseUrl()}/admin/orders` }),
+  }));
   await Promise.allSettled(tasks);
 }
 
 export async function sendOrderStatusNotification(order: OrderEmailShape) {
   if (!order.customerEmail) return;
   const tracking = order.shipment?.trackingNumber
-    ? `<p><strong>Courier:</strong> ${escapeHtml(order.shipment.carrier || "Courier")}<br/><strong>Tracking:</strong> ${escapeHtml(order.shipment.trackingNumber)}${order.shipment.trackingUrl ? `<br/><a href="${escapeHtml(order.shipment.trackingUrl)}">Track shipment</a>` : ""}</p>`
+    ? `<p><strong>Courier:</strong> ${escapeEmailHtml(order.shipment.carrier || "Courier")}<br/><strong>Tracking:</strong> ${escapeEmailHtml(order.shipment.trackingNumber)}${order.shipment.trackingUrl ? `<br/><a href="${escapeEmailHtml(order.shipment.trackingUrl)}">Track with courier</a>` : ""}</p>`
     : "";
-  await send({
+  await sendRiseoraEmail({
     to: order.customerEmail,
     subject: `Riseora order ${order.orderNumber}: ${order.status}`,
+    template: "order-status",
     idempotencyKey: `order-status/${order.orderNumber}/${order.status}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Order update</h2><p>Your order <strong>${escapeHtml(order.orderNumber)}</strong> is now <strong>${escapeHtml(order.status)}</strong>.</p>${tracking}<p>Total: ${money(order.totalAmount)}</p></div>`,
+    html: renderRiseoraEmail({ eyebrow: "ORDER UPDATE", title: `Your order is ${order.status.toLowerCase().replaceAll("_", " ")}.`, bodyHtml: `<p>Order <strong>${escapeEmailHtml(order.orderNumber)}</strong> has moved to <strong>${escapeEmailHtml(order.status)}</strong>.</p>${tracking}<p>Total: ${moneyText(order.totalAmount)}</p>`, ctaLabel: "View order journey", ctaUrl: `${baseUrl()}/orders/${encodeURIComponent(order.orderNumber)}` }),
   });
 }
 
 type ReturnEmailShape = {
-  returnNumber: string;
-  status: string;
-  refundAmount: unknown;
-  reason?: string | null;
-  reverseCarrier?: string | null;
-  reverseTrackingNumber?: string | null;
-  reverseTrackingUrl?: string | null;
+  returnNumber: string; status: string; refundAmount: unknown; reason?: string | null;
+  reverseCarrier?: string | null; reverseTrackingNumber?: string | null; reverseTrackingUrl?: string | null;
   order?: { orderNumber?: string | null; customerEmail?: string | null } | null;
   user?: { email?: string | null; firstName?: string | null } | null;
 };
@@ -88,86 +57,54 @@ type ReturnEmailShape = {
 export async function sendReturnStatusNotification(request: ReturnEmailShape) {
   const email = request.user?.email || request.order?.customerEmail || null;
   if (!email) return;
-  const tracking = request.reverseTrackingNumber
-    ? `<p><strong>Return courier:</strong> ${escapeHtml(request.reverseCarrier || "Courier")}<br/><strong>Tracking:</strong> ${escapeHtml(request.reverseTrackingNumber)}${request.reverseTrackingUrl ? `<br/><a href="${escapeHtml(request.reverseTrackingUrl)}">Track return pickup</a>` : ""}</p>`
-    : "";
-  await send({
-    to: email,
-    subject: `Riseora return ${request.returnNumber}: ${request.status}`,
-    idempotencyKey: `return-status/${request.returnNumber}/${request.status}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Return update</h2><p>Your return <strong>${escapeHtml(request.returnNumber)}</strong>${request.order?.orderNumber ? ` for order <strong>${escapeHtml(request.order.orderNumber)}</strong>` : ""} is now <strong>${escapeHtml(request.status)}</strong>.</p>${tracking}<p>Expected refund value: ${money(request.refundAmount)}</p></div>`,
+  const tracking = request.reverseTrackingNumber ? `<p><strong>Return courier:</strong> ${escapeEmailHtml(request.reverseCarrier || "Courier")}<br/><strong>Tracking:</strong> ${escapeEmailHtml(request.reverseTrackingNumber)}${request.reverseTrackingUrl ? `<br/><a href="${escapeEmailHtml(request.reverseTrackingUrl)}">Track return pickup</a>` : ""}</p>` : "";
+  await sendRiseoraEmail({
+    to: email, subject: `Riseora return ${request.returnNumber}: ${request.status}`, template: "return-status", idempotencyKey: `return-status/${request.returnNumber}/${request.status}`,
+    html: renderRiseoraEmail({ eyebrow: "RETURN UPDATE", title: `Return ${request.status.toLowerCase().replaceAll("_", " ")}`, bodyHtml: `<p>Your return <strong>${escapeEmailHtml(request.returnNumber)}</strong>${request.order?.orderNumber ? ` for order <strong>${escapeEmailHtml(request.order.orderNumber)}</strong>` : ""} is now <strong>${escapeEmailHtml(request.status)}</strong>.</p>${tracking}<p>Expected refund value: ${moneyText(request.refundAmount)}</p>`, footnote: "Refund arrival times can vary by bank or payment provider after Riseora processes the refund." }),
   });
 }
 
-export async function sendBackInStockNotification(input: {
-  email: string;
-  name?: string | null;
-  productName: string;
-  productSlug: string;
-  variantName: string;
-}) {
+export async function sendBackInStockNotification(input: { email: string; name?: string | null; productName: string; productSlug: string; variantName: string }) {
   if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
-  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
-  const url = `${base}/product/${encodeURIComponent(input.productSlug)}`;
-  await send({
-    to: input.email,
-    subject: `${input.productName} is back in stock at Riseora`,
-    idempotencyKey: `stock-alert/${input.productSlug}/${input.variantName}/${input.email}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>It's back.</h2><p>${input.name ? `${escapeHtml(input.name)}, ` : ""}<strong>${escapeHtml(input.productName)}</strong> (${escapeHtml(input.variantName)}) is available again.</p><p><a href="${escapeHtml(url)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Shop now</a></p><p style="color:#68776e;font-size:13px">Stock can move quickly and availability is not reserved by this notification.</p></div>`,
-  });
+  const url = `${baseUrl()}/product/${encodeURIComponent(input.productSlug)}`;
+  await sendRiseoraEmail({ to: input.email, subject: `${input.productName} is back in stock at Riseora`, template: "back-in-stock", idempotencyKey: `stock-alert/${input.productSlug}/${input.variantName}/${input.email}`, html: renderRiseoraEmail({ eyebrow: "BACK IN STOCK", title: "It’s back.", bodyHtml: `<p>${input.name ? `${escapeEmailHtml(input.name)}, ` : ""}<strong>${escapeEmailHtml(input.productName)}</strong> (${escapeEmailHtml(input.variantName)}) is available again.</p>`, ctaLabel: "Shop now", ctaUrl: url, footnote: "Stock can move quickly and availability is not reserved by this notification." }) });
   return true;
 }
 
 export async function sendPasswordResetEmail(input: { email: string; firstName?: string | null; resetUrl: string }) {
   if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
-  await send({
-    to: input.email,
-    subject: "Reset your Riseora password",
-    idempotencyKey: `password-reset/${input.email}/${input.resetUrl.slice(-24)}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>Reset your password</h2><p>${input.firstName ? `${escapeHtml(input.firstName)}, ` : ""}we received a request to reset your Riseora account password.</p><p><a href="${escapeHtml(input.resetUrl)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Reset password</a></p><p style="color:#68776e;font-size:13px">This link expires in 60 minutes. If you did not request a reset, you can ignore this email.</p></div>`,
-  });
+  await sendRiseoraEmail({ to: input.email, subject: "Reset your Riseora password", template: "password-reset", idempotencyKey: `password-reset/${input.email}/${input.resetUrl.slice(-24)}`, html: renderRiseoraEmail({ eyebrow: "ACCOUNT SECURITY", title: "Reset your password", bodyHtml: `<p>${input.firstName ? `${escapeEmailHtml(input.firstName)}, ` : ""}we received a request to reset your Riseora account password.</p>`, ctaLabel: "Reset password", ctaUrl: input.resetUrl, footnote: "This link expires in 60 minutes. If you did not request a reset, you can ignore this email." }) });
   return true;
 }
 
-export async function sendCartRecoveryEmail(input: {
-  email: string;
-  name?: string | null;
-  cartToken: string;
-  subtotal: unknown;
-  reminderNumber: number;
-  items: Array<{ productName?: string; variantName?: string; quantity?: number }>;
-}) {
+export async function sendCartRecoveryEmail(input: { email: string; name?: string | null; cartToken: string; subtotal: unknown; reminderNumber: number; items: Array<{ productName?: string; variantName?: string; quantity?: number }> }) {
   if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
-  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
-  const recoveryUrl = `${base}/recover-cart/${encodeURIComponent(input.cartToken)}`;
-  const lines = input.items.slice(0, 4).map((item) => `<li>${escapeHtml(item.productName || "Riseora product")}${item.variantName ? ` · ${escapeHtml(item.variantName)}` : ""} × ${Number(item.quantity || 1)}</li>`).join("");
-  await send({
-    to: input.email,
-    subject: input.reminderNumber > 1 ? "Your Riseora cart is still waiting" : "You left something in your Riseora cart",
-    idempotencyKey: `cart-recovery/${input.cartToken}/${input.reminderNumber}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>${input.name ? `${escapeHtml(input.name)}, your` : "Your"} cart is waiting.</h2><p>You asked Riseora to remind you if you left checkout before finishing.</p><ul style="padding-left:20px">${lines}</ul><p><strong>Cart value:</strong> ${money(input.subtotal)}</p><p><a href="${escapeHtml(recoveryUrl)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">Return to cart</a></p><p style="color:#68776e;font-size:13px">Prices and stock are checked again when you return. This reminder does not reserve products.</p></div>`,
-  });
+  const recoveryUrl = `${baseUrl()}/recover-cart/${encodeURIComponent(input.cartToken)}`;
+  const lines = input.items.slice(0, 4).map((item) => `<li>${escapeEmailHtml(item.productName || "Riseora product")}${item.variantName ? ` · ${escapeEmailHtml(item.variantName)}` : ""} × ${Number(item.quantity || 1)}</li>`).join("");
+  await sendRiseoraEmail({ to: input.email, subject: input.reminderNumber > 1 ? "Your Riseora cart is still waiting" : "You left something in your Riseora cart", template: "cart-recovery", idempotencyKey: `cart-recovery/${input.cartToken}/${input.reminderNumber}`, html: renderRiseoraEmail({ eyebrow: "SAVED CART", title: `${input.name ? `${input.name}, your` : "Your"} cart is waiting.`, bodyHtml: `<p>You asked Riseora to remind you if you left checkout before finishing.</p><ul style="padding-left:20px">${lines}</ul><p><strong>Cart value:</strong> ${moneyText(input.subtotal)}</p>`, ctaLabel: "Return to cart", ctaUrl: recoveryUrl, footnote: "Prices and stock are checked again when you return. This reminder does not reserve products." }) });
   return true;
 }
 
-export async function sendPriceDropNotification(input: {
-  email: string;
-  name?: string | null;
-  productName: string;
-  productSlug: string;
-  variantName: string;
-  previousPrice: unknown;
-  currentPrice: unknown;
-}) {
+export async function sendPriceDropNotification(input: { email: string; name?: string | null; productName: string; productSlug: string; variantName: string; previousPrice: unknown; currentPrice: unknown }) {
   if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
-  const base = (env.PUBLIC_SITE_URL || env.CLIENT_URL).replace(/\/$/, "");
-  const url = `${base}/product/${encodeURIComponent(input.productSlug)}`;
+  const url = `${baseUrl()}/product/${encodeURIComponent(input.productSlug)}`;
   const saving = Math.max(0, Number(input.previousPrice || 0) - Number(input.currentPrice || 0));
-  await send({
-    to: input.email,
-    subject: `Price drop: ${input.productName} at Riseora`,
-    idempotencyKey: `price-alert/${input.productSlug}/${input.variantName}/${input.email}/${Number(input.currentPrice || 0).toFixed(2)}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#173326"><h2>A better price is live.</h2><p>${input.name ? `${escapeHtml(input.name)}, ` : ""}<strong>${escapeHtml(input.productName)}</strong> (${escapeHtml(input.variantName)}) has dropped from <strong>${money(input.previousPrice)}</strong> to <strong>${money(input.currentPrice)}</strong>.</p>${saving > 0 ? `<p>You save <strong>${money(saving)}</strong> versus the price when you created this alert.</p>` : ""}<p><a href="${escapeHtml(url)}" style="display:inline-block;background:#173326;color:#fff;text-decoration:none;padding:12px 18px;border-radius:999px">View product</a></p><p style="color:#68776e;font-size:13px">Prices and stock can change. This alert does not reserve inventory.</p></div>`,
-  });
+  await sendRiseoraEmail({ to: input.email, subject: `Price drop: ${input.productName} at Riseora`, template: "price-drop", idempotencyKey: `price-alert/${input.productSlug}/${input.variantName}/${input.email}/${Number(input.currentPrice || 0).toFixed(2)}`, html: renderRiseoraEmail({ eyebrow: "PRICE WATCH", title: "A better price is live.", bodyHtml: `<p>${input.name ? `${escapeEmailHtml(input.name)}, ` : ""}<strong>${escapeEmailHtml(input.productName)}</strong> (${escapeEmailHtml(input.variantName)}) has dropped from <strong>${moneyText(input.previousPrice)}</strong> to <strong>${moneyText(input.currentPrice)}</strong>.</p>${saving > 0 ? `<p>You save <strong>${moneyText(saving)}</strong> versus the price when you created this alert.</p>` : ""}`, ctaLabel: "View product", ctaUrl: url, footnote: "Prices and stock can change. This alert does not reserve inventory." }) });
+  return true;
+}
+
+export async function sendSupportTicketReceived(input: { email: string; name: string; ticketNumber: string; subject: string; signedIn: boolean }) {
+  const url = input.signedIn ? `${baseUrl()}/support/${encodeURIComponent(input.ticketNumber)}` : `${baseUrl()}/help`;
+  return sendRiseoraEmail({ to: input.email, subject: `Riseora support ${input.ticketNumber}: received`, template: "support-received", idempotencyKey: `support-received/${input.ticketNumber}`, html: renderRiseoraEmail({ eyebrow: "SUPPORT REQUEST RECEIVED", title: `We’re on it, ${input.name}.`, bodyHtml: `<p>Your support request <strong>${escapeEmailHtml(input.ticketNumber)}</strong> has been received.</p><p><strong>Subject:</strong> ${escapeEmailHtml(input.subject)}</p><p>Keep this ticket number for reference. Our team can reply through your Riseora support thread and email.</p>`, ctaLabel: input.signedIn ? "Open support thread" : "Visit Help Center", ctaUrl: url }) });
+}
+
+export async function sendSupportReplyNotification(input: { email: string; name?: string | null; ticketNumber: string; subject: string; reply: string; signedIn: boolean; replyId?: string }) {
+  const url = input.signedIn ? `${baseUrl()}/support/${encodeURIComponent(input.ticketNumber)}` : `${baseUrl()}/help`;
+  return sendRiseoraEmail({ to: input.email, subject: `Riseora support ${input.ticketNumber}: new reply`, template: "support-reply", idempotencyKey: `support-reply/${input.ticketNumber}/${input.replyId || Buffer.from(input.reply).toString("base64url").slice(0, 32)}`, html: renderRiseoraEmail({ eyebrow: "SUPPORT UPDATE", title: input.subject || "Riseora Support replied", bodyHtml: `<p>${input.name ? `${escapeEmailHtml(input.name)}, ` : ""}our support team replied to ticket <strong>${escapeEmailHtml(input.ticketNumber)}</strong>.</p><div style="margin:16px 0;padding:16px;background:#f6f8f4;border-radius:14px">${escapeEmailHtml(input.reply).replaceAll("\n", "<br/>")}</div>`, ctaLabel: input.signedIn ? "Reply in My Riseora" : "Help Center", ctaUrl: url }) });
+}
+
+export async function sendSupportAdminNotification(input: { ticketNumber: string; name: string; email: string; category: string; subject: string; priority: string }) {
+  if (!env.ADMIN_NOTIFICATION_EMAIL) return false;
+  await sendRiseoraEmail({ to: env.ADMIN_NOTIFICATION_EMAIL, subject: `Support ${input.priority}: ${input.ticketNumber}`, template: "admin-support-new", idempotencyKey: `admin-support/${input.ticketNumber}`, html: renderRiseoraEmail({ eyebrow: `${input.category} · ${input.priority}`, title: input.subject, bodyHtml: `<p><strong>${escapeEmailHtml(input.name)}</strong><br/>${escapeEmailHtml(input.email)}<br/>Ticket ${escapeEmailHtml(input.ticketNumber)}</p>`, ctaLabel: "Open Support queue", ctaUrl: `${baseUrl()}/admin/support` }) });
   return true;
 }

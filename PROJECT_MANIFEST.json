@@ -61,10 +61,14 @@
     "CheckoutSession.checkoutRequestKey",
     "CheckoutSession payment recovery telemetry",
     "OrderItem.unitCost checkout-time cost snapshot",
-    "WishlistItem account-synced saved products"
+    "WishlistItem account-synced saved products",
+    "ContactMessage support ticket/thread fields",
+    "SupportMessage",
+    "EmailDeliveryLog",
+    "NotificationType.SUPPORT"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 35,
+  "latestPhase": 37,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -234,15 +238,33 @@
   "currentPhase": "Phase 36 \u2014 Rewards & Referrals V2",
   "lastUpdated": "2026-10-02",
   "phase36": {
-    "name": "Rewards & Referrals V2",
+    "name": "Riseora Rewards & Referrals V2",
     "features": [
-      "delivery-only reward points",
-      "verified-review bonus",
-      "referral attribution and first-order bonuses",
-      "private reward vouchers",
-      "refund/review reversal controls",
-      "customer rewards center",
-      "admin rewards control center"
-    ]
+      "delivered-order reward earning",
+      "verified-review reward bonuses",
+      "referral rewards after first delivered order",
+      "private one-time reward vouchers",
+      "refund/review reward reversals",
+      "Admin Rewards control center"
+    ],
+    "migration": "20261002233000_phase36_rewards_referrals",
+    "verification": "npm run verify:phase36"
+  },
+  "phase37": {
+    "name": "Support Operations & Communications V2",
+    "features": [
+      "public Help Center with searchable order, payment, delivery, return, product, account and rewards guidance",
+      "signed-in My Support ticket list, threaded replies, order linking and customer close workflow",
+      "existing Contact messages upgraded into ticket-numbered support threads without losing historical enquiries",
+      "Admin Support queue with category/priority/status filters, assignment, customer replies and private internal notes",
+      "support-specific Admin permission for Owner, Operations and Support staff roles",
+      "support email acknowledgements/replies plus signed-in in-app SUPPORT notifications",
+      "shared branded transactional email shell for orders, returns, password reset, cart recovery, stock and price alerts",
+      "transactional EmailDeliveryLog records sent/failed provider outcomes for operational visibility",
+      "Admin support dashboard surfaces recent email failures and main dashboard surfaces support items needing attention",
+      "phase audit verifies support routes, permission wiring, email logging and all relative client imports"
+    ],
+    "migration": "20261003003000_phase37_support_communications_v2",
+    "verification": "npm run verify:phase37"
   }
 }

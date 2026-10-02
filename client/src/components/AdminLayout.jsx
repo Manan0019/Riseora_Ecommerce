@@ -13,6 +13,7 @@ const nav = [
   { to: "/admin/orders", label: "Orders", icon: "orders", permission: "OPERATIONS" },
   { to: "/admin/payments", label: "Payments", icon: "shield", permission: "OPERATIONS" },
   { to: "/admin/customers", label: "Customers", icon: "user", permission: "CUSTOMERS" },
+  { to: "/admin/support", label: "Support", icon: "mail", permission: "SUPPORT" },
   { to: "/admin/promotions", label: "Promotions", icon: "tag", permission: "MARKETING" },
   { to: "/admin/merchandising", label: "Merchandising", icon: "sparkles", permission: "MARKETING" },
   { to: "/admin/reviews", label: "Reviews", icon: "star", permission: "CONTENT" },
