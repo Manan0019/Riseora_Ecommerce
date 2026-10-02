@@ -7,7 +7,7 @@ import {
   loadAnalytics,
   setAnalyticsConsent,
   trackPage,
-} from "../lib/analytics";
+} from "../analytics";
 
 export function PageAnalytics() {
   const location = useLocation();

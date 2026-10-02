@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import Seo from "../components/Seo";
-import { openAnalyticsPreferences } from "../lib/analytics";
+import { openAnalyticsPreferences } from "../analytics";
 
 const definitions = {
   shipping: { title: "Shipping policy", field: "shippingPolicy" },

@@ -12,6 +12,14 @@ enum UserRole {
   ADMIN
 }
 
+enum AdminRole {
+  OWNER
+  OPERATIONS
+  CATALOG
+  MARKETING
+  SUPPORT
+}
+
 enum AddressType {
   HOME
   WORK
@@ -155,6 +163,7 @@ model User {
   phone        String?  @unique
   passwordHash String
   role         UserRole @default(CUSTOMER)
+  adminRole    AdminRole?
   isActive     Boolean  @default(true)
   tokenVersion Int      @default(0)
 
@@ -167,6 +176,7 @@ model User {
   passwordResetTokens PasswordResetToken[]
   couponRedemptions CouponRedemption[]
   notifications Notification[]
+  adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -174,6 +184,28 @@ model User {
   @@index([role, isActive, createdAt])
 }
 
+
+model AdminAuditLog {
+  id String @id @default(uuid()) @db.Uuid
+
+  actorUserId String? @db.Uuid
+  actor User? @relation("AdminAuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  method     String
+  path       String
+  action     String
+  statusCode Int
+  durationMs Int?
+  userAgent  String?
+  metadata   Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([actorUserId, createdAt])
+  @@index([action, createdAt])
+  @@index([statusCode, createdAt])
+  @@index([createdAt])
+}
 
 model PasswordResetToken {
   id String @id @default(uuid()) @db.Uuid

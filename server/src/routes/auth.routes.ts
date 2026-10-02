@@ -63,6 +63,7 @@ router.post(
         email: true,
         phone: true,
         role: true,
+        adminRole: true,
         tokenVersion: true,
       },
     });
@@ -105,6 +106,7 @@ router.post(
           email: user.email,
           phone: user.phone,
           role: user.role,
+          adminRole: user.adminRole,
         },
       },
     });
@@ -181,6 +183,7 @@ router.get(
         email: true,
         phone: true,
         role: true,
+        adminRole: true,
         isActive: true,
       },
     });

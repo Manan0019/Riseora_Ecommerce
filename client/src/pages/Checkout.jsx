@@ -4,7 +4,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
-import { trackCommerce, trackPurchase } from "../lib/analytics";
+import { trackCommerce, trackPurchase } from "../analytics";
 
 const RECOVERY_KEY = "riseora_cart_recovery_token";
 const BUY_NOW_RECOVERY_KEY = "riseora_buy_now_recovery_token";

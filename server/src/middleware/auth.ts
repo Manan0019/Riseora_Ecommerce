@@ -12,12 +12,12 @@ async function resolveAuthenticatedUser(token: string) {
   const payload = verifyAuthToken(token);
   const user = await prisma.user.findUnique({
     where: { id: payload.sub },
-    select: { id: true, email: true, role: true, isActive: true, tokenVersion: true },
+    select: { id: true, email: true, role: true, adminRole: true, isActive: true, tokenVersion: true },
   });
   if (!user?.isActive) return null;
   const tokenVersion = Number.isInteger(payload.ver) ? payload.ver : 0;
   if (user.tokenVersion !== tokenVersion) return null;
-  return { id: user.id, email: user.email, role: user.role };
+  return { id: user.id, email: user.email, role: user.role, adminRole: user.adminRole };
 }
 
 export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {

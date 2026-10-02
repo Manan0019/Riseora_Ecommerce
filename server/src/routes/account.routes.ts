@@ -20,7 +20,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const user = await prisma.user.findUnique({
       where: { id: req.user!.id },
-      select: { id: true, firstName: true, lastName: true, email: true, phone: true, role: true, createdAt: true },
+      select: { id: true, firstName: true, lastName: true, email: true, phone: true, role: true, adminRole: true, createdAt: true },
     });
     if (!user) return res.status(404).json({ success: false, message: "Account not found" });
     res.json({ success: true, data: user });
@@ -45,7 +45,7 @@ router.patch(
         lastName: parsed.data.lastName || null,
         phone: parsed.data.phone || null,
       },
-      select: { id: true, firstName: true, lastName: true, email: true, phone: true, role: true },
+      select: { id: true, firstName: true, lastName: true, email: true, phone: true, role: true, adminRole: true },
     });
     res.json({ success: true, data: user });
   }),

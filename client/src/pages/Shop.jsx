@@ -4,7 +4,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
 import Seo from "../components/Seo";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent } from "../analytics";
 
 export default function Shop() {
   const [params] = useSearchParams();

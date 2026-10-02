@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent } from "../analytics";
 
 function giftImage(deal) {
   const product = deal?.giftVariant?.product || deal?.resolvedItems?.[0]?.variant?.product || deal?.buyVariant?.product;

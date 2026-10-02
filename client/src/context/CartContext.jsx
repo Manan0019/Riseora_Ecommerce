@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { trackCommerce, trackEvent } from "../lib/analytics";
+import { trackCommerce, trackEvent } from "../analytics";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";

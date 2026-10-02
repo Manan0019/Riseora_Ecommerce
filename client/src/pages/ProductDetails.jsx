@@ -12,7 +12,7 @@ import RichText, { richTextToPlain } from "../components/RichText";
 import ProductFaq from "../components/ProductFaq";
 import ProductQuestions from "../components/ProductQuestions";
 import DealCard from "../components/DealCard";
-import { trackCommerce, trackEvent } from "../lib/analytics";
+import { trackCommerce, trackEvent } from "../analytics";
 
 const RECENT_KEY = "riseora_recent_products";
 

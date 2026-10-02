@@ -17,6 +17,17 @@ export const UserRole = {
 export type UserRole = (typeof UserRole)[keyof typeof UserRole]
 
 
+export const AdminRole = {
+  OWNER: 'OWNER',
+  OPERATIONS: 'OPERATIONS',
+  CATALOG: 'CATALOG',
+  MARKETING: 'MARKETING',
+  SUPPORT: 'SUPPORT'
+} as const
+
+export type AdminRole = (typeof AdminRole)[keyof typeof AdminRole]
+
+
 export const AddressType = {
   HOME: 'HOME',
   WORK: 'WORK',

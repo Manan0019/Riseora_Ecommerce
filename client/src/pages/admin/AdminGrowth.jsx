@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../../api/http";
-import { getAnalyticsConfiguration, openAnalyticsPreferences, trackEvent } from "../../lib/analytics";
+import { getAnalyticsConfiguration, openAnalyticsPreferences, trackEvent } from "../../analytics";
 
 function Status({ ok, children }) {
   return <span className={ok ? "phase30-status ok" : "phase30-status warn"}>{ok ? "READY" : "ACTION"} · {children}</span>;

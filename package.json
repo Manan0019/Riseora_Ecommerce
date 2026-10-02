@@ -26,7 +26,8 @@
     "verify:phase27": "npm run db:generate && npm run typecheck && npm run build",
     "verify:phase28": "npm run db:generate && npm run typecheck && npm run build",
     "verify:phase29": "npm run db:generate && npm run typecheck && npm run build",
-    "verify:phase30": "npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase30": "npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase31": "node scripts/phase31-client-import-audit.mjs && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

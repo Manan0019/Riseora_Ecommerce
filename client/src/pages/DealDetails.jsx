@@ -4,7 +4,7 @@ import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import Seo from "../components/Seo";
 import { Icon } from "../components/Icons";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent } from "../analytics";
 
 function imageFor(deal) {
   if (deal?.imageUrl) return mediaUrl(deal.imageUrl);

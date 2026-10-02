@@ -7,6 +7,7 @@ declare global {
         id: string;
         email: string;
         role: "CUSTOMER" | "ADMIN";
+        adminRole?: "OWNER" | "OPERATIONS" | "CATALOG" | "MARKETING" | "SUPPORT" | null;
       };
     }
   }

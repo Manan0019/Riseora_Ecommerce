@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  AdminAuditLog: 'AdminAuditLog',
   PasswordResetToken: 'PasswordResetToken',
   Address: 'Address',
   Category: 'Category',
@@ -116,6 +117,7 @@ export const UserScalarFieldEnum = {
   phone: 'phone',
   passwordHash: 'passwordHash',
   role: 'role',
+  adminRole: 'adminRole',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
   createdAt: 'createdAt',
@@ -123,6 +125,22 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const AdminAuditLogScalarFieldEnum = {
+  id: 'id',
+  actorUserId: 'actorUserId',
+  method: 'method',
+  path: 'path',
+  action: 'action',
+  statusCode: 'statusCode',
+  durationMs: 'durationMs',
+  userAgent: 'userAgent',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type AdminAuditLogScalarFieldEnum = (typeof AdminAuditLogScalarFieldEnum)[keyof typeof AdminAuditLogScalarFieldEnum]
 
 
 export const PasswordResetTokenScalarFieldEnum = {

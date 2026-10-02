@@ -5,7 +5,7 @@ import { useCart } from "../context/CartContext";
 import { Icon } from "../components/Icons";
 import OfferProgress from "../components/OfferProgress";
 import ProductCard from "../components/ProductCard";
-import { trackCommerce } from "../lib/analytics";
+import { trackCommerce } from "../analytics";
 
 export default function Cart() {
   const { items, subtotal, updateQuantity, removeItem } = useCart();

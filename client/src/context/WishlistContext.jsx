@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { trackCommerce } from "../lib/analytics";
+import { trackCommerce } from "../analytics";
 
 const WishlistContext = createContext(null);
 const KEY = "riseora_wishlist";

@@ -3,25 +3,27 @@ import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { Icon } from "./Icons";
 import BrandLogo from "./BrandLogo";
+import { adminHasPermission, ADMIN_ROLE_LABELS, normalizedAdminRole } from "../adminPermissions";
 
 const nav = [
-  { to: "/admin", label: "Dashboard", icon: "dashboard", end: true },
-  { to: "/admin/catalog", label: "Catalog", icon: "package" },
-  { to: "/admin/reports", label: "Reports", icon: "sparkles" },
-  { to: "/admin/inventory", label: "Inventory", icon: "tag" },
-  { to: "/admin/orders", label: "Orders", icon: "orders" },
-  { to: "/admin/customers", label: "Customers", icon: "user" },
-  { to: "/admin/promotions", label: "Promotions", icon: "tag" },
-  { to: "/admin/merchandising", label: "Merchandising", icon: "sparkles" },
-  { to: "/admin/reviews", label: "Reviews", icon: "star" },
-  { to: "/admin/returns", label: "Returns", icon: "truck" },
-  { to: "/admin/audience", label: "Audience", icon: "mail" },
-  { to: "/admin/retention", label: "Retention", icon: "bell" },
-  { to: "/admin/lifecycle", label: "Lifecycle", icon: "refresh" },
-  { to: "/admin/growth", label: "Growth", icon: "sparkles" },
-  { to: "/admin/settings", label: "Settings", icon: "shield" },
-  { to: "/admin/erp-sync", label: "ERP Sync", icon: "refresh" },
-  { to: "/admin/system", label: "System", icon: "dashboard" },
+  { to: "/admin", label: "Dashboard", icon: "dashboard", end: true, permission: "DASHBOARD" },
+  { to: "/admin/catalog", label: "Catalog", icon: "package", permission: "CATALOG" },
+  { to: "/admin/reports", label: "Reports", icon: "sparkles", permission: "DASHBOARD" },
+  { to: "/admin/inventory", label: "Inventory", icon: "tag", permission: "CATALOG" },
+  { to: "/admin/orders", label: "Orders", icon: "orders", permission: "OPERATIONS" },
+  { to: "/admin/customers", label: "Customers", icon: "user", permission: "CUSTOMERS" },
+  { to: "/admin/promotions", label: "Promotions", icon: "tag", permission: "MARKETING" },
+  { to: "/admin/merchandising", label: "Merchandising", icon: "sparkles", permission: "MARKETING" },
+  { to: "/admin/reviews", label: "Reviews", icon: "star", permission: "CONTENT" },
+  { to: "/admin/returns", label: "Returns", icon: "truck", permission: "OPERATIONS" },
+  { to: "/admin/audience", label: "Audience", icon: "mail", permission: "MARKETING" },
+  { to: "/admin/retention", label: "Retention", icon: "bell", permission: "MARKETING" },
+  { to: "/admin/lifecycle", label: "Lifecycle", icon: "refresh", permission: "MARKETING" },
+  { to: "/admin/growth", label: "Growth", icon: "sparkles", permission: "MARKETING" },
+  { to: "/admin/settings", label: "Settings", icon: "shield", permission: "SETTINGS" },
+  { to: "/admin/erp-sync", label: "ERP Sync", icon: "refresh", permission: "ERP" },
+  { to: "/admin/security", label: "Security", icon: "shield", permission: "SECURITY" },
+  { to: "/admin/system", label: "System", icon: "dashboard", permission: "SYSTEM" },
 ];
 const mobilePrimaryPaths = new Set(["/admin", "/admin/orders", "/admin/catalog", "/admin/inventory"]);
 
@@ -29,8 +31,10 @@ export default function AdminLayout() {
   const { user, logout } = useAuth();
   const { pathname } = useLocation();
   const [moreOpen, setMoreOpen] = useState(false);
-  const mobilePrimary = nav.filter((item) => mobilePrimaryPaths.has(item.to));
-  const mobileMore = nav.filter((item) => !mobilePrimaryPaths.has(item.to));
+  const adminRole = normalizedAdminRole(user?.adminRole);
+  const visibleNav = nav.filter((item) => adminHasPermission(adminRole, item.permission));
+  const mobilePrimary = visibleNav.filter((item) => mobilePrimaryPaths.has(item.to));
+  const mobileMore = visibleNav.filter((item) => !mobilePrimaryPaths.has(item.to));
   const moreActive = useMemo(() => mobileMore.some((item) => pathname === item.to || pathname.startsWith(`${item.to}/`)), [pathname]);
 
   useEffect(() => { setMoreOpen(false); }, [pathname]);
@@ -51,7 +55,7 @@ export default function AdminLayout() {
           <div><strong>RISEORA</strong><small>ADMIN</small></div>
         </div>
         <nav className="admin-nav">
-          {nav.map((item) => <NavLink key={item.to} to={item.to} end={item.end}><Icon name={item.icon} size={20} /><span>{item.label}</span></NavLink>)}
+          {visibleNav.map((item) => <NavLink key={item.to} to={item.to} end={item.end}><Icon name={item.icon} size={20} /><span>{item.label}</span></NavLink>)}
         </nav>
         <div className="admin-sidebar-bottom">
           <a href="/" className="admin-store-link">View storefront →</a>
@@ -61,7 +65,7 @@ export default function AdminLayout() {
 
       <div className="admin-main">
         <header className="admin-topbar phase15-admin-topbar">
-          <div><span className="admin-mobile-brand">RISEORA ADMIN</span><strong>{user?.firstName ? `Hi, ${user.firstName}` : "Store admin"}</strong></div>
+          <div><span className="admin-mobile-brand">RISEORA ADMIN</span><strong>{user?.firstName ? `Hi, ${user.firstName}` : "Store admin"}</strong><small className="phase31-admin-role">{ADMIN_ROLE_LABELS[adminRole]}</small></div>
           <a href="/" className="admin-view-store">View store</a>
         </header>
         <main className="admin-content"><div key={pathname} className="phase18-route-frame"><Outlet /></div></main>

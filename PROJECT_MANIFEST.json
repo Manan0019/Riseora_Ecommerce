@@ -51,10 +51,11 @@
   },
   "database_changes": [
     "WishlistShare",
-    "PriceAlert"
+    "PriceAlert",
+    "AdminAuditLog"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 30,
+  "latestPhase": 31,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -140,5 +141,22 @@
     ],
     "databaseChanges": [],
     "verification": "npm run verify:phase30"
+  },
+  "phase31": {
+    "name": "Admin Security, Audit Trail & Analytics Runtime Repair",
+    "features": [
+      "moves analytics runtime to stable client/src/analytics.js and leaves a compatibility shim only at the old location",
+      "verification script fails on legacy analytics imports or unresolved relative imports before build",
+      "AdminRole access profiles for Owner, Operations, Catalog, Marketing and Support",
+      "existing Admin accounts migrate safely to Owner to preserve current access",
+      "server-side admin permission enforcement across all /api/admin tools",
+      "automatic audit logging for every Admin POST/PUT/PATCH/DELETE action without storing request bodies",
+      "Admin Security page with activity filters, staff management and role guidance",
+      "Owner-only staff promotion, role changes, deactivation and admin removal with last-owner protection",
+      "session rotation that invalidates other admin sessions while keeping the current browser signed in",
+      "stricter admin API rate limit and no reliance on client-side navigation hiding for authorization"
+    ],
+    "migration": "20261002121500_phase31_admin_security_audit",
+    "verification": "npm run verify:phase31"
   }
 }

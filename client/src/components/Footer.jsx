@@ -4,7 +4,7 @@ import { apiFetch } from "../api/http";
 import { Icon } from "./Icons";
 import BrandLogo from "./BrandLogo";
 import { useStore } from "../context/StoreContext";
-import { openAnalyticsPreferences, trackEvent } from "../lib/analytics";
+import { openAnalyticsPreferences, trackEvent } from "../analytics";
 
 export default function Footer() {
   const { store } = useStore();
