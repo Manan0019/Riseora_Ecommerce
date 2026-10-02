@@ -26,6 +26,8 @@ router.get(
       include: {
         order: { select: { orderNumber: true, createdAt: true, totalAmount: true, status: true } },
         items: { include: { orderItem: true } },
+        evidence: true,
+        statusHistory: { where: { customerVisible: true }, orderBy: { createdAt: "asc" } },
       },
       orderBy: { requestedAt: "desc" },
     });
@@ -41,6 +43,8 @@ router.get(
       include: {
         order: { include: { shipment: true } },
         items: { include: { orderItem: true } },
+        evidence: true,
+        statusHistory: { where: { customerVisible: true }, orderBy: { createdAt: "asc" } },
       },
     });
     if (!item) return res.status(404).json({ success: false, message: "Return request not found" });
@@ -53,6 +57,11 @@ const requestSchema = z.object({
   reason: z.string().trim().min(3).max(120),
   details: z.string().trim().max(1000).optional().or(z.literal("")),
   items: z.array(z.object({ orderItemId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
+  evidence: z.array(z.object({
+    url: z.string().trim().min(1).max(1500).refine((value) => value.startsWith("/uploads/returns/") || /^https:\/\/res\.cloudinary\.com\//i.test(value), "Invalid evidence URL"),
+    publicId: z.string().trim().max(500).optional().nullable(),
+    originalName: z.string().trim().max(255).optional().nullable(),
+  })).max(4).optional().default([]),
 });
 
 router.post(
@@ -117,8 +126,10 @@ router.post(
         details: parsed.data.details || null,
         refundAmount,
         items: { create: createItems },
+        evidence: parsed.data.evidence.length ? { create: parsed.data.evidence.map((item) => ({ url: item.url, publicId: item.publicId || null, originalName: item.originalName || null })) } : undefined,
+        statusHistory: { create: { status: "REQUESTED", note: parsed.data.details || parsed.data.reason, source: "CUSTOMER", customerVisible: true } },
       },
-      include: { order: true, items: { include: { orderItem: true } } },
+      include: { order: true, items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } } },
     });
     res.status(201).json({ success: true, data: created });
   }),
@@ -127,11 +138,18 @@ router.post(
 router.post(
   "/:id/cancel",
   asyncHandler(async (req, res) => {
-    const updated = await prisma.returnRequest.updateMany({
-      where: { id: String(req.params.id), userId: req.user!.id, status: "REQUESTED" },
-      data: { status: "CANCELLED" },
+    const updated = await prisma.$transaction(async (tx) => {
+      const changed = await tx.returnRequest.updateMany({
+        where: { id: String(req.params.id), userId: req.user!.id, status: "REQUESTED" },
+        data: { status: "CANCELLED" },
+      });
+      if (changed.count !== 1) return false;
+      await tx.returnStatusHistory.create({
+        data: { returnRequestId: String(req.params.id), status: "CANCELLED", note: "Return request cancelled by customer", source: "CUSTOMER", customerVisible: true },
+      });
+      return true;
     });
-    if (updated.count !== 1) return res.status(409).json({ success: false, message: "This return can no longer be cancelled" });
+    if (!updated) return res.status(409).json({ success: false, message: "This return can no longer be cancelled" });
     res.json({ success: true });
   }),
 );

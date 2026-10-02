@@ -52,10 +52,14 @@
   "database_changes": [
     "WishlistShare",
     "PriceAlert",
-    "AdminAuditLog"
+    "AdminAuditLog",
+    "OrderCancellationRequest",
+    "ShipmentEvent",
+    "ReturnEvidence",
+    "ReturnStatusHistory"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 31,
+  "latestPhase": 32,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -158,5 +162,22 @@
     ],
     "migration": "20261002121500_phase31_admin_security_audit",
     "verification": "npm run verify:phase31"
+  },
+  "phase32": {
+    "name": "Post-Purchase Operations V2",
+    "features": [
+      "customer cancellation-request workflow for pending/confirmed orders with fulfilment pause while review is pending",
+      "safe admin cancellation approval including Razorpay refund-before-cancel for paid online orders and one-time inventory/coupon restoration",
+      "dedicated Admin Cancellations queue plus dashboard pending-cancellation visibility",
+      "shipment journey events, customer-visible courier history and editable estimated delivery date",
+      "automatic picked-up and delivered shipment events from normal fulfilment status changes",
+      "return evidence image upload with authenticated customer upload routing and Cloudinary/local media support",
+      "customer return detail page with evidence, refund information, reverse tracking and return status timeline",
+      "admin return evidence review and customer-visible status notes/history",
+      "repairs customer review image upload routing by mounting authenticated upload endpoints at /api/uploads",
+      "phase audit verifies canonical analytics imports, relative module resolution, upload routing and required post-purchase Prisma models"
+    ],
+    "migration": "20261002143000_phase32_post_purchase_ops_v2",
+    "verification": "npm run verify:phase32"
   }
 }

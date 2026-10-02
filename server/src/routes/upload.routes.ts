@@ -10,6 +10,7 @@ import {
   storeCategoryImage,
   storeProductImage,
   storeReviewImage,
+  storeReturnImage,
 } from "../services/media.service";
 
 const router = Router();
@@ -31,6 +32,23 @@ router.post("/reviews", reviewUploadLimit, requireAuth, upload.array("images", 4
     const stored = await Promise.all(
       files.map(async (file) => ({
         ...(await storeReviewImage(file.buffer, file.mimetype)),
+        originalName: file.originalname,
+        size: file.size,
+      })),
+    );
+    res.status(201).json({ success: true, storage: cloudMediaEnabled ? "cloudinary" : "local", data: stored });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/returns", reviewUploadLimit, requireAuth, upload.array("images", 4), async (req, res, next) => {
+  try {
+    const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+    if (files.length === 0) return res.status(400).json({ success: false, message: "Select at least one return evidence image" });
+    const stored = await Promise.all(
+      files.map(async (file) => ({
+        ...(await storeReturnImage(file.buffer, file.mimetype)),
         originalName: file.originalname,
         size: file.size,
       })),

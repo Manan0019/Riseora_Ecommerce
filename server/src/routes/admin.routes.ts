@@ -8,7 +8,7 @@ import { sendOrderStatusNotification } from "../services/notification.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
 import { notifyPriceAlertsForVariant } from "../services/price-alert.service";
-import { createOrderStatusInAppNotification } from "../services/notification-center.service";
+import { createOrderStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -234,6 +234,7 @@ router.get(
         user: { select: { id: true, firstName: true, lastName: true, email: true } },
         items: true,
         payment: true,
+        cancellationRequest: true,
         shipment: true,
         statusHistory: { orderBy: { createdAt: "asc" } },
       },
@@ -283,9 +284,12 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
       where: { id: orderId },
-      include: { items: true, payment: true, shipment: true },
+      include: { items: true, payment: true, cancellationRequest: true, shipment: { include: { events: true } } },
     });
     if (!order) throw new Error("ORDER_NOT_FOUND");
+    if (order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status) && payload.status !== "CANCELLED") {
+      throw new Error("CANCELLATION_REQUEST_PENDING");
+    }
 
     const isSameStatus = order.status === payload.status;
     if (!isSameStatus && !allowedTransitions[order.status].includes(payload.status)) {
@@ -316,10 +320,18 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
       if (order.payment?.status === "PENDING") {
         await tx.payment.update({ where: { orderId: order.id }, data: { status: "CANCELLED" } });
       }
+      if (order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status)) {
+        await tx.orderCancellationRequest.update({ where: { id: order.cancellationRequest.id }, data: { status: "COMPLETED", resolvedAt: new Date(), adminNote: payload.note || order.cancellationRequest.adminNote || null } });
+      }
     }
 
     if (payload.status === "SHIPPED") {
-      await tx.shipment.upsert({
+      const estimate = order.deliveryEstimate && typeof order.deliveryEstimate === "object" && !Array.isArray(order.deliveryEstimate)
+        ? order.deliveryEstimate as Record<string, unknown>
+        : null;
+      const deliveryMaxDays = Math.max(1, Number(estimate?.deliveryMaxDays || 5));
+      const defaultEstimatedDeliveryAt = new Date(Date.now() + deliveryMaxDays * 24 * 60 * 60 * 1000);
+      const shipment = await tx.shipment.upsert({
         where: { orderId: order.id },
         create: {
           orderId: order.id,
@@ -327,14 +339,21 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
           trackingNumber: payload.trackingNumber || null,
           trackingUrl: resolvedTrackingUrl || null,
           shippedAt: new Date(),
+          estimatedDeliveryAt: defaultEstimatedDeliveryAt,
         },
         update: {
           carrier: payload.carrier || null,
           trackingNumber: payload.trackingNumber || null,
           trackingUrl: resolvedTrackingUrl || null,
           shippedAt: order.shipment?.shippedAt ?? new Date(),
+          estimatedDeliveryAt: order.shipment?.estimatedDeliveryAt ?? defaultEstimatedDeliveryAt,
         },
       });
+      if (!isSameStatus) {
+        await tx.shipmentEvent.create({
+          data: { shipmentId: shipment.id, type: "PICKED_UP", title: "Shipment handed to courier", note: payload.note || null, customerVisible: true },
+        });
+      }
     } else if (order.shipment && (payload.carrier || payload.trackingNumber || payload.trackingUrl)) {
       await tx.shipment.update({
         where: { orderId: order.id },
@@ -347,10 +366,13 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
 
     if (!isSameStatus && payload.status === "DELIVERED") {
-      await tx.shipment.upsert({
+      const shipment = await tx.shipment.upsert({
         where: { orderId: order.id },
         create: { orderId: order.id, deliveredAt: new Date() },
         update: { deliveredAt: new Date() },
+      });
+      await tx.shipmentEvent.create({
+        data: { shipmentId: shipment.id, type: "DELIVERED", title: "Delivered", note: payload.note || "Your Riseora order was delivered.", customerVisible: true },
       });
       if (order.paymentMethod === "COD" && order.payment) {
         await tx.payment.update({ where: { orderId: order.id }, data: { status: "PAID", paidAt: new Date() } });
@@ -369,10 +391,76 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
 
     return tx.order.findUnique({
       where: { id: order.id },
-      include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } },
+      include: { items: true, payment: true, cancellationRequest: true, shipment: { include: { events: { orderBy: { eventAt: "asc" } } } }, statusHistory: { orderBy: { createdAt: "asc" } } },
     });
   });
 }
+
+const shipmentEventTypes = ["LABEL_CREATED", "PICKED_UP", "IN_TRANSIT", "OUT_FOR_DELIVERY", "DELIVERED", "EXCEPTION", "RTO_INITIATED", "RTO_DELIVERED", "NOTE"] as const;
+
+router.patch(
+  "/orders/:id/shipment-estimate",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ estimatedDeliveryAt: z.string().datetime().nullable() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid delivery estimate" });
+    const order = await prisma.order.findUnique({ where: { id: String(req.params.id) }, include: { shipment: true } });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!["SHIPPED", "DELIVERED"].includes(order.status) && !order.shipment) return res.status(409).json({ success: false, message: "Add shipment details before setting a delivery estimate" });
+    const shipment = await prisma.shipment.upsert({
+      where: { orderId: order.id },
+      create: { orderId: order.id, estimatedDeliveryAt: parsed.data.estimatedDeliveryAt ? new Date(parsed.data.estimatedDeliveryAt) : null },
+      update: { estimatedDeliveryAt: parsed.data.estimatedDeliveryAt ? new Date(parsed.data.estimatedDeliveryAt) : null },
+      include: { events: { orderBy: { eventAt: "asc" } } },
+    });
+    res.json({ success: true, data: shipment });
+  }),
+);
+
+router.post(
+  "/orders/:id/shipment-events",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      type: z.enum(shipmentEventTypes),
+      title: z.string().trim().min(2).max(140),
+      note: z.string().trim().max(1000).optional().or(z.literal("")),
+      location: z.string().trim().max(160).optional().or(z.literal("")),
+      customerVisible: z.boolean().default(true),
+      eventAt: z.string().datetime().optional(),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid shipment event", errors: parsed.error.flatten() });
+
+    const order = await prisma.order.findUnique({ where: { id: String(req.params.id) }, include: { shipment: true } });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+    if (!order.shipment) return res.status(409).json({ success: false, message: "Create shipment details before adding courier events" });
+
+    const event = await prisma.shipmentEvent.create({
+      data: {
+        shipmentId: order.shipment.id,
+        type: parsed.data.type,
+        title: parsed.data.title,
+        note: parsed.data.note || null,
+        location: parsed.data.location || null,
+        customerVisible: parsed.data.customerVisible,
+        eventAt: parsed.data.eventAt ? new Date(parsed.data.eventAt) : new Date(),
+      },
+    });
+
+    if (parsed.data.customerVisible && order.userId && ["OUT_FOR_DELIVERY", "EXCEPTION", "RTO_INITIATED"].includes(parsed.data.type)) {
+      await createUserNotification({
+        userId: order.userId,
+        title: parsed.data.title,
+        message: parsed.data.note || `Shipment update for order ${order.orderNumber}.`,
+        type: "ORDER",
+        ctaLabel: "Track order",
+        ctaUrl: `/orders/${order.orderNumber}`,
+        metadata: { orderId: order.id, shipmentEventId: event.id, type: parsed.data.type },
+        dedupeKey: `shipment-event/${event.id}`,
+      });
+    }
+
+    res.status(201).json({ success: true, data: event });
+  }),
+);
 
 router.post(
   "/orders/:id/refund",
@@ -400,7 +488,8 @@ router.post(
       await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date() } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
       await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
-      return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
+      await tx.orderCancellationRequest.updateMany({ where: { orderId: order.id, status: { in: ["REQUESTED", "APPROVED"] } }, data: { status: "COMPLETED", resolvedAt: new Date(), adminNote: "Online payment refunded and cancellation completed" } });
+      return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, cancellationRequest: true, shipment: { include: { events: { orderBy: { eventAt: "asc" } } } }, statusHistory: { orderBy: { createdAt: "asc" } } } });
     });
     if (updated) {
       void sendOrderStatusNotification(updated).catch((error) => console.error("Refund email failed", error));
@@ -427,6 +516,7 @@ router.patch(
       if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Carrier and tracking number are required before marking an order shipped" });
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
+      if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }
@@ -449,6 +539,7 @@ router.patch(
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Use order details to add shipping information before marking this order shipped" });
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
+      if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
       throw error;
@@ -747,7 +838,7 @@ router.get(
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    const [productCount, customerCount, openOrderCount, todayOrderCount, todaySales, recentOrders, variants, pendingReturnCount] = await Promise.all([
+    const [productCount, customerCount, openOrderCount, todayOrderCount, todaySales, recentOrders, variants, pendingReturnCount, pendingCancellationCount] = await Promise.all([
       prisma.product.count(),
       prisma.user.count({ where: { role: "CUSTOMER" } }),
       prisma.order.count({ where: { status: { in: ["PENDING", "CONFIRMED", "PROCESSING"] } } }),
@@ -764,6 +855,7 @@ router.get(
         orderBy: { stockQuantity: "asc" },
       }),
       prisma.returnRequest.count({ where: { status: { in: ["REQUESTED", "APPROVED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED"] } } }),
+      prisma.orderCancellationRequest.count({ where: { status: "REQUESTED" } }),
     ]);
 
     const lowStock = variants.filter((variant) => variant.stockQuantity <= variant.lowStockThreshold);
@@ -778,6 +870,7 @@ router.get(
         todaySales: Number(todaySales._sum.totalAmount ?? 0),
         lowStockCount: lowStock.length,
         pendingReturnCount,
+        pendingCancellationCount,
         recentOrders,
         lowStock: lowStock.slice(0, 6),
       },

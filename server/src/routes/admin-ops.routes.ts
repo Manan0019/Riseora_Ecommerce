@@ -7,8 +7,9 @@ import { getStoreSettings } from "../services/store.service";
 import { normalizePostalPrefixes } from "../services/shipping-zone.service";
 import { getInvoiceWithOrder } from "../services/invoice.service";
 import { refundRazorpayPayment } from "../services/payment.service";
-import { sendReturnStatusNotification } from "../services/notification.service";
-import { createReturnStatusInAppNotification } from "../services/notification-center.service";
+import { sendOrderStatusNotification, sendReturnStatusNotification } from "../services/notification.service";
+import { createOrderStatusInAppNotification, createReturnStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
+import { approveOrderCancellationRequest } from "../services/order-cancellation.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -271,6 +272,76 @@ router.get(
 );
 
 router.get(
+  "/cancellations",
+  asyncHandler(async (req, res) => {
+    const status = typeof req.query.status === "string" ? req.query.status : "";
+    const requests = await prisma.orderCancellationRequest.findMany({
+      where: status ? { status: status as any } : undefined,
+      include: {
+        user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
+        order: { include: { payment: true, shipment: true, items: true } },
+      },
+      orderBy: { requestedAt: "desc" },
+      take: 300,
+    });
+    res.json({ success: true, data: requests });
+  }),
+);
+
+router.patch(
+  "/cancellations/:id",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      action: z.enum(["APPROVE", "REJECT"]),
+      adminNote: z.string().trim().max(1000).optional().or(z.literal("")),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cancellation decision" });
+
+    const request = await prisma.orderCancellationRequest.findUnique({
+      where: { id: String(req.params.id) },
+      include: { order: true, user: true },
+    });
+    if (!request) return res.status(404).json({ success: false, message: "Cancellation request not found" });
+    if (request.status !== "REQUESTED") return res.status(409).json({ success: false, message: "This cancellation request has already been resolved" });
+
+    if (parsed.data.action === "REJECT") {
+      const updated = await prisma.orderCancellationRequest.update({
+        where: { id: request.id },
+        data: { status: "REJECTED", adminNote: parsed.data.adminNote || null, resolvedAt: new Date() },
+      });
+      await createUserNotification({
+        userId: request.userId,
+        title: `Cancellation request update for ${request.order.orderNumber}`,
+        message: parsed.data.adminNote || "Your cancellation request could not be approved because the order has progressed further in fulfilment.",
+        type: "ORDER",
+        ctaLabel: "View order",
+        ctaUrl: `/orders/${request.order.orderNumber}`,
+        metadata: { orderId: request.orderId, cancellationRequestId: request.id, status: "REJECTED" },
+        dedupeKey: `cancellation-decision/${request.id}/${request.requestedAt.toISOString()}/REJECTED`,
+      });
+      return res.json({ success: true, data: updated });
+    }
+
+    try {
+      const order = await approveOrderCancellationRequest(request.id, parsed.data.adminNote || null);
+      if (order) {
+        void sendOrderStatusNotification(order).catch((error) => console.error("Cancellation email failed", error));
+        void createOrderStatusInAppNotification(order).catch((error) => console.error("Cancellation in-app notification failed", error));
+      }
+      return res.json({ success: true, data: order });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "CANCELLATION_FAILED";
+      if (["CANCELLATION_NOT_FOUND", "ORDER_NOT_FOUND"].includes(message)) return res.status(404).json({ success: false, message: "Cancellation request or order was not found" });
+      if (message === "CANCELLATION_NOT_PENDING") return res.status(409).json({ success: false, message: "This cancellation request is no longer pending" });
+      if (message === "ORDER_TOO_FAR_ALONG") return res.status(409).json({ success: false, message: "This order has already moved too far in fulfilment to cancel" });
+      if (message === "PAYMENT_NOT_REFUNDABLE") return res.status(409).json({ success: false, message: "The online payment is not currently refundable" });
+      if (message === "PAYMENT_REFUND_FAILED") return res.status(502).json({ success: false, message: "Razorpay could not complete the refund. The cancellation remains pending and no stock was restored." });
+      throw error;
+    }
+  }),
+);
+
+router.get(
   "/returns",
   asyncHandler(async (req, res) => {
     const status = typeof req.query.status === "string" ? req.query.status : "";
@@ -280,6 +351,8 @@ router.get(
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         order: { include: { payment: true, shipment: true } },
         items: { include: { orderItem: true } },
+        evidence: true,
+        statusHistory: { orderBy: { createdAt: "asc" } },
       },
       orderBy: { requestedAt: "desc" },
       take: 300,
@@ -297,6 +370,8 @@ router.get(
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         order: { include: { payment: true, shipment: true } },
         items: { include: { orderItem: true } },
+        evidence: true,
+        statusHistory: { orderBy: { createdAt: "asc" } },
       },
     });
     if (!item) return res.status(404).json({ success: false, message: "Return request not found" });
@@ -320,6 +395,7 @@ const allowedReturnTransitions: Record<string, string[]> = {
 const returnUpdateSchema = z.object({
   status: z.enum(returnStatuses),
   adminNote: z.string().trim().max(1000).optional().or(z.literal("")),
+  customerVisibleNote: z.string().trim().max(1000).optional().or(z.literal("")),
   refundMethod: z.enum(["ORIGINAL_PAYMENT", "BANK_TRANSFER", "UPI", "STORE_CREDIT", "OTHER"]).optional(),
   refundReference: z.string().trim().max(200).optional().or(z.literal("")),
   reverseCarrier: z.string().trim().max(100).optional().or(z.literal("")),
@@ -335,18 +411,27 @@ router.patch(
 
     const current = await prisma.returnRequest.findUnique({
       where: { id: String(req.params.id) },
-      include: { items: true, order: { include: { payment: true } }, user: true },
+      include: { items: true, evidence: true, statusHistory: true, order: { include: { payment: true } }, user: true },
     });
     if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
     if (current.status === parsed.data.status) {
-      const updated = await prisma.returnRequest.update({
-        where: { id: current.id },
-        data: {
-          adminNote: parsed.data.adminNote || null,
-          reverseCarrier: parsed.data.reverseCarrier || null,
-          reverseTrackingNumber: parsed.data.reverseTrackingNumber || null,
-          reverseTrackingUrl: parsed.data.reverseTrackingUrl || null,
-        },
+      const updated = await prisma.$transaction(async (tx) => {
+        const item = await tx.returnRequest.update({
+          where: { id: current.id },
+          data: {
+            adminNote: parsed.data.adminNote || null,
+            reverseCarrier: parsed.data.reverseCarrier || null,
+            reverseTrackingNumber: parsed.data.reverseTrackingNumber || null,
+            reverseTrackingUrl: parsed.data.reverseTrackingUrl || null,
+          },
+          include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
+        });
+        if (parsed.data.customerVisibleNote) {
+          await tx.returnStatusHistory.create({
+            data: { returnRequestId: current.id, status: current.status, note: parsed.data.customerVisibleNote, source: "ADMIN", customerVisible: true },
+          });
+        }
+        return item;
       });
       return res.json({ success: true, data: updated });
     }
@@ -392,7 +477,7 @@ router.patch(
             },
           });
         }
-        return tx.returnRequest.update({
+        const item = await tx.returnRequest.update({
           where: { id: current.id },
           data: {
             status: "REFUNDED",
@@ -402,8 +487,12 @@ router.patch(
             refundedAt: new Date(),
             adminNote: parsed.data.adminNote || null,
           },
-          include: { items: { include: { orderItem: true } }, order: true, user: true },
+          include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
         });
+        await tx.returnStatusHistory.create({
+          data: { returnRequestId: current.id, status: "REFUNDED", note: parsed.data.customerVisibleNote || "Refund completed", source: "ADMIN", customerVisible: true },
+        });
+        return item;
       });
       void sendReturnStatusNotification(updated).catch((error) => console.error("Return refund email failed", error));
       void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return refund in-app notification failed", error));
@@ -429,11 +518,15 @@ router.patch(
           data.restockedAt = new Date();
         }
       }
-      return tx.returnRequest.update({
+      const item = await tx.returnRequest.update({
         where: { id: current.id },
         data,
-        include: { items: { include: { orderItem: true } }, order: true, user: true },
+        include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
       });
+      await tx.returnStatusHistory.create({
+        data: { returnRequestId: current.id, status: parsed.data.status, note: parsed.data.customerVisibleNote || null, source: "ADMIN", customerVisible: true },
+      });
+      return item;
     });
     void sendReturnStatusNotification(updated).catch((error) => console.error("Return status email failed", error));
     void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return status in-app notification failed", error));

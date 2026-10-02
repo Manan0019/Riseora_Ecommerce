@@ -90,6 +90,26 @@ enum ReturnStatus {
   CANCELLED
 }
 
+enum CancellationRequestStatus {
+  REQUESTED
+  APPROVED
+  REJECTED
+  COMPLETED
+  WITHDRAWN
+}
+
+enum ShipmentEventType {
+  LABEL_CREATED
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  EXCEPTION
+  RTO_INITIATED
+  RTO_DELIVERED
+  NOTE
+}
+
 enum RefundMethod {
   ORIGINAL_PAYMENT
   BANK_TRANSFER
@@ -173,6 +193,7 @@ model User {
   productQuestions ProductQuestion[]
   checkoutSessions CheckoutSession[]
   returnRequests ReturnRequest[]
+  cancellationRequests OrderCancellationRequest[]
   passwordResetTokens PasswordResetToken[]
   couponRedemptions CouponRedemption[]
   notifications Notification[]
@@ -383,6 +404,7 @@ model Order {
   checkoutSession CheckoutSession?
   invoice       Invoice?
   returnRequests ReturnRequest[]
+  cancellationRequest OrderCancellationRequest?
   couponRedemption CouponRedemption?
 
   createdAt DateTime @default(now())
@@ -418,11 +440,56 @@ model Shipment {
   carrier        String?
   trackingNumber String?
   trackingUrl    String?
+  estimatedDeliveryAt DateTime?
   shippedAt      DateTime?
   deliveredAt    DateTime?
 
+  events ShipmentEvent[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ShipmentEvent {
+  id String @id @default(uuid()) @db.Uuid
+
+  shipmentId String @db.Uuid
+  shipment Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+
+  type ShipmentEventType
+  title String
+  note String?
+  location String?
+  customerVisible Boolean @default(true)
+  eventAt DateTime @default(now())
+
+  createdAt DateTime @default(now())
+
+  @@index([shipmentId, eventAt])
+  @@index([type, eventAt])
+}
+
+model OrderCancellationRequest {
+  id String @id @default(uuid()) @db.Uuid
+
+  orderId String @unique @db.Uuid
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  userId String @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  status CancellationRequestStatus @default(REQUESTED)
+  reason String
+  customerNote String?
+  adminNote String?
+
+  requestedAt DateTime @default(now())
+  resolvedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, requestedAt])
+  @@index([userId, requestedAt])
 }
 
 model OrderItem {
@@ -726,6 +793,8 @@ model ReturnRequest {
   refundedAt  DateTime?
 
   items ReturnRequestItem[]
+  evidence ReturnEvidence[]
+  statusHistory ReturnStatusHistory[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -751,6 +820,35 @@ model ReturnRequestItem {
 
   @@unique([returnRequestId, orderItemId])
   @@index([orderItemId])
+}
+
+model ReturnEvidence {
+  id String @id @default(uuid()) @db.Uuid
+
+  returnRequestId String @db.Uuid
+  returnRequest ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+
+  url String
+  publicId String?
+  originalName String?
+  createdAt DateTime @default(now())
+
+  @@index([returnRequestId, createdAt])
+}
+
+model ReturnStatusHistory {
+  id String @id @default(uuid()) @db.Uuid
+
+  returnRequestId String @db.Uuid
+  returnRequest ReturnRequest @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+
+  status ReturnStatus
+  note String?
+  source String?
+  customerVisible Boolean @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([returnRequestId, createdAt])
 }
 
 model Coupon {

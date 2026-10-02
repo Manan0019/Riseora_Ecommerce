@@ -81,6 +81,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/returns", returnRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/account", accountRoutes);
+app.use("/api/uploads", uploadRoutes);
 app.use("/api/admin", rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: "draft-8", legacyHeaders: false }), requireAuth, requireAdmin, adminAuditTrail, enforceAdminPermission);
 app.use("/api/admin/uploads", uploadRoutes);
 app.use("/api/admin", adminSecurityRoutes);

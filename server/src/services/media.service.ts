@@ -15,14 +15,14 @@ export function isAllowedProductImage(mime: string) {
   return Boolean(extensionByMime[mime]);
 }
 
-function cloudFolder(kind: "products" | "brand" | "campaigns" | "categories" | "reviews") {
+function cloudFolder(kind: "products" | "brand" | "campaigns" | "categories" | "reviews" | "returns") {
   const configured = (env.CLOUDINARY_FOLDER || "").replace(/\/+$/, "");
   if (!configured) return `riseora/${kind}`;
   if (kind === "products") return configured;
   return `${configured}/${kind}`;
 }
 
-async function uploadCloud(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews") {
+async function uploadCloud(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews" | "returns") {
   if (!env.CLOUDINARY_CLOUD_NAME || !env.CLOUDINARY_API_KEY || !env.CLOUDINARY_API_SECRET) {
     throw new Error("CLOUD_MEDIA_NOT_CONFIGURED");
   }
@@ -54,7 +54,7 @@ async function uploadCloud(buffer: Buffer, mime: string, kind: "products" | "bra
   return { url: body.secure_url, publicId: body.public_id };
 }
 
-async function uploadLocal(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews") {
+async function uploadLocal(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews" | "returns") {
   const uploadRoot = path.resolve(process.cwd(), "uploads", kind);
   await fs.mkdir(uploadRoot, { recursive: true });
   const filename = `${Date.now()}-${randomBytes(8).toString("hex")}${extensionByMime[mime] || ".img"}`;
@@ -62,7 +62,7 @@ async function uploadLocal(buffer: Buffer, mime: string, kind: "products" | "bra
   return { url: `/uploads/${kind}/${filename}`, publicId: filename };
 }
 
-async function storeImage(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews") {
+async function storeImage(buffer: Buffer, mime: string, kind: "products" | "brand" | "campaigns" | "categories" | "reviews" | "returns") {
   return cloudMediaEnabled ? uploadCloud(buffer, mime, kind) : uploadLocal(buffer, mime, kind);
 }
 
@@ -84,4 +84,8 @@ export function storeCategoryImage(buffer: Buffer, mime: string) {
 
 export function storeReviewImage(buffer: Buffer, mime: string) {
   return storeImage(buffer, mime, "reviews");
+}
+
+export function storeReturnImage(buffer: Buffer, mime: string) {
+  return storeImage(buffer, mime, "returns");
 }

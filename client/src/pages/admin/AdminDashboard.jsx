@@ -17,6 +17,7 @@ export default function AdminDashboard() {
     { label: "Products", value: data.productCount, icon: "shop", to: "/admin/catalog" },
     { label: "Customers", value: data.customerCount, icon: "user", to: "/admin/customers" },
     { label: "Returns", value: data.pendingReturnCount ?? 0, icon: "truck", to: "/admin/returns" },
+    { label: "Cancellations", value: data.pendingCancellationCount ?? 0, icon: "close", to: "/admin/cancellations" },
   ] : [];
 
   return <>

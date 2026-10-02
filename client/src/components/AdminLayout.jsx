@@ -16,6 +16,7 @@ const nav = [
   { to: "/admin/merchandising", label: "Merchandising", icon: "sparkles", permission: "MARKETING" },
   { to: "/admin/reviews", label: "Reviews", icon: "star", permission: "CONTENT" },
   { to: "/admin/returns", label: "Returns", icon: "truck", permission: "OPERATIONS" },
+  { to: "/admin/cancellations", label: "Cancellations", icon: "close", permission: "OPERATIONS" },
   { to: "/admin/audience", label: "Audience", icon: "mail", permission: "MARKETING" },
   { to: "/admin/retention", label: "Retention", icon: "bell", permission: "MARKETING" },
   { to: "/admin/lifecycle", label: "Lifecycle", icon: "refresh", permission: "MARKETING" },

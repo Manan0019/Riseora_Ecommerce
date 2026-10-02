@@ -110,7 +110,7 @@ export async function createReturnStatusInAppNotification(request: { id: string;
     message: `Your return request is now ${request.status.toLowerCase().replaceAll("_", " ")}.`,
     type: "ORDER",
     ctaLabel: "View returns",
-    ctaUrl: "/returns",
+    ctaUrl: `/returns/${request.id}`,
     metadata: { returnId: request.id, returnNumber: request.returnNumber, status: request.status },
     dedupeKey: `return-status/${request.id}/${request.status}`,
   });
