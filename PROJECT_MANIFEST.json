@@ -53,7 +53,7 @@
     "WishlistShare"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 27,
+  "latestPhase": 28,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -88,5 +88,21 @@
     ],
     "migration": "20261002060000_phase27_retention_notification_center",
     "verification": "npm run verify:phase27"
+  },
+  "phase28": {
+    "name": "Conversion & Merchandising V2",
+    "features": [
+      "server-authoritative live cart offer preview for bundle, Buy X Get Y and gift-with-purchase deals",
+      "cart and mini-cart offer progress now includes combo discounts and best-offer selection",
+      "one-click add-missing-items actions for eligible combo and Buy X Get Y promotions",
+      "public offer detail pages with transparent breakdown, product links and checkout-safety messaging",
+      "product detail pages surface active merchandising offers tied to that product",
+      "admin full merchandising deal editing without URL churn",
+      "admin duplicate-to-inactive-draft workflow for safer campaign creation",
+      "product-filtered public deal discovery and secure current-price cart preview endpoint",
+      "analytics event hooks for offer actions and deal adds"
+    ],
+    "databaseChanges": [],
+    "verification": "npm run verify:phase28"
   }
 }

@@ -1,85 +1,94 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
+import { trackEvent } from "../lib/analytics";
 
 function giftImage(deal) {
-  const product = deal?.giftVariant?.product;
+  const product = deal?.giftVariant?.product || deal?.resolvedItems?.[0]?.variant?.product || deal?.buyVariant?.product;
   const image = product?.images?.find((item) => item.isPrimary) || product?.images?.[0];
   return mediaUrl(image?.url);
 }
 
-export default function OfferProgress({ compact = false }) {
-  const { items, subtotal } = useCart();
-  const [deals, setDeals] = useState([]);
+function cartSignature(items) {
+  return items.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|");
+}
+
+export default function OfferProgress({ compact = false, actionable = false }) {
+  const { items, addItems } = useCart();
+  const [preview, setPreview] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const signature = useMemo(() => cartSignature(items), [items]);
 
   useEffect(() => {
-    apiFetch("/promotions/deals")
-      .then((response) => setDeals(Array.isArray(response.data) ? response.data : []))
-      .catch(() => setDeals([]));
-  }, []);
-
-  const progress = useMemo(() => {
-    if (!items.length || !deals.length) return null;
-    const quantities = new Map(items.map((item) => [item.variantId, Number(item.quantity || 0)]));
-
-    const giftDeals = deals
-      .filter((deal) => deal.type === "GIFT_WITH_PURCHASE" && deal.giftVariant && Number(deal.giftVariant.stockQuantity || 0) >= Math.max(1, Number(deal.giftQuantity || 1)))
-      .map((deal) => {
-        const threshold = Number(deal.minOrderAmount || 0);
-        const remaining = Math.max(0, threshold - subtotal);
-        const ratio = threshold > 0 ? Math.min(1, subtotal / threshold) : 1;
-        return { type: "gift", deal, remaining, ratio, score: remaining > 0 ? remaining : -threshold };
+    if (!items.length) { setPreview(null); return undefined; }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      apiFetch("/promotions/deals/preview", {
+        method: "POST",
+        body: JSON.stringify({ items: items.map((item) => ({ variantId: item.variantId, quantity: Number(item.quantity || 1) })) }),
       })
-      .sort((a, b) => a.score - b.score);
+        .then((response) => { if (!cancelled) setPreview(response.data || null); })
+        .catch(() => { if (!cancelled) setPreview(null); });
+    }, 180);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [signature]);
 
-    const bogoDeals = deals
-      .filter((deal) => deal.type === "BUY_X_GET_Y" && deal.buyVariant && deal.giftVariant && Number(deal.giftVariant.stockQuantity || 0) >= Math.max(1, Number(deal.giftQuantity || 1)))
-      .map((deal) => {
-        const required = Math.max(1, Number(deal.buyQuantity || 1));
-        const current = quantities.get(deal.buyVariant.id) || 0;
-        const missing = current >= required ? 0 : required - current;
-        return { type: "bogo", deal, missing, ratio: Math.min(1, current / required), score: missing };
-      })
-      .sort((a, b) => a.score - b.score);
+  const row = useMemo(() => {
+    const rows = preview?.deals || [];
+    if (!rows.length) return null;
+    return rows.find((item) => item.winner)
+      || rows.find((item) => item.available && !item.eligible && item.progress > 0)
+      || rows.find((item) => item.available && !item.eligible)
+      || null;
+  }, [preview]);
 
-    const qualifiedGift = giftDeals.find((item) => item.remaining === 0);
-    const qualifiedBogo = bogoDeals.find((item) => item.missing === 0);
-    if (qualifiedGift) return qualifiedGift;
-    if (qualifiedBogo) return qualifiedBogo;
-
-    const nearestGift = giftDeals.find((item) => item.remaining > 0);
-    const nearestBogo = bogoDeals.find((item) => item.missing > 0);
-    if (!nearestGift) return nearestBogo || null;
-    if (!nearestBogo) return nearestGift;
-
-    // Prefer the gift meter when both are close; money-based progress is easier for customers to act on.
-    return nearestGift.ratio >= nearestBogo.ratio - 0.08 ? nearestGift : nearestBogo;
-  }, [deals, items, subtotal]);
-
-  if (!progress) return null;
-  const { deal } = progress;
+  if (!row?.deal) return null;
+  const deal = row.deal;
   const image = giftImage(deal);
-  const unlocked = progress.type === "gift" ? progress.remaining === 0 : progress.missing === 0;
+  const unlocked = Boolean(row.eligible);
+
+  function addMissingItems() {
+    if (busy || unlocked) return;
+    const additions = [];
+    if (deal.type === "BUNDLE_DISCOUNT") {
+      for (const missing of row.missingItems || []) {
+        const resolved = (deal.resolvedItems || []).find((item) => item.variantId === missing.variantId);
+        if (resolved?.variant?.product && Number(missing.missingQuantity || 0) > 0) {
+          additions.push({ product: resolved.variant.product, variant: resolved.variant, quantity: Number(missing.missingQuantity) });
+        }
+      }
+    } else if (deal.type === "BUY_X_GET_Y" && deal.buyVariant?.product) {
+      const missing = Number(row.missingItems?.[0]?.missingQuantity || 0);
+      if (missing > 0) additions.push({ product: deal.buyVariant.product, variant: deal.buyVariant, quantity: missing });
+    }
+    if (!additions.length) return;
+    setBusy(true);
+    const ok = addItems(additions);
+    trackEvent("merchandising_offer_action", { deal_name: deal.name, deal_type: deal.type, action: "add_missing_items" });
+    window.setTimeout(() => setBusy(false), ok ? 500 : 200);
+  }
 
   return (
-    <div className={`phase14-offer-progress ${compact ? "compact" : ""} ${unlocked ? "unlocked" : ""}`}>
+    <div className={`phase14-offer-progress phase28-offer-advisor ${compact ? "compact" : ""} ${unlocked ? "unlocked" : ""}`}>
       <div className="phase14-offer-progress-copy">
         {image ? <img src={image} alt="" /> : <span className="phase14-offer-gift">✦</span>}
         <div>
-          <small>{unlocked ? "OFFER UNLOCKED" : "UNLOCK MORE VALUE"}</small>
-          {progress.type === "gift" ? (
-            unlocked
-              ? <strong>{deal.name} is eligible at checkout</strong>
-              : <strong>Add ₹{Math.ceil(progress.remaining)} more to unlock {deal.giftVariant?.product?.name || "your free gift"}</strong>
-          ) : (
-            unlocked
-              ? <strong>{deal.name} is eligible at checkout</strong>
-              : <strong>Add {progress.missing} more {deal.buyVariant?.product?.name || "qualifying item"} to unlock {deal.name}</strong>
-          )}
-          <span>Riseora securely applies the best eligible automatic offer at checkout.</span>
+          <small>{row.winner ? "BEST OFFER UNLOCKED" : unlocked ? "OFFER UNLOCKED" : "NEXT BEST OFFER"}</small>
+          <strong>{row.message || deal.name}</strong>
+          <span>{unlocked ? "The final eligible automatic offer is recalculated securely at checkout." : deal.name}</span>
         </div>
       </div>
-      <div className="phase14-offer-meter" aria-hidden="true"><span style={{ width: `${Math.max(5, Math.round(progress.ratio * 100))}%` }} /></div>
+      <div className="phase14-offer-meter" aria-hidden="true"><span style={{ width: `${Math.max(5, Math.round(Number(row.progress || 0) * 100))}%` }} /></div>
+      {!compact && actionable && !unlocked && (
+        <div className="phase28-offer-actions">
+          {(deal.type === "BUNDLE_DISCOUNT" || deal.type === "BUY_X_GET_Y") && (row.missingItems || []).length > 0
+            ? <button type="button" className="state-toggle active" onClick={addMissingItems} disabled={busy}>{busy ? "ADDING…" : "ADD WHAT'S MISSING"}</button>
+            : <Link className="state-toggle active" to="/shop">SHOP TO UNLOCK</Link>}
+          <Link className="state-toggle" to={`/offers/${deal.slug}`}>VIEW OFFER</Link>
+        </div>
+      )}
+      {compact && <Link className="phase28-mini-offer-link" to="/cart">See offer progress →</Link>}
     </div>
   );
 }

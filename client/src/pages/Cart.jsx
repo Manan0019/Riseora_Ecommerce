@@ -42,7 +42,7 @@ export default function Cart() {
             </div>
           ))}
         </div>
-        <aside className="summary-card"><h2>Order summary</h2><OfferProgress /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link><Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
+        <aside className="summary-card"><h2>Order summary</h2><OfferProgress actionable /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link><Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
       </div>
 
       {crossSell.length > 0 && <section className="phase15-cart-cross-sell"><div className="section-title-row"><div><p className="phase3-eyebrow">PAIR WITH YOUR BAG</p><h2>You may also like</h2></div><Link to="/shop">VIEW ALL</Link></div><div className="phase3-product-rail">{crossSell.map((product) => <ProductCard key={product.id} product={product} compact />)}</div></section>}

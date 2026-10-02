@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { useCart } from "../context/CartContext";
 import { Icon } from "./Icons";
-import OptimizedImage from "./OptimizedImage";
 
 function dealImage(deal) {
   if (deal.imageUrl) return mediaUrl(deal.imageUrl);
@@ -21,7 +20,7 @@ export default function DealCard({ deal, compact = false }) {
     ? (deal.resolvedItems || []).length >= 2 && (deal.resolvedItems || []).every((item) => Number(item.variant?.stockQuantity || 0) >= Number(item.quantity || 1))
     : deal.type === "BUY_X_GET_Y"
       ? Number(deal.buyVariant?.stockQuantity || 0) >= Number(deal.buyQuantity || 1) && Number(deal.giftVariant?.stockQuantity || 0) >= Number(deal.giftQuantity || 1)
-      : true;
+      : Number(deal.giftVariant?.stockQuantity || 0) >= Number(deal.giftQuantity || 1);
 
   function add() {
     if (!actionable || !available) return;
@@ -33,15 +32,15 @@ export default function DealCard({ deal, compact = false }) {
   }
 
   return <article className={`deal-card ${compact ? "compact" : ""}`}>
-    <div className="deal-media">{image ? <OptimizedImage src={image} alt={deal.name} loading="lazy" /> : <div className="deal-media-fallback">R</div>}<span>{deal.badge || (deal.type === "BUNDLE_DISCOUNT" ? "COMBO" : deal.type === "BUY_X_GET_Y" ? "BUY & GET" : "FREE GIFT")}</span></div>
+    <div className="deal-media">{image ? <img src={image} alt={deal.name} loading="lazy" /> : <div className="deal-media-fallback">R</div>}<span>{deal.badge || (deal.type === "BUNDLE_DISCOUNT" ? "COMBO" : deal.type === "BUY_X_GET_Y" ? "BUY & GET" : "FREE GIFT")}</span></div>
     <div className="deal-body">
       <p className="phase3-eyebrow">RISEORA DEAL</p>
-      <h3>{deal.name}</h3>
+      <h3><Link to={`/offers/${deal.slug}`}>{deal.name}</Link></h3>
       {deal.description && <p>{deal.description}</p>}
       {deal.type === "BUNDLE_DISCOUNT" && <div className="deal-detail"><strong>{Number(deal.discountPercent || 0).toFixed(0)}% automatic combo saving</strong><small>{deal.resolvedItems?.map((item) => `${item.variant?.product?.name} ×${item.quantity}`).join(" + ")}</small></div>}
       {deal.type === "BUY_X_GET_Y" && <div className="deal-detail"><strong>Buy {deal.buyQuantity} • Get {deal.giftQuantity} free</strong><small>{deal.buyVariant?.product?.name} → {deal.giftVariant?.product?.name}</small></div>}
       {deal.type === "GIFT_WITH_PURCHASE" && <div className="deal-detail"><strong>Free gift above ₹{Number(deal.minOrderAmount || 0).toFixed(0)}</strong><small>{deal.giftVariant?.product?.name} {deal.giftVariant?.name ? `• ${deal.giftVariant.name}` : ""}</small></div>}
-      {actionable ? <button className="button deal-cta" onClick={add} disabled={!available}>{!available ? "CURRENTLY UNAVAILABLE" : added ? "ADDED ✓" : deal.type === "BUNDLE_DISCOUNT" ? "ADD COMBO" : "ADD QUALIFYING ITEM"} {available && <Icon name="plus" size={16} />}</button> : <Link className="button deal-cta" to="/shop">SHOP & UNLOCK <Icon name="arrow" size={16} /></Link>}
+      <div className="phase28-deal-card-actions">{actionable ? <button className="button deal-cta" onClick={add} disabled={!available}>{!available ? "CURRENTLY UNAVAILABLE" : added ? "ADDED ✓" : deal.type === "BUNDLE_DISCOUNT" ? "ADD COMBO" : "ADD QUALIFYING ITEM"} {available && <Icon name="plus" size={16} />}</button> : available ? <Link className="button deal-cta" to="/shop">SHOP & UNLOCK <Icon name="arrow" size={16} /></Link> : <button className="button deal-cta" disabled>CURRENTLY UNAVAILABLE</button>}<Link className="phase28-deal-detail-link" to={`/offers/${deal.slug}`}>VIEW DETAILS →</Link></div>
     </div>
   </article>;
 }

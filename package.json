@@ -23,7 +23,8 @@
     "deploy:production": "node scripts/phase24-production-deploy.mjs",
     "start:production": "npm run start:production --workspace server",
     "verify:phase24": "npm run db:generate && npm run typecheck && npm run build",
-    "verify:phase27": "npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase27": "npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase28": "npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"
