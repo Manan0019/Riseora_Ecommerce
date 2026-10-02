@@ -23,6 +23,16 @@ export * from './enums';
  */
 export type User = Prisma.UserModel
 /**
+ * Model RewardAccount
+ * 
+ */
+export type RewardAccount = Prisma.RewardAccountModel
+/**
+ * Model RewardTransaction
+ * 
+ */
+export type RewardTransaction = Prisma.RewardTransactionModel
+/**
  * Model AdminAuditLog
  * 
  */
@@ -112,6 +122,11 @@ export type StoreSetting = Prisma.StoreSettingModel
  * 
  */
 export type Notification = Prisma.NotificationModel
+/**
+ * Model WishlistItem
+ * 
+ */
+export type WishlistItem = Prisma.WishlistItemModel
 /**
  * Model WishlistShare
  * 

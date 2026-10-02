@@ -214,6 +214,19 @@ export const NotificationType = {
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
 
 
+export const RewardTransactionType = {
+  ORDER_EARN: 'ORDER_EARN',
+  REVIEW_BONUS: 'REVIEW_BONUS',
+  REFERRAL_BONUS: 'REFERRAL_BONUS',
+  REFERRAL_WELCOME: 'REFERRAL_WELCOME',
+  VOUCHER_REDEEM: 'VOUCHER_REDEEM',
+  REVERSAL: 'REVERSAL',
+  ADMIN_ADJUST: 'ADMIN_ADJUST'
+} as const
+
+export type RewardTransactionType = (typeof RewardTransactionType)[keyof typeof RewardTransactionType]
+
+
 export const MerchandisingDealType = {
   BUNDLE_DISCOUNT: 'BUNDLE_DISCOUNT',
   BUY_X_GET_Y: 'BUY_X_GET_Y',

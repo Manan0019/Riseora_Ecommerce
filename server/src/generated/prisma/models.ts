@@ -9,6 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/RewardAccount'
+export type * from './models/RewardTransaction'
 export type * from './models/AdminAuditLog'
 export type * from './models/PasswordResetToken'
 export type * from './models/Address'
@@ -27,6 +29,7 @@ export type * from './models/CheckoutSession'
 export type * from './models/PaymentWebhookEvent'
 export type * from './models/StoreSetting'
 export type * from './models/Notification'
+export type * from './models/WishlistItem'
 export type * from './models/WishlistShare'
 export type * from './models/ShippingZone'
 export type * from './models/ShippingPartner'

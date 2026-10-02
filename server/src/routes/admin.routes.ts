@@ -9,6 +9,7 @@ import { refundRazorpayPayment } from "../services/payment.service";
 import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
 import { notifyPriceAlertsForVariant } from "../services/price-alert.service";
 import { createOrderStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
+import { awardDeliveredOrderRewards, awardApprovedReviewReward, reverseReviewReward } from "../services/rewards.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -509,6 +510,7 @@ router.patch(
       if (order) {
         void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
         void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
+        if (order.status === "DELIVERED") void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
       }
       res.json({ success: true, data: order });
     } catch (error) {
@@ -533,6 +535,7 @@ router.patch(
       if (order) {
         void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
         void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
+        if (order.status === "DELIVERED") void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
       }
       res.json({ success: true, data: order });
     } catch (error) {
@@ -583,7 +586,7 @@ function couponWriteData(data: z.infer<typeof couponSchema>) {
 router.get(
   "/coupons",
   asyncHandler(async (_req, res) => {
-    const coupons = await prisma.coupon.findMany({ include: couponInclude, orderBy: { createdAt: "desc" } });
+    const coupons = await prisma.coupon.findMany({ where: { rewardOwnerUserId: null }, include: couponInclude, orderBy: { createdAt: "desc" } });
     res.json({ success: true, data: coupons });
   }),
 );
@@ -1190,11 +1193,15 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = z.object({ isApproved: z.boolean() }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid review update" });
+    const before = await prisma.review.findUnique({ where: { id: String(req.params.id) }, select: { id: true, isApproved: true } });
+    if (!before) return res.status(404).json({ success: false, message: "Review not found" });
     const data = await prisma.review.update({
-      where: { id: String(req.params.id) },
+      where: { id: before.id },
       data: { isApproved: parsed.data.isApproved },
       include: { user: { select: { firstName: true, lastName: true, email: true } }, product: { select: { name: true, slug: true } } },
     });
+    if (!before.isApproved && data.isApproved) void awardApprovedReviewReward(data.id).catch((error) => console.error("Review reward failed", error));
+    if (before.isApproved && !data.isApproved) void reverseReviewReward(data.id).catch((error) => console.error("Review reward reversal failed", error));
     res.json({ success: true, data });
   }),
 );
@@ -1202,7 +1209,9 @@ router.patch(
 router.delete(
   "/reviews/:id",
   asyncHandler(async (req, res) => {
-    await prisma.review.delete({ where: { id: String(req.params.id) } });
+    const reviewId = String(req.params.id);
+    await reverseReviewReward(reviewId).catch((error) => console.error("Review reward reversal failed", error));
+    await prisma.review.delete({ where: { id: reviewId } });
     res.json({ success: true });
   }),
 );

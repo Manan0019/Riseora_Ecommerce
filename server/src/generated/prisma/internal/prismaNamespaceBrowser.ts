@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  RewardAccount: 'RewardAccount',
+  RewardTransaction: 'RewardTransaction',
   AdminAuditLog: 'AdminAuditLog',
   PasswordResetToken: 'PasswordResetToken',
   Address: 'Address',
@@ -70,6 +72,7 @@ export const ModelName = {
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
   Notification: 'Notification',
+  WishlistItem: 'WishlistItem',
   WishlistShare: 'WishlistShare',
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
@@ -124,11 +127,41 @@ export const UserScalarFieldEnum = {
   adminRole: 'adminRole',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
+  referralCode: 'referralCode',
+  referredByUserId: 'referredByUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const RewardAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  balance: 'balance',
+  lifetimeEarned: 'lifetimeEarned',
+  lifetimeRedeemed: 'lifetimeRedeemed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RewardAccountScalarFieldEnum = (typeof RewardAccountScalarFieldEnum)[keyof typeof RewardAccountScalarFieldEnum]
+
+
+export const RewardTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  points: 'points',
+  balanceAfter: 'balanceAfter',
+  description: 'description',
+  sourceKey: 'sourceKey',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type RewardTransactionScalarFieldEnum = (typeof RewardTransactionScalarFieldEnum)[keyof typeof RewardTransactionScalarFieldEnum]
 
 
 export const AdminAuditLogScalarFieldEnum = {
@@ -490,6 +523,15 @@ export const StoreSettingScalarFieldEnum = {
   facebookUrl: 'facebookUrl',
   youtubeUrl: 'youtubeUrl',
   whatsappNumber: 'whatsappNumber',
+  rewardsEnabled: 'rewardsEnabled',
+  rewardPointsPerHundred: 'rewardPointsPerHundred',
+  rewardVoucherPoints: 'rewardVoucherPoints',
+  rewardVoucherAmount: 'rewardVoucherAmount',
+  rewardVoucherMinOrderAmount: 'rewardVoucherMinOrderAmount',
+  rewardVoucherValidityDays: 'rewardVoucherValidityDays',
+  rewardReviewBonusPoints: 'rewardReviewBonusPoints',
+  rewardReferralReferrerPoints: 'rewardReferralReferrerPoints',
+  rewardReferralNewCustomerPoints: 'rewardReferralNewCustomerPoints',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -513,6 +555,16 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const WishlistItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  createdAt: 'createdAt'
+} as const
+
+export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
 
 
 export const WishlistShareScalarFieldEnum = {
@@ -664,6 +716,8 @@ export const CouponScalarFieldEnum = {
   usageLimit: 'usageLimit',
   usageCount: 'usageCount',
   perCustomerUsageLimit: 'perCustomerUsageLimit',
+  rewardOwnerUserId: 'rewardOwnerUserId',
+  rewardPointsCost: 'rewardPointsCost',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',

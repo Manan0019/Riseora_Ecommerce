@@ -152,6 +152,16 @@ enum NotificationType {
   CAMPAIGN
 }
 
+enum RewardTransactionType {
+  ORDER_EARN
+  REVIEW_BONUS
+  REFERRAL_BONUS
+  REFERRAL_WELCOME
+  VOUCHER_REDEEM
+  REVERSAL
+  ADMIN_ADJUST
+}
+
 enum MerchandisingDealType {
   BUNDLE_DISCOUNT
   BUY_X_GET_Y
@@ -186,6 +196,10 @@ model User {
   adminRole    AdminRole?
   isActive     Boolean  @default(true)
   tokenVersion Int      @default(0)
+  referralCode String @unique
+  referredByUserId String? @db.Uuid
+  referredBy User? @relation("UserReferrals", fields: [referredByUserId], references: [id], onDelete: SetNull)
+  referrals User[] @relation("UserReferrals")
 
   addresses Address[]
   orders    Order[]
@@ -198,14 +212,46 @@ model User {
   couponRedemptions CouponRedemption[]
   notifications Notification[]
   wishlistItems WishlistItem[]
+  rewardAccount RewardAccount?
+  rewardTransactions RewardTransaction[]
+  rewardCoupons Coupon[] @relation("RewardCouponOwner")
   adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([role, isActive, createdAt])
+  @@index([referredByUserId, createdAt])
 }
 
+model RewardAccount {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @unique @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance Int @default(0)
+  lifetimeEarned Int @default(0)
+  lifetimeRedeemed Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([balance])
+}
+
+model RewardTransaction {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type RewardTransactionType
+  points Int
+  balanceAfter Int
+  description String
+  sourceKey String? @unique
+  metadata Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type, createdAt])
+}
 
 model AdminAuditLog {
   id String @id @default(uuid()) @db.Uuid
@@ -669,6 +715,16 @@ model StoreSetting {
   youtubeUrl            String?
   whatsappNumber        String?
 
+  rewardsEnabled Boolean @default(true)
+  rewardPointsPerHundred Int @default(5)
+  rewardVoucherPoints Int @default(500)
+  rewardVoucherAmount Decimal @default(50) @db.Decimal(12, 2)
+  rewardVoucherMinOrderAmount Decimal @default(499) @db.Decimal(12, 2)
+  rewardVoucherValidityDays Int @default(90)
+  rewardReviewBonusPoints Int @default(25)
+  rewardReferralReferrerPoints Int @default(100)
+  rewardReferralNewCustomerPoints Int @default(50)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -895,6 +951,9 @@ model Coupon {
   usageLimit             Int?
   usageCount             Int @default(0)
   perCustomerUsageLimit  Int? @default(1)
+  rewardOwnerUserId String? @db.Uuid
+  rewardOwner User? @relation("RewardCouponOwner", fields: [rewardOwnerUserId], references: [id], onDelete: Cascade)
+  rewardPointsCost Int?
 
   products     CouponProduct[]
   categories   CouponCategory[]
@@ -909,6 +968,7 @@ model Coupon {
 
   @@index([isActive])
   @@index([startsAt, endsAt])
+  @@index([rewardOwnerUserId, isActive])
 }
 
 model CouponProduct {

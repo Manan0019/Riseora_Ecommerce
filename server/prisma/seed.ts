@@ -1,5 +1,6 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
+import { randomBytes } from "node:crypto";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "../src/generated/prisma/client";
 
@@ -24,6 +25,15 @@ async function main() {
   }
 
   const passwordHash = await bcrypt.hash(password, 12);
+
+  let seedReferralCode = "";
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const candidate = `RISE-${randomBytes(5).toString("hex").toUpperCase()}`;
+    const exists = await prisma.user.findUnique({ where: { referralCode: candidate }, select: { id: true } });
+    if (!exists) { seedReferralCode = candidate; break; }
+  }
+  if (!seedReferralCode) throw new Error("Could not generate a unique admin referral code");
+
   const admin = await prisma.user.upsert({
     where: { email },
     update: {
@@ -38,6 +48,7 @@ async function main() {
       passwordHash,
       role: "ADMIN",
       isActive: true,
+      referralCode: seedReferralCode,
     },
     select: { id: true, email: true, role: true },
   });

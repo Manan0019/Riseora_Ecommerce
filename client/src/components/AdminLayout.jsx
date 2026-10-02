@@ -20,6 +20,7 @@ const nav = [
   { to: "/admin/cancellations", label: "Cancellations", icon: "close", permission: "OPERATIONS" },
   { to: "/admin/audience", label: "Audience", icon: "mail", permission: "MARKETING" },
   { to: "/admin/retention", label: "Retention", icon: "bell", permission: "MARKETING" },
+  { to: "/admin/rewards", label: "Rewards", icon: "star", permission: "MARKETING" },
   { to: "/admin/lifecycle", label: "Lifecycle", icon: "refresh", permission: "MARKETING" },
   { to: "/admin/growth", label: "Growth", icon: "sparkles", permission: "MARKETING" },
   { to: "/admin/settings", label: "Settings", icon: "shield", permission: "SETTINGS" },

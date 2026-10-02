@@ -10,6 +10,7 @@ import { refundRazorpayPayment } from "../services/payment.service";
 import { sendOrderStatusNotification, sendReturnStatusNotification } from "../services/notification.service";
 import { createOrderStatusInAppNotification, createReturnStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
 import { approveOrderCancellationRequest } from "../services/order-cancellation.service";
+import { reverseRefundedOrderRewards } from "../services/rewards.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -496,6 +497,7 @@ router.patch(
       });
       void sendReturnStatusNotification(updated).catch((error) => console.error("Return refund email failed", error));
       void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return refund in-app notification failed", error));
+      void reverseRefundedOrderRewards(updated.id).catch((error) => console.error("Reward refund reversal failed", error));
       return res.json({ success: true, data: updated });
     }
 

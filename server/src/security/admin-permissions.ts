@@ -36,6 +36,6 @@ export function permissionForAdminPath(originalUrl: string): AdminPermission {
   if (pathname.startsWith("/customers")) return "CUSTOMERS";
   if (["/categories", "/products", "/inventory", "/suitability-options", "/uploads"].some((prefix) => pathname.startsWith(prefix))) return "CATALOG";
   if (["/reviews", "/product-questions"].some((prefix) => pathname.startsWith(prefix))) return "CONTENT";
-  if (["/coupons", "/offers", "/banners", "/deals", "/audience", "/contact-messages", "/newsletter", "/cart-recoveries", "/stock-alerts", "/price-alerts", "/retention", "/lifecycle", "/growth"].some((prefix) => pathname.startsWith(prefix))) return "MARKETING";
+  if (["/coupons", "/offers", "/banners", "/deals", "/audience", "/contact-messages", "/newsletter", "/cart-recoveries", "/stock-alerts", "/price-alerts", "/retention", "/lifecycle", "/growth", "/rewards"].some((prefix) => pathname.startsWith(prefix))) return "MARKETING";
   return "SYSTEM";
 }

@@ -19,6 +19,7 @@ const registerSchema = z.object({
   email: z.string().trim().email(),
   phone: z.string().trim().min(8).max(20).optional().or(z.literal("")),
   password: z.string().min(8).max(100),
+  referralCode: z.string().trim().max(40).optional().or(z.literal("")),
 });
 
 router.post(
@@ -47,7 +48,16 @@ router.post(
       return res.status(409).json({ success: false, message: "Email or phone already registered" });
     }
 
+    const referrer = parsed.data.referralCode ? await prisma.user.findFirst({ where: { referralCode: parsed.data.referralCode.toUpperCase(), role: "CUSTOMER", isActive: true }, select: { id: true } }) : null;
+    if (parsed.data.referralCode && !referrer) return res.status(400).json({ success: false, message: "That referral code is not valid." });
     const passwordHash = await bcrypt.hash(parsed.data.password, 12);
+    let referralCode = "";
+    for (let attempt = 0; attempt < 8; attempt += 1) {
+      const candidate = `RISE-${randomBytes(5).toString("hex").toUpperCase()}`;
+      const exists = await prisma.user.findUnique({ where: { referralCode: candidate }, select: { id: true } });
+      if (!exists) { referralCode = candidate; break; }
+    }
+    if (!referralCode) throw new Error("REFERRAL_CODE_GENERATION_FAILED");
     const user = await prisma.user.create({
       data: {
         firstName: parsed.data.firstName,
@@ -55,6 +65,8 @@ router.post(
         email,
         phone: parsed.data.phone || null,
         passwordHash,
+        referralCode,
+        referredByUserId: referrer?.id || null,
       },
       select: {
         id: true,
@@ -65,6 +77,7 @@ router.post(
         role: true,
         adminRole: true,
         tokenVersion: true,
+        referralCode: true,
       },
     });
 
@@ -107,6 +120,7 @@ router.post(
           phone: user.phone,
           role: user.role,
           adminRole: user.adminRole,
+          referralCode: user.referralCode,
         },
       },
     });
@@ -184,6 +198,7 @@ router.get(
         phone: true,
         role: true,
         adminRole: true,
+        referralCode: true,
         isActive: true,
       },
     });

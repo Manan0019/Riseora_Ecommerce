@@ -221,6 +221,7 @@ export async function prepareCheckout(input: CheckoutInput, paymentMethod: "COD"
       include: { products: true, categories: true },
     });
     if (!coupon) throw new Error("COUPON_NOT_FOUND");
+    if (coupon.rewardOwnerUserId && coupon.rewardOwnerUserId !== userId) throw new Error("COUPON_INVALID:This private rewards voucher belongs to another Riseora account");
 
     const customerLimit = coupon.perCustomerUsageLimit == null ? null : Number(coupon.perCustomerUsageLimit);
     const email = (input.customerEmail || "").trim().toLowerCase();

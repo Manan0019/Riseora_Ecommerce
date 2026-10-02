@@ -398,6 +398,8 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  RewardAccount: 'RewardAccount',
+  RewardTransaction: 'RewardTransaction',
   AdminAuditLog: 'AdminAuditLog',
   PasswordResetToken: 'PasswordResetToken',
   Address: 'Address',
@@ -416,6 +418,7 @@ export const ModelName = {
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   StoreSetting: 'StoreSetting',
   Notification: 'Notification',
+  WishlistItem: 'WishlistItem',
   WishlistShare: 'WishlistShare',
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
@@ -456,7 +459,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -531,6 +534,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    RewardAccount: {
+      payload: Prisma.$RewardAccountPayload<ExtArgs>
+      fields: Prisma.RewardAccountFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RewardAccountFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RewardAccountFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        findFirst: {
+          args: Prisma.RewardAccountFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RewardAccountFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        findMany: {
+          args: Prisma.RewardAccountFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>[]
+        }
+        create: {
+          args: Prisma.RewardAccountCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        createMany: {
+          args: Prisma.RewardAccountCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RewardAccountCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>[]
+        }
+        delete: {
+          args: Prisma.RewardAccountDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        update: {
+          args: Prisma.RewardAccountUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        deleteMany: {
+          args: Prisma.RewardAccountDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RewardAccountUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RewardAccountUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>[]
+        }
+        upsert: {
+          args: Prisma.RewardAccountUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardAccountPayload>
+        }
+        aggregate: {
+          args: Prisma.RewardAccountAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRewardAccount>
+        }
+        groupBy: {
+          args: Prisma.RewardAccountGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RewardAccountGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RewardAccountCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RewardAccountCountAggregateOutputType> | number
+        }
+      }
+    }
+    RewardTransaction: {
+      payload: Prisma.$RewardTransactionPayload<ExtArgs>
+      fields: Prisma.RewardTransactionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RewardTransactionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RewardTransactionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        findFirst: {
+          args: Prisma.RewardTransactionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RewardTransactionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        findMany: {
+          args: Prisma.RewardTransactionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>[]
+        }
+        create: {
+          args: Prisma.RewardTransactionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        createMany: {
+          args: Prisma.RewardTransactionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RewardTransactionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>[]
+        }
+        delete: {
+          args: Prisma.RewardTransactionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        update: {
+          args: Prisma.RewardTransactionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        deleteMany: {
+          args: Prisma.RewardTransactionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RewardTransactionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RewardTransactionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>[]
+        }
+        upsert: {
+          args: Prisma.RewardTransactionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RewardTransactionPayload>
+        }
+        aggregate: {
+          args: Prisma.RewardTransactionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRewardTransaction>
+        }
+        groupBy: {
+          args: Prisma.RewardTransactionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RewardTransactionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RewardTransactionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RewardTransactionCountAggregateOutputType> | number
         }
       }
     }
@@ -1863,6 +2014,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.NotificationCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.NotificationCountAggregateOutputType> | number
+        }
+      }
+    }
+    WishlistItem: {
+      payload: Prisma.$WishlistItemPayload<ExtArgs>
+      fields: Prisma.WishlistItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.WishlistItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.WishlistItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        findFirst: {
+          args: Prisma.WishlistItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.WishlistItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        findMany: {
+          args: Prisma.WishlistItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>[]
+        }
+        create: {
+          args: Prisma.WishlistItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        createMany: {
+          args: Prisma.WishlistItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.WishlistItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>[]
+        }
+        delete: {
+          args: Prisma.WishlistItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        update: {
+          args: Prisma.WishlistItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.WishlistItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.WishlistItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.WishlistItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.WishlistItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$WishlistItemPayload>
+        }
+        aggregate: {
+          args: Prisma.WishlistItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateWishlistItem>
+        }
+        groupBy: {
+          args: Prisma.WishlistItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WishlistItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.WishlistItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.WishlistItemCountAggregateOutputType> | number
         }
       }
     }
@@ -3766,11 +3991,41 @@ export const UserScalarFieldEnum = {
   adminRole: 'adminRole',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
+  referralCode: 'referralCode',
+  referredByUserId: 'referredByUserId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const RewardAccountScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  balance: 'balance',
+  lifetimeEarned: 'lifetimeEarned',
+  lifetimeRedeemed: 'lifetimeRedeemed',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RewardAccountScalarFieldEnum = (typeof RewardAccountScalarFieldEnum)[keyof typeof RewardAccountScalarFieldEnum]
+
+
+export const RewardTransactionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  points: 'points',
+  balanceAfter: 'balanceAfter',
+  description: 'description',
+  sourceKey: 'sourceKey',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type RewardTransactionScalarFieldEnum = (typeof RewardTransactionScalarFieldEnum)[keyof typeof RewardTransactionScalarFieldEnum]
 
 
 export const AdminAuditLogScalarFieldEnum = {
@@ -4132,6 +4387,15 @@ export const StoreSettingScalarFieldEnum = {
   facebookUrl: 'facebookUrl',
   youtubeUrl: 'youtubeUrl',
   whatsappNumber: 'whatsappNumber',
+  rewardsEnabled: 'rewardsEnabled',
+  rewardPointsPerHundred: 'rewardPointsPerHundred',
+  rewardVoucherPoints: 'rewardVoucherPoints',
+  rewardVoucherAmount: 'rewardVoucherAmount',
+  rewardVoucherMinOrderAmount: 'rewardVoucherMinOrderAmount',
+  rewardVoucherValidityDays: 'rewardVoucherValidityDays',
+  rewardReviewBonusPoints: 'rewardReviewBonusPoints',
+  rewardReferralReferrerPoints: 'rewardReferralReferrerPoints',
+  rewardReferralNewCustomerPoints: 'rewardReferralNewCustomerPoints',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -4155,6 +4419,16 @@ export const NotificationScalarFieldEnum = {
 } as const
 
 export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
+
+
+export const WishlistItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  productId: 'productId',
+  createdAt: 'createdAt'
+} as const
+
+export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
 
 
 export const WishlistShareScalarFieldEnum = {
@@ -4306,6 +4580,8 @@ export const CouponScalarFieldEnum = {
   usageLimit: 'usageLimit',
   usageCount: 'usageCount',
   perCustomerUsageLimit: 'perCustomerUsageLimit',
+  rewardOwnerUserId: 'rewardOwnerUserId',
+  rewardPointsCost: 'rewardPointsCost',
   startsAt: 'startsAt',
   endsAt: 'endsAt',
   isActive: 'isActive',
@@ -4713,6 +4989,20 @@ export type DateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel
  * Reference to a field of type 'DateTime[]'
  */
 export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RewardTransactionType'
+ */
+export type EnumRewardTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RewardTransactionType'>
+    
+
+
+/**
+ * Reference to a field of type 'RewardTransactionType[]'
+ */
+export type ListEnumRewardTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RewardTransactionType[]'>
     
 
 
@@ -5217,6 +5507,8 @@ export interface PrismaClientOptionsWithAdapter extends PrismaClientBaseOptions 
 export type PrismaClientOptions = PrismaClientOptionsWithAccelerateUrl | PrismaClientOptionsWithAdapter
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  rewardAccount?: Prisma.RewardAccountOmit
+  rewardTransaction?: Prisma.RewardTransactionOmit
   adminAuditLog?: Prisma.AdminAuditLogOmit
   passwordResetToken?: Prisma.PasswordResetTokenOmit
   address?: Prisma.AddressOmit
@@ -5235,6 +5527,7 @@ export type GlobalOmitConfig = {
   paymentWebhookEvent?: Prisma.PaymentWebhookEventOmit
   storeSetting?: Prisma.StoreSettingOmit
   notification?: Prisma.NotificationOmit
+  wishlistItem?: Prisma.WishlistItemOmit
   wishlistShare?: Prisma.WishlistShareOmit
   shippingZone?: Prisma.ShippingZoneOmit
   shippingPartner?: Prisma.ShippingPartnerOmit

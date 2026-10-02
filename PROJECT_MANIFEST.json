@@ -230,5 +230,19 @@
     ],
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
+  },
+  "currentPhase": "Phase 36 \u2014 Rewards & Referrals V2",
+  "lastUpdated": "2026-10-02",
+  "phase36": {
+    "name": "Rewards & Referrals V2",
+    "features": [
+      "delivery-only reward points",
+      "verified-review bonus",
+      "referral attribution and first-order bonuses",
+      "private reward vouchers",
+      "refund/review reversal controls",
+      "customer rewards center",
+      "admin rewards control center"
+    ]
   }
 }
