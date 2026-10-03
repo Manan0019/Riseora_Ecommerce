@@ -49,8 +49,10 @@ import { requireAdmin, requireAuth } from "./middleware/auth";
 import { adminAuditTrail, enforceAdminPermission } from "./middleware/admin-security";
 import { runBackgroundJob, runLifecycleJobs } from "./services/background-jobs.service";
 import { assertDatabaseSchemaReady } from "./services/database-readiness.service";
+import { assertProductionConfigurationReady } from "./services/production-readiness.service";
 import { logRuntimeEvent, setRuntimeDraining } from "./services/runtime-observability.service";
 import { cleanupExpiredAuthSessions } from "./services/auth-security.service";
+import { releaseOwnedSystemJobLeases } from "./services/system-job.service";
 
 const app = express();
 if (env.TRUST_PROXY) app.set("trust proxy", 1);
@@ -125,9 +127,18 @@ app.use("/api", notFound);
 
 if (env.SERVE_CLIENT) {
   const clientDist = path.resolve(process.cwd(), "../client/dist");
-  app.use(express.static(clientDist, { maxAge: env.NODE_ENV === "production" ? "1d" : 0, index: false }));
+  app.use(express.static(clientDist, {
+    index: false,
+    setHeaders(res, filePath) {
+      if (env.NODE_ENV !== "production") return;
+      const assetsSegment = `${path.sep}assets${path.sep}`;
+      if (filePath.includes(assetsSegment)) res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+      else res.setHeader("Cache-Control", "public, max-age=3600");
+    },
+  }));
   app.use((req, res, next) => {
-    if (req.method !== "GET" || !req.accepts("html")) return next();
+    if (req.method !== "GET" || req.path.startsWith("/api") || !req.accepts("html")) return next();
+    res.setHeader("Cache-Control", "no-store");
     res.sendFile(path.join(clientDist, "index.html"), (error) => error ? next(error) : undefined);
   });
 }
@@ -141,11 +152,13 @@ let cartRecoveryTimer: NodeJS.Timeout | null = null;
 let authSessionCleanupTimer: NodeJS.Timeout | null = null;
 
 async function startServer() {
+  const production = assertProductionConfigurationReady();
+  if (env.NODE_ENV === "production" && production.warnings.length) logRuntimeEvent("warn", "production_configuration_warnings", { warnings: production.warnings });
   const schema = await assertDatabaseSchemaReady();
   logRuntimeEvent("info", "database_schema_ready", { migrationHead: schema.expectedMigrationHead, appliedMigrationCount: schema.appliedMigrationCount });
 
   server = app.listen(env.PORT, () => {
-    logRuntimeEvent("info", "server_started", { port: env.PORT, environment: env.NODE_ENV, releaseName: env.RELEASE_NAME || null, releaseSha: env.RELEASE_SHA || null });
+    logRuntimeEvent("info", "server_started", { port: env.PORT, environment: env.NODE_ENV, releaseName: env.RELEASE_NAME || null, releaseSha: env.RELEASE_SHA || null, releaseBuildTime: env.RELEASE_BUILD_TIME || null });
     if (env.NODE_ENV !== "production") console.log(`Riseora API running on http://localhost:${env.PORT}`);
     void runBackgroundJob("CHECKOUT_CLEANUP").catch((error) => console.error("Checkout cleanup failed", error));
     void runLifecycleJobs().catch((error) => console.error("Lifecycle processing failed", error));
@@ -169,9 +182,11 @@ async function startServer() {
 }
 
 void startServer().catch((error) => {
-  logRuntimeEvent("error", "server_start_failed", { error: error instanceof Error ? error.message : String(error) });
-  console.error("Riseora API could not start because the database schema is not ready.");
-  console.error("Run: npm run db:backup && npm run db:deploy && npm run db:generate");
+  const message = error instanceof Error ? error.message : String(error);
+  logRuntimeEvent("error", "server_start_failed", { error: message });
+  console.error("Riseora API could not start safely.");
+  if (message.startsWith("DATABASE_SCHEMA_NOT_READY")) console.error("Run: npm run db:backup && npm run db:deploy && npm run db:generate");
+  else if (message.startsWith("PRODUCTION_CONFIGURATION_NOT_READY")) console.error("Review server/.env.production and run: npm run release:doctor");
   process.exitCode = 1;
 });
 
@@ -191,9 +206,16 @@ async function shutdown(signal: string, exitCode = 0) {
   }, env.SHUTDOWN_GRACE_MS);
   forceTimer.unref();
 
-  if (!server) { clearTimeout(forceTimer); await prisma.$disconnect().catch(() => undefined); process.exit(exitCode); return; }
+  if (!server) {
+    clearTimeout(forceTimer);
+    await releaseOwnedSystemJobLeases().catch(() => undefined);
+    await prisma.$disconnect().catch(() => undefined);
+    process.exit(exitCode);
+    return;
+  }
   server.close(async () => {
     clearTimeout(forceTimer);
+    try { await releaseOwnedSystemJobLeases(); } catch (error) { logRuntimeEvent("error", "job_lease_release_failed", { message: error instanceof Error ? error.message : String(error) }); }
     try { await prisma.$disconnect(); } catch (error) { logRuntimeEvent("error", "database_disconnect_failed", { message: error instanceof Error ? error.message : String(error) }); }
     logRuntimeEvent("info", "server_shutdown_complete", { signal });
     process.exit(exitCode);

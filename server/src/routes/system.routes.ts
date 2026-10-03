@@ -9,6 +9,8 @@ import { recordClientError } from "../services/runtime-observability.service";
 import { launchReadinessSnapshot } from "../services/launch-readiness.service";
 import { runBackgroundJob } from "../services/background-jobs.service";
 import { SYSTEM_JOB_KEYS } from "../services/system-job.service";
+import { releaseMetadata } from "../services/production-readiness.service";
+import { EXPECTED_MIGRATION_HEAD } from "../services/database-readiness.service";
 
 export const publicSystemRoutes = Router();
 
@@ -29,6 +31,13 @@ publicSystemRoutes.post(
 
 publicSystemRoutes.get("/health/live", (_req, res) => {
   res.json({ success: true, status: "live", uptimeSeconds: Math.round(process.uptime()), timestamp: new Date().toISOString() });
+});
+
+publicSystemRoutes.get("/release", (_req, res) => {
+  res.json({
+    success: true,
+    data: { ...releaseMetadata(), databaseMigrationHead: EXPECTED_MIGRATION_HEAD },
+  });
 });
 
 publicSystemRoutes.get(

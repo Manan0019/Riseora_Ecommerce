@@ -10,12 +10,13 @@ const root = process.cwd();
 const fileArg = process.argv.find((arg, index) => index > 1 && !arg.startsWith("--"));
 const explicitEnv = process.argv.find((arg) => arg.startsWith("--env="))?.slice(6);
 if (!fileArg) {
-  console.error("Usage: npm run db:restore -- <backup.dump> [--env=server/.env.production]");
+  console.error("Usage: npm run db:restore -- <backup.dump> [--production | --env=server/.env.production]");
   process.exit(2);
 }
 const backup = path.resolve(root, fileArg);
 if (!fs.existsSync(backup)) throw new Error(`Backup not found: ${backup}`);
-const envFile = explicitEnv ? path.resolve(root, explicitEnv) : (fs.existsSync(path.join(root, "server/.env.production")) ? path.join(root, "server/.env.production") : path.join(root, "server/.env"));
+const production = process.argv.includes("--production");
+const envFile = explicitEnv ? path.resolve(root, explicitEnv) : path.join(root, production ? "server/.env.production" : "server/.env");
 function parseEnv(file) { const out = {}; for (const raw of fs.readFileSync(file, "utf8").split(/\r?\n/)) { const line = raw.trim(); if (!line || line.startsWith("#")) continue; const i = line.indexOf("="); if (i < 1) continue; let value = line.slice(i + 1).trim(); if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1,-1); out[line.slice(0,i).trim()] = value; } return out; }
 const values = parseEnv(envFile); if (!values.DATABASE_URL) throw new Error(`DATABASE_URL missing in ${envFile}`);
 const restoreTool = resolvePostgresTool("pg_restore", values);

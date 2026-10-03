@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 48 · DATABASE & JOB RELIABILITY</p><h1>System health, observability & recovery</h1><p>Live API performance, request tracing, PostgreSQL tooling, verified backups and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 49 · PRODUCTION RELEASE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, live performance, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -87,6 +87,20 @@ export default function AdminSystem() {
         <article><small>Database</small><strong>{health.database?.ok ? `${health.database.latencyMs} ms` : "Offline"}</strong><StatusPill ok={health.database?.ok} yes="Connected" no="Disconnected" /></article>
         <article><small>Backup tools</small><strong>{backupReady ? "Ready" : "Setup needed"}</strong><StatusPill ok={backupReady} /></article>
         <article><small>Latest backup</small><strong>{health.backup?.latest ? formatBytes(health.backup.latest.sizeBytes) : "None"}</strong><StatusPill ok={Boolean(health.backup?.latest?.verified)} yes="Checksum recorded" no="Create backup" /></article>
+      </section>
+
+      <section className="admin-panel phase24-system-panel phase49-release-panel">
+        <div className="admin-panel-head"><div><p className="eyebrow">RELEASE CONTROL</p><h2>Deployment & runtime identity</h2><p>Safe release metadata and production-configuration health. Secret values are never returned to this screen.</p></div><StatusPill ok={Boolean(health.deployment?.apiReady)} yes="API ready" no="Not ready" /></div>
+        <div className="phase49-release-grid">
+          <article><small>Release</small><strong>{health.deployment?.release?.name || "Local / unnamed"}</strong><span>{health.environment}</span></article>
+          <article><small>Commit</small><strong>{health.deployment?.release?.sha || "Not supplied"}</strong><span>Short release SHA</span></article>
+          <article><small>Build time</small><strong>{health.deployment?.release?.buildTime ? new Date(health.deployment.release.buildTime).toLocaleString() : "Not supplied"}</strong><span>Build provenance</span></article>
+          <article><small>Started</small><strong>{health.deployment?.release?.startedAt ? new Date(health.deployment.release.startedAt).toLocaleString() : "Unknown"}</strong><span>{Math.floor((health.uptimeSeconds || 0) / 60)} min uptime</span></article>
+          <article><small>Client mode</small><strong>{health.deployment?.clientMode === "same-origin" ? "Same origin" : "Separate client"}</strong><span>{health.deployment?.configuration?.configuredOrigins ?? 0} allowed origin(s)</span></article>
+          <article><small>Production config</small><strong>{health.deployment?.configuration?.ok ? "Valid" : "Blocked"}</strong><span>{health.deployment?.configuration?.warnings?.length || 0} warning(s)</span></article>
+        </div>
+        {(health.deployment?.configuration?.errors || []).length > 0 && <div className="phase24-warning"><strong>Blocking production configuration:</strong><ul>{health.deployment.configuration.errors.map((item) => <li key={item}>{item}</li>)}</ul></div>}
+        {(health.deployment?.configuration?.warnings || []).length > 0 && <div className="phase49-release-warnings"><strong>Review before launch</strong><ul>{health.deployment.configuration.warnings.map((item) => <li key={item}>{item}</li>)}</ul></div>}
       </section>
 
       <section className="admin-panel phase24-system-panel">
@@ -112,7 +126,7 @@ export default function AdminSystem() {
         <div className="admin-panel-head"><div><p className="eyebrow">BACKGROUND JOBS</p><h2>Lifecycle job reliability</h2><p>Database-backed leases prevent multiple API instances from sending the same recovery/refill alert at the same time.</p></div><span className="phase24-runtime">{health.jobs?.instance || "Instance unavailable"}</span></div>
         <div className="phase48-job-list">
           {(health.jobs?.jobs || []).map((job) => <article key={job.key} className={job.lastError ? "has-error" : ""}>
-            <div><strong>{job.key.replaceAll("_", " ")}</strong><small>{job.running ? "Running now" : job.lastSucceededAt ? `Last success ${new Date(job.lastSucceededAt).toLocaleString()}` : "Not run yet"}</small>{job.lastError && <em>{job.lastError}</em>}</div>
+            <div><strong>{job.key.replaceAll("_", " ")}</strong><small>{job.state ? `${job.state.replace("-", " ").toUpperCase()} · ` : ""}{job.running ? "Running now" : job.lastSucceededAt ? `Last success ${new Date(job.lastSucceededAt).toLocaleString()}` : "Not run yet"}</small>{job.lastError && <em>{job.lastError}</em>}</div>
             <span>{job.lastDurationMs != null ? `${job.lastDurationMs} ms` : "—"}</span>
             <button className="button button-secondary" disabled={runningJob === job.key || job.running} onClick={() => runJob(job.key)}>{runningJob === job.key ? "Running…" : job.running ? "Running" : "Run now"}</button>
           </article>)}

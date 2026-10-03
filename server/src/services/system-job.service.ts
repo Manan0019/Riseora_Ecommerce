@@ -65,12 +65,25 @@ export async function runSystemJob<T>(key: SystemJobKey, handler: () => Promise<
   }
 }
 
+export async function releaseOwnedSystemJobLeases() {
+  await prisma.systemJobState.updateMany({
+    where: { leaseOwner: OWNER },
+    data: { leaseOwner: null, leaseUntil: null },
+  });
+}
+
 export async function systemJobsSnapshot() {
   const rows = await prisma.systemJobState.findMany({ orderBy: { key: "asc" } });
   return {
     instance: OWNER,
     jobs: SYSTEM_JOB_KEYS.map((key) => {
       const row = rows.find((item) => item.key === key);
+      const now = new Date();
+      const leaseActive = Boolean(row?.leaseUntil && row.leaseUntil > now);
+      const runningHere = Boolean(leaseActive && row?.leaseOwner === OWNER);
+      const failedAfterSuccess = Boolean(row?.lastFailedAt && (!row.lastSucceededAt || row.lastFailedAt > row.lastSucceededAt));
+      const delayed = Boolean(row?.lastSucceededAt && now.getTime() - row.lastSucceededAt.getTime() > 24 * 60 * 60 * 1000);
+      const state = runningHere ? "running" : leaseActive ? "lease-held" : failedAfterSuccess ? "failed" : delayed ? "delayed" : row?.lastSucceededAt ? "healthy" : "idle";
       return {
         key,
         lastStartedAt: row?.lastStartedAt || null,
@@ -79,7 +92,8 @@ export async function systemJobsSnapshot() {
         lastDurationMs: row?.lastDurationMs || null,
         lastSummary: row?.lastSummary || null,
         lastError: row?.lastError || null,
-        running: Boolean(row?.leaseUntil && row.leaseUntil > new Date()),
+        running: leaseActive,
+        state,
         leaseUntil: row?.leaseUntil || null,
       };
     }),

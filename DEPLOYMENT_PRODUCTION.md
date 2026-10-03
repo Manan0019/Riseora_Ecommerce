@@ -1,110 +1,132 @@
-# Riseora Production Deployment
+# Riseora Production Deployment — Phase 49
 
-The e-commerce application remains standalone. ERP synchronization is still deferred until production web workflows are verified.
+Riseora remains a standalone e-commerce application. ERP synchronization stays deferred until the standalone web release is verified in production.
 
-## Recommended release shape
-Use one canonical HTTPS origin:
-- Express serves `/api/*`, `/sitemap.xml`, `/robots.txt` and the built Vite SPA.
-- PostgreSQL is separately backed up.
-- Cloudinary stores production product/media uploads when configured.
-- Razorpay handles online payments.
-- Resend handles transactional email.
+## Recommended deployment shape
 
-Set `SERVE_CLIENT=true` and use the same canonical HTTPS origin for `CLIENT_URL` and `PUBLIC_SITE_URL` unless your hosting architecture explicitly separates them.
+Use one canonical HTTPS origin when practical:
 
-## Phase 24 deployment commands
-
-Prepare missing env files only:
-
-```bat
-PREPARE_PRODUCTION_ENV.bat
+```text
+Browser
+  ↓ HTTPS
+Trusted reverse proxy / platform ingress
+  ↓
+Express
+  ├─ /api/*
+  ├─ /uploads/*
+  ├─ SEO routes
+  └─ Vite client/dist SPA
+       ↓
+PostgreSQL
 ```
 
-Verify env + builds without touching the production database:
+Set `SERVE_CLIENT=true` for the single-origin deployment. A separate frontend deployment remains supported; if used, configure explicit HTTPS origins and verify CORS carefully.
 
-```bat
-PHASE24_VERIFY_PRODUCTION.bat
-```
+## Environment
 
-Safe deployment with pre-migration backup:
+Create `server/.env.production` from its example. Never commit it.
 
-```bat
-PRODUCTION_DEPLOY.bat
-```
+Important values include:
 
-Start the built server:
-
-```bat
-PRODUCTION_START.bat
-```
-
-## Health endpoints
-- `/api/health/live` — Node process liveness
-- `/api/health/ready` — PostgreSQL readiness
-- `/api/health` — backwards-compatible health response
-
-Use `/api/health/ready` for load-balancer/container readiness checks.
-
-## Production controls
 - `NODE_ENV=production`
-- unique `JWT_SECRET` (48+ characters recommended; never example text)
-- HTTPS only for public URLs
-- `TRUST_PROXY=true` only behind a trusted reverse proxy/load balancer
-- explicit canonical origins
-- production PostgreSQL user with required privileges only
-- Razorpay webhook secret configured before enabling live payments
-- Cloudinary enabled before relying on durable uploaded media
-- verified transactional-email sender
-- PostgreSQL client tools available for backup/restore
-- database backups retained and copied off-machine
-- tested restore into a disposable database
-- never commit `.env.production`
-- deploy migrations with `prisma migrate deploy`, not `migrate dev`
+- `DATABASE_URL`
+- a unique 48+ character `JWT_SECRET`
+- `CLIENT_URL`
+- `PUBLIC_SITE_URL`
+- explicit `ALLOWED_ORIGINS`
+- `TRUST_PROXY=true` only behind a trusted proxy
+- `SERVE_CLIENT=true` for same-origin hosting
+- `RELEASE_NAME`
+- `RELEASE_SHA`
+- `RELEASE_BUILD_TIME`
 
-## Backup safety
-`PRODUCTION_DEPLOY.bat` stops if the pre-deployment backup fails. Browser admin may create backups, but database restore is intentionally CLI-only via `RESTORE_DATABASE.bat`.
+Payment, media and email values must either be complete or intentionally left disabled.
 
-See `PHASE24_PRODUCTION_RELEASE.md` for the complete acceptance checklist and restore procedure.
+## Release workflow
 
-## SEO / business launch checks
-Before public launch confirm canonical URL, SEO metadata, real policy content, legal name, GSTIN, invoice address, HSN/GST rates, shipping/COD rules, support contacts, Search Console/analytics configuration and consent behavior.
+Run:
 
-## ERP later
-Never expose the ERP database publicly. Future synchronization should use authenticated APIs/jobs with shared SKU identity, idempotency and explicit conflict handling.
+```text
+npm run release:doctor
+npm run release:prepare
+```
 
-## Phase 42 account-security checks
+`release:prepare` enforces:
 
-Before production launch, verify the following after `npm install` and `npm run db:deploy`:
+```text
+doctor
+→ verified backup
+→ committed migration deploy
+→ Prisma generate
+→ schema verification
+→ source/security verification
+→ TypeScript
+→ server build
+→ client build
+```
+
+Never replace this with `prisma migrate dev`, `prisma migrate reset`, or `prisma db push` in production.
+
+## Start
+
+```text
+npm run start:production
+```
+
+Use `/api/health/live` for liveness and `/api/health/ready` for readiness.
+
+## Smoke test
+
+Local production simulation:
+
+```text
+npm run release:smoke
+```
+
+Remote deployment:
 
 ```powershell
+$env:API_BASE_URL="https://your-domain.example/api"
+$env:SITE_BASE_URL="https://your-domain.example"
+npm run release:smoke
+```
+
+## Database commands
+
+Local development commands target `server/.env` by default:
+
+```text
 npm run db:doctor
-npm run security:tree
-npm run verify:phase42
-npm run security:audit:prod
-```
-
-Recommended production environment values (defaults are safe for normal rollout):
-
-```env
-AUTH_SESSION_TTL_DAYS=7
-AUTH_MAX_FAILED_LOGINS=5
-AUTH_LOCK_MINUTES=15
-```
-
-Changing the JWT secret invalidates both old and new sessions. Password changes/resets and staff-role changes also revoke previous managed sessions.
-
-## Phase 48 database integrity gate
-
-Development now runs `npm run predev` automatically before API/Vite startup. It validates Prisma, applies committed pending migrations with `prisma migrate deploy`, and verifies critical database tables/columns. This is intended only for the local development command.
-
-Production deployment remains explicit: create/verify a backup, deploy committed migrations, run `npm run db:status`, then start the production server. The API also performs a schema contract check before accepting traffic and fails fast when the database is behind the application release.
-
-Useful commands:
-
-```powershell
 npm run db:status
-npm run db:repair
-npm run db:doctor
+npm run db:backup
 ```
 
-`db:repair` creates a verified backup, deploys migrations, regenerates Prisma Client, and verifies the deployed schema contract.
+Production commands are explicit:
+
+```text
+npm run db:doctor:production
+npm run db:status:production
+npm run db:backup:production
+```
+
+Restore always requires typed confirmation. Use `--production` or an explicit `--env` when the intended target is production.
+
+## Rollback/recovery
+
+Automatic migration rollback is intentionally not implemented. Restore from a verified backup or use a forward-fix migration. Confirm the target database before any restore operation.
+
+## Release acceptance
+
+Before public traffic:
+
+- `release:doctor` PASS
+- `verify:phase49` PASS
+- `security:audit` reviewed
+- `db:status:production` PASS
+- verified recent backup exists
+- Admin → System shows API ready / schema ready
+- payment webhook tested
+- email sender tested
+- media storage tested
+- maintenance mode tested
+- `release:smoke` PASS against the deployed URL

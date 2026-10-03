@@ -1,7 +1,7 @@
 {
   "project": "Riseora E-Commerce",
-  "phase": "48 - Database Integrity & Job Reliability V2",
-  "direction": "production launch-ready D2C storefront with enforced database schema integrity, durable lifecycle jobs, resilient checkout, privacy, finance, fulfilment and release quality gates",
+  "phase": "49 - Production Release Orchestration & Deployment Safety V2",
+  "direction": "production-ready standalone D2C storefront with verified release orchestration, explicit database targeting, deployment health, durable job shutdown safety and Phase 48 schema integrity",
   "customer": [
     "campaign-led mobile storefront",
     "predictive search",
@@ -88,7 +88,7 @@
     "Phase 38 refill schema drift repair"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": "Phase 48 \u2014 Database Integrity & Job Reliability V2",
+  "latestPhase": "Phase 49 \u2014 Production Release Orchestration & Deployment Safety V2",
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -457,5 +457,24 @@
     ],
     "migration": "20261004160000_phase48_schema_integrity_job_orchestration",
     "verification": "npm run verify:phase48"
+  },
+  "phase49": {
+    "name": "Production Release Orchestration & Deployment Safety V2",
+    "features": [
+      "repairs Phase 48 database-readiness TypeScript literal-union inference without weakening the migration-head guard",
+      "production-only environment safety checks for HTTPS origins, strong secrets and complete integration credentials",
+      "safe public release metadata endpoint and Admin deployment/runtime identity panel",
+      "readiness includes database, physical schema, production configuration and draining state",
+      "same-origin production API fallback with immutable hashed-asset caching and no-store SPA HTML",
+      "graceful shutdown releases database job leases owned by the stopping API instance",
+      "local database tools default to server/.env while production targeting must be explicit",
+      "release:doctor, release:prepare, release:build and release:smoke orchestration",
+      "backup-before-migrate release order with no migrate dev/reset/db push in production workflow"
+    ],
+    "migration": null,
+    "verification": "npm run verify:phase49",
+    "releaseDoctor": "npm run release:doctor",
+    "releasePrepare": "npm run release:prepare",
+    "smoke": "npm run release:smoke"
   }
 }

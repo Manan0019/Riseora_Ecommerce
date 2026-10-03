@@ -6,7 +6,8 @@ import { resolvePostgresTool } from "./postgres-tools.mjs";
 
 const root = process.cwd();
 const explicit = process.argv.find((arg) => arg.startsWith("--env="))?.slice(6);
-const envFile = explicit ? path.resolve(root, explicit) : (fs.existsSync(path.join(root, "server/.env.production")) ? path.join(root, "server/.env.production") : path.join(root, "server/.env"));
+const production = process.argv.includes("--production");
+const envFile = explicit ? path.resolve(root, explicit) : path.join(root, production ? "server/.env.production" : "server/.env");
 function parseEnv(file) { const out = {}; for (const raw of fs.readFileSync(file, "utf8").split(/\r?\n/)) { const line = raw.trim(); if (!line || line.startsWith("#")) continue; const i = line.indexOf("="); if (i < 1) continue; let value = line.slice(i + 1).trim(); if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) value = value.slice(1,-1); out[line.slice(0,i).trim()] = value; } return out; }
 
 function prismaCliPath() {

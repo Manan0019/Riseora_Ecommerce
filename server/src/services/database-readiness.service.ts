@@ -50,7 +50,7 @@ export async function databaseSchemaStatus() {
       ORDER BY started_at ASC
     `);
     const applied = migrationRows.filter((item) => item.finished_at && !item.rolled_back_at).map((item) => item.migration_name);
-    const missing = requirements.filter(([, ok]) => !ok).map(([label]) => label);
+    const missing: string[] = requirements.filter(([, ok]) => !ok).map(([label]) => label);
     const headApplied = applied.includes(EXPECTED_MIGRATION_HEAD);
     if (!headApplied) missing.push(`Migration ${EXPECTED_MIGRATION_HEAD}`);
 

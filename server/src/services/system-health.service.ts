@@ -7,6 +7,7 @@ import { backupDirectory, listDatabaseBackups, postgresBackupTools } from "./dat
 import { isRuntimeDraining, runtimeObservabilitySnapshot } from "./runtime-observability.service";
 import { databaseSchemaStatus } from "./database-readiness.service";
 import { systemJobsSnapshot } from "./system-job.service";
+import { productionConfigurationStatus, releaseMetadata } from "./production-readiness.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -32,11 +33,14 @@ export async function readinessStatus() {
   const database = await checkDatabase();
   const schema = database.ok ? await databaseSchemaStatus() : { ok: false, missing: ["Database unavailable"] };
   const draining = isRuntimeDraining();
+  const configuration = productionConfigurationStatus();
   return {
-    ok: database.ok && schema.ok && !draining,
+    ok: database.ok && schema.ok && configuration.ok && !draining,
     database,
     schema,
+    configuration: { ok: configuration.ok, errors: configuration.errors },
     draining,
+    release: releaseMetadata(),
     uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
   };
@@ -62,9 +66,11 @@ export async function adminSystemHealth() {
   };
 
   const runtime = runtimeObservabilitySnapshot();
+  const configuration = productionConfigurationStatus();
+  const release = releaseMetadata();
 
   return {
-    status: database.ok && schema.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
+    status: database.ok && schema.ok && configuration.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
     environment: env.NODE_ENV,
     nodeVersion: process.version,
     uptimeSeconds: Math.round(process.uptime()),
@@ -85,7 +91,13 @@ export async function adminSystemHealth() {
       latest: backups[0] || null,
     },
     integrations,
-    release: { name: env.RELEASE_NAME || null, sha: env.RELEASE_SHA || null },
+    deployment: {
+      configuration,
+      release,
+      apiReady: database.ok && schema.ok && configuration.ok && !runtime.draining,
+      clientMode: env.SERVE_CLIENT ? "same-origin" : "separate-client",
+    },
+    release,
     runtime,
     timestamp: new Date().toISOString(),
   };
