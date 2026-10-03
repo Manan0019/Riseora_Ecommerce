@@ -37,12 +37,13 @@
     "verify:phase38": "node scripts/phase38-refill-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase39": "node scripts/phase39-inventory-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "db:doctor": "node scripts/db-doctor.mjs",
-    "security:tree": "node scripts/phase41-security-tree.mjs",
+    "security:tree": "node scripts/phase42-security-tree.mjs",
     "security:audit": "npm audit --audit-level=low",
     "security:audit:prod": "npm audit --omit=dev --audit-level=high",
     "verify:phase40": "node scripts/phase40-ops-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "security:audit:runtime": "npm audit --omit=dev --audit-level=high",
-    "verify:phase41": "node scripts/phase41-production-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase41": "node scripts/phase41-production-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase42": "node scripts/phase42-account-security-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

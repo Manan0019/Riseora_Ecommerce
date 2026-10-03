@@ -4,7 +4,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
-import { signAuthToken } from "../utils/jwt";
+import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
 import { availableToSell } from "../services/inventory.service";
 
 const router = Router();
@@ -73,12 +73,14 @@ router.post(
     const passwordHash = await bcrypt.hash(parsed.data.newPassword, 12);
     const updated = await prisma.user.update({
       where: { id: user.id },
-      data: { passwordHash, tokenVersion: { increment: 1 } },
+      data: { passwordHash, tokenVersion: { increment: 1 }, failedLoginCount: 0, lockedUntil: null, lastPasswordChangedAt: new Date() },
       select: { id: true, email: true, role: true, tokenVersion: true },
     });
     await prisma.passwordResetToken.deleteMany({ where: { userId: user.id, usedAt: null } });
-    const token = signAuthToken({ sub: updated.id, email: updated.email, role: updated.role, ver: updated.tokenVersion });
-    res.json({ success: true, data: { token }, message: "Password changed successfully." });
+    await revokeAllAuthSessions(user.id, "PASSWORD_CHANGED");
+    const { session, token } = await createAuthSession(updated, req);
+    await recordSecurityEvent({ req, type: "PASSWORD_CHANGED", userId: user.id, sessionId: session.id, identity: user.email });
+    res.json({ success: true, data: { token }, message: "Password changed successfully. Other sessions were signed out." });
   }),
 );
 

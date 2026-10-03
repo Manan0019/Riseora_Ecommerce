@@ -7,8 +7,8 @@ import { prisma } from "../config/prisma";
 import { env } from "../config/env";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
-import { signAuthToken } from "../utils/jwt";
 import { sendPasswordResetEmail } from "../services/notification.service";
+import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions, revokeAuthSession } from "../services/auth-security.service";
 
 const router = Router();
 const passwordResetLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 8, standardHeaders: "draft-8", legacyHeaders: false });
@@ -67,6 +67,8 @@ router.post(
         passwordHash,
         referralCode,
         referredByUserId: referrer?.id || null,
+        lastLoginAt: new Date(),
+        lastPasswordChangedAt: new Date(),
       },
       select: {
         id: true,
@@ -81,7 +83,8 @@ router.post(
       },
     });
 
-    const token = signAuthToken({ sub: user.id, email: user.email, role: user.role, ver: user.tokenVersion });
+    const { session, token } = await createAuthSession(user, req);
+    await recordSecurityEvent({ req, type: "ACCOUNT_CREATED", userId: user.id, sessionId: session.id, identity: user.email });
     res.status(201).json({ success: true, data: { token, user } });
   }),
 );
@@ -99,28 +102,65 @@ router.post(
       return res.status(400).json({ success: false, message: "Email and password are required" });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: parsed.data.email.toLowerCase() },
-    });
+    const email = parsed.data.email.toLowerCase();
+    const user = await prisma.user.findUnique({ where: { email } });
+    const now = new Date();
 
-    if (!user || !user.isActive || !(await bcrypt.compare(parsed.data.password, user.passwordHash))) {
+    if (user?.lockedUntil && user.lockedUntil > now) {
+      await recordSecurityEvent({ req, type: "LOGIN_BLOCKED", userId: user.id, identity: email, metadata: { lockMinutes: env.AUTH_LOCK_MINUTES } });
+      return res.status(429).json({ success: false, message: "Too many unsuccessful sign-in attempts. Please try again later." });
+    }
+
+    const passwordMatches = user?.isActive ? await bcrypt.compare(parsed.data.password, user.passwordHash) : false;
+    if (!user || !user.isActive || !passwordMatches) {
+      if (user?.isActive) {
+        const previousFailures = user.lockedUntil && user.lockedUntil <= now ? 0 : Number(user.failedLoginCount || 0);
+        const nextFailures = previousFailures + 1;
+        const shouldLock = nextFailures >= env.AUTH_MAX_FAILED_LOGINS;
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            failedLoginCount: nextFailures,
+            lockedUntil: shouldLock ? new Date(now.getTime() + env.AUTH_LOCK_MINUTES * 60 * 1000) : null,
+          },
+        });
+        await recordSecurityEvent({ req, type: shouldLock ? "LOGIN_BLOCKED" : "LOGIN_FAILED", userId: user.id, identity: email, metadata: { attempts: nextFailures } });
+      } else {
+        await recordSecurityEvent({ req, type: "LOGIN_FAILED", identity: email });
+      }
       return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    const token = signAuthToken({ sub: user.id, email: user.email, role: user.role, ver: user.tokenVersion });
+    const updated = await prisma.user.update({
+      where: { id: user.id },
+      data: { failedLoginCount: 0, lockedUntil: null, lastLoginAt: now },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        role: true,
+        adminRole: true,
+        tokenVersion: true,
+        referralCode: true,
+      },
+    });
+    const { session, token } = await createAuthSession(updated, req);
+    await recordSecurityEvent({ req, type: "LOGIN_SUCCESS", userId: updated.id, sessionId: session.id, identity: updated.email });
     res.json({
       success: true,
       data: {
         token,
         user: {
-          id: user.id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          phone: user.phone,
-          role: user.role,
-          adminRole: user.adminRole,
-          referralCode: user.referralCode,
+          id: updated.id,
+          firstName: updated.firstName,
+          lastName: updated.lastName,
+          email: updated.email,
+          phone: updated.phone,
+          role: updated.role,
+          adminRole: updated.adminRole,
+          referralCode: updated.referralCode,
         },
       },
     });
@@ -175,12 +215,27 @@ router.post(
 
     const passwordHash = await bcrypt.hash(parsed.data.password, 12);
     await prisma.$transaction(async (tx) => {
-      await tx.user.update({ where: { id: resetToken.userId }, data: { passwordHash, tokenVersion: { increment: 1 } } });
+      await tx.user.update({
+        where: { id: resetToken.userId },
+        data: { passwordHash, tokenVersion: { increment: 1 }, failedLoginCount: 0, lockedUntil: null, lastPasswordChangedAt: new Date() },
+      });
       await tx.passwordResetToken.update({ where: { id: resetToken.id }, data: { usedAt: new Date() } });
       await tx.passwordResetToken.deleteMany({ where: { userId: resetToken.userId, id: { not: resetToken.id }, usedAt: null } });
+      await tx.authSession.updateMany({ where: { userId: resetToken.userId, revokedAt: null }, data: { revokedAt: new Date(), revokedReason: "PASSWORD_RESET" } });
     });
+    await recordSecurityEvent({ req, type: "PASSWORD_RESET", userId: resetToken.userId, identity: resetToken.user.email });
 
-    res.json({ success: true, message: "Password updated. Please sign in with your new password." });
+    res.json({ success: true, message: "Password updated. All previous sessions were signed out. Please sign in with your new password." });
+  }),
+);
+
+router.post(
+  "/logout",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    if (req.authSessionId) await revokeAuthSession(req.authSessionId, req.user!.id, "USER_LOGOUT");
+    await recordSecurityEvent({ req, type: "LOGOUT", userId: req.user!.id, sessionId: req.authSessionId || null, identity: req.user!.email });
+    res.json({ success: true, message: "Signed out." });
   }),
 );
 

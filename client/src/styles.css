@@ -2747,3 +2747,49 @@ textarea { min-height: 105px; resize: vertical; }
   .phase41-route-head small { grid-column: 1 / -1; text-align: left; }
   .phase41-route-table > div:not(.phase41-route-head) span { display: none; }
 }
+
+/* Phase 42 — Account Security & Privacy */
+.phase42-security-center { max-width: 1180px; }
+.phase42-security-hero { display:flex; align-items:flex-start; justify-content:space-between; gap:24px; margin-bottom:28px; }
+.phase42-security-hero h1 { margin:.2rem 0 .55rem; }
+.phase42-security-hero p { max-width:720px; }
+.phase42-security-stats { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:14px; margin:20px 0 24px; }
+.phase42-security-stats article { display:flex; gap:12px; align-items:center; padding:18px; border:1px solid var(--line,#e7e6df); border-radius:18px; background:#fff; box-shadow:0 8px 28px rgba(29,59,43,.05); }
+.phase42-security-stats article > span { width:42px; height:42px; border-radius:14px; display:grid; place-items:center; background:#edf4ee; color:#174b32; flex:0 0 auto; }
+.phase42-security-stats small { display:block; color:var(--muted,#6c746f); margin-bottom:3px; }
+.phase42-security-stats strong { display:block; font-size:1.02rem; }
+.phase42-security-notice { display:flex; gap:12px; align-items:flex-start; padding:16px 18px; margin-bottom:20px; border-radius:16px; background:#fff8e8; border:1px solid #ead8a8; color:#604d1e; }
+.phase42-security-notice p { margin:4px 0 0; color:#78652f; }
+.phase42-session-card { margin-bottom:22px; }
+.phase42-session-list { display:grid; gap:10px; margin-top:14px; }
+.phase42-session-list article { display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:14px; border:1px solid #e8e9e4; border-radius:15px; background:#fbfcfa; }
+.phase42-session-list article.current { border-color:#b7d2bd; background:#f2f8f3; }
+.phase42-session-icon { width:40px; height:40px; display:grid; place-items:center; border-radius:13px; background:#e9f0ea; color:#174b32; }
+.phase42-session-list strong { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.phase42-session-list strong em { font-style:normal; font-size:.68rem; letter-spacing:.08em; padding:3px 7px; border-radius:999px; background:#174b32; color:#fff; }
+.phase42-session-list small { display:block; color:#727b75; margin-top:2px; }
+.phase42-revoke-all { display:grid; grid-template-columns:minmax(220px,420px) auto; align-items:end; gap:12px; margin-top:18px; padding-top:18px; border-top:1px solid #ecece7; }
+.phase42-revoke-all label, .phase42-export-form label { display:grid; gap:7px; font-weight:700; }
+.phase42-security-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px; margin-bottom:22px; }
+.phase42-export-form { display:grid; gap:12px; margin-top:18px; }
+.phase42-export-form .button { width:max-content; }
+.phase42-security-logout { margin-top:12px; }
+.phase42-activity-card { margin-bottom:30px; }
+.phase42-security-events { display:grid; gap:9px; margin-top:14px; }
+.phase42-security-events article { display:flex; gap:12px; align-items:center; padding:12px 0; border-bottom:1px solid #efefe9; }
+.phase42-security-events article:last-child { border-bottom:0; }
+.phase42-security-events article > span { width:34px; height:34px; border-radius:11px; display:grid; place-items:center; background:#eaf4ec; color:#174b32; }
+.phase42-security-events article > span.warn { background:#fff0eb; color:#a43e23; }
+.phase42-security-events strong, .phase42-security-events small { display:block; }
+.phase42-security-events small { color:#747d77; margin-top:2px; }
+.phase42-auth-table code { font-size:.78rem; }
+.phase42-auth-event-badge { display:inline-flex; align-items:center; padding:4px 8px; border-radius:999px; background:#edf4ee; color:#174b32; font-size:.72rem; font-weight:800; letter-spacing:.03em; }
+.phase42-auth-event-badge.warn { background:#fff0eb; color:#a43e23; }
+
+@media (max-width: 780px) {
+  .phase42-security-hero { flex-direction:column; }
+  .phase42-security-stats, .phase42-security-grid { grid-template-columns:1fr; }
+  .phase42-revoke-all { grid-template-columns:1fr; }
+  .phase42-session-list article { grid-template-columns:auto 1fr; }
+  .phase42-session-list article > button { grid-column:2; justify-self:start; }
+}

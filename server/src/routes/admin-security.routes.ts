@@ -3,7 +3,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
-import { signAuthToken } from "../utils/jwt";
+import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
 import { permissionsForAdminRole } from "../security/admin-permissions";
 
 const router = Router();
@@ -16,7 +16,7 @@ async function activeOwnerCount() {
 }
 
 router.get("/security/overview", asyncHandler(async (req, res) => {
-  const [admins, recentChanges, failedChanges, recent] = await Promise.all([
+  const [admins, recentChanges, failedChanges, recent, activeSessions, lockedAccounts, failedLogins24h, recentAuthEvents] = await Promise.all([
     prisma.user.findMany({
       where: { role: "ADMIN" },
       select: { id: true, firstName: true, lastName: true, email: true, adminRole: true, isActive: true, createdAt: true, updatedAt: true },
@@ -28,6 +28,15 @@ router.get("/security/overview", asyncHandler(async (req, res) => {
       include: { actor: { select: { id: true, firstName: true, lastName: true, email: true, adminRole: true } } },
       orderBy: { createdAt: "desc" },
       take: 12,
+    }),
+    prisma.authSession.count({ where: { revokedAt: null, expiresAt: { gt: new Date() } } }),
+    prisma.user.count({ where: { isActive: true, lockedUntil: { gt: new Date() } } }),
+    prisma.authSecurityEvent.count({ where: { type: { in: ["LOGIN_FAILED", "LOGIN_BLOCKED"] }, createdAt: { gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } } }),
+    prisma.authSecurityEvent.findMany({
+      where: { type: { in: ["LOGIN_SUCCESS", "LOGIN_FAILED", "LOGIN_BLOCKED", "PASSWORD_CHANGED", "PASSWORD_RESET", "SESSIONS_REVOKED"] } },
+      include: { user: { select: { id: true, email: true, firstName: true, lastName: true, role: true } } },
+      orderBy: { createdAt: "desc" },
+      take: 40,
     }),
   ]);
   const currentRole = req.user?.adminRole || "OWNER";
@@ -41,8 +50,12 @@ router.get("/security/overview", asyncHandler(async (req, res) => {
       ownerCount: admins.filter((item: any) => item.isActive && (!item.adminRole || item.adminRole === "OWNER")).length,
       recentChanges,
       failedChanges,
+      activeSessions,
+      lockedAccounts,
+      failedLogins24h,
       admins,
       recent,
+      recentAuthEvents,
     },
   });
 }));
@@ -85,6 +98,7 @@ router.post("/security/staff/promote", asyncHandler(async (req, res) => {
     data: { role: "ADMIN", adminRole: parsed.data.adminRole, tokenVersion: { increment: 1 } },
     select: { id: true, firstName: true, lastName: true, email: true, adminRole: true, isActive: true },
   });
+  await revokeAllAuthSessions(target.id, "ADMIN_ACCESS_CHANGED");
   res.status(201).json({ success: true, data: updated, message: "Admin access granted. Existing sessions for that account were invalidated." });
 }));
 
@@ -108,6 +122,7 @@ router.patch("/security/staff/:id", asyncHandler(async (req, res) => {
     where: { id }, data,
     select: { id: true, firstName: true, lastName: true, email: true, role: true, adminRole: true, isActive: true },
   });
+  await revokeAllAuthSessions(id, "ADMIN_ACCESS_CHANGED");
   res.json({ success: true, data: updated, message: "Staff access updated and previous sessions invalidated." });
 }));
 
@@ -117,7 +132,9 @@ router.post("/security/session/rotate", asyncHandler(async (req, res) => {
     data: { tokenVersion: { increment: 1 } },
     select: { id: true, email: true, role: true, adminRole: true, tokenVersion: true },
   });
-  const token = signAuthToken({ sub: updated.id, email: updated.email, role: updated.role, ver: updated.tokenVersion });
+  await revokeAllAuthSessions(updated.id, "ADMIN_SESSION_ROTATE");
+  const { session, token } = await createAuthSession(updated, req);
+  await recordSecurityEvent({ req, type: "SESSIONS_REVOKED", userId: updated.id, sessionId: session.id, identity: updated.email });
   res.json({ success: true, data: { token, adminRole: updated.adminRole }, message: "Other sessions were signed out. This browser remains signed in." });
 }));
 

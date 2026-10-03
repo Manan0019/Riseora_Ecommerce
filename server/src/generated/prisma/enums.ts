@@ -28,6 +28,22 @@ export const AdminRole = {
 export type AdminRole = (typeof AdminRole)[keyof typeof AdminRole]
 
 
+export const AuthSecurityEventType = {
+  ACCOUNT_CREATED: 'ACCOUNT_CREATED',
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  LOGIN_FAILED: 'LOGIN_FAILED',
+  LOGIN_BLOCKED: 'LOGIN_BLOCKED',
+  LOGOUT: 'LOGOUT',
+  PASSWORD_CHANGED: 'PASSWORD_CHANGED',
+  PASSWORD_RESET: 'PASSWORD_RESET',
+  SESSION_REVOKED: 'SESSION_REVOKED',
+  SESSIONS_REVOKED: 'SESSIONS_REVOKED',
+  DATA_EXPORT: 'DATA_EXPORT'
+} as const
+
+export type AuthSecurityEventType = (typeof AuthSecurityEventType)[keyof typeof AuthSecurityEventType]
+
+
 export const AddressType = {
   HOME: 'HOME',
   WORK: 'WORK',

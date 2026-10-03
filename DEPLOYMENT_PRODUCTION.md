@@ -71,3 +71,24 @@ Before public launch confirm canonical URL, SEO metadata, real policy content, l
 
 ## ERP later
 Never expose the ERP database publicly. Future synchronization should use authenticated APIs/jobs with shared SKU identity, idempotency and explicit conflict handling.
+
+## Phase 42 account-security checks
+
+Before production launch, verify the following after `npm install` and `npm run db:deploy`:
+
+```powershell
+npm run db:doctor
+npm run security:tree
+npm run verify:phase42
+npm run security:audit:prod
+```
+
+Recommended production environment values (defaults are safe for normal rollout):
+
+```env
+AUTH_SESSION_TTL_DAYS=7
+AUTH_MAX_FAILED_LOGINS=5
+AUTH_LOCK_MINUTES=15
+```
+
+Changing the JWT secret invalidates both old and new sessions. Password changes/resets and staff-role changes also revoke previous managed sessions.

@@ -7,6 +7,7 @@ import { allowedOrigins, env } from "./config/env";
 import { prisma } from "./config/prisma";
 import adminRoutes from "./routes/admin.routes";
 import accountRoutes from "./routes/account.routes";
+import accountSecurityRoutes from "./routes/account-security.routes";
 import authRoutes from "./routes/auth.routes";
 import categoryRoutes from "./routes/category.routes";
 import orderRoutes from "./routes/order.routes";
@@ -47,6 +48,7 @@ import { processCartRecoveryReminders } from "./services/cart-recovery.service";
 import { notifyEligiblePriceAlerts } from "./services/price-alert.service";
 import { processDueRefillReminders } from "./services/refill-reminder.service";
 import { logRuntimeEvent, setRuntimeDraining } from "./services/runtime-observability.service";
+import { cleanupExpiredAuthSessions } from "./services/auth-security.service";
 
 const app = express();
 if (env.TRUST_PROXY) app.set("trust proxy", 1);
@@ -93,6 +95,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/returns", returnRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/account", accountRoutes);
+app.use("/api/account/security", accountSecurityRoutes);
 app.use("/api/uploads", uploadRoutes);
 app.use("/api/admin", rateLimit({ windowMs: 15 * 60 * 1000, limit: 300, standardHeaders: "draft-8", legacyHeaders: false }), requireAuth, requireAdmin, adminAuditTrail, enforceAdminPermission);
 app.use("/api/admin/uploads", uploadRoutes);
@@ -132,6 +135,7 @@ const server = app.listen(env.PORT, () => {
   void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
   void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
   void processDueRefillReminders().catch((error) => console.error("Refill reminder processing failed", error));
+  void cleanupExpiredAuthSessions().catch((error) => console.error("Auth session cleanup failed", error));
 });
 
 const checkoutCleanupTimer = setInterval(() => {
@@ -146,6 +150,11 @@ const cartRecoveryTimer = setInterval(() => {
 }, 10 * 60 * 1000);
 cartRecoveryTimer.unref();
 
+const authSessionCleanupTimer = setInterval(() => {
+  void cleanupExpiredAuthSessions().catch((error) => console.error("Auth session cleanup failed", error));
+}, 24 * 60 * 60 * 1000);
+authSessionCleanupTimer.unref();
+
 let shuttingDown = false;
 async function shutdown(signal: string, exitCode = 0) {
   if (shuttingDown) return;
@@ -154,6 +163,7 @@ async function shutdown(signal: string, exitCode = 0) {
   logRuntimeEvent("warn", "server_shutdown_started", { signal, activeGraceMs: env.SHUTDOWN_GRACE_MS });
   clearInterval(checkoutCleanupTimer);
   clearInterval(cartRecoveryTimer);
+  clearInterval(authSessionCleanupTimer);
 
   const forceTimer = setTimeout(() => {
     logRuntimeEvent("error", "server_shutdown_forced", { signal });

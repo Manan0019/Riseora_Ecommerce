@@ -129,7 +129,9 @@ export default function Account() {
         <Link to="/wishlist"><Icon name="heart" /><span><strong>Wishlist</strong><small>Your saved products</small></span><b>›</b></Link>
         <Link to="/notifications"><Icon name="bell" /><span><strong>Notifications</strong><small>Orders and Riseora updates</small></span><b>›</b></Link>
         <Link to="/support"><Icon name="mail" /><span><strong>Support</strong><small>Requests, replies & help history</small></span><b>›</b></Link>
+        <Link to="/security"><Icon name="shield" /><span><strong>Security & privacy</strong><small>Sessions, activity & data export</small></span><b>›</b></Link>
         <Link to="/rewards"><Icon name="sparkles" /><span><strong>Riseora Rewards</strong><small>Points, vouchers & referrals</small></span><b>›</b></Link>
+        <Link to="/refills"><Icon name="refresh" /><span><strong>Refill reminders</strong><small>Plan repeat essentials</small></span><b>›</b></Link>
         <a href="#shopping-alerts"><Icon name="tag" /><span><strong>Shopping alerts</strong><small>Price drops and restocks</small></span><b>›</b></a>
         <Link to="/returns"><Icon name="truck" /><span><strong>Returns & refunds</strong><small>Track return requests and refunds</small></span><b>›</b></Link>
       </div>
@@ -174,7 +176,7 @@ export default function Account() {
         </section>
       </div>
 
-      <form className="account-card account-security-card" onSubmit={changePassword}>
+      <form id="security" className="account-card account-security-card" onSubmit={changePassword}>
         <div className="account-card-head"><div><p className="eyebrow">SECURITY</p><h2>Change password</h2></div></div>
         <div className="form-grid three"><label>Current password<input type="password" required value={passwordForm.currentPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, currentPassword: e.target.value }))} autoComplete="current-password" /></label><label>New password<input type="password" required minLength="8" value={passwordForm.newPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, newPassword: e.target.value }))} autoComplete="new-password" /></label><label>Confirm new password<input type="password" required minLength="8" value={passwordForm.confirmPassword} onChange={(e) => setPasswordForm((v) => ({ ...v, confirmPassword: e.target.value }))} autoComplete="new-password" /></label></div>
         <p className="account-security-note">Changing your password invalidates older Riseora login sessions.</p>

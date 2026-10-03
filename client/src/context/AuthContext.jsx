@@ -54,8 +54,10 @@ export function AuthProvider({ children }) {
   }
 
   function logout() {
+    const request = apiFetch("/auth/logout", { method: "POST" }).catch(() => {});
     localStorage.removeItem("riseora_token");
     setUser(null);
+    return request;
   }
 
   const value = useMemo(() => ({ user, loading, login, register, updateUser, replaceToken, logout }), [user, loading]);

@@ -9,6 +9,8 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/AuthSession'
+export type * from './models/AuthSecurityEvent'
 export type * from './models/RewardAccount'
 export type * from './models/RewardTransaction'
 export type * from './models/AdminAuditLog'

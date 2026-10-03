@@ -71,10 +71,14 @@
     "Product replenishment reminder configuration",
     "InventoryMovement",
     "ProductVariant.safetyStock",
-    "InventoryMovement.actorUser referential integrity"
+    "InventoryMovement.actorUser referential integrity",
+    "AuthSession",
+    "AuthSecurityEvent",
+    "User failed-login lockout telemetry",
+    "User last login/password change timestamps"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 40,
+  "latestPhase": "Phase 42 \u2014 Account Security, Sessions & Privacy V2",
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -241,7 +245,7 @@
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
   },
-  "currentPhase": "Phase 40 \u2014 Production Resilience & Dependency Security V2",
+  "currentPhase": "Phase 42 \u2014 Account Security, Sessions & Privacy V2",
   "lastUpdated": "2026-10-03",
   "phase36": {
     "name": "Riseora Rewards & Referrals V2",
@@ -338,5 +342,19 @@
     ],
     "migration": null,
     "verification": "npm run verify:phase41"
+  },
+  "phase42": {
+    "features": [
+      "managed per-device authentication sessions with revoke controls",
+      "customer Security & Privacy Center with active sessions and security history",
+      "account-specific failed-login lockout and privacy-preserving security telemetry",
+      "password reset/change revokes prior sessions",
+      "password-confirmed customer data JSON export",
+      "Admin Security sign-in telemetry",
+      "Windows-safe db:doctor Prisma validation without npm.cmd spawn",
+      "React Router 7.18.4 security upgrade and corrected Prisma dev-only verification"
+    ],
+    "migration": "20261003174500_phase42_account_security_sessions",
+    "verification": "npm run verify:phase42"
   }
 }

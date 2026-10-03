@@ -28,10 +28,12 @@ export type AggregateUser = {
 
 export type UserAvgAggregateOutputType = {
   tokenVersion: number | null
+  failedLoginCount: number | null
 }
 
 export type UserSumAggregateOutputType = {
   tokenVersion: number | null
+  failedLoginCount: number | null
 }
 
 export type UserMinAggregateOutputType = {
@@ -45,6 +47,10 @@ export type UserMinAggregateOutputType = {
   adminRole: $Enums.AdminRole | null
   isActive: boolean | null
   tokenVersion: number | null
+  failedLoginCount: number | null
+  lockedUntil: Date | null
+  lastLoginAt: Date | null
+  lastPasswordChangedAt: Date | null
   referralCode: string | null
   referredByUserId: string | null
   createdAt: Date | null
@@ -62,6 +68,10 @@ export type UserMaxAggregateOutputType = {
   adminRole: $Enums.AdminRole | null
   isActive: boolean | null
   tokenVersion: number | null
+  failedLoginCount: number | null
+  lockedUntil: Date | null
+  lastLoginAt: Date | null
+  lastPasswordChangedAt: Date | null
   referralCode: string | null
   referredByUserId: string | null
   createdAt: Date | null
@@ -79,6 +89,10 @@ export type UserCountAggregateOutputType = {
   adminRole: number
   isActive: number
   tokenVersion: number
+  failedLoginCount: number
+  lockedUntil: number
+  lastLoginAt: number
+  lastPasswordChangedAt: number
   referralCode: number
   referredByUserId: number
   createdAt: number
@@ -89,10 +103,12 @@ export type UserCountAggregateOutputType = {
 
 export type UserAvgAggregateInputType = {
   tokenVersion?: true
+  failedLoginCount?: true
 }
 
 export type UserSumAggregateInputType = {
   tokenVersion?: true
+  failedLoginCount?: true
 }
 
 export type UserMinAggregateInputType = {
@@ -106,6 +122,10 @@ export type UserMinAggregateInputType = {
   adminRole?: true
   isActive?: true
   tokenVersion?: true
+  failedLoginCount?: true
+  lockedUntil?: true
+  lastLoginAt?: true
+  lastPasswordChangedAt?: true
   referralCode?: true
   referredByUserId?: true
   createdAt?: true
@@ -123,6 +143,10 @@ export type UserMaxAggregateInputType = {
   adminRole?: true
   isActive?: true
   tokenVersion?: true
+  failedLoginCount?: true
+  lockedUntil?: true
+  lastLoginAt?: true
+  lastPasswordChangedAt?: true
   referralCode?: true
   referredByUserId?: true
   createdAt?: true
@@ -140,6 +164,10 @@ export type UserCountAggregateInputType = {
   adminRole?: true
   isActive?: true
   tokenVersion?: true
+  failedLoginCount?: true
+  lockedUntil?: true
+  lastLoginAt?: true
+  lastPasswordChangedAt?: true
   referralCode?: true
   referredByUserId?: true
   createdAt?: true
@@ -244,6 +272,10 @@ export type UserGroupByOutputType = {
   adminRole: $Enums.AdminRole | null
   isActive: boolean
   tokenVersion: number
+  failedLoginCount: number
+  lockedUntil: Date | null
+  lastLoginAt: Date | null
+  lastPasswordChangedAt: Date | null
   referralCode: string
   referredByUserId: string | null
   createdAt: Date
@@ -284,6 +316,10 @@ export type UserWhereInput = {
   adminRole?: Prisma.EnumAdminRoleNullableFilter<"User"> | $Enums.AdminRole | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   tokenVersion?: Prisma.IntFilter<"User"> | number
+  failedLoginCount?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastPasswordChangedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   referralCode?: Prisma.StringFilter<"User"> | string
   referredByUserId?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -308,6 +344,8 @@ export type UserWhereInput = {
   supportTickets?: Prisma.ContactMessageListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
+  authSessions?: Prisma.AuthSessionListRelationFilter
+  authSecurityEvents?: Prisma.AuthSecurityEventListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -321,6 +359,10 @@ export type UserOrderByWithRelationInput = {
   adminRole?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPasswordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   referredByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -345,6 +387,8 @@ export type UserOrderByWithRelationInput = {
   supportTickets?: Prisma.ContactMessageOrderByRelationAggregateInput
   refillReminders?: Prisma.RefillReminderOrderByRelationAggregateInput
   inventoryMovements?: Prisma.InventoryMovementOrderByRelationAggregateInput
+  authSessions?: Prisma.AuthSessionOrderByRelationAggregateInput
+  authSecurityEvents?: Prisma.AuthSecurityEventOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -362,6 +406,10 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   adminRole?: Prisma.EnumAdminRoleNullableFilter<"User"> | $Enums.AdminRole | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   tokenVersion?: Prisma.IntFilter<"User"> | number
+  failedLoginCount?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastPasswordChangedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   referredByUserId?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
@@ -385,6 +433,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   supportTickets?: Prisma.ContactMessageListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
+  authSessions?: Prisma.AuthSessionListRelationFilter
+  authSecurityEvents?: Prisma.AuthSecurityEventListRelationFilter
 }, "id" | "email" | "phone" | "referralCode">
 
 export type UserOrderByWithAggregationInput = {
@@ -398,6 +448,10 @@ export type UserOrderByWithAggregationInput = {
   adminRole?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastPasswordChangedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   referredByUserId?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -423,6 +477,10 @@ export type UserScalarWhereWithAggregatesInput = {
   adminRole?: Prisma.EnumAdminRoleNullableWithAggregatesFilter<"User"> | $Enums.AdminRole | null
   isActive?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   tokenVersion?: Prisma.IntWithAggregatesFilter<"User"> | number
+  failedLoginCount?: Prisma.IntWithAggregatesFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  lastLoginAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+  lastPasswordChangedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
   referralCode?: Prisma.StringWithAggregatesFilter<"User"> | string
   referredByUserId?: Prisma.UuidNullableWithAggregatesFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
@@ -440,6 +498,10 @@ export type UserCreateInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -463,6 +525,8 @@ export type UserCreateInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -476,6 +540,10 @@ export type UserUncheckedCreateInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -499,6 +567,8 @@ export type UserUncheckedCreateInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -512,6 +582,10 @@ export type UserUpdateInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -535,6 +609,8 @@ export type UserUpdateInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -548,6 +624,10 @@ export type UserUncheckedUpdateInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -571,6 +651,8 @@ export type UserUncheckedUpdateInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -584,6 +666,10 @@ export type UserCreateManyInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -601,6 +687,10 @@ export type UserUpdateManyMutationInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -617,6 +707,10 @@ export type UserUncheckedUpdateManyInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -649,6 +743,10 @@ export type UserCountOrderByAggregateInput = {
   adminRole?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
+  lastPasswordChangedAt?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   referredByUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -657,6 +755,7 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserAvgOrderByAggregateInput = {
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
 }
 
 export type UserMaxOrderByAggregateInput = {
@@ -670,6 +769,10 @@ export type UserMaxOrderByAggregateInput = {
   adminRole?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
+  lastPasswordChangedAt?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   referredByUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -687,6 +790,10 @@ export type UserMinOrderByAggregateInput = {
   adminRole?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
+  lockedUntil?: Prisma.SortOrder
+  lastLoginAt?: Prisma.SortOrder
+  lastPasswordChangedAt?: Prisma.SortOrder
   referralCode?: Prisma.SortOrder
   referredByUserId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -695,6 +802,7 @@ export type UserMinOrderByAggregateInput = {
 
 export type UserSumOrderByAggregateInput = {
   tokenVersion?: Prisma.SortOrder
+  failedLoginCount?: Prisma.SortOrder
 }
 
 export type UserScalarRelationFilter = {
@@ -750,6 +858,10 @@ export type IntFieldUpdateOperationsInput = {
   divide?: number
 }
 
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type DateTimeFieldUpdateOperationsInput = {
   set?: Date | string
 }
@@ -790,6 +902,36 @@ export type UserUncheckedUpdateManyWithoutReferredByNestedInput = {
   update?: Prisma.UserUpdateWithWhereUniqueWithoutReferredByInput | Prisma.UserUpdateWithWhereUniqueWithoutReferredByInput[]
   updateMany?: Prisma.UserUpdateManyWithWhereWithoutReferredByInput | Prisma.UserUpdateManyWithWhereWithoutReferredByInput[]
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserCreateNestedOneWithoutAuthSessionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuthSessionsInput, Prisma.UserUncheckedCreateWithoutAuthSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuthSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAuthSessionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuthSessionsInput, Prisma.UserUncheckedCreateWithoutAuthSessionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuthSessionsInput
+  upsert?: Prisma.UserUpsertWithoutAuthSessionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuthSessionsInput, Prisma.UserUpdateWithoutAuthSessionsInput>, Prisma.UserUncheckedUpdateWithoutAuthSessionsInput>
+}
+
+export type UserCreateNestedOneWithoutAuthSecurityEventsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedCreateWithoutAuthSecurityEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuthSecurityEventsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutAuthSecurityEventsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedCreateWithoutAuthSecurityEventsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuthSecurityEventsInput
+  upsert?: Prisma.UserUpsertWithoutAuthSecurityEventsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuthSecurityEventsInput, Prisma.UserUpdateWithoutAuthSecurityEventsInput>, Prisma.UserUncheckedUpdateWithoutAuthSecurityEventsInput>
 }
 
 export type UserCreateNestedOneWithoutRewardAccountInput = {
@@ -1071,6 +1213,10 @@ export type UserCreateWithoutReferralsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1093,6 +1239,8 @@ export type UserCreateWithoutReferralsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsInput = {
@@ -1106,6 +1254,10 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -1128,6 +1280,8 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralsInput = {
@@ -1146,6 +1300,10 @@ export type UserCreateWithoutReferredByInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1168,6 +1326,8 @@ export type UserCreateWithoutReferredByInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferredByInput = {
@@ -1181,6 +1341,10 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1203,6 +1367,8 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferredByInput = {
@@ -1237,6 +1403,10 @@ export type UserUpdateWithoutReferralsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1259,6 +1429,8 @@ export type UserUpdateWithoutReferralsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsInput = {
@@ -1272,6 +1444,10 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1294,6 +1470,8 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutReferredByInput = {
@@ -1326,10 +1504,374 @@ export type UserScalarWhereInput = {
   adminRole?: Prisma.EnumAdminRoleNullableFilter<"User"> | $Enums.AdminRole | null
   isActive?: Prisma.BoolFilter<"User"> | boolean
   tokenVersion?: Prisma.IntFilter<"User"> | number
+  failedLoginCount?: Prisma.IntFilter<"User"> | number
+  lockedUntil?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastLoginAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
+  lastPasswordChangedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   referralCode?: Prisma.StringFilter<"User"> | string
   referredByUserId?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+}
+
+export type UserCreateWithoutAuthSessionsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAuthSessionsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAuthSessionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuthSessionsInput, Prisma.UserUncheckedCreateWithoutAuthSessionsInput>
+}
+
+export type UserUpsertWithoutAuthSessionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAuthSessionsInput, Prisma.UserUncheckedUpdateWithoutAuthSessionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuthSessionsInput, Prisma.UserUncheckedCreateWithoutAuthSessionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAuthSessionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAuthSessionsInput, Prisma.UserUncheckedUpdateWithoutAuthSessionsInput>
+}
+
+export type UserUpdateWithoutAuthSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAuthSessionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutAuthSecurityEventsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAuthSecurityEventsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedCreateWithoutAuthSecurityEventsInput>
+}
+
+export type UserUpsertWithoutAuthSecurityEventsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedUpdateWithoutAuthSecurityEventsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedCreateWithoutAuthSecurityEventsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAuthSecurityEventsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAuthSecurityEventsInput, Prisma.UserUncheckedUpdateWithoutAuthSecurityEventsInput>
+}
+
+export type UserUpdateWithoutAuthSecurityEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardAccountInput = {
@@ -1343,6 +1885,10 @@ export type UserCreateWithoutRewardAccountInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1365,6 +1911,8 @@ export type UserCreateWithoutRewardAccountInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardAccountInput = {
@@ -1378,6 +1926,10 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -1400,6 +1952,8 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardAccountInput = {
@@ -1429,6 +1983,10 @@ export type UserUpdateWithoutRewardAccountInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1451,6 +2009,8 @@ export type UserUpdateWithoutRewardAccountInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardAccountInput = {
@@ -1464,6 +2024,10 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1486,6 +2050,8 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardTransactionsInput = {
@@ -1499,6 +2065,10 @@ export type UserCreateWithoutRewardTransactionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1521,6 +2091,8 @@ export type UserCreateWithoutRewardTransactionsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardTransactionsInput = {
@@ -1534,6 +2106,10 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -1556,6 +2132,8 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardTransactionsInput = {
@@ -1585,6 +2163,10 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1607,6 +2189,8 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
@@ -1620,6 +2204,10 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1642,6 +2230,8 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdminAuditLogsInput = {
@@ -1655,6 +2245,10 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1677,6 +2271,8 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
@@ -1690,6 +2286,10 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -1712,6 +2312,8 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdminAuditLogsInput = {
@@ -1741,6 +2343,10 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1763,6 +2369,8 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
@@ -1776,6 +2384,10 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1798,6 +2410,8 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -1811,6 +2425,10 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1833,6 +2451,8 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -1846,6 +2466,10 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -1868,6 +2492,8 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -1897,6 +2523,10 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1919,6 +2549,8 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -1932,6 +2564,10 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1954,6 +2590,8 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -1967,6 +2605,10 @@ export type UserCreateWithoutAddressesInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -1989,6 +2631,8 @@ export type UserCreateWithoutAddressesInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -2002,6 +2646,10 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2024,6 +2672,8 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -2053,6 +2703,10 @@ export type UserUpdateWithoutAddressesInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2075,6 +2729,8 @@ export type UserUpdateWithoutAddressesInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -2088,6 +2744,10 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2110,6 +2770,8 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInventoryMovementsInput = {
@@ -2123,6 +2785,10 @@ export type UserCreateWithoutInventoryMovementsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2145,6 +2811,8 @@ export type UserCreateWithoutInventoryMovementsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInventoryMovementsInput = {
@@ -2158,6 +2826,10 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2180,6 +2852,8 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInventoryMovementsInput = {
@@ -2209,6 +2883,10 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2231,6 +2909,8 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
@@ -2244,6 +2924,10 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2266,6 +2950,8 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -2279,6 +2965,10 @@ export type UserCreateWithoutOrdersInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2301,6 +2991,8 @@ export type UserCreateWithoutOrdersInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -2314,6 +3006,10 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2336,6 +3032,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -2365,6 +3063,10 @@ export type UserUpdateWithoutOrdersInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2387,6 +3089,8 @@ export type UserUpdateWithoutOrdersInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -2400,6 +3104,10 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2422,6 +3130,8 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCancellationRequestsInput = {
@@ -2435,6 +3145,10 @@ export type UserCreateWithoutCancellationRequestsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2457,6 +3171,8 @@ export type UserCreateWithoutCancellationRequestsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCancellationRequestsInput = {
@@ -2470,6 +3186,10 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2492,6 +3212,8 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCancellationRequestsInput = {
@@ -2521,6 +3243,10 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2543,6 +3269,8 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
@@ -2556,6 +3284,10 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2578,6 +3310,8 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCheckoutSessionsInput = {
@@ -2591,6 +3325,10 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2613,6 +3351,8 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
@@ -2626,6 +3366,10 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2648,6 +3392,8 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCheckoutSessionsInput = {
@@ -2677,6 +3423,10 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2699,6 +3449,8 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
@@ -2712,6 +3464,10 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2734,6 +3490,8 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -2747,6 +3505,10 @@ export type UserCreateWithoutNotificationsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2769,6 +3531,8 @@ export type UserCreateWithoutNotificationsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -2782,6 +3546,10 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2804,6 +3572,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -2833,6 +3603,10 @@ export type UserUpdateWithoutNotificationsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2855,6 +3629,8 @@ export type UserUpdateWithoutNotificationsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -2868,6 +3644,10 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2890,6 +3670,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -2903,6 +3685,10 @@ export type UserCreateWithoutWishlistItemsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -2925,6 +3711,8 @@ export type UserCreateWithoutWishlistItemsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -2938,6 +3726,10 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -2960,6 +3752,8 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -2989,6 +3783,10 @@ export type UserUpdateWithoutWishlistItemsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3011,6 +3809,8 @@ export type UserUpdateWithoutWishlistItemsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -3024,6 +3824,10 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3046,6 +3850,8 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReturnRequestsInput = {
@@ -3059,6 +3865,10 @@ export type UserCreateWithoutReturnRequestsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3081,6 +3891,8 @@ export type UserCreateWithoutReturnRequestsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReturnRequestsInput = {
@@ -3094,6 +3906,10 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3116,6 +3932,8 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReturnRequestsInput = {
@@ -3145,6 +3963,10 @@ export type UserUpdateWithoutReturnRequestsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3167,6 +3989,8 @@ export type UserUpdateWithoutReturnRequestsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReturnRequestsInput = {
@@ -3180,6 +4004,10 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3202,6 +4030,8 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardCouponsInput = {
@@ -3215,6 +4045,10 @@ export type UserCreateWithoutRewardCouponsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3237,6 +4071,8 @@ export type UserCreateWithoutRewardCouponsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardCouponsInput = {
@@ -3250,6 +4086,10 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3272,6 +4112,8 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardCouponsInput = {
@@ -3301,6 +4143,10 @@ export type UserUpdateWithoutRewardCouponsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3323,6 +4169,8 @@ export type UserUpdateWithoutRewardCouponsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardCouponsInput = {
@@ -3336,6 +4184,10 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3358,6 +4210,8 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCouponRedemptionsInput = {
@@ -3371,6 +4225,10 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3393,6 +4251,8 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
@@ -3406,6 +4266,10 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3428,6 +4292,8 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCouponRedemptionsInput = {
@@ -3457,6 +4323,10 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3479,6 +4349,8 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
@@ -3492,6 +4364,10 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3514,6 +4390,8 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -3527,6 +4405,10 @@ export type UserCreateWithoutReviewsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3549,6 +4431,8 @@ export type UserCreateWithoutReviewsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -3562,6 +4446,10 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3584,6 +4472,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -3613,6 +4503,10 @@ export type UserUpdateWithoutReviewsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3635,6 +4529,8 @@ export type UserUpdateWithoutReviewsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -3648,6 +4544,10 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3670,6 +4570,8 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProductQuestionsInput = {
@@ -3683,6 +4585,10 @@ export type UserCreateWithoutProductQuestionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3705,6 +4611,8 @@ export type UserCreateWithoutProductQuestionsInput = {
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductQuestionsInput = {
@@ -3718,6 +4626,10 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3740,6 +4652,8 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductQuestionsInput = {
@@ -3769,6 +4683,10 @@ export type UserUpdateWithoutProductQuestionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3791,6 +4709,8 @@ export type UserUpdateWithoutProductQuestionsInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductQuestionsInput = {
@@ -3804,6 +4724,10 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3826,6 +4750,8 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSupportTicketsInput = {
@@ -3839,6 +4765,10 @@ export type UserCreateWithoutSupportTicketsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -3861,6 +4791,8 @@ export type UserCreateWithoutSupportTicketsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSupportTicketsInput = {
@@ -3874,6 +4806,10 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -3896,6 +4832,8 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSupportTicketsInput = {
@@ -3925,6 +4863,10 @@ export type UserUpdateWithoutSupportTicketsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3947,6 +4889,8 @@ export type UserUpdateWithoutSupportTicketsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupportTicketsInput = {
@@ -3960,6 +4904,10 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3982,6 +4930,8 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRefillRemindersInput = {
@@ -3995,6 +4945,10 @@ export type UserCreateWithoutRefillRemindersInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -4017,6 +4971,8 @@ export type UserCreateWithoutRefillRemindersInput = {
   adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
   supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRefillRemindersInput = {
@@ -4030,6 +4986,10 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   referredByUserId?: string | null
   createdAt?: Date | string
@@ -4052,6 +5012,8 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
   supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRefillRemindersInput = {
@@ -4081,6 +5043,10 @@ export type UserUpdateWithoutRefillRemindersInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4103,6 +5069,8 @@ export type UserUpdateWithoutRefillRemindersInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefillRemindersInput = {
@@ -4116,6 +5084,10 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4138,6 +5110,8 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyReferredByInput = {
@@ -4151,6 +5125,10 @@ export type UserCreateManyReferredByInput = {
   adminRole?: $Enums.AdminRole | null
   isActive?: boolean
   tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
   referralCode: string
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -4167,6 +5145,10 @@ export type UserUpdateWithoutReferredByInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4189,6 +5171,8 @@ export type UserUpdateWithoutReferredByInput = {
   supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferredByInput = {
@@ -4202,6 +5186,10 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4224,6 +5212,8 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutReferredByInput = {
@@ -4237,6 +5227,10 @@ export type UserUncheckedUpdateManyWithoutReferredByInput = {
   adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   referralCode?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4266,6 +5260,8 @@ export type UserCountOutputType = {
   supportTickets: number
   refillReminders: number
   inventoryMovements: number
+  authSessions: number
+  authSecurityEvents: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4287,6 +5283,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
   refillReminders?: boolean | UserCountOutputTypeCountRefillRemindersArgs
   inventoryMovements?: boolean | UserCountOutputTypeCountInventoryMovementsArgs
+  authSessions?: boolean | UserCountOutputTypeCountAuthSessionsArgs
+  authSecurityEvents?: boolean | UserCountOutputTypeCountAuthSecurityEventsArgs
 }
 
 /**
@@ -4425,6 +5423,20 @@ export type UserCountOutputTypeCountInventoryMovementsArgs<ExtArgs extends runti
   where?: Prisma.InventoryMovementWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAuthSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuthSessionWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountAuthSecurityEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.AuthSecurityEventWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -4437,6 +5449,10 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   adminRole?: boolean
   isActive?: boolean
   tokenVersion?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
+  lastLoginAt?: boolean
+  lastPasswordChangedAt?: boolean
   referralCode?: boolean
   referredByUserId?: boolean
   createdAt?: boolean
@@ -4461,6 +5477,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
+  authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
+  authSecurityEvents?: boolean | Prisma.User$authSecurityEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -4475,6 +5493,10 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   adminRole?: boolean
   isActive?: boolean
   tokenVersion?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
+  lastLoginAt?: boolean
+  lastPasswordChangedAt?: boolean
   referralCode?: boolean
   referredByUserId?: boolean
   createdAt?: boolean
@@ -4493,6 +5515,10 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   adminRole?: boolean
   isActive?: boolean
   tokenVersion?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
+  lastLoginAt?: boolean
+  lastPasswordChangedAt?: boolean
   referralCode?: boolean
   referredByUserId?: boolean
   createdAt?: boolean
@@ -4511,13 +5537,17 @@ export type UserSelectScalar = {
   adminRole?: boolean
   isActive?: boolean
   tokenVersion?: boolean
+  failedLoginCount?: boolean
+  lockedUntil?: boolean
+  lastLoginAt?: boolean
+  lastPasswordChangedAt?: boolean
   referralCode?: boolean
   referredByUserId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "passwordHash" | "role" | "adminRole" | "isActive" | "tokenVersion" | "referralCode" | "referredByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "firstName" | "lastName" | "email" | "phone" | "passwordHash" | "role" | "adminRole" | "isActive" | "tokenVersion" | "failedLoginCount" | "lockedUntil" | "lastLoginAt" | "lastPasswordChangedAt" | "referralCode" | "referredByUserId" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   referredBy?: boolean | Prisma.User$referredByArgs<ExtArgs>
   referrals?: boolean | Prisma.User$referralsArgs<ExtArgs>
@@ -4539,6 +5569,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
+  authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
+  authSecurityEvents?: boolean | Prisma.User$authSecurityEventsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4571,6 +5603,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     supportTickets: Prisma.$ContactMessagePayload<ExtArgs>[]
     refillReminders: Prisma.$RefillReminderPayload<ExtArgs>[]
     inventoryMovements: Prisma.$InventoryMovementPayload<ExtArgs>[]
+    authSessions: Prisma.$AuthSessionPayload<ExtArgs>[]
+    authSecurityEvents: Prisma.$AuthSecurityEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4583,6 +5617,10 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     adminRole: $Enums.AdminRole | null
     isActive: boolean
     tokenVersion: number
+    failedLoginCount: number
+    lockedUntil: Date | null
+    lastLoginAt: Date | null
+    lastPasswordChangedAt: Date | null
     referralCode: string
     referredByUserId: string | null
     createdAt: Date
@@ -5001,6 +6039,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   supportTickets<T extends Prisma.User$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ContactMessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refillReminders<T extends Prisma.User$refillRemindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refillRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefillReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryMovements<T extends Prisma.User$inventoryMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  authSessions<T extends Prisma.User$authSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  authSecurityEvents<T extends Prisma.User$authSecurityEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSecurityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSecurityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5040,6 +6080,10 @@ export interface UserFieldRefs {
   readonly adminRole: Prisma.FieldRef<"User", 'AdminRole'>
   readonly isActive: Prisma.FieldRef<"User", 'Boolean'>
   readonly tokenVersion: Prisma.FieldRef<"User", 'Int'>
+  readonly failedLoginCount: Prisma.FieldRef<"User", 'Int'>
+  readonly lockedUntil: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lastLoginAt: Prisma.FieldRef<"User", 'DateTime'>
+  readonly lastPasswordChangedAt: Prisma.FieldRef<"User", 'DateTime'>
   readonly referralCode: Prisma.FieldRef<"User", 'String'>
   readonly referredByUserId: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
@@ -5912,6 +6956,54 @@ export type User$inventoryMovementsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.InventoryMovementScalarFieldEnum | Prisma.InventoryMovementScalarFieldEnum[]
+}
+
+/**
+ * User.authSessions
+ */
+export type User$authSessionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuthSession
+   */
+  select?: Prisma.AuthSessionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuthSession
+   */
+  omit?: Prisma.AuthSessionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuthSessionInclude<ExtArgs> | null
+  where?: Prisma.AuthSessionWhereInput
+  orderBy?: Prisma.AuthSessionOrderByWithRelationInput | Prisma.AuthSessionOrderByWithRelationInput[]
+  cursor?: Prisma.AuthSessionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuthSessionScalarFieldEnum | Prisma.AuthSessionScalarFieldEnum[]
+}
+
+/**
+ * User.authSecurityEvents
+ */
+export type User$authSecurityEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AuthSecurityEvent
+   */
+  select?: Prisma.AuthSecurityEventSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AuthSecurityEvent
+   */
+  omit?: Prisma.AuthSecurityEventOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AuthSecurityEventInclude<ExtArgs> | null
+  where?: Prisma.AuthSecurityEventWhereInput
+  orderBy?: Prisma.AuthSecurityEventOrderByWithRelationInput | Prisma.AuthSecurityEventOrderByWithRelationInput[]
+  cursor?: Prisma.AuthSecurityEventWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.AuthSecurityEventScalarFieldEnum | Prisma.AuthSecurityEventScalarFieldEnum[]
 }
 
 /**

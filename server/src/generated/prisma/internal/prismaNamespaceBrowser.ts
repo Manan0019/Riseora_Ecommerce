@@ -52,6 +52,8 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  AuthSession: 'AuthSession',
+  AuthSecurityEvent: 'AuthSecurityEvent',
   RewardAccount: 'RewardAccount',
   RewardTransaction: 'RewardTransaction',
   AdminAuditLog: 'AdminAuditLog',
@@ -131,6 +133,10 @@ export const UserScalarFieldEnum = {
   adminRole: 'adminRole',
   isActive: 'isActive',
   tokenVersion: 'tokenVersion',
+  failedLoginCount: 'failedLoginCount',
+  lockedUntil: 'lockedUntil',
+  lastLoginAt: 'lastLoginAt',
+  lastPasswordChangedAt: 'lastPasswordChangedAt',
   referralCode: 'referralCode',
   referredByUserId: 'referredByUserId',
   createdAt: 'createdAt',
@@ -138,6 +144,39 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const AuthSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  tokenVersion: 'tokenVersion',
+  deviceLabel: 'deviceLabel',
+  userAgent: 'userAgent',
+  ipHash: 'ipHash',
+  createdAt: 'createdAt',
+  lastSeenAt: 'lastSeenAt',
+  expiresAt: 'expiresAt',
+  revokedAt: 'revokedAt',
+  revokedReason: 'revokedReason'
+} as const
+
+export type AuthSessionScalarFieldEnum = (typeof AuthSessionScalarFieldEnum)[keyof typeof AuthSessionScalarFieldEnum]
+
+
+export const AuthSecurityEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  sessionId: 'sessionId',
+  identityHash: 'identityHash',
+  deviceLabel: 'deviceLabel',
+  userAgent: 'userAgent',
+  ipHash: 'ipHash',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+} as const
+
+export type AuthSecurityEventScalarFieldEnum = (typeof AuthSecurityEventScalarFieldEnum)[keyof typeof AuthSecurityEventScalarFieldEnum]
 
 
 export const RewardAccountScalarFieldEnum = {

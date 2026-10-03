@@ -486,3 +486,19 @@ See `PHASE23_REPEAT_PURCHASE_SHARED_WISHLIST.md` for the runtime checklist.
 Phase 24 adds production liveness/readiness endpoints, an Admin → System health/backup dashboard, PostgreSQL backup/restore tooling, production env preflight, safe Windows deployment scripts and Docker health/backup persistence.
 
 Start with `README_PHASE24_FIRST.txt` and `PHASE24_PRODUCTION_RELEASE.md`. Runtime production PASS requires the Phase 24 verification/deployment scripts to complete successfully in the target Windows/hosting environment.
+
+## Phase 42 — Account Security, Sessions & Privacy V2
+
+Phase 42 introduces managed per-device login sessions, account-specific failed-login protection, customer security history, password-confirmed account data export and Admin sign-in visibility. It also repairs the Windows `db:doctor` Prisma invocation and moves the storefront to the patched React Router 7.18.4 line.
+
+Useful commands:
+
+```powershell
+npm run db:doctor
+npm run security:tree
+npm run verify:phase42
+npm run security:audit:prod
+npm run security:audit
+```
+
+After deployment, existing JWTs without a managed session ID remain valid until their normal expiry. New sign-ins are represented in **My Account → Security & privacy** and can be individually revoked.

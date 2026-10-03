@@ -20,6 +20,20 @@ enum AdminRole {
   SUPPORT
 }
 
+
+enum AuthSecurityEventType {
+  ACCOUNT_CREATED
+  LOGIN_SUCCESS
+  LOGIN_FAILED
+  LOGIN_BLOCKED
+  LOGOUT
+  PASSWORD_CHANGED
+  PASSWORD_RESET
+  SESSION_REVOKED
+  SESSIONS_REVOKED
+  DATA_EXPORT
+}
+
 enum AddressType {
   HOME
   WORK
@@ -235,6 +249,10 @@ model User {
   adminRole    AdminRole?
   isActive     Boolean  @default(true)
   tokenVersion Int      @default(0)
+  failedLoginCount Int   @default(0)
+  lockedUntil DateTime?
+  lastLoginAt DateTime?
+  lastPasswordChangedAt DateTime?
   referralCode String @unique
   referredByUserId String? @db.Uuid
   referredBy User? @relation("UserReferrals", fields: [referredByUserId], references: [id], onDelete: SetNull)
@@ -258,12 +276,51 @@ model User {
   supportTickets ContactMessage[]
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
+  authSessions AuthSession[]
+  authSecurityEvents AuthSecurityEvent[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([role, isActive, createdAt])
   @@index([referredByUserId, createdAt])
+}
+
+
+model AuthSession {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tokenVersion Int
+  deviceLabel String?
+  userAgent String?
+  ipHash String?
+  createdAt DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+  expiresAt DateTime
+  revokedAt DateTime?
+  revokedReason String?
+
+  @@index([userId, revokedAt, lastSeenAt])
+  @@index([expiresAt])
+}
+
+model AuthSecurityEvent {
+  id String @id @default(uuid()) @db.Uuid
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  type AuthSecurityEventType
+  sessionId String? @db.Uuid
+  identityHash String?
+  deviceLabel String?
+  userAgent String?
+  ipHash String?
+  metadata Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type, createdAt])
+  @@index([identityHash, createdAt])
 }
 
 model RewardAccount {
