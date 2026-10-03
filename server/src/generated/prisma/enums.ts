@@ -119,6 +119,16 @@ export const BannerPlacement = {
 export type BannerPlacement = (typeof BannerPlacement)[keyof typeof BannerPlacement]
 
 
+export const MediaAssetKind = {
+  PRODUCT: 'PRODUCT',
+  BRAND: 'BRAND',
+  CAMPAIGN: 'CAMPAIGN',
+  CATEGORY: 'CATEGORY'
+} as const
+
+export type MediaAssetKind = (typeof MediaAssetKind)[keyof typeof MediaAssetKind]
+
+
 export const CheckoutSessionStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',

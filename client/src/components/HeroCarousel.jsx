@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { mediaUrl } from "../api/http";
 import { Icon } from "./Icons";
 import RichText from "./RichText";
-import OptimizedImage from "./OptimizedImage";
 
 export default function HeroCarousel({ banners = [] }) {
   const slides = useMemo(() => banners.filter(Boolean), [banners]);
@@ -77,7 +76,7 @@ export default function HeroCarousel({ banners = [] }) {
                 {hero.imageUrl ? (
                   <picture>
                     {hero.mobileImageUrl && <source media="(max-width: 639px)" srcSet={mediaUrl(hero.mobileImageUrl)} />}
-                    <OptimizedImage src={mediaUrl(hero.imageUrl)} alt={hero.title} loading={slideIndex === 0 ? "eager" : "lazy"} decoding="async" />
+                    <img src={mediaUrl(hero.imageUrl)} alt={hero.imageAlt || hero.title} loading={slideIndex === 0 ? "eager" : "lazy"} decoding="async" />
                   </picture>
                 ) : (
                   <div className="campaign-placeholder"><span>R</span><strong>RISEORA</strong><small>HERBALS</small><i>your campaign image</i></div>

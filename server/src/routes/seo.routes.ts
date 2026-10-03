@@ -47,15 +47,17 @@ router.get("/robots.txt", (_req, res) => {
 
 router.get("/sitemap.xml", asyncHandler(async (_req, res) => {
   const now = new Date();
-  const [products, deals] = await Promise.all([
+  const [products, deals, campaigns] = await Promise.all([
     prisma.product.findMany({ where: { isActive: true }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
     prisma.merchandisingDeal.findMany({ where: liveDealWhere(now), select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
+    prisma.campaign.findMany({ where: { isPublished: true, AND: [{ OR: [{ startsAt: null }, { startsAt: { lte: now } }] }, { OR: [{ endsAt: null }, { endsAt: { gt: now } }] }] }, select: { slug: true, updatedAt: true }, orderBy: { updatedAt: "desc" } }),
   ]);
   const staticPaths = ["/", "/shop", "/routine-builder", "/offers", "/about", "/contact", "/track-order", "/policies/shipping", "/policies/returns", "/policies/privacy", "/policies/terms"];
   const urls = [
     ...staticPaths.map((path) => ({ loc: `${base()}${path === "/" ? "" : path}`, lastmod: null, priority: path === "/" ? "1.0" : path === "/shop" ? "0.9" : "0.6" })),
     ...products.map((product) => ({ loc: `${base()}/product/${encodeURIComponent(product.slug)}`, lastmod: product.updatedAt.toISOString(), priority: "0.8" })),
     ...deals.map((deal) => ({ loc: `${base()}/offers/${encodeURIComponent(deal.slug)}`, lastmod: deal.updatedAt.toISOString(), priority: "0.7" })),
+    ...campaigns.map((campaign) => ({ loc: `${base()}/campaigns/${encodeURIComponent(campaign.slug)}`, lastmod: campaign.updatedAt.toISOString(), priority: "0.7" })),
   ];
   const body = urls.map((item) => `<url><loc>${xml(item.loc)}</loc>${item.lastmod ? `<lastmod>${item.lastmod}</lastmod>` : ""}<priority>${item.priority}</priority></url>`).join("");
   res.type("application/xml").set("Cache-Control", "public, max-age=900").send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</urlset>`);

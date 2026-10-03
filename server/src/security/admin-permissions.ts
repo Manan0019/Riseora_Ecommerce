@@ -35,8 +35,10 @@ export function permissionForAdminPath(originalUrl: string): AdminPermission {
   if (["/orders", "/dispatch", "/invoices", "/returns", "/cancellations", "/shipping-zones", "/shipping-partners", "/payments"].some((prefix) => pathname.startsWith(prefix))) return "OPERATIONS";
   if (pathname.startsWith("/customers")) return "CUSTOMERS";
   if (pathname.startsWith("/support")) return "SUPPORT";
+  if (pathname.startsWith("/uploads/campaigns")) return "MARKETING";
+  if (pathname.startsWith("/uploads/brand")) return "SETTINGS";
   if (["/categories", "/products", "/inventory", "/suitability-options", "/uploads"].some((prefix) => pathname.startsWith(prefix))) return "CATALOG";
-  if (["/reviews", "/product-questions"].some((prefix) => pathname.startsWith(prefix))) return "CONTENT";
-  if (["/coupons", "/offers", "/banners", "/deals", "/audience", "/contact-messages", "/newsletter", "/cart-recoveries", "/stock-alerts", "/price-alerts", "/retention", "/lifecycle", "/growth", "/rewards"].some((prefix) => pathname.startsWith(prefix))) return "MARKETING";
+  if (["/reviews", "/product-questions", "/media"].some((prefix) => pathname.startsWith(prefix))) return "CONTENT";
+  if (["/coupons", "/offers", "/banners", "/deals", "/campaigns", "/content", "/audience", "/contact-messages", "/newsletter", "/cart-recoveries", "/stock-alerts", "/price-alerts", "/retention", "/lifecycle", "/growth", "/rewards", "/refills"].some((prefix) => pathname.startsWith(prefix))) return "MARKETING";
   return "SYSTEM";
 }

@@ -94,6 +94,9 @@ export const ModelName = {
   Review: 'Review',
   ProductQuestion: 'ProductQuestion',
   Banner: 'Banner',
+  Campaign: 'Campaign',
+  CampaignProduct: 'CampaignProduct',
+  MediaAsset: 'MediaAsset',
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
   SupportMessage: 'SupportMessage',
@@ -920,6 +923,7 @@ export const BannerScalarFieldEnum = {
   description: 'description',
   imageUrl: 'imageUrl',
   mobileImageUrl: 'mobileImageUrl',
+  imageAlt: 'imageAlt',
   ctaText: 'ctaText',
   ctaLink: 'ctaLink',
   background: 'background',
@@ -940,6 +944,62 @@ export const BannerScalarFieldEnum = {
 } as const
 
 export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof BannerScalarFieldEnum]
+
+
+export const CampaignScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  eyebrow: 'eyebrow',
+  title: 'title',
+  summary: 'summary',
+  body: 'body',
+  heroImageUrl: 'heroImageUrl',
+  mobileHeroImageUrl: 'mobileHeroImageUrl',
+  heroAlt: 'heroAlt',
+  ctaText: 'ctaText',
+  ctaLink: 'ctaLink',
+  secondaryCtaText: 'secondaryCtaText',
+  secondaryCtaLink: 'secondaryCtaLink',
+  theme: 'theme',
+  seoTitle: 'seoTitle',
+  seoDescription: 'seoDescription',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  isPublished: 'isPublished',
+  isFeatured: 'isFeatured',
+  priority: 'priority',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CampaignScalarFieldEnum = (typeof CampaignScalarFieldEnum)[keyof typeof CampaignScalarFieldEnum]
+
+
+export const CampaignProductScalarFieldEnum = {
+  campaignId: 'campaignId',
+  productId: 'productId',
+  sortOrder: 'sortOrder'
+} as const
+
+export type CampaignProductScalarFieldEnum = (typeof CampaignProductScalarFieldEnum)[keyof typeof CampaignProductScalarFieldEnum]
+
+
+export const MediaAssetScalarFieldEnum = {
+  id: 'id',
+  kind: 'kind',
+  url: 'url',
+  publicId: 'publicId',
+  originalName: 'originalName',
+  mimeType: 'mimeType',
+  sizeBytes: 'sizeBytes',
+  altText: 'altText',
+  storage: 'storage',
+  isArchived: 'isArchived',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MediaAssetScalarFieldEnum = (typeof MediaAssetScalarFieldEnum)[keyof typeof MediaAssetScalarFieldEnum]
 
 
 export const CartRecoverySessionScalarFieldEnum = {

@@ -257,6 +257,21 @@ export type ProductQuestion = Prisma.ProductQuestionModel
  */
 export type Banner = Prisma.BannerModel
 /**
+ * Model Campaign
+ * 
+ */
+export type Campaign = Prisma.CampaignModel
+/**
+ * Model CampaignProduct
+ * 
+ */
+export type CampaignProduct = Prisma.CampaignProductModel
+/**
+ * Model MediaAsset
+ * 
+ */
+export type MediaAsset = Prisma.MediaAssetModel
+/**
  * Model CartRecoverySession
  * 
  */

@@ -75,10 +75,14 @@
     "AuthSession",
     "AuthSecurityEvent",
     "User failed-login lockout telemetry",
-    "User last login/password change timestamps"
+    "User last login/password change timestamps",
+    "Campaign",
+    "CampaignProduct",
+    "MediaAsset",
+    "Banner.imageAlt"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": "Phase 42 \u2014 Account Security, Sessions & Privacy V2",
+  "latestPhase": "Phase 43 \u2014 Content Studio, Campaign Publishing & Media Library V2",
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -245,7 +249,7 @@
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
   },
-  "currentPhase": "Phase 42 \u2014 Account Security, Sessions & Privacy V2",
+  "currentPhase": "Phase 43 \u2014 Content Studio, Campaign Publishing & Media Library V2",
   "lastUpdated": "2026-10-03",
   "phase36": {
     "name": "Riseora Rewards & Referrals V2",
@@ -356,5 +360,22 @@
     ],
     "migration": "20261003174500_phase42_account_security_sessions",
     "verification": "npm run verify:phase42"
+  },
+  "phase43": {
+    "name": "Content Studio, Campaign Publishing & Media Library V2",
+    "features": [
+      "repairs missing Phase 38 Refills/AdminRefills page delivery that caused Phase 42 unresolved-import verification failure",
+      "scheduled draft/live/expired campaign landing pages with SEO metadata, desktop/mobile hero media and curated products",
+      "Admin Content Studio with campaign create/edit/duplicate/delete, publishing windows, featured placement and inline preview",
+      "featured live campaign storytelling cards on the homepage",
+      "reusable Media Library indexes new Admin product/category/brand/campaign uploads with alt-text editing and archive controls",
+      "content health checks flag missing campaign SEO, hero alt text, desktop/mobile banner media and media accessibility gaps",
+      "homepage banner image alt text is stored and rendered for accessibility",
+      "campaign URLs are included in the production sitemap only while the campaign is live",
+      "safe internal campaign CTA validation blocks protocol-relative/backslash redirect patterns",
+      "Phase 43 audit verifies missing Refills pages, content routes, Prisma models and all frontend relative imports"
+    ],
+    "migration": "20261003213000_phase43_content_campaign_studio",
+    "verification": "npm run verify:phase43"
   }
 }

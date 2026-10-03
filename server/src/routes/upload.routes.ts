@@ -11,6 +11,7 @@ import {
   storeProductImage,
   storeReviewImage,
   storeReturnImage,
+  registerMediaAsset,
 } from "../services/media.service";
 
 const router = Router();
@@ -66,11 +67,11 @@ router.post("/products", upload.array("images", 8), async (req, res, next) => {
     const files = (req.files as Express.Multer.File[] | undefined) ?? [];
     if (files.length === 0) return res.status(400).json({ success: false, message: "Select at least one image" });
     const stored = await Promise.all(
-      files.map(async (file) => ({
-        ...(await storeProductImage(file.buffer, file.mimetype)),
-        originalName: file.originalname,
-        size: file.size,
-      })),
+      files.map(async (file) => {
+        const stored = await storeProductImage(file.buffer, file.mimetype);
+        await registerMediaAsset({ kind: "PRODUCT", ...stored, originalName: file.originalname, mimeType: file.mimetype, sizeBytes: file.size });
+        return { ...stored, originalName: file.originalname, size: file.size };
+      }),
     );
     res.status(201).json({ success: true, storage: cloudMediaEnabled ? "cloudinary" : "local", data: stored });
   } catch (error) {
@@ -83,6 +84,7 @@ router.post("/brand", upload.single("image"), async (req, res, next) => {
     const file = req.file;
     if (!file) return res.status(400).json({ success: false, message: "Select a logo image" });
     const stored = await storeBrandImage(file.buffer, file.mimetype);
+    await registerMediaAsset({ kind: "BRAND", ...stored, originalName: file.originalname, mimeType: file.mimetype, sizeBytes: file.size });
     res.status(201).json({
       success: true,
       storage: cloudMediaEnabled ? "cloudinary" : "local",
@@ -99,6 +101,7 @@ router.post("/categories", upload.single("image"), async (req, res, next) => {
     const file = req.file;
     if (!file) return res.status(400).json({ success: false, message: "Select a category image" });
     const stored = await storeCategoryImage(file.buffer, file.mimetype);
+    await registerMediaAsset({ kind: "CATEGORY", ...stored, originalName: file.originalname, mimeType: file.mimetype, sizeBytes: file.size });
     res.status(201).json({
       success: true,
       storage: cloudMediaEnabled ? "cloudinary" : "local",
@@ -114,6 +117,7 @@ router.post("/campaigns", upload.single("image"), async (req, res, next) => {
     const file = req.file;
     if (!file) return res.status(400).json({ success: false, message: "Select a campaign image" });
     const stored = await storeCampaignImage(file.buffer, file.mimetype);
+    await registerMediaAsset({ kind: "CAMPAIGN", ...stored, originalName: file.originalname, mimeType: file.mimetype, sizeBytes: file.size });
     res.status(201).json({
       success: true,
       storage: cloudMediaEnabled ? "cloudinary" : "local",

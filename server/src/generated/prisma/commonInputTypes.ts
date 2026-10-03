@@ -769,6 +769,23 @@ export type EnumBannerPlacementWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumBannerPlacementFilter<$PrismaModel>
 }
 
+export type EnumMediaAssetKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaAssetKind | Prisma.EnumMediaAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel> | $Enums.MediaAssetKind
+}
+
+export type EnumMediaAssetKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaAssetKind | Prisma.EnumMediaAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMediaAssetKindWithAggregatesFilter<$PrismaModel> | $Enums.MediaAssetKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel>
+}
+
 export type EnumCartRecoveryStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.CartRecoveryStatus | Prisma.EnumCartRecoveryStatusFieldRefInput<$PrismaModel>
   in?: $Enums.CartRecoveryStatus[] | Prisma.ListEnumCartRecoveryStatusFieldRefInput<$PrismaModel>
@@ -1681,6 +1698,23 @@ export type NestedEnumBannerPlacementWithAggregatesFilter<$PrismaModel = never> 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumBannerPlacementFilter<$PrismaModel>
   _max?: Prisma.NestedEnumBannerPlacementFilter<$PrismaModel>
+}
+
+export type NestedEnumMediaAssetKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaAssetKind | Prisma.EnumMediaAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel> | $Enums.MediaAssetKind
+}
+
+export type NestedEnumMediaAssetKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MediaAssetKind | Prisma.EnumMediaAssetKindFieldRefInput<$PrismaModel>
+  in?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MediaAssetKind[] | Prisma.ListEnumMediaAssetKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMediaAssetKindWithAggregatesFilter<$PrismaModel> | $Enums.MediaAssetKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMediaAssetKindFilter<$PrismaModel>
 }
 
 export type NestedEnumCartRecoveryStatusFilter<$PrismaModel = never> = {

@@ -85,6 +85,13 @@ enum BannerPlacement {
   HOME_STRIP
 }
 
+enum MediaAssetKind {
+  PRODUCT
+  BRAND
+  CAMPAIGN
+  CATEGORY
+}
+
 enum CheckoutSessionStatus {
   PENDING
   PAID
@@ -484,6 +491,7 @@ model Product {
   questions ProductQuestion[]
   couponLinks CouponProduct[]
   wishlistItems WishlistItem[]
+  campaignLinks CampaignProduct[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1280,6 +1288,7 @@ model Banner {
   description    String?
   imageUrl       String?
   mobileImageUrl String?
+  imageAlt       String?
   ctaText        String?
   ctaLink        String?
   background     String?
@@ -1304,6 +1313,71 @@ model Banner {
   @@index([startsAt, endsAt])
 }
 
+
+model Campaign {
+  id String @id @default(uuid()) @db.Uuid
+
+  slug String @unique
+  eyebrow String?
+  title String
+  summary String?
+  body String?
+  heroImageUrl String?
+  mobileHeroImageUrl String?
+  heroAlt String?
+  ctaText String?
+  ctaLink String?
+  secondaryCtaText String?
+  secondaryCtaLink String?
+  theme String @default("HERBAL")
+  seoTitle String?
+  seoDescription String?
+
+  startsAt DateTime?
+  endsAt DateTime?
+  isPublished Boolean @default(false)
+  isFeatured Boolean @default(false)
+  priority Int @default(0)
+
+  products CampaignProduct[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isPublished, startsAt, endsAt])
+  @@index([isFeatured, priority])
+}
+
+model CampaignProduct {
+  campaignId String @db.Uuid
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+
+  productId String @db.Uuid
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  sortOrder Int @default(0)
+
+  @@id([campaignId, productId])
+  @@index([productId])
+}
+
+model MediaAsset {
+  id String @id @default(uuid()) @db.Uuid
+  kind MediaAssetKind
+  url String @unique
+  publicId String?
+  originalName String?
+  mimeType String?
+  sizeBytes Int?
+  altText String?
+  storage String @default("local")
+  isArchived Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind, isArchived, createdAt])
+}
 
 model CartRecoverySession {
   id String @id @default(uuid()) @db.Uuid

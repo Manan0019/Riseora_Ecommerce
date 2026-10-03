@@ -33,6 +33,7 @@ export default function Home() {
   const [offers, setOffers] = useState([]);
   const [banners, setBanners] = useState([]);
   const [deals, setDeals] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [recent, setRecent] = useState([]);
   const [error, setError] = useState("");
 
@@ -44,12 +45,14 @@ export default function Home() {
       apiFetch("/promotions/offers"),
       apiFetch("/promotions/banners?placement=HOME_HERO"),
       apiFetch("/promotions/deals?featured=true"),
-    ]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult]) => {
+      apiFetch("/campaigns?featured=true&limit=3"),
+    ]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult, campaignResult]) => {
       if (productResult.status === "fulfilled") setProducts(productResult.value.data); else setError(productResult.reason?.message || "Unable to load products");
       if (categoryResult.status === "fulfilled") setCategories(categoryResult.value.data);
       if (offerResult.status === "fulfilled") setOffers(offerResult.value.data);
       if (bannerResult.status === "fulfilled") setBanners(bannerResult.value.data);
       if (dealResult.status === "fulfilled") setDeals(dealResult.value.data);
+      if (campaignResult.status === "fulfilled") setCampaigns(campaignResult.value.data);
     });
   }, []);
 
@@ -104,6 +107,12 @@ export default function Home() {
 
     <div className="phase18-home-bestsellers"><ProductShelf title="Bestsellers" eyebrow="CUSTOMER FAVOURITES" products={bestsellers} empty={error} /></div>
     <div className="phase18-home-new"><ProductShelf title="Newly launched" eyebrow="FRESH PICKS" products={newest} /></div>
+
+    {campaigns.length > 0 && <section className="container phase3-section phase43-home-campaigns">
+      <div className="section-title-row"><div><p className="phase3-eyebrow">RISEORA EDITS</p><h2>Stories worth shopping</h2></div></div>
+      <div className="phase43-home-campaign-grid">{campaigns.map((item) => <Link key={item.id} className={`phase43-home-campaign phase43-theme-${String(item.theme || "HERBAL").toLowerCase()}`} to={`/campaigns/${item.slug}`}><div className="phase43-home-campaign-image">{item.heroImageUrl ? <img src={mediaUrl(item.heroImageUrl)} alt={item.heroAlt || item.title} loading="lazy" /> : <span>R</span>}</div><div><small>{item.eyebrow || "RISEORA EDIT"}</small><h3>{item.title}</h3>{item.summary && <p>{item.summary}</p>}<strong>{item.ctaText || "DISCOVER THE EDIT"} →</strong></div></Link>)}</div>
+    </section>}
+
     <div className="phase18-home-trending"><ProductShelf title="Trending now" eyebrow="WHAT'S HOT" products={trending} /></div>
 
     {offers.length > 0 && <section className="container phase3-section promo-card-row phase18-home-offers">

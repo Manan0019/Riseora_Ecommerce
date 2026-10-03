@@ -89,3 +89,40 @@ export function storeReviewImage(buffer: Buffer, mime: string) {
 export function storeReturnImage(buffer: Buffer, mime: string) {
   return storeImage(buffer, mime, "returns");
 }
+
+export type MediaLibraryKind = "PRODUCT" | "BRAND" | "CAMPAIGN" | "CATEGORY";
+
+export async function registerMediaAsset(input: {
+  kind: MediaLibraryKind;
+  url: string;
+  publicId?: string | null;
+  originalName?: string | null;
+  mimeType?: string | null;
+  sizeBytes?: number | null;
+  storage?: string | null;
+  altText?: string | null;
+}) {
+  const { prisma } = await import("../config/prisma");
+  return prisma.mediaAsset.upsert({
+    where: { url: input.url },
+    update: {
+      publicId: input.publicId || null,
+      originalName: input.originalName || null,
+      mimeType: input.mimeType || null,
+      sizeBytes: input.sizeBytes ?? null,
+      storage: input.storage || (cloudMediaEnabled ? "cloudinary" : "local"),
+      ...(input.altText !== undefined ? { altText: input.altText || null } : {}),
+      isArchived: false,
+    },
+    create: {
+      kind: input.kind,
+      url: input.url,
+      publicId: input.publicId || null,
+      originalName: input.originalName || null,
+      mimeType: input.mimeType || null,
+      sizeBytes: input.sizeBytes ?? null,
+      altText: input.altText || null,
+      storage: input.storage || (cloudMediaEnabled ? "cloudinary" : "local"),
+    },
+  });
+}

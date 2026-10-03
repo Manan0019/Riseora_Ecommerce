@@ -5,7 +5,7 @@ import RichText from "../../components/RichText";
 
 const emptyCoupon = { id: "", code: "", description: "", discountType: "PERCENTAGE", discountValue: "", scope: "ORDER", application: "ORDER_TOTAL", productIds: [], categoryIds: [], minOrderAmount: "", maxDiscountAmount: "", usageLimit: "", perCustomerUsageLimit: "1", startsAt: "", endsAt: "" };
 const emptyOffer = { title: "", description: "", badge: "", ctaText: "Shop now", ctaLink: "/shop", startsAt: "", endsAt: "" };
-const emptyBanner = { id: "", placement: "HOME_HERO", eyebrow: "RISEORA HERBALS", title: "", description: "", imageUrl: "", mobileImageUrl: "", ctaText: "SHOP NOW", ctaLink: "/shop", background: "#d8a693", textColor: "#11251c", titleFontFamily: "Inter", titleFontWeight: "900", titleFontStyle: "normal", titleTextAlign: "left", titleSize: "XL", descriptionFontFamily: "Inter", descriptionTextAlign: "left", priority: "0", startsAt: "", endsAt: "" };
+const emptyBanner = { id: "", placement: "HOME_HERO", eyebrow: "RISEORA HERBALS", title: "", description: "", imageUrl: "", mobileImageUrl: "", imageAlt: "", ctaText: "SHOP NOW", ctaLink: "/shop", background: "#d8a693", textColor: "#11251c", titleFontFamily: "Inter", titleFontWeight: "900", titleFontStyle: "normal", titleTextAlign: "left", titleSize: "XL", descriptionFontFamily: "Inter", descriptionTextAlign: "left", priority: "0", startsAt: "", endsAt: "" };
 
 function optionalNumber(value) { return value === "" ? undefined : Number(value); }
 function optionalDate(value) { return value ? new Date(value).toISOString() : undefined; }
@@ -99,7 +99,7 @@ export default function AdminPromotions() {
   async function saveBanner(event) {
     event.preventDefault(); setError(""); setMessage("");
     const payload = {
-      placement: banner.placement, eyebrow: banner.eyebrow, title: banner.title, description: banner.description, imageUrl: banner.imageUrl, mobileImageUrl: banner.mobileImageUrl,
+      placement: banner.placement, eyebrow: banner.eyebrow, title: banner.title, description: banner.description, imageUrl: banner.imageUrl, mobileImageUrl: banner.mobileImageUrl, imageAlt: banner.imageAlt,
       ctaText: banner.ctaText, ctaLink: banner.ctaLink, background: banner.background, textColor: banner.textColor,
       titleFontFamily: banner.titleFontFamily, titleFontWeight: Number(banner.titleFontWeight || 900), titleFontStyle: banner.titleFontStyle, titleTextAlign: banner.titleTextAlign, titleSize: banner.titleSize,
       descriptionFontFamily: banner.descriptionFontFamily, descriptionTextAlign: banner.descriptionTextAlign,
@@ -113,7 +113,7 @@ export default function AdminPromotions() {
 
   function editBanner(item) {
     setBanner({
-      id: item.id, placement: item.placement, eyebrow: item.eyebrow || "", title: item.title || "", description: item.description || "", imageUrl: item.imageUrl || "", mobileImageUrl: item.mobileImageUrl || "",
+      id: item.id, placement: item.placement, eyebrow: item.eyebrow || "", title: item.title || "", description: item.description || "", imageUrl: item.imageUrl || "", mobileImageUrl: item.mobileImageUrl || "", imageAlt: item.imageAlt || "",
       ctaText: item.ctaText || "", ctaLink: item.ctaLink || "", background: item.background || "#d8a693", textColor: item.textColor || "#11251c",
       titleFontFamily: item.titleFontFamily || "Inter", titleFontWeight: String(item.titleFontWeight || 900), titleFontStyle: item.titleFontStyle || "normal", titleTextAlign: item.titleTextAlign || "left", titleSize: item.titleSize || "XL",
       descriptionFontFamily: item.descriptionFontFamily || "Inter", descriptionTextAlign: item.descriptionTextAlign || "left", priority: String(item.priority || 0), startsAt: dateInput(item.startsAt), endsAt: dateInput(item.endsAt),
@@ -151,6 +151,7 @@ export default function AdminPromotions() {
         <CampaignStylePreview banner={banner} />
         <div className="admin-field-grid two"><label>Description font<select value={banner.descriptionFontFamily} onChange={(e) => setBanner({ ...banner, descriptionFontFamily: e.target.value })}>{["Inter","Georgia","Arial","Verdana","Times New Roman","Trebuchet MS"].map((font) => <option key={font}>{font}</option>)}</select></label><label>Description alignment<select value={banner.descriptionTextAlign} onChange={(e) => setBanner({ ...banner, descriptionTextAlign: e.target.value })}><option value="left">Left</option><option value="center">Center</option><option value="right">Right</option><option value="justify">Justify</option></select></label></div>
         <div className="phase12-campaign-upload-grid"><CampaignUpload label="Desktop image" value={banner.imageUrl} busy={uploadingCampaign === "imageUrl"} onUpload={(file) => uploadCampaign(file, "imageUrl")} onChange={(value) => setBanner({ ...banner, imageUrl: value })} /><CampaignUpload label="Mobile portrait image" value={banner.mobileImageUrl} busy={uploadingCampaign === "mobileImageUrl"} onUpload={(file) => uploadCampaign(file, "mobileImageUrl")} onChange={(value) => setBanner({ ...banner, mobileImageUrl: value })} /></div>
+        <label>Image alt text<input value={banner.imageAlt} onChange={(e) => setBanner({ ...banner, imageAlt: e.target.value })} placeholder="Describe the campaign visual for accessibility" /></label>
         <div className="admin-field-grid two"><label>Button text<input value={banner.ctaText} onChange={(e) => setBanner({ ...banner, ctaText: e.target.value })} /></label><label>Button link<input value={banner.ctaLink} onChange={(e) => setBanner({ ...banner, ctaLink: e.target.value })} /></label></div>
         <div className="admin-field-grid three"><label>Background<input value={banner.background} onChange={(e) => setBanner({ ...banner, background: e.target.value })} placeholder="#d8a693" /></label><label>Text color<input value={banner.textColor} onChange={(e) => setBanner({ ...banner, textColor: e.target.value })} placeholder="#11251c" /></label><label>Priority<input type="number" min="0" value={banner.priority} onChange={(e) => setBanner({ ...banner, priority: e.target.value })} /></label></div>
         <div className="admin-field-grid two"><label>Starts<input type="datetime-local" value={banner.startsAt} onChange={(e) => setBanner({ ...banner, startsAt: e.target.value })} /></label><label>Ends<input type="datetime-local" value={banner.endsAt} onChange={(e) => setBanner({ ...banner, endsAt: e.target.value })} /></label></div>

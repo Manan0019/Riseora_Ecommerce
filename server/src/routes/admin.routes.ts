@@ -777,6 +777,7 @@ const bannerSchema = z.object({
   description: z.string().trim().max(12000).optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
   mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
+  imageAlt: z.string().trim().max(180).optional().or(z.literal("")),
   ctaText: z.string().trim().max(60).optional().or(z.literal("")),
   ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
   background: z.string().trim().max(40).optional().or(z.literal("")),
@@ -817,6 +818,7 @@ router.post(
         description: parsed.data.description || null,
         imageUrl: parsed.data.imageUrl || null,
         mobileImageUrl: parsed.data.mobileImageUrl || null,
+        imageAlt: parsed.data.imageAlt || null,
         ctaText: parsed.data.ctaText || null,
         ctaLink: parsed.data.ctaLink || null,
         background: parsed.data.background || null,
@@ -844,6 +846,7 @@ const bannerUpdateSchema = z.object({
   description: z.string().trim().max(12000).optional().or(z.literal("")),
   imageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid desktop image URL"),
   mobileImageUrl: z.string().trim().optional().or(z.literal("")).refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid mobile image URL"),
+  imageAlt: z.string().trim().max(180).optional().or(z.literal("")),
   ctaText: z.string().trim().max(60).optional().or(z.literal("")),
   ctaLink: z.string().trim().max(220).optional().or(z.literal("")),
   background: z.string().trim().max(40).optional().or(z.literal("")),
@@ -868,7 +871,7 @@ router.patch(
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid banner update", errors: parsed.success ? undefined : parsed.error.flatten() });
 
     const data: any = { ...parsed.data };
-    for (const key of ["eyebrow", "description", "imageUrl", "mobileImageUrl", "ctaText", "ctaLink", "background", "textColor", "titleFontFamily", "descriptionFontFamily"]) {
+    for (const key of ["eyebrow", "description", "imageUrl", "mobileImageUrl", "imageAlt", "ctaText", "ctaLink", "background", "textColor", "titleFontFamily", "descriptionFontFamily"]) {
       if (key in data && data[key] === "") data[key] = null;
     }
     if ("startsAt" in data) data.startsAt = data.startsAt ? new Date(data.startsAt) : null;
