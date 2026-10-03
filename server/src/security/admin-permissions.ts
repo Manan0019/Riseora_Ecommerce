@@ -29,6 +29,7 @@ export function permissionForAdminPath(originalUrl: string): AdminPermission {
   const pathname = String(originalUrl || "").split("?")[0].replace(/^\/api\/admin/, "") || "/";
   if (pathname === "/" || pathname.startsWith("/dashboard") || pathname.startsWith("/reports")) return "DASHBOARD";
   if (pathname.startsWith("/security")) return "SECURITY";
+  if (pathname.startsWith("/compliance")) return "SECURITY";
   if (pathname.startsWith("/finance")) return "FINANCE";
   if (pathname.startsWith("/settings")) return "SETTINGS";
   if (pathname.startsWith("/erp-sync")) return "ERP";

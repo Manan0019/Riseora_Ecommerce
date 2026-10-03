@@ -128,3 +128,23 @@ export async function sendRefillReminderEmail(input: { email: string; firstName?
   });
   return true;
 }
+
+export async function sendNewsletterPreferenceEmail(input: { email: string; unsubscribeToken: string }) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  const url = `${baseUrl()}/unsubscribe?token=${encodeURIComponent(input.unsubscribeToken)}`;
+  await sendRiseoraEmail({
+    to: input.email,
+    subject: "Manage your Riseora email preference",
+    template: "newsletter-preference",
+    idempotencyKey: `newsletter-preference/${input.email}/${new Date().toISOString().slice(0, 10)}`,
+    html: renderRiseoraEmail({
+      eyebrow: "PRIVACY & EMAIL",
+      title: "Manage your Riseora marketing email.",
+      bodyHtml: "<p>You asked for a secure link to manage optional Riseora marketing email.</p><p>Order, payment, security, support and other service messages are separate from this marketing preference.</p>",
+      ctaLabel: "Unsubscribe from marketing email",
+      ctaUrl: url,
+      footnote: "If you did not request this link, you can ignore this email.",
+    }),
+  });
+  return true;
+}

@@ -103,6 +103,9 @@ export const ModelName = {
   SupportMessage: 'SupportMessage',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
+  MarketingPreference: 'MarketingPreference',
+  ConsentEvent: 'ConsentEvent',
+  PrivacyRequest: 'PrivacyRequest',
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
   RefillReminder: 'RefillReminder',
@@ -585,6 +588,7 @@ export const StoreSettingScalarFieldEnum = {
   returnPolicy: 'returnPolicy',
   shippingPolicy: 'shippingPolicy',
   privacyPolicy: 'privacyPolicy',
+  privacyPolicyVersion: 'privacyPolicyVersion',
   termsPolicy: 'termsPolicy',
   brandTagline: 'brandTagline',
   logoUrl: 'logoUrl',
@@ -1124,6 +1128,9 @@ export const NewsletterSubscriberScalarFieldEnum = {
   email: 'email',
   name: 'name',
   source: 'source',
+  consentVersion: 'consentVersion',
+  consentSource: 'consentSource',
+  unsubscribeToken: 'unsubscribeToken',
   isActive: 'isActive',
   subscribedAt: 'subscribedAt',
   unsubscribedAt: 'unsubscribedAt',
@@ -1132,6 +1139,52 @@ export const NewsletterSubscriberScalarFieldEnum = {
 } as const
 
 export type NewsletterSubscriberScalarFieldEnum = (typeof NewsletterSubscriberScalarFieldEnum)[keyof typeof NewsletterSubscriberScalarFieldEnum]
+
+
+export const MarketingPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  emailMarketing: 'emailMarketing',
+  smsMarketing: 'smsMarketing',
+  whatsappMarketing: 'whatsappMarketing',
+  lastSource: 'lastSource',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MarketingPreferenceScalarFieldEnum = (typeof MarketingPreferenceScalarFieldEnum)[keyof typeof MarketingPreferenceScalarFieldEnum]
+
+
+export const ConsentEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  email: 'email',
+  purpose: 'purpose',
+  decision: 'decision',
+  source: 'source',
+  policyVersion: 'policyVersion',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type ConsentEventScalarFieldEnum = (typeof ConsentEventScalarFieldEnum)[keyof typeof ConsentEventScalarFieldEnum]
+
+
+export const PrivacyRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  message: 'message',
+  adminNote: 'adminNote',
+  requestedAt: 'requestedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrivacyRequestScalarFieldEnum = (typeof PrivacyRequestScalarFieldEnum)[keyof typeof PrivacyRequestScalarFieldEnum]
 
 
 export const StockAlertScalarFieldEnum = {

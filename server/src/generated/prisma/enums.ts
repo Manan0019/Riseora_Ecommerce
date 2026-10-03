@@ -253,6 +253,45 @@ export const EmailDeliveryStatus = {
 export type EmailDeliveryStatus = (typeof EmailDeliveryStatus)[keyof typeof EmailDeliveryStatus]
 
 
+export const ConsentPurpose = {
+  ANALYTICS: 'ANALYTICS',
+  NEWSLETTER: 'NEWSLETTER',
+  EMAIL_MARKETING: 'EMAIL_MARKETING',
+  SMS_MARKETING: 'SMS_MARKETING',
+  WHATSAPP_MARKETING: 'WHATSAPP_MARKETING'
+} as const
+
+export type ConsentPurpose = (typeof ConsentPurpose)[keyof typeof ConsentPurpose]
+
+
+export const ConsentDecision = {
+  GRANTED: 'GRANTED',
+  WITHDRAWN: 'WITHDRAWN'
+} as const
+
+export type ConsentDecision = (typeof ConsentDecision)[keyof typeof ConsentDecision]
+
+
+export const PrivacyRequestType = {
+  ERASURE: 'ERASURE',
+  CORRECTION: 'CORRECTION',
+  OTHER: 'OTHER'
+} as const
+
+export type PrivacyRequestType = (typeof PrivacyRequestType)[keyof typeof PrivacyRequestType]
+
+
+export const PrivacyRequestStatus = {
+  OPEN: 'OPEN',
+  IN_REVIEW: 'IN_REVIEW',
+  RESOLVED: 'RESOLVED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PrivacyRequestStatus = (typeof PrivacyRequestStatus)[keyof typeof PrivacyRequestStatus]
+
+
 export const CartRecoveryStatus = {
   ACTIVE: 'ACTIVE',
   CONVERTED: 'CONVERTED',

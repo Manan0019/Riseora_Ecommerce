@@ -302,6 +302,21 @@ export type EmailDeliveryLog = Prisma.EmailDeliveryLogModel
  */
 export type NewsletterSubscriber = Prisma.NewsletterSubscriberModel
 /**
+ * Model MarketingPreference
+ * 
+ */
+export type MarketingPreference = Prisma.MarketingPreferenceModel
+/**
+ * Model ConsentEvent
+ * 
+ */
+export type ConsentEvent = Prisma.ConsentEventModel
+/**
+ * Model PrivacyRequest
+ * 
+ */
+export type PrivacyRequest = Prisma.PrivacyRequestModel
+/**
  * Model StockAlert
  * 
  */

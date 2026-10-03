@@ -410,5 +410,22 @@
     ],
     "migration": "20261003193000_phase45_finance_gst_reconciliation",
     "verification": "npm run verify:phase45"
+  },
+  "phase46": {
+    "name": "Consent, Communications & Privacy Operations V2",
+    "features": [
+      "customer Privacy Center for optional email/SMS/WhatsApp marketing choices and analytics consent",
+      "append-only consent ledger snapshots purpose, grant/withdrawal, source and privacy-policy version with privacy-preserving network fingerprinting",
+      "explicit newsletter consent at registration/footer plus secure preference-link and tokenized one-click unsubscribe support",
+      "registered email-marketing preference remains synchronized with the newsletter suppression list",
+      "Admin cannot silently re-subscribe a customer after withdrawal; customer must opt in again",
+      "privacy request workflow for correction, erasure review and other requests with password confirmation for erasure",
+      "Admin Privacy operations dashboard with opt-in KPIs, consent ledger CSV and privacy request queue",
+      "privacy-policy version is configurable and snapshotted into future consent events",
+      "customer account export now includes marketing preferences, consent history and privacy requests",
+      "analytics banner choices are mirrored to the server consent ledger while local analytics loading remains browser-controlled"
+    ],
+    "migration": "20261004003000_phase46_privacy_consent_v2",
+    "verification": "npm run verify:phase46"
   }
 }

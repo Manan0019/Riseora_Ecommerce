@@ -905,6 +905,74 @@ export type EnumEmailDeliveryStatusWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumEmailDeliveryStatusFilter<$PrismaModel>
 }
 
+export type EnumConsentPurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentPurpose | Prisma.EnumConsentPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel> | $Enums.ConsentPurpose
+}
+
+export type EnumConsentDecisionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentDecision | Prisma.EnumConsentDecisionFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel> | $Enums.ConsentDecision
+}
+
+export type EnumConsentPurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentPurpose | Prisma.EnumConsentPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentPurposeWithAggregatesFilter<$PrismaModel> | $Enums.ConsentPurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel>
+}
+
+export type EnumConsentDecisionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentDecision | Prisma.EnumConsentDecisionFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentDecisionWithAggregatesFilter<$PrismaModel> | $Enums.ConsentDecision
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel>
+}
+
+export type EnumPrivacyRequestTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestType | Prisma.EnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel> | $Enums.PrivacyRequestType
+}
+
+export type EnumPrivacyRequestStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestStatus | Prisma.EnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel> | $Enums.PrivacyRequestStatus
+}
+
+export type EnumPrivacyRequestTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestType | Prisma.EnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestTypeWithAggregatesFilter<$PrismaModel> | $Enums.PrivacyRequestType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel>
+}
+
+export type EnumPrivacyRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestStatus | Prisma.EnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.PrivacyRequestStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel>
+}
+
 export type EnumStockAlertStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.StockAlertStatus | Prisma.EnumStockAlertStatusFieldRefInput<$PrismaModel>
   in?: $Enums.StockAlertStatus[] | Prisma.ListEnumStockAlertStatusFieldRefInput<$PrismaModel>
@@ -1851,6 +1919,74 @@ export type NestedEnumEmailDeliveryStatusWithAggregatesFilter<$PrismaModel = nev
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumEmailDeliveryStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumEmailDeliveryStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumConsentPurposeFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentPurpose | Prisma.EnumConsentPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel> | $Enums.ConsentPurpose
+}
+
+export type NestedEnumConsentDecisionFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentDecision | Prisma.EnumConsentDecisionFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel> | $Enums.ConsentDecision
+}
+
+export type NestedEnumConsentPurposeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentPurpose | Prisma.EnumConsentPurposeFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentPurpose[] | Prisma.ListEnumConsentPurposeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentPurposeWithAggregatesFilter<$PrismaModel> | $Enums.ConsentPurpose
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConsentPurposeFilter<$PrismaModel>
+}
+
+export type NestedEnumConsentDecisionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ConsentDecision | Prisma.EnumConsentDecisionFieldRefInput<$PrismaModel>
+  in?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ConsentDecision[] | Prisma.ListEnumConsentDecisionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumConsentDecisionWithAggregatesFilter<$PrismaModel> | $Enums.ConsentDecision
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumConsentDecisionFilter<$PrismaModel>
+}
+
+export type NestedEnumPrivacyRequestTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestType | Prisma.EnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel> | $Enums.PrivacyRequestType
+}
+
+export type NestedEnumPrivacyRequestStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestStatus | Prisma.EnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel> | $Enums.PrivacyRequestStatus
+}
+
+export type NestedEnumPrivacyRequestTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestType | Prisma.EnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestType[] | Prisma.ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestTypeWithAggregatesFilter<$PrismaModel> | $Enums.PrivacyRequestType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPrivacyRequestTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumPrivacyRequestStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PrivacyRequestStatus | Prisma.EnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PrivacyRequestStatus[] | Prisma.ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPrivacyRequestStatusWithAggregatesFilter<$PrismaModel> | $Enums.PrivacyRequestStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPrivacyRequestStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumStockAlertStatusFilter<$PrismaModel = never> = {

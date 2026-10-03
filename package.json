@@ -46,7 +46,8 @@
     "verify:phase42": "node scripts/phase42-account-security-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase43": "node scripts/phase43-content-studio-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase44": "node scripts/phase44-fulfilment-shipping-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase46": "node scripts/phase46-privacy-consent-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

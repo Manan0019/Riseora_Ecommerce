@@ -49,6 +49,7 @@ const settingsSchema = z.object({
   returnPolicy: z.string().trim().max(10000).nullable().optional(),
   shippingPolicy: z.string().trim().max(10000).nullable().optional(),
   privacyPolicy: z.string().trim().max(20000).nullable().optional(),
+  privacyPolicyVersion: z.string().trim().min(1).max(40).optional(),
   termsPolicy: z.string().trim().max(20000).nullable().optional(),
   brandTagline: z.string().trim().max(240).nullable().optional(),
   logoUrl: z.string().trim().max(1000).nullable().optional().refine((value) => !value || value.startsWith("/uploads/") || /^https?:\/\//i.test(value), "Invalid logo URL"),

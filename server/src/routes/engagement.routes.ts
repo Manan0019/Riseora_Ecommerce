@@ -8,6 +8,7 @@ import { optionalAuth } from "../middleware/auth";
 import { createUserNotification } from "../services/notification-center.service";
 import { sendSupportAdminNotification, sendSupportTicketReceived } from "../services/notification.service";
 import { availableToSell } from "../services/inventory.service";
+import { currentPrivacyPolicyVersion, recordConsentEvent } from "../services/consent.service";
 
 const router = Router();
 router.use(optionalAuth);
@@ -57,24 +58,43 @@ const newsletterSchema = z.object({
   email: z.string().trim().email().max(200),
   name: z.string().trim().max(120).optional().or(z.literal("")),
   source: z.string().trim().max(80).optional().or(z.literal("")),
+  consent: z.literal(true),
 });
 
 router.post("/newsletter", publicWriteLimit, asyncHandler(async (req, res) => {
   const parsed = newsletterSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid email address" });
   const email = parsed.data.email.toLowerCase();
-  await prisma.newsletterSubscriber.upsert({
-    where: { email },
-    create: { email, name: parsed.data.name || null, source: parsed.data.source || "storefront" },
-    update: { name: parsed.data.name || undefined, source: parsed.data.source || undefined, isActive: true, unsubscribedAt: null, subscribedAt: new Date() },
+  const policyVersion = await currentPrivacyPolicyVersion();
+  await prisma.$transaction(async (tx) => {
+    await tx.newsletterSubscriber.upsert({
+      where: { email },
+      create: { email, name: parsed.data.name || null, source: parsed.data.source || "storefront", consentSource: parsed.data.source || "storefront", consentVersion: policyVersion },
+      update: { name: parsed.data.name || undefined, source: parsed.data.source || undefined, consentSource: parsed.data.source || "storefront", consentVersion: policyVersion, isActive: true, unsubscribedAt: null, subscribedAt: new Date() },
+    });
+    if (req.user?.id) {
+      await tx.marketingPreference.upsert({
+        where: { userId: req.user.id },
+        create: { userId: req.user.id, emailMarketing: true, lastSource: parsed.data.source || "storefront" },
+        update: { emailMarketing: true, lastSource: parsed.data.source || "storefront" },
+      });
+    }
   });
+  await recordConsentEvent({ req, userId: req.user?.id || null, email, purpose: "NEWSLETTER", decision: "GRANTED", source: parsed.data.source || "storefront", policyVersion });
+  if (req.user?.id) await recordConsentEvent({ req, userId: req.user.id, email, purpose: "EMAIL_MARKETING", decision: "GRANTED", source: parsed.data.source || "storefront", policyVersion });
   res.json({ success: true, message: "You're on the Riseora list." });
 }));
 
 router.post("/newsletter/unsubscribe", publicWriteLimit, asyncHandler(async (req, res) => {
   const parsed = z.object({ email: z.string().trim().email() }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid email address" });
-  await prisma.newsletterSubscriber.updateMany({ where: { email: parsed.data.email.toLowerCase() }, data: { isActive: false, unsubscribedAt: new Date() } });
+  const email = parsed.data.email.toLowerCase();
+  if (!req.user || req.user.email.toLowerCase() !== email) return res.status(403).json({ success: false, message: "Sign in to update this email preference, or use the unsubscribe link in a Riseora marketing email." });
+  const subscriber = await prisma.newsletterSubscriber.findUnique({ where: { email } });
+  await prisma.newsletterSubscriber.updateMany({ where: { email }, data: { isActive: false, unsubscribedAt: new Date() } });
+  await prisma.marketingPreference.upsert({ where: { userId: req.user.id }, create: { userId: req.user.id, emailMarketing: false, lastSource: "email-preference-form" }, update: { emailMarketing: false, lastSource: "email-preference-form" } });
+  await recordConsentEvent({ req, userId: req.user.id, email, purpose: "NEWSLETTER", decision: "WITHDRAWN", source: "email-preference-form", policyVersion: subscriber?.consentVersion || undefined });
+  await recordConsentEvent({ req, userId: req.user.id, email, purpose: "EMAIL_MARKETING", decision: "WITHDRAWN", source: "email-preference-form", policyVersion: subscriber?.consentVersion || undefined });
   res.json({ success: true, message: "Email preferences updated." });
 }));
 

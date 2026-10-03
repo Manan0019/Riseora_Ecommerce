@@ -35,6 +35,7 @@ router.get(
         returnPolicy: settings.returnPolicy,
         shippingPolicy: settings.shippingPolicy,
         privacyPolicy: settings.privacyPolicy,
+        privacyPolicyVersion: settings.privacyPolicyVersion,
         termsPolicy: settings.termsPolicy,
         brandTagline: settings.brandTagline,
         logoUrl: settings.logoUrl,

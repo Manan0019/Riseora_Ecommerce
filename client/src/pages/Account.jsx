@@ -130,6 +130,7 @@ export default function Account() {
         <Link to="/notifications"><Icon name="bell" /><span><strong>Notifications</strong><small>Orders and Riseora updates</small></span><b>›</b></Link>
         <Link to="/support"><Icon name="mail" /><span><strong>Support</strong><small>Requests, replies & help history</small></span><b>›</b></Link>
         <Link to="/security"><Icon name="shield" /><span><strong>Security & privacy</strong><small>Sessions, activity & data export</small></span><b>›</b></Link>
+        <Link to="/privacy-center"><Icon name="shield" /><span><strong>Privacy Center</strong><small>Marketing choices, consent & requests</small></span><b>›</b></Link>
         <Link to="/rewards"><Icon name="sparkles" /><span><strong>Riseora Rewards</strong><small>Points, vouchers & referrals</small></span><b>›</b></Link>
         <Link to="/refills"><Icon name="refresh" /><span><strong>Refill reminders</strong><small>Plan repeat essentials</small></span><b>›</b></Link>
         <a href="#shopping-alerts"><Icon name="tag" /><span><strong>Shopping alerts</strong><small>Price drops and restocks</small></span><b>›</b></a>

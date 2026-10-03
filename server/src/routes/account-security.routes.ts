@@ -78,7 +78,7 @@ router.post("/export", asyncHandler(async (req, res) => {
   });
   if (!user || !(await bcrypt.compare(parsed.data.currentPassword, user.passwordHash))) return res.status(400).json({ success: false, message: "Current password is incorrect." });
 
-  const [addresses, orders, reviews, wishlist, rewardAccount, rewardTransactions, notifications, supportTickets, refills, securityEvents] = await Promise.all([
+  const [addresses, orders, reviews, wishlist, rewardAccount, rewardTransactions, notifications, supportTickets, refills, securityEvents, marketingPreference, consentHistory, privacyRequests] = await Promise.all([
     prisma.address.findMany({ where: { userId: user.id }, orderBy: { createdAt: "asc" } }),
     prisma.order.findMany({
       where: { userId: user.id },
@@ -99,6 +99,9 @@ router.post("/export", asyncHandler(async (req, res) => {
     prisma.contactMessage.findMany({ where: { userId: user.id }, select: { ticketNumber: true, subject: true, category: true, priority: true, orderNumber: true, status: true, createdAt: true, updatedAt: true, messages: { where: { isInternal: false }, select: { sender: true, message: true, createdAt: true }, orderBy: { createdAt: "asc" } } }, orderBy: { createdAt: "asc" } }),
     prisma.refillReminder.findMany({ where: { userId: user.id }, select: { intervalDays: true, quantity: true, status: true, nextReminderAt: true, lastReminderAt: true, lastOrderedAt: true, createdAt: true, variant: { select: { name: true, sku: true, product: { select: { name: true, slug: true } } } } }, orderBy: { createdAt: "asc" } }),
     prisma.authSecurityEvent.findMany({ where: { userId: user.id }, select: { type: true, deviceLabel: true, createdAt: true }, orderBy: { createdAt: "asc" } }),
+    prisma.marketingPreference.findUnique({ where: { userId: user.id }, select: { emailMarketing: true, smsMarketing: true, whatsappMarketing: true, lastSource: true, createdAt: true, updatedAt: true } }),
+    prisma.consentEvent.findMany({ where: { userId: user.id }, select: { purpose: true, decision: true, source: true, policyVersion: true, createdAt: true }, orderBy: { createdAt: "asc" } }),
+    prisma.privacyRequest.findMany({ where: { userId: user.id }, select: { type: true, status: true, message: true, requestedAt: true, resolvedAt: true, createdAt: true, updatedAt: true }, orderBy: { createdAt: "asc" } }),
   ]);
 
   await recordSecurityEvent({ req, type: "DATA_EXPORT", userId: user.id, sessionId: req.authSessionId || null, identity: user.email });
@@ -117,6 +120,9 @@ router.post("/export", asyncHandler(async (req, res) => {
       supportTickets,
       refillReminders: refills,
       securityHistory: securityEvents,
+      marketingPreference,
+      consentHistory,
+      privacyRequests,
     },
   });
 }));

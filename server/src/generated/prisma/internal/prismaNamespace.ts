@@ -449,6 +449,9 @@ export const ModelName = {
   SupportMessage: 'SupportMessage',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
+  MarketingPreference: 'MarketingPreference',
+  ConsentEvent: 'ConsentEvent',
+  PrivacyRequest: 'PrivacyRequest',
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
   RefillReminder: 'RefillReminder',
@@ -469,7 +472,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4321,6 +4324,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    MarketingPreference: {
+      payload: Prisma.$MarketingPreferencePayload<ExtArgs>
+      fields: Prisma.MarketingPreferenceFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MarketingPreferenceFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MarketingPreferenceFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        findFirst: {
+          args: Prisma.MarketingPreferenceFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MarketingPreferenceFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        findMany: {
+          args: Prisma.MarketingPreferenceFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>[]
+        }
+        create: {
+          args: Prisma.MarketingPreferenceCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        createMany: {
+          args: Prisma.MarketingPreferenceCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MarketingPreferenceCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>[]
+        }
+        delete: {
+          args: Prisma.MarketingPreferenceDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        update: {
+          args: Prisma.MarketingPreferenceUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        deleteMany: {
+          args: Prisma.MarketingPreferenceDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MarketingPreferenceUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MarketingPreferenceUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>[]
+        }
+        upsert: {
+          args: Prisma.MarketingPreferenceUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MarketingPreferencePayload>
+        }
+        aggregate: {
+          args: Prisma.MarketingPreferenceAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMarketingPreference>
+        }
+        groupBy: {
+          args: Prisma.MarketingPreferenceGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarketingPreferenceGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MarketingPreferenceCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MarketingPreferenceCountAggregateOutputType> | number
+        }
+      }
+    }
+    ConsentEvent: {
+      payload: Prisma.$ConsentEventPayload<ExtArgs>
+      fields: Prisma.ConsentEventFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ConsentEventFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ConsentEventFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        findFirst: {
+          args: Prisma.ConsentEventFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ConsentEventFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        findMany: {
+          args: Prisma.ConsentEventFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>[]
+        }
+        create: {
+          args: Prisma.ConsentEventCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        createMany: {
+          args: Prisma.ConsentEventCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ConsentEventCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>[]
+        }
+        delete: {
+          args: Prisma.ConsentEventDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        update: {
+          args: Prisma.ConsentEventUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        deleteMany: {
+          args: Prisma.ConsentEventDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ConsentEventUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ConsentEventUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>[]
+        }
+        upsert: {
+          args: Prisma.ConsentEventUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ConsentEventPayload>
+        }
+        aggregate: {
+          args: Prisma.ConsentEventAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateConsentEvent>
+        }
+        groupBy: {
+          args: Prisma.ConsentEventGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConsentEventGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ConsentEventCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ConsentEventCountAggregateOutputType> | number
+        }
+      }
+    }
+    PrivacyRequest: {
+      payload: Prisma.$PrivacyRequestPayload<ExtArgs>
+      fields: Prisma.PrivacyRequestFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PrivacyRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PrivacyRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        findFirst: {
+          args: Prisma.PrivacyRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PrivacyRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        findMany: {
+          args: Prisma.PrivacyRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>[]
+        }
+        create: {
+          args: Prisma.PrivacyRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        createMany: {
+          args: Prisma.PrivacyRequestCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PrivacyRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>[]
+        }
+        delete: {
+          args: Prisma.PrivacyRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        update: {
+          args: Prisma.PrivacyRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        deleteMany: {
+          args: Prisma.PrivacyRequestDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PrivacyRequestUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PrivacyRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>[]
+        }
+        upsert: {
+          args: Prisma.PrivacyRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PrivacyRequestPayload>
+        }
+        aggregate: {
+          args: Prisma.PrivacyRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePrivacyRequest>
+        }
+        groupBy: {
+          args: Prisma.PrivacyRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrivacyRequestGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PrivacyRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PrivacyRequestCountAggregateOutputType> | number
+        }
+      }
+    }
     StockAlert: {
       payload: Prisma.$StockAlertPayload<ExtArgs>
       fields: Prisma.StockAlertFieldRefs
@@ -5189,6 +5414,7 @@ export const StoreSettingScalarFieldEnum = {
   returnPolicy: 'returnPolicy',
   shippingPolicy: 'shippingPolicy',
   privacyPolicy: 'privacyPolicy',
+  privacyPolicyVersion: 'privacyPolicyVersion',
   termsPolicy: 'termsPolicy',
   brandTagline: 'brandTagline',
   logoUrl: 'logoUrl',
@@ -5728,6 +5954,9 @@ export const NewsletterSubscriberScalarFieldEnum = {
   email: 'email',
   name: 'name',
   source: 'source',
+  consentVersion: 'consentVersion',
+  consentSource: 'consentSource',
+  unsubscribeToken: 'unsubscribeToken',
   isActive: 'isActive',
   subscribedAt: 'subscribedAt',
   unsubscribedAt: 'unsubscribedAt',
@@ -5736,6 +5965,52 @@ export const NewsletterSubscriberScalarFieldEnum = {
 } as const
 
 export type NewsletterSubscriberScalarFieldEnum = (typeof NewsletterSubscriberScalarFieldEnum)[keyof typeof NewsletterSubscriberScalarFieldEnum]
+
+
+export const MarketingPreferenceScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  emailMarketing: 'emailMarketing',
+  smsMarketing: 'smsMarketing',
+  whatsappMarketing: 'whatsappMarketing',
+  lastSource: 'lastSource',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MarketingPreferenceScalarFieldEnum = (typeof MarketingPreferenceScalarFieldEnum)[keyof typeof MarketingPreferenceScalarFieldEnum]
+
+
+export const ConsentEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  email: 'email',
+  purpose: 'purpose',
+  decision: 'decision',
+  source: 'source',
+  policyVersion: 'policyVersion',
+  ipHash: 'ipHash',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type ConsentEventScalarFieldEnum = (typeof ConsentEventScalarFieldEnum)[keyof typeof ConsentEventScalarFieldEnum]
+
+
+export const PrivacyRequestScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  status: 'status',
+  message: 'message',
+  adminNote: 'adminNote',
+  requestedAt: 'requestedAt',
+  resolvedAt: 'resolvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PrivacyRequestScalarFieldEnum = (typeof PrivacyRequestScalarFieldEnum)[keyof typeof PrivacyRequestScalarFieldEnum]
 
 
 export const StockAlertScalarFieldEnum = {
@@ -6361,6 +6636,62 @@ export type ListEnumEmailDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInp
 
 
 /**
+ * Reference to a field of type 'ConsentPurpose'
+ */
+export type EnumConsentPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConsentPurpose'>
+    
+
+
+/**
+ * Reference to a field of type 'ConsentPurpose[]'
+ */
+export type ListEnumConsentPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConsentPurpose[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ConsentDecision'
+ */
+export type EnumConsentDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConsentDecision'>
+    
+
+
+/**
+ * Reference to a field of type 'ConsentDecision[]'
+ */
+export type ListEnumConsentDecisionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConsentDecision[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivacyRequestType'
+ */
+export type EnumPrivacyRequestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivacyRequestType'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivacyRequestType[]'
+ */
+export type ListEnumPrivacyRequestTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivacyRequestType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivacyRequestStatus'
+ */
+export type EnumPrivacyRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivacyRequestStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PrivacyRequestStatus[]'
+ */
+export type ListEnumPrivacyRequestStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PrivacyRequestStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'StockAlertStatus'
  */
 export type EnumStockAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StockAlertStatus'>
@@ -6660,6 +6991,9 @@ export type GlobalOmitConfig = {
   supportMessage?: Prisma.SupportMessageOmit
   emailDeliveryLog?: Prisma.EmailDeliveryLogOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
+  marketingPreference?: Prisma.MarketingPreferenceOmit
+  consentEvent?: Prisma.ConsentEventOmit
+  privacyRequest?: Prisma.PrivacyRequestOmit
   stockAlert?: Prisma.StockAlertOmit
   priceAlert?: Prisma.PriceAlertOmit
   refillReminder?: Prisma.RefillReminderOmit

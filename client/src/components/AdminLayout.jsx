@@ -31,6 +31,7 @@ const nav = [
   { to: "/admin/settings", label: "Settings", icon: "shield", permission: "SETTINGS" },
   { to: "/admin/erp-sync", label: "ERP Sync", icon: "refresh", permission: "ERP" },
   { to: "/admin/security", label: "Security", icon: "shield", permission: "SECURITY" },
+  { to: "/admin/compliance", label: "Privacy", icon: "shield", permission: "SECURITY" },
   { to: "/admin/system", label: "System", icon: "dashboard", permission: "SYSTEM" },
 ];
 const mobilePrimaryPaths = new Set(["/admin", "/admin/orders", "/admin/catalog", "/admin/inventory"]);

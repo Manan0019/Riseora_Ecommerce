@@ -7,6 +7,7 @@ import { notifyReadyStockAlerts } from "../services/stock-alert.service";
 import { sendCartRecoveryReminder } from "../services/cart-recovery.service";
 import { env } from "../config/env";
 import { notifyEligiblePriceAlerts } from "../services/price-alert.service";
+import { recordConsentEvent } from "../services/consent.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -43,17 +44,33 @@ router.get("/newsletter", asyncHandler(async (req, res) => {
   if (active === "true") where.isActive = true;
   if (active === "false") where.isActive = false;
   if (search) where.email = { contains: search, mode: "insensitive" };
-  const data = await prisma.newsletterSubscriber.findMany({ where, orderBy: { subscribedAt: "desc" }, take: 1000 });
+  const data = await prisma.newsletterSubscriber.findMany({
+    where,
+    orderBy: { subscribedAt: "desc" },
+    take: 1000,
+    select: { id: true, email: true, name: true, source: true, consentVersion: true, consentSource: true, isActive: true, subscribedAt: true, unsubscribedAt: true, createdAt: true, updatedAt: true },
+  });
   res.json({ success: true, data });
 }));
 
 router.patch("/newsletter/:id", asyncHandler(async (req, res) => {
   const parsed = z.object({ isActive: z.boolean() }).safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid subscriber update" });
+  const existing = await prisma.newsletterSubscriber.findUnique({ where: { id: String(req.params.id) } });
+  if (!existing) return res.status(404).json({ success: false, message: "Subscriber not found" });
+  if (parsed.data.isActive && !existing.isActive) {
+    return res.status(409).json({ success: false, message: "Marketing consent must be granted by the customer. Ask them to subscribe again from the storefront or Privacy Center." });
+  }
   const data = await prisma.newsletterSubscriber.update({
-    where: { id: String(req.params.id) },
-    data: { isActive: parsed.data.isActive, unsubscribedAt: parsed.data.isActive ? null : new Date(), ...(parsed.data.isActive ? { subscribedAt: new Date() } : {}) },
+    where: { id: existing.id },
+    data: { isActive: parsed.data.isActive, unsubscribedAt: parsed.data.isActive ? null : new Date() },
   });
+  if (!parsed.data.isActive && existing.isActive) {
+    const user = await prisma.user.findUnique({ where: { email: existing.email }, select: { id: true } });
+    if (user) await prisma.marketingPreference.upsert({ where: { userId: user.id }, create: { userId: user.id, emailMarketing: false, lastSource: "admin-suppression" }, update: { emailMarketing: false, lastSource: "admin-suppression" } });
+    await recordConsentEvent({ req, userId: user?.id || null, email: existing.email, purpose: "NEWSLETTER", decision: "WITHDRAWN", source: "admin-suppression", policyVersion: existing.consentVersion });
+    if (user) await recordConsentEvent({ req, userId: user.id, email: existing.email, purpose: "EMAIL_MARKETING", decision: "WITHDRAWN", source: "admin-suppression", policyVersion: existing.consentVersion });
+  }
   res.json({ success: true, data });
 }));
 

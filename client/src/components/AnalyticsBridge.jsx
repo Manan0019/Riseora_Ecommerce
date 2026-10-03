@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { apiFetch } from "../api/http";
 import {
   analyticsConsent,
   analyticsEvents,
@@ -46,6 +47,7 @@ export function AnalyticsConsent() {
     setAnalyticsConsent(value);
     setChoice(value);
     setForcedOpen(false);
+    apiFetch("/privacy/analytics-consent", { method: "POST", body: JSON.stringify({ choice: value, source: "cookie-banner" }) }).catch(() => {});
   }
 
   return (

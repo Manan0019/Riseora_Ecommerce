@@ -57,7 +57,7 @@ export default function AdminSettings() {
         legalName: settings.legalName?.trim() || null, gstin: settings.gstin?.trim() || null, pan: settings.pan?.trim() || null,
         addressLine1: settings.addressLine1?.trim() || null, addressLine2: settings.addressLine2?.trim() || null,
         city: settings.city?.trim() || null, state: settings.state?.trim() || null, postalCode: settings.postalCode?.trim() || null, creditNotePrefix: settings.creditNotePrefix?.trim() || "RCN",
-        returnPolicy: settings.returnPolicy?.trim() || null, shippingPolicy: settings.shippingPolicy?.trim() || null, privacyPolicy: settings.privacyPolicy?.trim() || null, termsPolicy: settings.termsPolicy?.trim() || null,
+        returnPolicy: settings.returnPolicy?.trim() || null, shippingPolicy: settings.shippingPolicy?.trim() || null, privacyPolicy: settings.privacyPolicy?.trim() || null, privacyPolicyVersion: settings.privacyPolicyVersion?.trim() || "2026-10", termsPolicy: settings.termsPolicy?.trim() || null,
         brandTagline: settings.brandTagline?.trim() || null,
         logoUrl: settings.logoUrl?.trim() || null,
         logoMarkUrl: settings.logoMarkUrl?.trim() || null,
@@ -168,7 +168,7 @@ export default function AdminSettings() {
       <label className="checkbox-row phase21-strict-serviceability"><input type="checkbox" name="requireServiceablePostalCode" checked={Boolean(settings.requireServiceablePostalCode)} onChange={update} /> <span><strong>Require a configured delivery zone for checkout</strong><small>OFF = unmatched PIN codes use store-wide shipping rules. ON = checkout is allowed only when a PIN matches an active zone. Keep this OFF until your zone list is complete.</small></span></label>
       <label className="checkbox-row"><input type="checkbox" name="returnsEnabled" checked={Boolean(settings.returnsEnabled)} onChange={update} /> Allow customer return requests</label>
       <div className="admin-field-grid two"><label>Shipping policy<textarea name="shippingPolicy" value={settings.shippingPolicy || ""} onChange={update} /></label><label>Return policy<textarea name="returnPolicy" value={settings.returnPolicy || ""} onChange={update} /></label></div>
-      <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div>
+      <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div><label>Privacy policy version<input name="privacyPolicyVersion" value={settings.privacyPolicyVersion || "2026-10"} onChange={update} placeholder="2026-10" /><small>Increment this when the published privacy/consent wording materially changes. New consent events snapshot this version.</small></label>
       <div className="editor-section-head"><div><strong>Storefront, SEO & social</strong><small>Used by mobile navigation, search previews and customer pages.</small></div></div>
       <section className="phase12-brand-settings">
         <div className="phase12-brand-upload-card">

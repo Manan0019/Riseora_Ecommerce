@@ -9,6 +9,7 @@ import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { sendPasswordResetEmail } from "../services/notification.service";
 import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions, revokeAuthSession } from "../services/auth-security.service";
+import { currentPrivacyPolicyVersion, recordConsentEvent } from "../services/consent.service";
 
 const router = Router();
 const passwordResetLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 8, standardHeaders: "draft-8", legacyHeaders: false });
@@ -20,6 +21,7 @@ const registerSchema = z.object({
   phone: z.string().trim().min(8).max(20).optional().or(z.literal("")),
   password: z.string().min(8).max(100),
   referralCode: z.string().trim().max(40).optional().or(z.literal("")),
+  emailMarketingOptIn: z.boolean().default(false),
 });
 
 router.post(
@@ -82,6 +84,24 @@ router.post(
         referralCode: true,
       },
     });
+
+    const existingNewsletter = await prisma.newsletterSubscriber.findUnique({ where: { email }, select: { isActive: true } });
+    const shouldEmailMarketing = parsed.data.emailMarketingOptIn || Boolean(existingNewsletter?.isActive);
+    await prisma.marketingPreference.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id, emailMarketing: shouldEmailMarketing, lastSource: parsed.data.emailMarketingOptIn ? "registration" : existingNewsletter?.isActive ? "newsletter-sync" : "registration-default" },
+      update: { emailMarketing: shouldEmailMarketing },
+    });
+    if (parsed.data.emailMarketingOptIn) {
+      const policyVersion = await currentPrivacyPolicyVersion();
+      await prisma.newsletterSubscriber.upsert({
+        where: { email },
+        create: { email, name: user.firstName, source: "registration", consentSource: "registration", consentVersion: policyVersion, isActive: true },
+        update: { name: user.firstName, source: "registration", consentSource: "registration", consentVersion: policyVersion, isActive: true, unsubscribedAt: null, subscribedAt: new Date() },
+      });
+      await recordConsentEvent({ req, userId: user.id, email, purpose: "NEWSLETTER", decision: "GRANTED", source: "registration", policyVersion });
+      await recordConsentEvent({ req, userId: user.id, email, purpose: "EMAIL_MARKETING", decision: "GRANTED", source: "registration", policyVersion });
+    }
 
     const { session, token } = await createAuthSession(user, req);
     await recordSecurityEvent({ req, type: "ACCOUNT_CREATED", userId: user.id, sessionId: session.id, identity: user.email });

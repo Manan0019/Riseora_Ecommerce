@@ -183,6 +183,33 @@ enum EmailDeliveryStatus {
   FAILED
 }
 
+enum ConsentPurpose {
+  ANALYTICS
+  NEWSLETTER
+  EMAIL_MARKETING
+  SMS_MARKETING
+  WHATSAPP_MARKETING
+}
+
+enum ConsentDecision {
+  GRANTED
+  WITHDRAWN
+}
+
+enum PrivacyRequestType {
+  ERASURE
+  CORRECTION
+  OTHER
+}
+
+enum PrivacyRequestStatus {
+  OPEN
+  IN_REVIEW
+  RESOLVED
+  REJECTED
+  CANCELLED
+}
+
 enum CartRecoveryStatus {
   ACTIVE
   CONVERTED
@@ -291,6 +318,9 @@ model User {
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
   authSecurityEvents AuthSecurityEvent[]
+  marketingPreference MarketingPreference?
+  consentEvents ConsentEvent[]
+  privacyRequests PrivacyRequest[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -878,6 +908,7 @@ model StoreSetting {
   returnPolicy     String?
   shippingPolicy   String?
   privacyPolicy    String?
+  privacyPolicyVersion String @default("2026-10")
   termsPolicy      String?
 
   brandTagline          String?
@@ -1547,6 +1578,9 @@ model NewsletterSubscriber {
   email String @unique
   name  String?
   source String?
+  consentVersion String @default("2026-10")
+  consentSource String?
+  unsubscribeToken String @unique @default(uuid()) @db.Uuid
   isActive Boolean @default(true)
   subscribedAt DateTime @default(now())
   unsubscribedAt DateTime?
@@ -1555,6 +1589,54 @@ model NewsletterSubscriber {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, subscribedAt])
+}
+
+model MarketingPreference {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @unique @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  emailMarketing Boolean @default(false)
+  smsMarketing Boolean @default(false)
+  whatsappMarketing Boolean @default(false)
+  lastSource String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ConsentEvent {
+  id String @id @default(uuid()) @db.Uuid
+  userId String? @db.Uuid
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+  email String?
+  purpose ConsentPurpose
+  decision ConsentDecision
+  source String
+  policyVersion String
+  ipHash String?
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([email, createdAt])
+  @@index([purpose, decision, createdAt])
+}
+
+model PrivacyRequest {
+  id String @id @default(uuid()) @db.Uuid
+  userId String @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type PrivacyRequestType
+  status PrivacyRequestStatus @default(OPEN)
+  message String?
+  adminNote String?
+  requestedAt DateTime @default(now())
+  resolvedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, createdAt])
+  @@index([status, requestedAt])
+  @@index([type, status, requestedAt])
 }
 
 
