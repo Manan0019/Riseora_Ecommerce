@@ -20,11 +20,12 @@ export function mediaUrl(url) {
   return url;
 }
 
-export function reportClientError({ message, route, source } = {}) {
+export function reportClientError({ message, route, source, referenceId } = {}) {
   const payload = JSON.stringify({
     message: String(message || "Client error").slice(0, 500),
     route: String(route || window.location.pathname).split("?")[0].slice(0, 300),
     source: String(source || "client").slice(0, 80),
+    referenceId: String(referenceId || "").slice(0, 80) || undefined,
   });
   try {
     if (navigator.sendBeacon) {

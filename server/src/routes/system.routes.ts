@@ -22,6 +22,7 @@ publicSystemRoutes.post(
       message: z.string().trim().min(1).max(500),
       route: z.string().trim().max(300).optional(),
       source: z.string().trim().max(80).optional(),
+      referenceId: z.string().trim().max(80).optional(),
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid client error report" });
     recordClientError(parsed.data);

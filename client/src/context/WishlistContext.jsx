@@ -1,15 +1,16 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch } from "../api/http";
 import { trackCommerce } from "../analytics";
+import { readPersistedArray, writePersistedArray } from "../lib/persisted-state";
 import { useAuth } from "./AuthContext";
 
 const WishlistContext = createContext(null);
 const GUEST_KEY = "riseora_wishlist";
 
 function readGuest() {
-  try { const value = JSON.parse(localStorage.getItem(GUEST_KEY) || "[]"); return Array.isArray(value) ? value : []; } catch { return []; }
+  return readPersistedArray(window.localStorage, GUEST_KEY, { maxItems: 250, itemGuard: (item) => item && typeof item === "object" && Boolean(item.id) });
 }
-function writeGuest(items) { try { localStorage.setItem(GUEST_KEY, JSON.stringify(items)); } catch { /* optional */ } }
+function writeGuest(items) { writePersistedArray(window.localStorage, GUEST_KEY, items, { maxItems: 250 }); }
 
 export function WishlistProvider({ children }) {
   const { user } = useAuth();

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
+import { readPersistedArray } from "../lib/persisted-state";
 import { Icon } from "../components/Icons";
 import RichText from "../components/RichText";
 import ProductCard from "../components/ProductCard";
@@ -20,10 +21,12 @@ const fallbackBanner = {
 };
 
 function readRecentProducts() {
-  try {
-    const value = JSON.parse(localStorage.getItem("riseora_recent_products") || "[]");
-    return Array.isArray(value) ? value.slice(0, 8) : [];
-  } catch { return []; }
+  if (typeof window === "undefined") return [];
+  return readPersistedArray(window.localStorage, "riseora_recent_products", { maxItems: 8, itemGuard: (item) => item && typeof item === "object" && Boolean(item.id) });
+}
+
+function responseArray(result) {
+  return result?.status === "fulfilled" && Array.isArray(result.value?.data) ? result.value.data : [];
 }
 
 export default function Home() {
@@ -47,12 +50,16 @@ export default function Home() {
       apiFetch("/promotions/deals?featured=true"),
       apiFetch("/campaigns?featured=true&limit=3"),
     ]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult, campaignResult]) => {
-      if (productResult.status === "fulfilled") setProducts(productResult.value.data); else setError(productResult.reason?.message || "Unable to load products");
-      if (categoryResult.status === "fulfilled") setCategories(categoryResult.value.data);
-      if (offerResult.status === "fulfilled") setOffers(offerResult.value.data);
-      if (bannerResult.status === "fulfilled") setBanners(bannerResult.value.data);
-      if (dealResult.status === "fulfilled") setDeals(dealResult.value.data);
-      if (campaignResult.status === "fulfilled") setCampaigns(campaignResult.value.data);
+      const productData = responseArray(productResult);
+      setProducts(productData);
+      if (productResult.status !== "fulfilled" || !Array.isArray(productResult.value?.data)) {
+        setError(productResult.status === "rejected" ? (productResult.reason?.message || "Unable to load products") : "Product data is temporarily unavailable");
+      }
+      setCategories(responseArray(categoryResult));
+      setOffers(responseArray(offerResult));
+      setBanners(responseArray(bannerResult));
+      setDeals(responseArray(dealResult));
+      setCampaigns(responseArray(campaignResult));
     });
   }, []);
 

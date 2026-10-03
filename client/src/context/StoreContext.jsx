@@ -8,7 +8,10 @@ export function StoreProvider({ children }) {
   const [store, setStore] = useState(fallback);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    apiFetch("/store/config").then((response) => setStore({ ...fallback, ...response.data })).catch(() => {}).finally(() => setLoading(false));
+    apiFetch("/store/config").then((response) => {
+      const data = response?.data && typeof response.data === "object" && !Array.isArray(response.data) ? response.data : {};
+      setStore({ ...fallback, ...data });
+    }).catch(() => {}).finally(() => setLoading(false));
   }, []);
   useEffect(() => {
     const icon = store.logoMarkUrl || store.logoUrl;

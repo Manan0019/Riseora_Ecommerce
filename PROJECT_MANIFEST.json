@@ -1,480 +1,138 @@
 {
-  "project": "Riseora E-Commerce",
-  "phase": "49 - Production Release Orchestration & Deployment Safety V2",
-  "direction": "production-ready standalone D2C storefront with verified release orchestration, explicit database targeting, deployment health, durable job shutdown safety and Phase 48 schema integrity",
-  "customer": [
-    "campaign-led mobile storefront",
-    "predictive search",
-    "categories and offers",
-    "wishlist",
-    "private expiring wishlist sharing",
-    "visual reviews and product Q&A",
-    "cart and direct buy-now",
-    "buy again from delivered orders using current catalog data",
-    "COD and optional Razorpay checkout",
-    "PIN serviceability and delivery zones",
-    "order tracking",
-    "returns",
-    "invoices",
-    "About",
-    "Contact",
-    "newsletter",
-    "PWA install support"
-  ],
-  "admin": [
-    "catalog",
-    "image upload",
-    "inventory",
-    "orders",
-    "fulfilment",
-    "customers",
-    "promotions and coupon controls",
-    "merchandising",
-    "review and product-Q&A moderation",
-    "returns",
-    "delivery zones",
-    "store/tax/shipping/COD settings",
-    "contact inbox",
-    "newsletter audience",
-    "SEO/social settings"
-  ],
-  "phase23": {
-    "features": [
-      "delivered-order reorder preview using current active variants, prices, stock and purchase limits",
-      "account buy-again rail from delivered purchase history",
-      "30-day private wishlist share links containing product IDs only",
-      "active-product refresh when opening a shared wishlist",
-      "public share creation rate limiting and strict share-token validation"
-    ],
-    "migration": "20261001170000_phase23_repeat_purchase_shared_wishlist",
-    "verification": "npm run verify:phase23"
-  },
-  "database_changes": [
-    "WishlistShare",
-    "PriceAlert",
-    "AdminAuditLog",
-    "OrderCancellationRequest",
-    "ShipmentEvent",
-    "ReturnEvidence",
-    "ReturnStatusHistory",
-    "Order.checkoutRequestKey",
-    "CheckoutSession.checkoutRequestKey",
-    "CheckoutSession payment recovery telemetry",
-    "OrderItem.unitCost checkout-time cost snapshot",
-    "WishlistItem account-synced saved products",
-    "ContactMessage support ticket/thread fields",
-    "SupportMessage",
-    "EmailDeliveryLog",
-    "NotificationType.SUPPORT",
-    "RefillReminder",
-    "NotificationType.REFILL",
-    "Product replenishment reminder configuration",
-    "InventoryMovement",
-    "ProductVariant.safetyStock",
-    "InventoryMovement.actorUser referential integrity",
-    "AuthSession",
-    "AuthSecurityEvent",
-    "User failed-login lockout telemetry",
-    "User last login/password change timestamps",
-    "Campaign",
-    "CampaignProduct",
-    "MediaAsset",
-    "Banner.imageAlt",
-    "Order.dispatchDueAt",
-    "ShippingZone courier/COD/weight/SLA overrides",
-    "Shipment.shippingPartnerId",
-    "StoreSetting maintenance window and message",
-    "SystemJobState",
-    "Phase 38 refill schema drift repair"
-  ],
-  "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": "Phase 49 \u2014 Production Release Orchestration & Deployment Safety V2",
-  "phase24": {
-    "name": "Production Release & Deployment Readiness",
-    "features": [
-      "liveness/readiness health endpoints",
-      "admin system health dashboard",
-      "database backup creation/history",
-      "production preflight",
-      "safe CLI restore",
-      "Windows production scripts",
-      "Docker health/backups"
-    ]
-  },
-  "phase26": {
-    "name": "Notification Center Foundation",
-    "status": "completed-and-repaired-in-phase27",
-    "features": [
-      "notification database migration",
-      "notification service foundation"
-    ]
-  },
-  "phase27": {
-    "name": "Customer Retention Intelligence & Notification Center",
-    "features": [
-      "complete Prisma Notification model and indexes",
-      "customer notification bell, unread badge, popover and full notification page",
-      "mark-one, mark-all and dismiss notification APIs",
-      "automatic in-app notifications for placed orders, fulfilment changes and returns",
-      "admin customer segments from live order behaviour",
-      "admin targeted in-app campaigns with audience preview",
-      "retention-oriented database indexes for customer/order segmentation",
-      "Express 5 route-param TypeScript stabilization across API routes"
-    ],
-    "migration": "20261002060000_phase27_retention_notification_center",
-    "verification": "npm run verify:phase27"
-  },
-  "phase28": {
-    "name": "Conversion & Merchandising V2",
-    "features": [
-      "server-authoritative live cart offer preview for bundle, Buy X Get Y and gift-with-purchase deals",
-      "cart and mini-cart offer progress now includes combo discounts and best-offer selection",
-      "one-click add-missing-items actions for eligible combo and Buy X Get Y promotions",
-      "public offer detail pages with transparent breakdown, product links and checkout-safety messaging",
-      "product detail pages surface active merchandising offers tied to that product",
-      "admin full merchandising deal editing without URL churn",
-      "admin duplicate-to-inactive-draft workflow for safer campaign creation",
-      "product-filtered public deal discovery and secure current-price cart preview endpoint",
-      "analytics event hooks for offer actions and deal adds"
-    ],
-    "databaseChanges": [],
-    "verification": "npm run verify:phase28"
-  },
-  "phase29": {
-    "name": "Customer Lifecycle Automation & Shopping Alerts",
-    "features": [
-      "Prisma 7 JSON typing repair for Phase 27 notification metadata",
-      "customer price-drop watches with optional target price",
-      "price-drop email delivery plus in-app notification mirroring for account emails",
-      "back-in-stock email alerts mirrored to signed-in notification center",
-      "cart-recovery sessions linked to authenticated users and mirrored to in-app notifications",
-      "account shopping-alert management for stock and price watches",
-      "admin Audience price-watch demand queue with READY detection and manual processing",
-      "admin Lifecycle Automation Center for cart recovery, restock and price-drop jobs",
-      "automatic price-alert evaluation after Admin inventory/product price updates and on server lifecycle timer",
-      "anti-spam lifecycle rules: cart max two reminders and one-shot shopping alerts"
-    ],
-    "migration": "20261002093000_phase29_lifecycle_price_alerts",
-    "verification": "npm run verify:phase29"
-  },
-  "phase30": {
-    "name": "Growth Analytics, SEO & Merchant Discovery",
-    "features": [
-      "repairs the missing client/src/lib/analytics.js delivery that caused Vite module-load failures",
-      "single consent-aware analytics runtime shared by page tracking and commerce events",
-      "GA4 ecommerce events for view item, add/remove cart, wishlist, search, begin checkout, purchase and promotions",
-      "Meta Pixel mapping for core commerce events without sending customer PII",
-      "re-openable privacy choices from the footer and Privacy Policy page",
-      "enhanced canonical, Open Graph, Twitter, robots and structured-data handling",
-      "product Brand, Offer and Breadcrumb structured data plus Organization/WebSite search schema",
-      "sitemap now includes currently-live merchandising offer pages",
-      "Google Merchant XML feed generated from active products/variants with current stock and prices",
-      "Admin Growth dashboard for SEO/catalog/feed readiness and analytics diagnostics",
-      "Google Search Console verification token support through the production client environment"
-    ],
-    "databaseChanges": [],
-    "verification": "npm run verify:phase30"
-  },
-  "phase31": {
-    "name": "Admin Security, Audit Trail & Analytics Runtime Repair",
-    "features": [
-      "moves analytics runtime to stable client/src/analytics.js and leaves a compatibility shim only at the old location",
-      "verification script fails on legacy analytics imports or unresolved relative imports before build",
-      "AdminRole access profiles for Owner, Operations, Catalog, Marketing and Support",
-      "existing Admin accounts migrate safely to Owner to preserve current access",
-      "server-side admin permission enforcement across all /api/admin tools",
-      "automatic audit logging for every Admin POST/PUT/PATCH/DELETE action without storing request bodies",
-      "Admin Security page with activity filters, staff management and role guidance",
-      "Owner-only staff promotion, role changes, deactivation and admin removal with last-owner protection",
-      "session rotation that invalidates other admin sessions while keeping the current browser signed in",
-      "stricter admin API rate limit and no reliance on client-side navigation hiding for authorization"
-    ],
-    "migration": "20261002121500_phase31_admin_security_audit",
-    "verification": "npm run verify:phase31"
-  },
-  "phase32": {
-    "name": "Post-Purchase Operations V2",
-    "features": [
-      "customer cancellation-request workflow for pending/confirmed orders with fulfilment pause while review is pending",
-      "safe admin cancellation approval including Razorpay refund-before-cancel for paid online orders and one-time inventory/coupon restoration",
-      "dedicated Admin Cancellations queue plus dashboard pending-cancellation visibility",
-      "shipment journey events, customer-visible courier history and editable estimated delivery date",
-      "automatic picked-up and delivered shipment events from normal fulfilment status changes",
-      "return evidence image upload with authenticated customer upload routing and Cloudinary/local media support",
-      "customer return detail page with evidence, refund information, reverse tracking and return status timeline",
-      "admin return evidence review and customer-visible status notes/history",
-      "repairs customer review image upload routing by mounting authenticated upload endpoints at /api/uploads",
-      "phase audit verifies canonical analytics imports, relative module resolution, upload routing and required post-purchase Prisma models"
-    ],
-    "migration": "20261002143000_phase32_post_purchase_ops_v2",
-    "verification": "npm run verify:phase32"
-  },
-  "phase33": {
-    "name": "Checkout & Payment Reliability V2",
-    "features": [
-      "idempotent checkout request keys prevent duplicate COD orders during retries/double submits",
-      "recoverable Razorpay checkout sessions survive modal dismiss and delayed UPI confirmation",
-      "customer payment retry, status check and explicit reservation cancellation controls",
-      "authoritative webhook capture can finalize a dismissed payment session instead of racing a client-side cancel",
-      "payment failed webhook no longer destroys the reusable provider order immediately",
-      "signed-in customers can save new checkout delivery addresses with type/default preference",
-      "upgraded order-success experience with payment, delivery and next-step guidance",
-      "Admin Payments operations screen for pending reservations, webhook health and manual safe release",
-      "phase verification checks payment recovery invariants and legacy analytics path regression"
-    ],
-    "migration": "20261002165000_phase33_checkout_payment_reliability",
-    "verification": "npm run verify:phase33"
-  },
-  "phase34": {
-    "name": "Admin Control Center & Business Intelligence V2",
-    "features": [
-      "desktop Admin sidebar is viewport-fixed with independent navigation scrolling so the green rail never turns white while content scrolls",
-      "enhanced Admin dashboard with today-vs-yesterday deltas, 7-day sales pulse, inventory valuation and operational attention queue",
-      "checkout-time OrderItem unit-cost snapshots protect future margin history from later cost-price edits",
-      "existing order items are one-time backfilled from current variant cost where available",
-      "Business Intelligence reports add prior-period comparison, gross profit/margin, cost coverage, refund/cancellation rates and repeat-customer rate",
-      "product profitability and category contribution reporting",
-      "inventory cost/retail valuation, potential margin and slow-stock detection",
-      "tabbed Admin Reports workspace with 7/30/90/365-day presets and expanded CSV export",
-      "phase audit verifies full-height Admin rail, cost snapshot wiring and BI markers"
-    ],
-    "migration": "20261002190000_phase34_admin_bi_cost_snapshot",
-    "verification": "npm run verify:phase34"
-  },
-  "phase35": {
-    "name": "Storefront Discovery & Cross-Device Wishlist V2",
-    "features": [
-      "signed-in wishlist persists in PostgreSQL and automatically merges guest saved products on login/register",
-      "guest wishlist remains local and account wishlist is not leaked back to a signed-out browser session",
-      "multi-term storefront search matches product name, category, benefits, ingredients, suitability and SKU with relevance ordering",
-      "dynamic Shop by Need and ingredient facets from live catalog content plus shareable URL filter state",
-      "three-product comparison tray and side-by-side comparison workspace",
-      "comparison includes live price, rating, suitability, benefits, ingredients, pack availability, COD status and direct cart/wishlist actions",
-      "phase audit verifies Prisma wishlist persistence, discovery endpoints and comparison wiring"
-    ],
-    "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
-    "verification": "npm run verify:phase35"
-  },
-  "currentPhase": "Phase 45 \u2014 Finance, GST & Payment Reconciliation V2",
-  "lastUpdated": "2026-10-03",
-  "phase36": {
-    "name": "Riseora Rewards & Referrals V2",
-    "features": [
-      "delivered-order reward earning",
-      "verified-review reward bonuses",
-      "referral rewards after first delivered order",
-      "private one-time reward vouchers",
-      "refund/review reward reversals",
-      "Admin Rewards control center"
-    ],
-    "migration": "20261002233000_phase36_rewards_referrals",
-    "verification": "npm run verify:phase36"
-  },
-  "phase37": {
-    "name": "Support Operations & Communications V2",
-    "features": [
-      "public Help Center with searchable order, payment, delivery, return, product, account and rewards guidance",
-      "signed-in My Support ticket list, threaded replies, order linking and customer close workflow",
-      "existing Contact messages upgraded into ticket-numbered support threads without losing historical enquiries",
-      "Admin Support queue with category/priority/status filters, assignment, customer replies and private internal notes",
-      "support-specific Admin permission for Owner, Operations and Support staff roles",
-      "support email acknowledgements/replies plus signed-in in-app SUPPORT notifications",
-      "shared branded transactional email shell for orders, returns, password reset, cart recovery, stock and price alerts",
-      "transactional EmailDeliveryLog records sent/failed provider outcomes for operational visibility",
-      "Admin support dashboard surfaces recent email failures and main dashboard surfaces support items needing attention",
-      "phase audit verifies support routes, permission wiring, email logging and all relative client imports"
-    ],
-    "migration": "20261003003000_phase37_support_communications_v2",
-    "verification": "npm run verify:phase37"
-  },
-  "phase38": {
-    "name": "Refill & Replenishment V2",
-    "features": [
-      "opt-in customer refill reminders for replenishable product variants without automatic charging or recurring order creation",
-      "customer refill planner on Product Details with configurable interval and quantity",
-      "My Refills account workspace with pause, resume, snooze, cancel and current-price/current-stock Refill Now actions",
-      "product-level Admin Catalog controls for suggested refill cycle and optional customer-facing refill label",
-      "automatic due-reminder processing with branded email plus in-app REFILL notifications",
-      "delivered orders reschedule existing refill plans from the actual fulfilment date instead of creating unsolicited plans",
-      "Admin Refills demand dashboard with active/due/upcoming/paused KPIs and most-requested variants",
-      "Lifecycle Automation Center integration for scheduled and manual refill processing",
-      "out-of-stock reminders defer safely while inactive products/variants pause the plan",
-      "Phase 38 audit verifies refill routes, lifecycle wiring, product configuration and all relative client imports"
-    ],
-    "migration": "20261003024500_phase38_refill_replenishment_v2",
-    "verification": "npm run verify:phase38"
-  },
-  "phase39": {
-    "name": "Inventory Control & Availability V2",
-    "features": [
-      "per-variant safety stock keeps a configurable physical buffer unavailable to customer checkout",
-      "checkout reservations enforce sellable stock atomically and cannot consume the safety buffer",
-      "inventory movement ledger records opening stock, checkout reservations/releases, cancellations, refunds, returns and manual adjustments",
-      "Admin Inventory V2 separates on-hand, safety and sellable quantities with 30-day sales velocity, days cover and reorder guidance",
-      "physical stock changes require an adjustment reason and expose variant-level stock history",
-      "public product, wishlist, deal, recovery, refill and Merchant availability use sellable stock rather than raw physical stock",
-      "back-in-stock/refill lifecycle respects safety stock so protected units are never advertised as customer available",
-      "catalog editor supports website safety-stock configuration including ERP-managed variants without taking ownership of ERP stock"
-    ],
-    "migration": "20261003130000_phase39_inventory_control_v2",
-    "verification": "npm run verify:phase39"
-  },
-  "phase40": {
-    "name": "Production Resilience & Dependency Security V2",
-    "features": [
-      "repairs Phase 39 Prisma reverse relations for User/ProductVariant InventoryMovement navigation and adds actor-user foreign-key integrity",
-      "PostgreSQL pg_dump/pg_restore auto-discovery through PATH, PG_BIN, explicit executable paths, Windows registry and common PostgreSQL install folders",
-      "verified database backups with pg_restore archive validation plus SHA-256 sidecar checksums",
-      "restore checksum/archive validation before destructive confirmation",
-      "db:doctor local diagnostics for PostgreSQL tools, backup directory and Prisma schema validation",
-      "Admin System V2 surfaces actual detected PostgreSQL client tool path/version and backup verification state",
-      "Vite 8.3.2 and React plugin 6.1.1 toolchain refresh",
-      "targeted deepmerge-ts/mysql2/esbuild security remediations without npm audit fix --force",
-      "version-pinned npm install-script allowlist for reviewed Prisma/esbuild build tooling; unreviewed future scripts remain blocked with a review warning",
-      "offline dependency-tree security gate plus online npm audit commands"
-    ],
-    "migration": "20261003153000_phase40_inventory_relation_integrity",
-    "verification": "npm run verify:phase40"
-  },
-  "phase41": {
-    "name": "Production Observability & Security Closure V2",
-    "features": [
-      "repairs db:doctor Prisma validation by using the same workspace npm-run path that already succeeds for generate/migrate commands",
-      "pins React Router 6.30.6 to close the open-redirect/XSS advisory reported by npm audit",
-      "removes tsup and its vulnerable esbuild branch; server production build now uses pinned esbuild 0.28.2 directly",
-      "moves the Prisma CLI to root development-only tooling and strengthens scoped deepmerge-ts/mysql2 overrides for the current Prisma 7.10 dependency advisories",
-      "npm install-script approvals use reviewed package identities while dependency-tree verification enforces safe resolved versions",
-      "request IDs are returned through X-Request-Id and included with server-side failures for support/debug correlation",
-      "rolling 15-minute runtime telemetry tracks request volume, 4xx/5xx counts, p50/p95 latency, slow requests, memory and event-loop lag",
-      "Admin System displays runtime performance and slow API routes without exposing request bodies or customer PII",
-      "production HTTP logs are structured JSON while development keeps concise morgan logging",
-      "graceful shutdown marks readiness as draining before closing the HTTP server and disconnecting Prisma"
-    ],
-    "migration": null,
-    "verification": "npm run verify:phase41"
-  },
-  "phase42": {
-    "features": [
-      "managed per-device authentication sessions with revoke controls",
-      "customer Security & Privacy Center with active sessions and security history",
-      "account-specific failed-login lockout and privacy-preserving security telemetry",
-      "password reset/change revokes prior sessions",
-      "password-confirmed customer data JSON export",
-      "Admin Security sign-in telemetry",
-      "Windows-safe db:doctor Prisma validation without npm.cmd spawn",
-      "React Router 7.18.4 security upgrade and corrected Prisma dev-only verification"
-    ],
-    "migration": "20261003174500_phase42_account_security_sessions",
-    "verification": "npm run verify:phase42"
-  },
-  "phase43": {
-    "name": "Content Studio, Campaign Publishing & Media Library V2",
-    "features": [
-      "repairs missing Phase 38 Refills/AdminRefills page delivery that caused Phase 42 unresolved-import verification failure",
-      "scheduled draft/live/expired campaign landing pages with SEO metadata, desktop/mobile hero media and curated products",
-      "Admin Content Studio with campaign create/edit/duplicate/delete, publishing windows, featured placement and inline preview",
-      "featured live campaign storytelling cards on the homepage",
-      "reusable Media Library indexes new Admin product/category/brand/campaign uploads with alt-text editing and archive controls",
-      "content health checks flag missing campaign SEO, hero alt text, desktop/mobile banner media and media accessibility gaps",
-      "homepage banner image alt text is stored and rendered for accessibility",
-      "campaign URLs are included in the production sitemap only while the campaign is live",
-      "safe internal campaign CTA validation blocks protocol-relative/backslash redirect patterns",
-      "Phase 43 audit verifies missing Refills pages, content routes, Prisma models and all frontend relative imports"
-    ],
-    "migration": "20261003213000_phase43_content_campaign_studio",
-    "verification": "npm run verify:phase43"
-  },
-  "phase44": {
-    "name": "Fulfilment, Delivery Zones & Courier Operations V2",
-    "features": [
-      "repairs missing Phase 38 backend refill route/email/in-app notification dependencies that caused Phase 43 typecheck failure",
-      "zone-level dispatch SLA, COD fee/max-order override, parcel-weight limit and preferred courier controls",
-      "courier capability controls for COD support and maximum parcel weight",
-      "weight-aware checkout serviceability with server-side final enforcement",
-      "order-level promised dispatch deadline snapshots for future orders",
-      "Admin Fulfilment control center with overdue/due-soon dispatch queues and shipment exceptions",
-      "preferred courier suggestions flow from delivery zone into order fulfilment while final courier validation remains server-side",
-      "shipment records link to configured courier partners while preserving carrier/tracking snapshots"
-    ],
-    "migration": "20261003231500_phase44_fulfilment_shipping_v2",
-    "verification": "npm run verify:phase44"
-  },
-  "phase45": {
-    "name": "Finance, GST & Payment Reconciliation V2",
-    "features": [
-      "restores the missing RefillPlanner component that caused Phase 44 verification to stop before typecheck",
-      "Admin Finance control center with GST summaries, collections, refunds, invoice coverage and payment exceptions",
-      "payment reconciliation states plus delivered COD collection/reference tracking",
-      "tax credit notes for refunded returns and previously invoiced full-order refunds",
-      "PAN/place-of-supply invoice snapshots and configurable credit-note numbering",
-      "GST rate summary net of issued credit notes and catalog HSN data-quality checks",
-      "customer printable credit notes and Admin credit-note copies",
-      "finance CSV export and explicit batch issuance of missing invoices/credit notes"
-    ],
-    "migration": "20261003193000_phase45_finance_gst_reconciliation",
-    "verification": "npm run verify:phase45"
-  },
-  "phase46": {
-    "name": "Consent, Communications & Privacy Operations V2",
-    "features": [
-      "customer Privacy Center for optional email/SMS/WhatsApp marketing choices and analytics consent",
-      "append-only consent ledger snapshots purpose, grant/withdrawal, source and privacy-policy version with privacy-preserving network fingerprinting",
-      "explicit newsletter consent at registration/footer plus secure preference-link and tokenized one-click unsubscribe support",
-      "registered email-marketing preference remains synchronized with the newsletter suppression list",
-      "Admin cannot silently re-subscribe a customer after withdrawal; customer must opt in again",
-      "privacy request workflow for correction, erasure review and other requests with password confirmation for erasure",
-      "Admin Privacy operations dashboard with opt-in KPIs, consent ledger CSV and privacy request queue",
-      "privacy-policy version is configurable and snapshotted into future consent events",
-      "customer account export now includes marketing preferences, consent history and privacy requests",
-      "analytics banner choices are mirrored to the server consent ledger while local analytics loading remains browser-controlled"
-    ],
-    "migration": "20261004003000_phase46_privacy_consent_v2",
-    "verification": "npm run verify:phase46"
-  },
-  "phase47": {
-    "features": [
-      "scheduled storefront maintenance mode with server-side checkout guard",
-      "global React error boundary and sanitized client-error telemetry",
-      "offline connectivity banner and request timeouts",
-      "Admin System production launch-readiness gate",
-      "deployment-safe service worker cache strategy",
-      "local/public endpoint smoke-test command",
-      "improved 404 recovery experience"
-    ],
-    "migration": "20261004123000_phase47_launch_readiness_v2",
-    "verification": "npm run verify:phase47",
-    "smoke": "npm run smoke:local"
-  },
-  "phase48": {
-    "name": "Database Integrity & Job Reliability V2",
-    "features": [
-      "restores the Phase 38 refill migration and repairs drifted databases idempotently",
-      "npm run dev deploys committed pending migrations before starting API/Web in development",
-      "API fails fast with a clear schema-readiness error instead of serving a partially compatible Prisma client",
-      "db:status and db:doctor verify the deployed database contract, not only the Prisma schema file",
-      "database-backed leases prevent duplicate lifecycle jobs across multiple API instances",
-      "Admin System exposes migration integrity and background-job health with controlled manual runs"
-    ],
-    "migration": "20261004160000_phase48_schema_integrity_job_orchestration",
-    "verification": "npm run verify:phase48"
-  },
-  "phase49": {
-    "name": "Production Release Orchestration & Deployment Safety V2",
-    "features": [
-      "repairs Phase 48 database-readiness TypeScript literal-union inference without weakening the migration-head guard",
-      "production-only environment safety checks for HTTPS origins, strong secrets and complete integration credentials",
-      "safe public release metadata endpoint and Admin deployment/runtime identity panel",
-      "readiness includes database, physical schema, production configuration and draining state",
-      "same-origin production API fallback with immutable hashed-asset caching and no-store SPA HTML",
-      "graceful shutdown releases database job leases owned by the stopping API instance",
-      "local database tools default to server/.env while production targeting must be explicit",
-      "release:doctor, release:prepare, release:build and release:smoke orchestration",
-      "backup-before-migrate release order with no migrate dev/reset/db push in production workflow"
-    ],
-    "migration": null,
-    "verification": "npm run verify:phase49",
-    "releaseDoctor": "npm run release:doctor",
-    "releasePrepare": "npm run release:prepare",
-    "smoke": "npm run release:smoke"
-  }
+  "phase": 50,
+  "name": "Storefront Runtime Recovery & Client State Integrity V2",
+  "createdUtc": "2026-10-03T15:34:09.074174+00:00",
+  "fileCount": 26,
+  "files": [
+    {
+      "path": "PHASE_50_CHANGED_FILES.txt",
+      "size": 746,
+      "sha256": "02f06989324aac197fb7c45a207364f1faa25a882b598d56a6361f0a83f002ee"
+    },
+    {
+      "path": "PHASE_50_RELEASE.md",
+      "size": 5913,
+      "sha256": "877060a609777e2bff89738969369b635c0e23b646e7a671bce9eef997bfd598"
+    },
+    {
+      "path": "PHASE_50_VERIFICATION.txt",
+      "size": 806,
+      "sha256": "a196252b293828c3659db7c2371454841dc32e4862e8db0680a0b02185b2fdcb"
+    },
+    {
+      "path": "client/src/analytics.js",
+      "size": 175,
+      "sha256": "abc5d29c42fdf66e2a18ba415e2a56198de68465c882112af4820362777c8e5d"
+    },
+    {
+      "path": "client/src/api/http.js",
+      "size": 3335,
+      "sha256": "564a31dba27e32ab47e20e2dd933f9097aeafea92e9f737d56fd016bcc743128"
+    },
+    {
+      "path": "client/src/components/AppErrorBoundary.jsx",
+      "size": 2245,
+      "sha256": "3edc950825ea35415743dc7b287889f872328aa0503caf9d6cf0a29508f9dff6"
+    },
+    {
+      "path": "client/src/components/Header.jsx",
+      "size": 10138,
+      "sha256": "761a3e225795c90691b87901d72897a029d08aa22d1319afad09bb84e1c5cbc4"
+    },
+    {
+      "path": "client/src/context/CartContext.jsx",
+      "size": 10208,
+      "sha256": "0f5bbbcbbfda13927e644ee9a00b0a4ef15ae80cd6acc69e3b5a0f172ca52d3b"
+    },
+    {
+      "path": "client/src/context/CompareContext.jsx",
+      "size": 1818,
+      "sha256": "39a8a1f12058247e120de660d334e6367bdfc535d6557503580b2a83e1daf506"
+    },
+    {
+      "path": "client/src/context/NotificationContext.jsx",
+      "size": 2731,
+      "sha256": "17619237e5108bd0219f136011e7e0ff964a11cb3c41e54ab4b0350f461d9483"
+    },
+    {
+      "path": "client/src/context/StoreContext.jsx",
+      "size": 1572,
+      "sha256": "02303aec0f702fb9aa6861383142aa359493a5142ec1c4c206ae5a196b8bc028"
+    },
+    {
+      "path": "client/src/context/WishlistContext.jsx",
+      "size": 3309,
+      "sha256": "c876d90e35b5413dcfb0fe03550578b81b480dbe20b63e8745fb3d0ad666fa65"
+    },
+    {
+      "path": "client/src/lib/client-runtime.js",
+      "size": 3335,
+      "sha256": "db3f184caaa0e262a31993158837eb0fdaef9c6f55233a3c2cf60b77a7c3870a"
+    },
+    {
+      "path": "client/src/lib/persisted-state.js",
+      "size": 2244,
+      "sha256": "9345a2842e3551c43d897d605feeb32ade32c7d2309a7cb8eb27cb6bdbb1cc4c"
+    },
+    {
+      "path": "client/src/main.jsx",
+      "size": 1942,
+      "sha256": "777b2953ef8799f2a3550b20582894403ff1623e893072cc0c74451fd119dc78"
+    },
+    {
+      "path": "client/src/pages/Home.jsx",
+      "size": 9780,
+      "sha256": "acf6fae6a604c430f74449b94a169354b2289f04d03979620bfcf18cdd5c03ab"
+    },
+    {
+      "path": "client/src/pages/admin/AdminSystem.jsx",
+      "size": 16246,
+      "sha256": "ce43446079cdd5f07d3af3c6a16c058304f11889ddc76e3f54a43cbf3377a7e5"
+    },
+    {
+      "path": "client/src/styles.css",
+      "size": 336367,
+      "sha256": "6f8220d02a4a821ebfafb536be5ba1e427505f2b9d1451af85847cdf955482e6"
+    },
+    {
+      "path": "package.json",
+      "size": 6114,
+      "sha256": "b80d44ae880394f9e1d55e2f0d4d01d16348f7052a6f49e68754b6b2314316db"
+    },
+    {
+      "path": "scripts/phase50-client-state-test.mjs",
+      "size": 1801,
+      "sha256": "aeb70cefc7203e4cd215ea424b454892721130b1e21a32102fb5a4cd0e4c07e8"
+    },
+    {
+      "path": "scripts/phase50-runtime-recovery-audit.mjs",
+      "size": 5097,
+      "sha256": "601b66ce3bf0cceaf0646ac2ce2f6a31572fea0a406a57040deac67066fb50f3"
+    },
+    {
+      "path": "server/.env.example",
+      "size": 1367,
+      "sha256": "c3cafd682b7deb950196ddeda3db5e3502303cf4a977368675b9a37d98a81a01"
+    },
+    {
+      "path": "server/.env.production.example",
+      "size": 1445,
+      "sha256": "a9d5aa4e3d6a1b860e47bdb54086e1c663d176217ea5428112a82347f1982d1e"
+    },
+    {
+      "path": "server/src/config/env.ts",
+      "size": 5177,
+      "sha256": "bfc845de7e0a9f8f354cab6b649f7448db14d67addd24cb2dbaed77ddff13260"
+    },
+    {
+      "path": "server/src/routes/system.routes.ts",
+      "size": 4085,
+      "sha256": "44f51ecdb6f917f6081d0c28ae0218e2cec01f8096108dcbf61f8c4b3ed70486"
+    },
+    {
+      "path": "server/src/services/runtime-observability.service.ts",
+      "size": 5944,
+      "sha256": "6f31408c3d6794917f7a2501d99ab26fe4527a2a5a4622da3033028e05b91ad9"
+    }
+  ]
 }

@@ -158,7 +158,7 @@ export default function AdminSystem() {
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>
           {(health.runtime?.routes || []).map((row) => <div key={row.route}><code>{row.route}</code><span>{row.requests} req</span><span>{row.errors} errors</span><b>{row.p95Ms} / {row.maxMs} ms</b></div>)}
         </div>}
-        {(health.runtime?.recentClientErrors || []).length > 0 && <div className="phase47-client-errors"><div className="phase41-route-head"><span>Recent client errors</span><small>Sanitized browser reports · rolling 15 minutes</small></div>{health.runtime.recentClientErrors.map((item, index) => <div key={`${item.at}-${index}`}><code>{item.route}</code><span>{item.source}</span><b>{item.message}</b><small>{new Date(item.at).toLocaleTimeString()}</small></div>)}</div>}
+        {(health.runtime?.recentClientErrors || []).length > 0 && <div className="phase47-client-errors"><div className="phase41-route-head"><span>Recent client errors</span><small>Sanitized browser reports · rolling 15 minutes</small></div>{health.runtime.recentClientErrors.map((item, index) => <div key={`${item.at}-${index}`}><code>{item.referenceId ? `${item.referenceId} · ${item.route}` : item.route}</code><span>{item.source}</span><b>{item.message}</b><small>{new Date(item.at).toLocaleTimeString()}</small></div>)}</div>}
         <p className="admin-help-note">Release: {health.release?.name || "local / unnamed"}{health.release?.sha ? ` · ${health.release.sha}` : ""}. A graceful shutdown first marks readiness as unavailable, then waits up to the configured grace window before forcing exit.</p>
       </section>
 

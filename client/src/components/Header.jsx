@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
+import { readPersistedArray } from "../lib/persisted-state";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
@@ -13,10 +14,9 @@ const SEARCH_KEY = "riseora_recent_searches";
 const RECENT_PRODUCT_KEY = "riseora_recent_products";
 
 function readJson(key, fallback = []) {
-  try {
-    const value = JSON.parse(localStorage.getItem(key) || "null");
-    return Array.isArray(value) ? value : fallback;
-  } catch { return fallback; }
+  if (typeof window === "undefined") return fallback;
+  const value = readPersistedArray(window.localStorage, key, { maxItems: key === SEARCH_KEY ? 20 : 20 });
+  return Array.isArray(value) ? value : fallback;
 }
 function rememberSearch(value) {
   try {

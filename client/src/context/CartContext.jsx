@@ -1,25 +1,38 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { trackCommerce, trackEvent } from "../analytics";
+import { readPersistedArray, writePersistedArray } from "../lib/persisted-state";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";
 const BUY_NOW_KEY = "riseora_buy_now";
 
-function readJson(storage, key) {
-  try {
-    const value = storage?.getItem(key);
-    return value ? JSON.parse(value) : [];
-  } catch {
-    return [];
-  }
+function normalizeStoredLine(item) {
+  if (!item || typeof item !== "object" || !item.variantId || !item.productId) return null;
+  const quantity = Math.max(1, Number(item.quantity || 1));
+  const price = Number(item.price || 0);
+  const mrp = Number(item.mrp || 0);
+  const stockQuantity = Math.max(0, Number(item.stockQuantity || 0));
+  return {
+    ...item,
+    quantity: Number.isFinite(quantity) ? quantity : 1,
+    price: Number.isFinite(price) ? price : 0,
+    mrp: Number.isFinite(mrp) ? mrp : 0,
+    stockQuantity: Number.isFinite(stockQuantity) ? stockQuantity : 0,
+  };
 }
 
 function readInitialCart() {
-  return typeof window === "undefined" ? [] : readJson(window.localStorage, STORAGE_KEY);
+  if (typeof window === "undefined") return [];
+  return readPersistedArray(window.localStorage, STORAGE_KEY, { maxItems: 250 })
+    .map(normalizeStoredLine)
+    .filter(Boolean);
 }
 
 function readInitialBuyNow() {
-  return typeof window === "undefined" ? [] : readJson(window.sessionStorage, BUY_NOW_KEY);
+  if (typeof window === "undefined") return [];
+  return readPersistedArray(window.sessionStorage, BUY_NOW_KEY, { maxItems: 20 })
+    .map(normalizeStoredLine)
+    .filter(Boolean);
 }
 
 function normalizePurchaseLimit(value) {
@@ -81,12 +94,12 @@ export function CartProvider({ children }) {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   useEffect(() => {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); } catch { /* cart persistence is best effort */ }
+    writePersistedArray(window.localStorage, STORAGE_KEY, items, { maxItems: 250 });
   }, [items]);
 
   useEffect(() => {
     try {
-      if (buyNowItems.length) sessionStorage.setItem(BUY_NOW_KEY, JSON.stringify(buyNowItems));
+      if (buyNowItems.length) writePersistedArray(window.sessionStorage, BUY_NOW_KEY, buyNowItems, { maxItems: 20 });
       else sessionStorage.removeItem(BUY_NOW_KEY);
     } catch { /* buy-now persistence is best effort */ }
   }, [buyNowItems]);
@@ -201,9 +214,9 @@ export function CartProvider({ children }) {
     setItems(safe);
   }
 
-  const count = items.reduce((sum, item) => sum + item.quantity, 0);
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
-  const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const count = items.reduce((sum, item) => sum + Math.max(0, Number(item?.quantity || 0)), 0);
+  const subtotal = items.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
+  const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
 
   const value = useMemo(
     () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),

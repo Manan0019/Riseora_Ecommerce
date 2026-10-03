@@ -1,14 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { readPersistedArray, writePersistedArray } from "../lib/persisted-state";
 
 const CompareContext = createContext(null);
 const KEY = "riseora_compare_products";
 const MAX = 3;
 
 function readStored() {
-  try {
-    const value = JSON.parse(localStorage.getItem(KEY) || "[]");
-    return Array.isArray(value) ? value.slice(0, MAX) : [];
-  } catch { return []; }
+  return readPersistedArray(window.localStorage, KEY, { maxItems: MAX, itemGuard: (item) => item && typeof item === "object" && Boolean(item.id) });
 }
 
 function snapshot(product) {
@@ -18,7 +16,7 @@ function snapshot(product) {
 
 export function CompareProvider({ children }) {
   const [items, setItems] = useState(readStored);
-  useEffect(() => { try { localStorage.setItem(KEY, JSON.stringify(items)); } catch { /* optional */ } }, [items]);
+  useEffect(() => { writePersistedArray(window.localStorage, KEY, items, { maxItems: MAX }); }, [items]);
   function has(id) { return items.some((item) => item.id === id); }
   function toggle(product) {
     let accepted = true;

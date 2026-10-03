@@ -14,6 +14,7 @@ type ClientErrorSample = {
   message: string;
   route: string;
   source: string;
+  referenceId: string | null;
 };
 
 const samples: RequestSample[] = [];
@@ -62,14 +63,22 @@ function sanitizeClientErrorMessage(value: string) {
     .slice(0, 500);
 }
 
-export function recordClientError(input: { message: string; route?: string; source?: string }) {
-  clientErrors.push({
+export function recordClientError(input: { message: string; route?: string; source?: string; referenceId?: string }) {
+  const sample: ClientErrorSample = {
     at: Date.now(),
     message: sanitizeClientErrorMessage(input.message),
     route: String(input.route || "/").split("?")[0].slice(0, 240),
     source: String(input.source || "client").slice(0, 80),
-  });
+    referenceId: String(input.referenceId || "").slice(0, 80) || null,
+  };
+  clientErrors.push(sample);
   if (clientErrors.length > MAX_CLIENT_ERRORS) clientErrors.splice(0, clientErrors.length - MAX_CLIENT_ERRORS);
+  logRuntimeEvent("warn", "client_error_reported", {
+    referenceId: sample.referenceId,
+    route: sample.route,
+    source: sample.source,
+    message: sample.message,
+  });
 }
 
 export function isRuntimeDraining() {

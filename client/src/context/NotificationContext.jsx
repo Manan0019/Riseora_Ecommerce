@@ -15,7 +15,7 @@ export function NotificationProvider({ children }) {
     setLoading(true);
     try {
       const response = await apiFetch("/notifications?limit=30");
-      setNotifications(response.data || []);
+      setNotifications(Array.isArray(response.data) ? response.data : []);
       setUnreadCount(Number(response.unreadCount || 0));
     } catch {
       // Notification failures must never block shopping/authentication.

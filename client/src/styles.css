@@ -2889,3 +2889,6 @@ textarea { min-height: 105px; resize: vertical; }
 .phase49-release-warnings ul{margin:0;padding-left:20px;display:grid;gap:4px}
 @media(max-width:900px){.phase49-release-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:620px){.phase49-release-grid{grid-template-columns:1fr}}
+
+/* Phase 50 · runtime recovery diagnostics */
+.phase50-dev-error{margin:14px 0 4px;padding:12px 14px;border:1px solid #e8ddd6;border-radius:12px;background:#fff9f5;text-align:left}.phase50-dev-error strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7b4d3f}.phase50-dev-error code{display:block;white-space:normal;overflow-wrap:anywhere;font-size:12px;line-height:1.45;color:#4d403b}.phase47-fatal-actions{flex-wrap:wrap}
