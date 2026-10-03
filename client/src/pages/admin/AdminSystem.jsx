@@ -59,7 +59,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 40 · RESILIENCE</p><h1>System health, backups & recovery</h1><p>Runtime health, PostgreSQL tooling, verified backup archives and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 41 · OBSERVABILITY</p><h1>System health, observability & recovery</h1><p>Live API performance, request tracing, PostgreSQL tooling, verified backups and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -90,6 +90,23 @@ export default function AdminSystem() {
         </div>
         <p className="admin-help-note">Uptime: {Math.floor((health.uptimeSeconds || 0) / 60)} minutes. Health snapshot: {new Date(health.timestamp).toLocaleString()}.</p>
       </section>
+      <section className="admin-panel phase24-system-panel phase41-runtime-panel">
+        <div className="admin-panel-head"><div><h2>Runtime observability</h2><p>Rolling 15-minute API health. Request IDs are returned in <code>X-Request-Id</code> and production logs are structured JSON.</p></div><span className={`phase24-status-pill ${health.runtime?.draining ? "warn" : "ok"}`}>{health.runtime?.draining ? "Draining" : "Accepting traffic"}</span></div>
+        <div className="phase41-runtime-grid">
+          <article><small>Requests · 15 min</small><strong>{health.runtime?.requestCount ?? 0}</strong><span>{health.runtime?.activeRequests ?? 0} active now</span></article>
+          <article><small>P95 API latency</small><strong>{health.runtime?.p95Ms ?? 0} ms</strong><span>P50 {health.runtime?.p50Ms ?? 0} ms</span></article>
+          <article><small>Server errors</small><strong>{health.runtime?.error5xx ?? 0}</strong><span>{health.runtime?.errorRatePercent ?? 0}% error rate</span></article>
+          <article><small>Slow requests</small><strong>{health.runtime?.slowRequestCount ?? 0}</strong><span>Threshold {health.runtime?.slowThresholdMs ?? 1000} ms</span></article>
+          <article><small>Process memory</small><strong>{health.runtime?.memory?.rssMb ?? 0} MB</strong><span>Heap {health.runtime?.memory?.heapUsedMb ?? 0} MB</span></article>
+          <article><small>Event loop lag</small><strong>{health.runtime?.eventLoopLagMs ?? 0} ms</strong><span>{health.runtime?.eventLoopLagMs > 250 ? "Investigate load" : "Normal"}</span></article>
+        </div>
+        {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
+          <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>
+          {(health.runtime?.routes || []).map((row) => <div key={row.route}><code>{row.route}</code><span>{row.requests} req</span><span>{row.errors} errors</span><b>{row.p95Ms} / {row.maxMs} ms</b></div>)}
+        </div>}
+        <p className="admin-help-note">Release: {health.release?.name || "local / unnamed"}{health.release?.sha ? ` · ${health.release.sha}` : ""}. A graceful shutdown first marks readiness as unavailable, then waits up to the configured grace window before forcing exit.</p>
+      </section>
+
     </>}
 
     <section className="admin-panel phase24-system-panel">

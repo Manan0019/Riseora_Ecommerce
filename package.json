@@ -37,25 +37,33 @@
     "verify:phase38": "node scripts/phase38-refill-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase39": "node scripts/phase39-inventory-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "db:doctor": "node scripts/db-doctor.mjs",
-    "security:tree": "node scripts/phase40-security-tree.mjs",
+    "security:tree": "node scripts/phase41-security-tree.mjs",
     "security:audit": "npm audit --audit-level=low",
     "security:audit:prod": "npm audit --omit=dev --audit-level=high",
-    "verify:phase40": "node scripts/phase40-ops-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase40": "node scripts/phase40-ops-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "security:audit:runtime": "npm audit --omit=dev --audit-level=high",
+    "verify:phase41": "node scripts/phase41-production-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "concurrently": "^9.2.1",
+    "prisma": "7.10.0"
   },
   "overrides": {
     "deepmerge-ts": "8.0.2",
     "mysql2": "3.24.5",
-    "tsup": {
-      "esbuild": "0.28.2"
+    "prisma@7.10.0": {
+      "mysql2": "3.24.5",
+      "@prisma/config": {
+        "deepmerge-ts": "8.0.2"
+      }
+    },
+    "@prisma/config@7.10.0": {
+      "deepmerge-ts": "8.0.2"
     }
   },
   "allowScripts": {
-    "esbuild@0.28.2": true,
-    "@prisma/engines@7.10.0": true,
-    "@prisma/client@7.10.0": true,
-    "prisma@7.10.0": true
+    "esbuild": true,
+    "@prisma/engines": true,
+    "prisma": true
   }
 }

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx watch src/index.ts",
-    "build": "tsup src/index.ts --format esm --platform node --out-dir dist --sourcemap --clean",
+    "build": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\" && esbuild src/index.ts --bundle --platform=node --format=esm --target=node22 --outfile=dist/index.js --sourcemap --packages=external",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit",
     "prisma:generate": "prisma generate",
@@ -18,7 +18,8 @@
     "pretypecheck": "prisma generate",
     "verify:phase23": "prisma generate && tsc --noEmit",
     "start:production": "node --env-file=.env.production dist/index.js",
-    "verify:phase24": "prisma generate && tsc --noEmit && npm run build"
+    "verify:phase24": "prisma generate && tsc --noEmit && npm run build",
+    "prisma:validate": "prisma validate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "7.10.0",
@@ -30,7 +31,6 @@
     "express-rate-limit": "^8.1.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.2",
-    "morgan": "^1.10.1",
     "pg": "^8.16.3",
     "zod": "^4.1.11",
     "multer": "^2.0.2"
@@ -39,13 +39,11 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/morgan": "^1.9.10",
     "@types/node": "^24.5.2",
     "@types/pg": "^8.15.5",
-    "prisma": "7.10.0",
-    "tsup": "8.5.1",
     "tsx": "4.23.15",
     "typescript": "5.9.2",
-    "@types/multer": "^2.0.0"
+    "@types/multer": "^2.0.0",
+    "esbuild": "0.28.2"
   }
 }

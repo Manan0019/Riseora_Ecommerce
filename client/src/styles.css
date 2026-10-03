@@ -2700,3 +2700,50 @@ textarea { min-height: 105px; resize: vertical; }
 .phase40-tool-row small { color: #718078; }
 .phase40-tool-row code { min-width: 0; overflow-wrap: anywhere; color: #53675a; background: #f2f6f1; border-radius: 9px; padding: 8px 10px; }
 @media (max-width: 700px) { .phase40-tool-row { grid-template-columns: 1fr; } }
+
+/* Phase 41 — production observability */
+.phase41-runtime-panel { overflow: hidden; }
+.phase41-runtime-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+.phase41-runtime-grid article {
+  border: 1px solid rgba(29, 65, 49, 0.11);
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(252, 250, 244, 0.96), rgba(247, 244, 234, 0.8));
+  padding: 16px;
+  display: grid;
+  gap: 4px;
+}
+.phase41-runtime-grid small { color: #6c756e; font-size: 0.75rem; letter-spacing: .06em; text-transform: uppercase; }
+.phase41-runtime-grid strong { color: #163c2d; font-family: var(--font-display); font-size: clamp(1.45rem, 2vw, 2rem); font-weight: 650; }
+.phase41-runtime-grid span { color: #66716a; font-size: .82rem; }
+.phase41-route-table { margin-top: 18px; border: 1px solid rgba(29, 65, 49, 0.1); border-radius: 18px; overflow: hidden; }
+.phase41-route-head,
+.phase41-route-table > div:not(.phase41-route-head) {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) 90px 90px 130px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+}
+.phase41-route-head { background: #f5f1e6; font-weight: 700; }
+.phase41-route-head small { grid-column: 2 / -1; color: #6e766f; font-weight: 500; text-align: right; }
+.phase41-route-table > div:not(.phase41-route-head) { border-top: 1px solid rgba(29, 65, 49, 0.08); }
+.phase41-route-table code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #244c3d; }
+.phase41-route-table span { color: #657168; font-size: .82rem; }
+.phase41-route-table b { text-align: right; color: #183f30; font-size: .84rem; }
+@media (max-width: 900px) {
+  .phase41-runtime-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phase41-route-head, .phase41-route-table > div:not(.phase41-route-head) { grid-template-columns: minmax(180px, 1fr) 80px 110px; }
+  .phase41-route-head small { grid-column: 2 / -1; }
+  .phase41-route-table > div:not(.phase41-route-head) span:nth-of-type(2) { display: none; }
+}
+@media (max-width: 620px) {
+  .phase41-runtime-grid { grid-template-columns: 1fr; }
+  .phase41-route-head, .phase41-route-table > div:not(.phase41-route-head) { grid-template-columns: minmax(0, 1fr) auto; }
+  .phase41-route-head small { grid-column: 1 / -1; text-align: left; }
+  .phase41-route-table > div:not(.phase41-route-head) span { display: none; }
+}

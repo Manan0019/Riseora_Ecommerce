@@ -26,8 +26,11 @@ else {
   restore.command ? pass("pg_restore", `${restore.version} · ${restore.command}`) : fail("pg_restore", "set PG_BIN or PG_RESTORE_PATH");
   const backupDir = path.resolve(root, "server", values.BACKUP_DIR || "backups");
   try { fs.mkdirSync(backupDir, { recursive: true }); fs.accessSync(backupDir, fs.constants.R_OK | fs.constants.W_OK); pass("Backup directory", backupDir); } catch (e) { fail("Backup directory", e.message); }
-  const validate = spawnSync(process.platform === "win32" ? "npm.cmd" : "npm", ["exec", "--workspace", "server", "--", "prisma", "validate"], { cwd: root, stdio: "inherit", windowsHide: true });
-  validate.status === 0 ? pass("Prisma schema validation") : fail("Prisma schema validation", `exit ${validate.status ?? "unknown"}`);
+  const npmCommand = process.platform === "win32" ? "npm.cmd" : "npm";
+  const validate = spawnSync(npmCommand, ["run", "prisma:validate", "--workspace", "server"], { cwd: root, stdio: "inherit", windowsHide: true });
+  if (validate.error) fail("Prisma schema validation", validate.error.message);
+  else if (validate.status === 0) pass("Prisma schema validation");
+  else fail("Prisma schema validation", `exit ${validate.status ?? "unknown"}`);
 }
 console.log(`\nDatabase doctor: ${failed ? "FAIL" : "PASS"}`);
 process.exitCode = failed ? 1 : 0;

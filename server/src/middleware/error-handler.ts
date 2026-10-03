@@ -1,19 +1,26 @@
 import type { NextFunction, Request, Response } from "express";
+import { logRuntimeEvent } from "../services/runtime-observability.service";
 
 export function notFound(req: Request, res: Response) {
   res.status(404).json({
     success: false,
     message: `Route not found: ${req.method} ${req.originalUrl}`,
+    requestId: req.requestId || undefined,
   });
 }
 
 export function errorHandler(
   error: unknown,
-  _req: Request,
+  req: Request,
   res: Response,
   _next: NextFunction,
 ) {
-  console.error(error);
+  logRuntimeEvent("error", "request_error", {
+    requestId: req.requestId || null,
+    method: req.method,
+    path: req.originalUrl?.split("?")[0],
+    message: error instanceof Error ? error.message : String(error),
+  });
 
 
   if (error instanceof Error && (error.name === "MulterError" || error.message.includes("JPG, PNG and WEBP"))) {
@@ -50,5 +57,6 @@ export function errorHandler(
   res.status(500).json({
     success: false,
     message: "Something went wrong on the server",
+    requestId: req.requestId || undefined,
   });
 }

@@ -4,6 +4,7 @@ import path from "node:path";
 import { prisma } from "../config/prisma";
 import { env } from "../config/env";
 import { backupDirectory, listDatabaseBackups, postgresBackupTools } from "./database-backup.service";
+import { isRuntimeDraining, runtimeObservabilitySnapshot } from "./runtime-observability.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -27,9 +28,11 @@ async function checkWritableDirectory(directory: string) {
 
 export async function readinessStatus() {
   const database = await checkDatabase();
+  const draining = isRuntimeDraining();
   return {
-    ok: database.ok,
+    ok: database.ok && !draining,
     database,
+    draining,
     uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
   };
@@ -52,8 +55,10 @@ export async function adminSystemHealth() {
     publicSiteUrl: Boolean(env.PUBLIC_SITE_URL),
   };
 
+  const runtime = runtimeObservabilitySnapshot();
+
   return {
-    status: database.ok && uploadsWritable ? "healthy" : "degraded",
+    status: database.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
     environment: env.NODE_ENV,
     nodeVersion: process.version,
     uptimeSeconds: Math.round(process.uptime()),
@@ -72,6 +77,8 @@ export async function adminSystemHealth() {
       latest: backups[0] || null,
     },
     integrations,
+    release: { name: env.RELEASE_NAME || null, sha: env.RELEASE_SHA || null },
+    runtime,
     timestamp: new Date().toISOString(),
   };
 }

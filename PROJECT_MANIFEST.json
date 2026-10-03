@@ -321,5 +321,22 @@
     ],
     "migration": "20261003153000_phase40_inventory_relation_integrity",
     "verification": "npm run verify:phase40"
+  },
+  "phase41": {
+    "name": "Production Observability & Security Closure V2",
+    "features": [
+      "repairs db:doctor Prisma validation by using the same workspace npm-run path that already succeeds for generate/migrate commands",
+      "pins React Router 6.30.6 to close the open-redirect/XSS advisory reported by npm audit",
+      "removes tsup and its vulnerable esbuild branch; server production build now uses pinned esbuild 0.28.2 directly",
+      "moves the Prisma CLI to root development-only tooling and strengthens scoped deepmerge-ts/mysql2 overrides for the current Prisma 7.10 dependency advisories",
+      "npm install-script approvals use reviewed package identities while dependency-tree verification enforces safe resolved versions",
+      "request IDs are returned through X-Request-Id and included with server-side failures for support/debug correlation",
+      "rolling 15-minute runtime telemetry tracks request volume, 4xx/5xx counts, p50/p95 latency, slow requests, memory and event-loop lag",
+      "Admin System displays runtime performance and slow API routes without exposing request bodies or customer PII",
+      "production HTTP logs are structured JSON while development keeps concise morgan logging",
+      "graceful shutdown marks readiness as draining before closing the HTTP server and disconnecting Prisma"
+    ],
+    "migration": null,
+    "verification": "npm run verify:phase41"
   }
 }

@@ -2,7 +2,6 @@ import path from "node:path";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
-import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { allowedOrigins, env } from "./config/env";
 import { prisma } from "./config/prisma";
@@ -31,6 +30,8 @@ import growthRoutes from "./routes/growth.routes";
 import rewardRoutes from "./routes/reward.routes";
 import adminRewardsRoutes from "./routes/admin-rewards.routes";
 import supportRoutes from "./routes/support.routes";
+import refillRoutes from "./routes/refill.routes";
+import adminRefillRoutes from "./routes/admin-refill.routes";
 import adminSupportRoutes from "./routes/admin-support.routes";
 import adminSystemRoutes, { publicSystemRoutes } from "./routes/system.routes";
 import erpSyncRoutes from "./routes/erp-sync.routes";
@@ -38,11 +39,14 @@ import adminErpRoutes from "./routes/admin-erp.routes";
 import adminSecurityRoutes from "./routes/admin-security.routes";
 import { publicDealRoutes, adminDealRoutes } from "./routes/deal.routes";
 import { errorHandler, notFound } from "./middleware/error-handler";
+import { requestObservability } from "./middleware/request-observability";
 import { requireAdmin, requireAuth } from "./middleware/auth";
 import { adminAuditTrail, enforceAdminPermission } from "./middleware/admin-security";
 import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
 import { processCartRecoveryReminders } from "./services/cart-recovery.service";
 import { notifyEligiblePriceAlerts } from "./services/price-alert.service";
+import { processDueRefillReminders } from "./services/refill-reminder.service";
+import { logRuntimeEvent, setRuntimeDraining } from "./services/runtime-observability.service";
 
 const app = express();
 if (env.TRUST_PROXY) app.set("trust proxy", 1);
@@ -61,11 +65,11 @@ app.use(cors({
   credentials: false,
 }));
 
+app.use(requestObservability);
 app.post("/api/payments/razorpay/webhook", express.raw({ type: "application/json", limit: "1mb" }), razorpayWebhook);
 app.use(express.json({ limit: "1mb" }));
 app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use("/uploads", express.static(path.resolve(process.cwd(), "uploads"), { maxAge: env.NODE_ENV === "production" ? "7d" : 0, immutable: env.NODE_ENV === "production" }));
-app.use(morgan(env.NODE_ENV === "production" ? "combined" : "dev"));
 app.use("/api", rateLimit({ windowMs: 15 * 60 * 1000, limit: 500, standardHeaders: "draft-8", legacyHeaders: false }));
 
 app.use("/api/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 40, standardHeaders: "draft-8", legacyHeaders: false }), authRoutes);
@@ -82,6 +86,7 @@ app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/rewards", rewardRoutes);
 app.use("/api/support", supportRoutes);
+app.use("/api/refills", refillRoutes);
 app.use("/api", engagementRoutes);
 app.use("/api/payments", rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: "draft-8", legacyHeaders: false }), paymentRoutes);
 app.use("/api/orders", orderRoutes);
@@ -104,6 +109,7 @@ app.use("/api/admin/lifecycle", lifecycleRoutes);
 app.use("/api/admin/growth", growthRoutes);
 app.use("/api/admin", adminRewardsRoutes);
 app.use("/api/admin", adminSupportRoutes);
+app.use("/api/admin", adminRefillRoutes);
 app.use("/", seoRoutes);
 app.use("/api", notFound);
 
@@ -120,10 +126,12 @@ app.use(notFound);
 app.use(errorHandler);
 
 const server = app.listen(env.PORT, () => {
-  console.log(`Riseora API running on http://localhost:${env.PORT}`);
+  logRuntimeEvent("info", "server_started", { port: env.PORT, environment: env.NODE_ENV, releaseName: env.RELEASE_NAME || null, releaseSha: env.RELEASE_SHA || null });
+  if (env.NODE_ENV !== "production") console.log(`Riseora API running on http://localhost:${env.PORT}`);
   void releaseExpiredCheckoutSessions().catch((error) => console.error("Checkout cleanup failed", error));
   void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
   void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
+  void processDueRefillReminders().catch((error) => console.error("Refill reminder processing failed", error));
 });
 
 const checkoutCleanupTimer = setInterval(() => {
@@ -134,17 +142,38 @@ checkoutCleanupTimer.unref();
 const cartRecoveryTimer = setInterval(() => {
   void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
   void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
+  void processDueRefillReminders().catch((error) => console.error("Refill reminder processing failed", error));
 }, 10 * 60 * 1000);
 cartRecoveryTimer.unref();
 
-async function shutdown(signal: string) {
-  console.log(`${signal} received. Shutting down...`);
+let shuttingDown = false;
+async function shutdown(signal: string, exitCode = 0) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  setRuntimeDraining(true);
+  logRuntimeEvent("warn", "server_shutdown_started", { signal, activeGraceMs: env.SHUTDOWN_GRACE_MS });
   clearInterval(checkoutCleanupTimer);
   clearInterval(cartRecoveryTimer);
+
+  const forceTimer = setTimeout(() => {
+    logRuntimeEvent("error", "server_shutdown_forced", { signal });
+    process.exit(exitCode || 1);
+  }, env.SHUTDOWN_GRACE_MS);
+  forceTimer.unref();
+
   server.close(async () => {
-    await prisma.$disconnect();
-    process.exit(0);
+    clearTimeout(forceTimer);
+    try { await prisma.$disconnect(); } catch (error) { logRuntimeEvent("error", "database_disconnect_failed", { message: error instanceof Error ? error.message : String(error) }); }
+    logRuntimeEvent("info", "server_shutdown_complete", { signal });
+    process.exit(exitCode);
   });
 }
 process.on("SIGINT", () => void shutdown("SIGINT"));
 process.on("SIGTERM", () => void shutdown("SIGTERM"));
+process.on("unhandledRejection", (reason) => {
+  logRuntimeEvent("error", "unhandled_rejection", { message: reason instanceof Error ? reason.message : String(reason) });
+});
+process.on("uncaughtException", (error) => {
+  logRuntimeEvent("error", "uncaught_exception", { message: error.message, stack: env.NODE_ENV === "development" ? error.stack : undefined });
+  void shutdown("uncaughtException", 1);
+});
