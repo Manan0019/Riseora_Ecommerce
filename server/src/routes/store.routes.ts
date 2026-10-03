@@ -64,6 +64,7 @@ router.get(
       postalCode: z.string().trim().regex(/^\d{6}$/),
       subtotal: z.coerce.number().nonnegative().optional().default(0),
       paymentMethod: z.enum(["COD", "ONLINE"]).optional().default("ONLINE"),
+      weightGrams: z.coerce.number().int().nonnegative().optional().default(0),
     }).safeParse(req.query);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid 6-digit PIN code" });
     const settings = await getStoreSettings();
@@ -71,6 +72,7 @@ router.get(
       postalCode: parsed.data.postalCode,
       merchandiseAfterDiscount: parsed.data.subtotal,
       paymentMethod: parsed.data.paymentMethod,
+      totalWeightGrams: parsed.data.weightGrams,
       settings,
     });
     res.json({
@@ -87,6 +89,10 @@ router.get(
         dispatchWithinDays: quote.dispatchWithinDays,
         deliveryMinDays: quote.deliveryMinDays,
         deliveryMaxDays: quote.deliveryMaxDays,
+        totalWeightGrams: quote.totalWeightGrams,
+        maxWeightGrams: quote.maxWeightGrams,
+        preferredShippingPartnerName: quote.preferredShippingPartnerName,
+        codMaxOrderAmount: quote.codMaxOrderAmountOverride,
         shippingFee: quote.shippingFee,
         freeShippingThreshold: quote.freeShippingThresholdOverride == null ? (settings.freeShippingThreshold == null ? null : Number(settings.freeShippingThreshold)) : quote.freeShippingThresholdOverride,
         reason: quote.reason,

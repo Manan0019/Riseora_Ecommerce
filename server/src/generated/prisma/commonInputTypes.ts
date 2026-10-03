@@ -606,6 +606,13 @@ export type EnumPaymentStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
 }
 
+export type EnumPaymentReconciliationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PaymentReconciliationStatus | Prisma.EnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel> | $Enums.PaymentReconciliationStatus
+}
+
 export type EnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.PaymentStatus | Prisma.EnumPaymentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.PaymentStatus[] | Prisma.ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -614,6 +621,16 @@ export type EnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel>
+}
+
+export type EnumPaymentReconciliationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PaymentReconciliationStatus | Prisma.EnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPaymentReconciliationStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentReconciliationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel>
 }
 
 export type EnumCheckoutSessionStatusFilter<$PrismaModel = never> = {
@@ -1537,6 +1554,13 @@ export type NestedEnumPaymentStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel> | $Enums.PaymentStatus
 }
 
+export type NestedEnumPaymentReconciliationStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.PaymentReconciliationStatus | Prisma.EnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel> | $Enums.PaymentReconciliationStatus
+}
+
 export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.PaymentStatus | Prisma.EnumPaymentStatusFieldRefInput<$PrismaModel>
   in?: $Enums.PaymentStatus[] | Prisma.ListEnumPaymentStatusFieldRefInput<$PrismaModel>
@@ -1545,6 +1569,16 @@ export type NestedEnumPaymentStatusWithAggregatesFilter<$PrismaModel = never> = 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPaymentStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumPaymentReconciliationStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.PaymentReconciliationStatus | Prisma.EnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.PaymentReconciliationStatus[] | Prisma.ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumPaymentReconciliationStatusWithAggregatesFilter<$PrismaModel> | $Enums.PaymentReconciliationStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumPaymentReconciliationStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumCheckoutSessionStatusFilter<$PrismaModel = never> = {

@@ -28,6 +28,7 @@ router.get(
         items: { include: { orderItem: true } },
         evidence: true,
         statusHistory: { where: { customerVisible: true }, orderBy: { createdAt: "asc" } },
+        creditNote: true,
       },
       orderBy: { requestedAt: "desc" },
     });
@@ -45,6 +46,7 @@ router.get(
         items: { include: { orderItem: true } },
         evidence: true,
         statusHistory: { where: { customerVisible: true }, orderBy: { createdAt: "asc" } },
+        creditNote: true,
       },
     });
     if (!item) return res.status(404).json({ success: false, message: "Return request not found" });

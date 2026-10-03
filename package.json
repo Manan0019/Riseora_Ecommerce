@@ -44,7 +44,9 @@
     "security:audit:runtime": "npm audit --omit=dev --audit-level=high",
     "verify:phase41": "node scripts/phase41-production-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase42": "node scripts/phase42-account-security-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "verify:phase43": "node scripts/phase43-content-studio-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase43": "node scripts/phase43-content-studio-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase44": "node scripts/phase44-fulfilment-shipping-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

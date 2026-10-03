@@ -17,8 +17,9 @@ function prefixesFromJson(value: unknown) {
   return normalizePostalPrefixes(Array.isArray(value) ? value : []);
 }
 
-export async function resolveShippingZone(postalCodeInput: unknown, suppliedSettings?: any) {
+export async function resolveShippingZone(postalCodeInput: unknown, suppliedSettings?: any, totalWeightGramsInput: unknown = 0) {
   const postalCode = normalizePostalCode(postalCodeInput);
+  const totalWeightGrams = Math.max(0, Math.round(Number(totalWeightGramsInput || 0)));
   const settings = suppliedSettings ?? await getStoreSettings();
   const strict = Boolean(settings.requireServiceablePostalCode);
   const fallback = {
@@ -31,11 +32,18 @@ export async function resolveShippingZone(postalCodeInput: unknown, suppliedSett
     city: null as string | null,
     state: null as string | null,
     codAllowed: true,
+    codFeeOverride: null as number | null,
+    codMaxOrderAmountOverride: null as number | null,
     dispatchWithinDays: Math.max(0, Number(settings.dispatchWithinDays ?? 2)),
     deliveryMinDays: Math.max(1, Number(settings.deliveryMinDays ?? 3)),
     deliveryMaxDays: Math.max(Number(settings.deliveryMinDays ?? 3), Number(settings.deliveryMaxDays ?? 7)),
     shippingFeeOverride: null as number | null,
     freeShippingThresholdOverride: null as number | null,
+    maxWeightGrams: null as number | null,
+    totalWeightGrams,
+    preferredShippingPartnerId: null as string | null,
+    preferredShippingPartnerName: null as string | null,
+    preferredShippingPartnerCode: null as string | null,
     reason: strict ? "Delivery is not enabled for this PIN code yet." : "Using the store-wide delivery settings for this PIN code.",
   };
 
@@ -45,6 +53,7 @@ export async function resolveShippingZone(postalCodeInput: unknown, suppliedSett
 
   const zones = await prisma.shippingZone.findMany({
     where: { isActive: true },
+    include: { preferredShippingPartner: true },
     orderBy: [{ priority: "desc" }, { createdAt: "asc" }],
   });
 
@@ -58,22 +67,40 @@ export async function resolveShippingZone(postalCodeInput: unknown, suppliedSett
   const minDays = match.zone.deliveryMinDays == null ? fallback.deliveryMinDays : Math.max(1, Number(match.zone.deliveryMinDays));
   const maxDaysRaw = match.zone.deliveryMaxDays == null ? fallback.deliveryMaxDays : Number(match.zone.deliveryMaxDays);
   const maxDays = Math.max(minDays, maxDaysRaw);
+  const dispatchWithinDays = match.zone.dispatchWithinDays == null ? fallback.dispatchWithinDays : Math.max(0, Number(match.zone.dispatchWithinDays));
+  const maxWeightGrams = match.zone.maxWeightGrams == null ? null : Math.max(1, Number(match.zone.maxWeightGrams));
+  const weightBlocked = maxWeightGrams != null && totalWeightGrams > 0 && totalWeightGrams > maxWeightGrams;
+  const partner = match.zone.preferredShippingPartner?.isActive ? match.zone.preferredShippingPartner : null;
+  const partnerWeightBlocked = partner?.maxWeightGrams != null && totalWeightGrams > 0 && totalWeightGrams > Number(partner.maxWeightGrams);
+  const codAllowed = Boolean(match.zone.codAllowed && (partner?.supportsCod ?? true));
+
   return {
     postalCode,
-    serviceable: true,
+    serviceable: !weightBlocked && !partnerWeightBlocked,
     matched: true,
     strict,
     zoneId: match.zone.id,
     zoneName: match.zone.name,
     city: match.zone.city || null,
     state: match.zone.state || null,
-    codAllowed: match.zone.codAllowed,
-    dispatchWithinDays: fallback.dispatchWithinDays,
+    codAllowed,
+    codFeeOverride: match.zone.codFee == null ? null : Number(match.zone.codFee),
+    codMaxOrderAmountOverride: match.zone.codMaxOrderAmount == null ? null : Number(match.zone.codMaxOrderAmount),
+    dispatchWithinDays,
     deliveryMinDays: minDays,
     deliveryMaxDays: maxDays,
     shippingFeeOverride: match.zone.shippingFee == null ? null : Number(match.zone.shippingFee),
     freeShippingThresholdOverride: match.zone.freeShippingThreshold == null ? null : Number(match.zone.freeShippingThreshold),
-    reason: `Delivery available in ${match.zone.name}.`,
+    maxWeightGrams,
+    totalWeightGrams,
+    preferredShippingPartnerId: partner?.id ?? null,
+    preferredShippingPartnerName: partner?.name ?? null,
+    preferredShippingPartnerCode: partner?.code ?? null,
+    reason: weightBlocked
+      ? `${match.zone.name} supports orders up to ${(maxWeightGrams! / 1000).toFixed(maxWeightGrams! % 1000 === 0 ? 0 : 1)} kg. Please reduce the cart or contact Riseora Support.`
+      : partnerWeightBlocked
+        ? `${partner?.name || "The preferred courier"} cannot carry this order weight for ${match.zone.name}. Please contact Riseora Support.`
+        : `Delivery available in ${match.zone.name}.`,
   };
 }
 
@@ -81,14 +108,18 @@ export async function getShippingQuote(input: {
   postalCode: unknown;
   merchandiseAfterDiscount: number;
   paymentMethod: "COD" | "ONLINE";
+  totalWeightGrams?: number;
   settings?: any;
 }) {
   const settings = input.settings ?? await getStoreSettings();
-  const delivery = await resolveShippingZone(input.postalCode, settings);
+  const delivery = await resolveShippingZone(input.postalCode, settings, input.totalWeightGrams ?? 0);
+  const feeSettings = delivery.codFeeOverride == null
+    ? settings
+    : { ...settings, codFee: delivery.codFeeOverride };
   const shippingFee = calculateShippingFee({
     merchandiseAfterDiscount: input.merchandiseAfterDiscount,
     paymentMethod: input.paymentMethod,
-    settings,
+    settings: feeSettings,
     shippingOverride: delivery.shippingFeeOverride,
     freeShippingThresholdOverride: delivery.freeShippingThresholdOverride,
   });

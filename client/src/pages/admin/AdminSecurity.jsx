@@ -7,7 +7,7 @@ import { ADMIN_ROLE_LABELS } from "../../adminPermissions";
 const roles = ["OWNER", "OPERATIONS", "CATALOG", "MARKETING", "SUPPORT"];
 const roleHelp = {
   OWNER: "Full store, settings, ERP, security and staff access.",
-  OPERATIONS: "Orders, returns, shipping and customer operations.",
+  OPERATIONS: "Orders, returns, shipping, finance reconciliation and customer operations.",
   CATALOG: "Products, categories, inventory and product content.",
   MARKETING: "Offers, campaigns, audience, retention and growth tools.",
   SUPPORT: "Orders, returns, customers, reviews and product questions.",

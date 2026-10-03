@@ -3,6 +3,7 @@ import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { getInvoiceWithOrder } from "../services/invoice.service";
+import { getCreditNoteForCustomer } from "../services/credit-note.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -25,6 +26,21 @@ router.get(
       if (error instanceof Error && error.message === "INVOICE_TAX_SETUP_INCOMPLETE") {
         return res.status(409).json({ success: false, message: "Riseora tax-invoice setup is incomplete. Please contact support." });
       }
+      throw error;
+    }
+  }),
+);
+
+router.get(
+  "/credit-note/my/:returnNumber",
+  asyncHandler(async (req, res) => {
+    try {
+      const data = await getCreditNoteForCustomer(String(req.params.returnNumber), req.user!.id);
+      res.json({ success: true, data });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "CREDIT_NOTE_NOT_AVAILABLE";
+      if (message === "RETURN_NOT_FOUND") return res.status(404).json({ success: false, message: "Return request not found" });
+      if (message === "CREDIT_NOTE_NOT_AVAILABLE") return res.status(409).json({ success: false, message: "Credit note is available after the refund is completed" });
       throw error;
     }
   }),

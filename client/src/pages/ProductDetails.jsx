@@ -13,6 +13,7 @@ import RichText, { richTextToPlain } from "../components/RichText";
 import ProductFaq from "../components/ProductFaq";
 import ProductQuestions from "../components/ProductQuestions";
 import DealCard from "../components/DealCard";
+import RefillPlanner from "../components/RefillPlanner";
 import { trackCommerce, trackEvent } from "../analytics";
 
 const RECENT_KEY = "riseora_recent_products";
@@ -180,7 +181,7 @@ export default function ProductDetails() {
     if (!/^\d{6}$/.test(value)) { setDeliveryMessage("Enter a valid 6-digit PIN code."); return; }
     setDeliveryBusy(true); setDeliveryMessage("");
     try {
-      const response = await apiFetch(`/store/serviceability?postalCode=${encodeURIComponent(value)}&subtotal=${encodeURIComponent(Number(variant?.sellingPrice || 0) * Math.max(1, quantity))}&paymentMethod=ONLINE`);
+      const response = await apiFetch(`/store/serviceability?postalCode=${encodeURIComponent(value)}&subtotal=${encodeURIComponent(Number(variant?.sellingPrice || 0) * Math.max(1, quantity))}&paymentMethod=ONLINE&weightGrams=${encodeURIComponent(Number(variant?.weightGrams || 0) * Math.max(1, quantity))}`);
       const quote = response.data;
       setDeliveryQuote(quote);
       try { localStorage.setItem("riseora_delivery_pin", value); } catch { /* optional preference */ }
@@ -190,7 +191,8 @@ export default function ProductDetails() {
         const to = formatEta(Number(quote.dispatchWithinDays || 0) + Number(quote.deliveryMaxDays || quote.deliveryMinDays || 1));
         const shipping = Number(quote.shippingFee || 0) > 0 ? `Shipping ₹${Number(quote.shippingFee).toFixed(0)}` : "Free shipping";
         const cod = quote.codAllowed ? "COD available" : "Prepaid only";
-        setDeliveryMessage(`${quote.zoneName ? `${quote.zoneName} • ` : ""}${from}–${to} • ${shipping} • ${cod}`);
+        const courier = quote.preferredShippingPartnerName ? ` • usually ${quote.preferredShippingPartnerName}` : "";
+        setDeliveryMessage(`${quote.zoneName ? `${quote.zoneName} • ` : ""}${from}–${to} • ${shipping} • ${cod}${courier}`);
       }
     } catch (err) { setDeliveryMessage(err.message || "Delivery availability could not be checked right now."); }
     finally { setDeliveryBusy(false); }
@@ -297,6 +299,7 @@ export default function ProductDetails() {
           <div className="desktop-buy-block phase17-desktop-buy"><label className="field-label" htmlFor="quantity">QUANTITY</label><div className="quantity-stepper"><button onClick={() => setQuantity((value) => Math.max(1, value - 1))}>−</button><input id="quantity" type="number" min="1" max={maxSelectableQuantity} value={quantity} onChange={(event) => setQuantity(Math.max(1, Math.min(maxSelectableQuantity, Number(event.target.value) || 1)))} /><button onClick={() => setQuantity((value) => Math.min(maxSelectableQuantity, value + 1))}>+</button></div><div className="phase17-buy-actions"><button className="button button-secondary" disabled={!inStock} onClick={addCurrent}>{inStock ? "ADD TO CART" : "OUT OF STOCK"}</button><button className="button" disabled={!inStock} onClick={buyCurrent}>{inStock ? "BUY NOW" : "SOLD OUT"}</button></div></div>
           {!inStock && variant && <form className="phase10-stock-alert" onSubmit={submitStockAlert}><div><span className="phase3-eyebrow">BACK IN STOCK</span><h3>Want this size?</h3><p>Leave your email and Riseora can notify you when <strong>{variant.name}</strong> is available again.</p></div><div className="phase10-stock-alert-form"><input id="stock-alert-email" type="email" required value={stockEmail} onChange={(e) => setStockEmail(e.target.value)} placeholder="you@example.com" /><button className="black-button" disabled={stockAlertBusy}>{stockAlertBusy ? "SAVING…" : "NOTIFY ME"}</button></div>{stockAlertMessage && <small className="phase10-stock-alert-message">{stockAlertMessage}</small>}</form>}
           {variant && <form className="phase29-price-alert" onSubmit={submitPriceAlert}><div className="phase29-price-alert-copy"><span className="phase3-eyebrow">PRICE WATCH</span><h3>Waiting for a better price?</h3><p>We can email you if <strong>{variant.name}</strong> drops below today’s ₹{Number(variant.sellingPrice).toFixed(0)} price. Set a target or leave it blank for any drop.</p></div><div className="phase29-price-alert-fields"><input type="email" required value={priceEmail} onChange={(e) => setPriceEmail(e.target.value)} placeholder="you@example.com" aria-label="Price alert email" /><div className="phase29-target-price"><span>₹</span><input type="number" min="1" max={Math.max(1, Math.floor(Number(variant.sellingPrice) - 1))} step="1" value={priceTarget} onChange={(e) => setPriceTarget(e.target.value)} placeholder="Target price" aria-label="Target price" /></div><button className="button button-secondary" disabled={priceAlertBusy}>{priceAlertBusy ? "SAVING…" : "WATCH PRICE"}</button></div>{priceAlertMessage && <small className="phase29-price-alert-message">{priceAlertMessage}</small>}</form>}
+          <RefillPlanner product={product} variant={variant} />
           <section className="phase17-delivery-card">
             <div className="phase17-delivery-head"><span><Icon name="truck" size={20} /></span><div><strong>Delivery estimate</strong><small>Usually dispatches within {dispatchDays} day{dispatchDays === 1 ? "" : "s"} · typical arrival {estimatedFrom}–{estimatedTo}</small></div><button type="button" onClick={shareProduct} aria-label="Share product"><Icon name="share" size={18} /></button></div>
             <form className="phase17-pin-check" onSubmit={saveDeliveryPin}><input value={deliveryPin} onChange={(e) => { setDeliveryPin(e.target.value.replace(/\D/g, "").slice(0, 6)); setDeliveryQuote(null); setDeliveryMessage(""); }} inputMode="numeric" placeholder="Enter 6-digit PIN" aria-label="Delivery PIN code" /><button type="submit" disabled={deliveryBusy}>{deliveryBusy ? "CHECKING…" : "CHECK PIN"}</button></form>

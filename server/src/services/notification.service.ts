@@ -108,3 +108,23 @@ export async function sendSupportAdminNotification(input: { ticketNumber: string
   await sendRiseoraEmail({ to: env.ADMIN_NOTIFICATION_EMAIL, subject: `Support ${input.priority}: ${input.ticketNumber}`, template: "admin-support-new", idempotencyKey: `admin-support/${input.ticketNumber}`, html: renderRiseoraEmail({ eyebrow: `${input.category} · ${input.priority}`, title: input.subject, bodyHtml: `<p><strong>${escapeEmailHtml(input.name)}</strong><br/>${escapeEmailHtml(input.email)}<br/>Ticket ${escapeEmailHtml(input.ticketNumber)}</p>`, ctaLabel: "Open Support queue", ctaUrl: `${baseUrl()}/admin/support` }) });
   return true;
 }
+
+export async function sendRefillReminderEmail(input: { email: string; firstName?: string | null; productName: string; productSlug: string; variantName: string; quantity: number; price: unknown; reminderId: string; dueKey: string }) {
+  if (!env.RESEND_API_KEY || !env.EMAIL_FROM) return false;
+  const url = `${baseUrl()}/refills`;
+  await sendRiseoraEmail({
+    to: input.email,
+    subject: `Refill reminder: ${input.productName}`,
+    template: "refill-reminder",
+    idempotencyKey: `refill/${input.reminderId}/${input.dueKey}`,
+    html: renderRiseoraEmail({
+      eyebrow: "REFILL REMINDER",
+      title: `${input.firstName ? `${input.firstName}, it` : "It"} may be time for a refill.`,
+      bodyHtml: `<p>Your reminder for <strong>${escapeEmailHtml(input.productName)}</strong> (${escapeEmailHtml(input.variantName)}) is due.</p><p><strong>Planned quantity:</strong> ${Number(input.quantity || 1)}<br/><strong>Current price:</strong> ${moneyText(input.price)}</p><p>Riseora will always re-check current price, stock and purchase limits before anything is added to your cart.</p>`,
+      ctaLabel: "Review my refills",
+      ctaUrl: url,
+      footnote: "This is a reminder only. Riseora never places or charges a recurring order without you confirming checkout.",
+    }),
+  });
+  return true;
+}

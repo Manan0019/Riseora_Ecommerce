@@ -80,6 +80,7 @@ export const ModelName = {
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
+  CreditNote: 'CreditNote',
   ReturnRequest: 'ReturnRequest',
   ReturnRequestItem: 'ReturnRequestItem',
   ReturnEvidence: 'ReturnEvidence',
@@ -367,6 +368,7 @@ export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
   checkoutRequestKey: 'checkoutRequestKey',
+  dispatchDueAt: 'dispatchDueAt',
   userId: 'userId',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
@@ -405,6 +407,7 @@ export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalar
 export const ShipmentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
+  shippingPartnerId: 'shippingPartnerId',
   carrier: 'carrier',
   trackingNumber: 'trackingNumber',
   trackingUrl: 'trackingUrl',
@@ -486,6 +489,10 @@ export const PaymentScalarFieldEnum = {
   refundId: 'refundId',
   refundedAmount: 'refundedAmount',
   refundedAt: 'refundedAt',
+  collectionReference: 'collectionReference',
+  reconciliationStatus: 'reconciliationStatus',
+  reconciledAt: 'reconciledAt',
+  reconciliationNote: 'reconciliationNote',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -550,6 +557,7 @@ export const StoreSettingScalarFieldEnum = {
   supportEmail: 'supportEmail',
   supportPhone: 'supportPhone',
   gstin: 'gstin',
+  pan: 'pan',
   addressLine1: 'addressLine1',
   addressLine2: 'addressLine2',
   city: 'city',
@@ -558,6 +566,8 @@ export const StoreSettingScalarFieldEnum = {
   country: 'country',
   invoicePrefix: 'invoicePrefix',
   invoiceNextNumber: 'invoiceNextNumber',
+  creditNotePrefix: 'creditNotePrefix',
+  creditNoteNextNumber: 'creditNoteNextNumber',
   freeShippingThreshold: 'freeShippingThreshold',
   flatShippingFee: 'flatShippingFee',
   codFee: 'codFee',
@@ -657,8 +667,13 @@ export const ShippingZoneScalarFieldEnum = {
   shippingFee: 'shippingFee',
   freeShippingThreshold: 'freeShippingThreshold',
   codAllowed: 'codAllowed',
+  codFee: 'codFee',
+  codMaxOrderAmount: 'codMaxOrderAmount',
+  dispatchWithinDays: 'dispatchWithinDays',
   deliveryMinDays: 'deliveryMinDays',
   deliveryMaxDays: 'deliveryMaxDays',
+  maxWeightGrams: 'maxWeightGrams',
+  preferredShippingPartnerId: 'preferredShippingPartnerId',
   isActive: 'isActive',
   priority: 'priority',
   createdAt: 'createdAt',
@@ -673,6 +688,8 @@ export const ShippingPartnerScalarFieldEnum = {
   name: 'name',
   code: 'code',
   trackingUrlTemplate: 'trackingUrlTemplate',
+  supportsCod: 'supportsCod',
+  maxWeightGrams: 'maxWeightGrams',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
@@ -689,6 +706,8 @@ export const InvoiceScalarFieldEnum = {
   issuedAt: 'issuedAt',
   sellerName: 'sellerName',
   sellerGstin: 'sellerGstin',
+  sellerPan: 'sellerPan',
+  placeOfSupply: 'placeOfSupply',
   sellerAddress: 'sellerAddress',
   buyerName: 'buyerName',
   buyerAddress: 'buyerAddress',
@@ -704,6 +723,29 @@ export const InvoiceScalarFieldEnum = {
 } as const
 
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
+
+
+export const CreditNoteScalarFieldEnum = {
+  id: 'id',
+  creditNoteNumber: 'creditNoteNumber',
+  sourceKey: 'sourceKey',
+  issuedAt: 'issuedAt',
+  invoiceId: 'invoiceId',
+  orderId: 'orderId',
+  returnRequestId: 'returnRequestId',
+  reason: 'reason',
+  taxableTotal: 'taxableTotal',
+  cgstTotal: 'cgstTotal',
+  sgstTotal: 'sgstTotal',
+  igstTotal: 'igstTotal',
+  taxTotal: 'taxTotal',
+  grandTotal: 'grandTotal',
+  lines: 'lines',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditNoteScalarFieldEnum = (typeof CreditNoteScalarFieldEnum)[keyof typeof CreditNoteScalarFieldEnum]
 
 
 export const ReturnRequestScalarFieldEnum = {

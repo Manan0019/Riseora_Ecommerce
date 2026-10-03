@@ -12,6 +12,7 @@ import { createOrderStatusInAppNotification, createUserNotification } from "../s
 import { awardDeliveredOrderRewards, awardApprovedReviewReward, reverseReviewReward } from "../services/rewards.service";
 import { rescheduleRefillsAfterDeliveredOrder } from "../services/refill-reminder.service";
 import { availableToSell, inventoryState, setInventoryQuantity, adjustInventory } from "../services/inventory.service";
+import { ensureCreditNoteForCancelledOrder } from "../services/credit-note.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -315,7 +316,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
   return prisma.$transaction(async (tx) => {
     const order = await tx.order.findUnique({
       where: { id: orderId },
-      include: { items: true, payment: true, cancellationRequest: true, shipment: { include: { events: true } } },
+      include: { items: { include: { variant: { select: { weightGrams: true } } } }, payment: true, cancellationRequest: true, shipment: { include: { events: true } } },
     });
     if (!order) throw new Error("ORDER_NOT_FOUND");
     if (order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status) && payload.status !== "CANCELLED") {
@@ -332,9 +333,16 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
 
     let resolvedTrackingUrl = payload.trackingUrl || "";
-    if (payload.carrier && payload.trackingNumber && !resolvedTrackingUrl) {
+    let resolvedPartnerId: string | null = null;
+    if (payload.carrier) {
       const partner = await tx.shippingPartner.findFirst({ where: { name: payload.carrier, isActive: true } });
-      if (partner?.trackingUrlTemplate) resolvedTrackingUrl = partner.trackingUrlTemplate.replaceAll("{trackingNumber}", encodeURIComponent(payload.trackingNumber));
+      if (partner) {
+        resolvedPartnerId = partner.id;
+        const totalWeightGrams = order.items.reduce((sum, item) => sum + Math.max(0, Number(item.variant?.weightGrams || 0)) * item.quantity, 0);
+        if (order.paymentMethod === "COD" && !partner.supportsCod) throw new Error("COURIER_COD_UNAVAILABLE");
+        if (partner.maxWeightGrams != null && totalWeightGrams > Number(partner.maxWeightGrams)) throw new Error("COURIER_WEIGHT_EXCEEDED");
+        if (payload.trackingNumber && !resolvedTrackingUrl && partner.trackingUrlTemplate) resolvedTrackingUrl = partner.trackingUrlTemplate.replaceAll("{trackingNumber}", encodeURIComponent(payload.trackingNumber));
+      }
     }
 
     if (!isSameStatus && payload.status === "CANCELLED") {
@@ -375,6 +383,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
         where: { orderId: order.id },
         create: {
           orderId: order.id,
+          shippingPartnerId: resolvedPartnerId,
           carrier: payload.carrier || null,
           trackingNumber: payload.trackingNumber || null,
           trackingUrl: resolvedTrackingUrl || null,
@@ -382,6 +391,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
           estimatedDeliveryAt: defaultEstimatedDeliveryAt,
         },
         update: {
+          shippingPartnerId: resolvedPartnerId,
           carrier: payload.carrier || null,
           trackingNumber: payload.trackingNumber || null,
           trackingUrl: resolvedTrackingUrl || null,
@@ -398,7 +408,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
       await tx.shipment.update({
         where: { orderId: order.id },
         data: {
-          ...(payload.carrier ? { carrier: payload.carrier } : {}),
+          ...(payload.carrier ? { carrier: payload.carrier, shippingPartnerId: resolvedPartnerId } : {}),
           ...(payload.trackingNumber ? { trackingNumber: payload.trackingNumber } : {}),
           ...(resolvedTrackingUrl ? { trackingUrl: resolvedTrackingUrl } : {}),
         },
@@ -415,7 +425,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
         data: { shipmentId: shipment.id, type: "DELIVERED", title: "Delivered", note: payload.note || "Your Riseora order was delivered.", customerVisible: true },
       });
       if (order.paymentMethod === "COD" && order.payment) {
-        await tx.payment.update({ where: { orderId: order.id }, data: { status: "PAID", paidAt: new Date() } });
+        await tx.payment.update({ where: { orderId: order.id }, data: { status: "PAID", paidAt: new Date(), collectionReference: `COD-${order.orderNumber}`, reconciliationStatus: "MATCHED", reconciledAt: new Date(), reconciliationNote: "COD collected on delivery" } });
       }
     }
 
@@ -510,14 +520,14 @@ router.post(
     if (["SHIPPED", "DELIVERED", "CANCELLED"].includes(order.status)) return res.status(400).json({ success: false, message: "This order can no longer be refunded from the dashboard" });
     if (order.paymentMethod !== "ONLINE" || !order.payment?.providerPaymentId || order.payment.status !== "PAID") return res.status(400).json({ success: false, message: "This order does not have a refundable online payment" });
 
-    const locked = await prisma.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING" } });
+    const locked = await prisma.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
     if (locked.count !== 1) return res.status(409).json({ success: false, message: "This payment is already being refunded or is no longer refundable" });
 
     let refund;
     try {
       refund = await refundRazorpayPayment(order.payment.providerPaymentId, Math.round(Number(order.totalAmount) * 100));
     } catch (error) {
-      await prisma.payment.updateMany({ where: { orderId: order.id, status: "REFUNDING" }, data: { status: "PAID" } });
+      await prisma.payment.updateMany({ where: { orderId: order.id, status: "REFUNDING" }, data: { status: "PAID", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
       if (error instanceof Error && error.message === "PAYMENT_REFUND_FAILED") return res.status(502).json({ success: false, message: "Refund could not be completed by the payment provider. No order data was changed." });
       throw error;
     }
@@ -534,7 +544,7 @@ router.post(
         actorUserId: req.user!.id,
       });
       if (order.couponCode) { await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } }); await tx.couponRedemption.deleteMany({ where: { orderId: order.id } }); }
-      await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date() } });
+      await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date(), reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
       await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: "Online payment refunded and order cancelled", source: "ADMIN" } });
       await tx.orderCancellationRequest.updateMany({ where: { orderId: order.id, status: { in: ["REQUESTED", "APPROVED"] } }, data: { status: "COMPLETED", resolvedAt: new Date(), adminNote: "Online payment refunded and cancellation completed" } });
@@ -543,6 +553,7 @@ router.post(
     if (updated) {
       void sendOrderStatusNotification(updated).catch((error) => console.error("Refund email failed", error));
       void createOrderStatusInAppNotification(updated).catch((error) => console.error("Refund in-app notification failed", error));
+      try { await ensureCreditNoteForCancelledOrder(updated.id); } catch (error) { console.error("Cancellation credit note issuance failed", error); }
     }
     res.json({ success: true, data: updated });
   }),
@@ -568,6 +579,8 @@ router.patch(
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
       if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Carrier and tracking number are required before marking an order shipped" });
+      if (message === "COURIER_COD_UNAVAILABLE") return res.status(400).json({ success: false, message: "The selected courier is not configured for Cash on Delivery. Choose another courier or update Shipping settings." });
+      if (message === "COURIER_WEIGHT_EXCEEDED") return res.status(400).json({ success: false, message: "The selected courier cannot carry this order weight. Choose another courier or adjust its weight limit in Shipping settings." });
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
@@ -595,6 +608,8 @@ router.patch(
     } catch (error) {
       const message = error instanceof Error ? error.message : "FULFILMENT_FAILED";
       if (message === "SHIPMENT_DETAILS_REQUIRED") return res.status(400).json({ success: false, message: "Use order details to add shipping information before marking this order shipped" });
+      if (message === "COURIER_COD_UNAVAILABLE") return res.status(400).json({ success: false, message: "The selected courier is not configured for Cash on Delivery. Choose another courier or update Shipping settings." });
+      if (message === "COURIER_WEIGHT_EXCEEDED") return res.status(400).json({ success: false, message: "The selected courier cannot carry this order weight. Choose another courier or adjust its weight limit in Shipping settings." });
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });

@@ -64,6 +64,12 @@ enum PaymentStatus {
   CANCELLED
 }
 
+enum PaymentReconciliationStatus {
+  UNCHECKED
+  MATCHED
+  REVIEW_REQUIRED
+}
+
 enum CouponDiscountType {
   PERCENTAGE
   FIXED
@@ -584,6 +590,7 @@ model Order {
   id          String @id @default(uuid()) @db.Uuid
   orderNumber String @unique
   checkoutRequestKey String? @unique
+  dispatchDueAt DateTime?
 
   userId String? @db.Uuid
   user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -613,6 +620,7 @@ model Order {
   shipment      Shipment?
   checkoutSession CheckoutSession?
   invoice       Invoice?
+  creditNotes   CreditNote[]
   returnRequests ReturnRequest[]
   cancellationRequest OrderCancellationRequest?
   couponRedemption CouponRedemption?
@@ -624,6 +632,7 @@ model Order {
   @@index([status])
   @@index([createdAt])
   @@index([userId, status, createdAt])
+  @@index([status, dispatchDueAt])
 }
 
 model OrderStatusHistory {
@@ -647,6 +656,9 @@ model Shipment {
   orderId String @unique @db.Uuid
   order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
+  shippingPartnerId String? @db.Uuid
+  shippingPartner ShippingPartner? @relation(fields: [shippingPartnerId], references: [id], onDelete: SetNull)
+
   carrier        String?
   trackingNumber String?
   trackingUrl    String?
@@ -658,6 +670,8 @@ model Shipment {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([shippingPartnerId])
 }
 
 model ShipmentEvent {
@@ -752,6 +766,10 @@ model Payment {
   refundId String? @unique
   refundedAmount Decimal @default(0) @db.Decimal(12, 2)
   refundedAt DateTime?
+  collectionReference String?
+  reconciliationStatus PaymentReconciliationStatus @default(UNCHECKED)
+  reconciledAt DateTime?
+  reconciliationNote String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -828,6 +846,7 @@ model StoreSetting {
   supportEmail  String?
   supportPhone  String?
   gstin         String?
+  pan           String?
 
   addressLine1  String?
   addressLine2  String?
@@ -838,6 +857,8 @@ model StoreSetting {
 
   invoicePrefix    String @default("RISE")
   invoiceNextNumber Int  @default(1)
+  creditNotePrefix String @default("RCN")
+  creditNoteNextNumber Int @default(1)
 
   freeShippingThreshold Decimal? @db.Decimal(12, 2)
   flatShippingFee       Decimal  @default(0) @db.Decimal(12, 2)
@@ -952,8 +973,15 @@ model ShippingZone {
   shippingFee          Decimal? @db.Decimal(12, 2)
   freeShippingThreshold Decimal? @db.Decimal(12, 2)
   codAllowed           Boolean  @default(true)
-  deliveryMinDays      Int?
-  deliveryMaxDays      Int?
+  codFee                Decimal? @db.Decimal(12, 2)
+  codMaxOrderAmount     Decimal? @db.Decimal(12, 2)
+  dispatchWithinDays    Int?
+  deliveryMinDays       Int?
+  deliveryMaxDays       Int?
+  maxWeightGrams        Int?
+
+  preferredShippingPartnerId String? @db.Uuid
+  preferredShippingPartner ShippingPartner? @relation("PreferredShippingPartner", fields: [preferredShippingPartnerId], references: [id], onDelete: SetNull)
 
   isActive Boolean @default(true)
   priority Int @default(0)
@@ -962,6 +990,7 @@ model ShippingZone {
   updatedAt DateTime @updatedAt
 
   @@index([isActive, priority])
+  @@index([preferredShippingPartnerId])
 }
 
 model ShippingPartner {
@@ -970,8 +999,13 @@ model ShippingPartner {
   name                String @unique
   code                String @unique
   trackingUrlTemplate String?
+  supportsCod         Boolean @default(true)
+  maxWeightGrams      Int?
   isActive            Boolean @default(true)
   sortOrder           Int     @default(0)
+
+  preferredZones ShippingZone[] @relation("PreferredShippingPartner")
+  shipments Shipment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -990,6 +1024,8 @@ model Invoice {
 
   sellerName    String
   sellerGstin   String?
+  sellerPan     String?
+  placeOfSupply String?
   sellerAddress Json
   buyerName     String
   buyerAddress  Json
@@ -1001,9 +1037,43 @@ model Invoice {
   taxTotal     Decimal @default(0) @db.Decimal(12, 2)
   grandTotal   Decimal @db.Decimal(12, 2)
   lines        Json
+  creditNotes CreditNote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CreditNote {
+  id String @id @default(uuid()) @db.Uuid
+
+  creditNoteNumber String @unique
+  sourceKey String @unique
+  issuedAt DateTime @default(now())
+
+  invoiceId String @db.Uuid
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  orderId String @db.Uuid
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  returnRequestId String? @unique @db.Uuid
+  returnRequest ReturnRequest? @relation(fields: [returnRequestId], references: [id], onDelete: Cascade)
+
+  reason String?
+  taxableTotal Decimal @default(0) @db.Decimal(12, 2)
+  cgstTotal Decimal @default(0) @db.Decimal(12, 2)
+  sgstTotal Decimal @default(0) @db.Decimal(12, 2)
+  igstTotal Decimal @default(0) @db.Decimal(12, 2)
+  taxTotal Decimal @default(0) @db.Decimal(12, 2)
+  grandTotal Decimal @db.Decimal(12, 2)
+  lines Json
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([invoiceId, issuedAt])
+  @@index([orderId, issuedAt])
+  @@index([issuedAt])
 }
 
 model ReturnRequest {
@@ -1040,6 +1110,7 @@ model ReturnRequest {
   items ReturnRequestItem[]
   evidence ReturnEvidence[]
   statusHistory ReturnStatusHistory[]
+  creditNote CreditNote?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

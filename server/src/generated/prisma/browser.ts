@@ -163,6 +163,11 @@ export type ShippingPartner = Prisma.ShippingPartnerModel
  */
 export type Invoice = Prisma.InvoiceModel
 /**
+ * Model CreditNote
+ * 
+ */
+export type CreditNote = Prisma.CreditNoteModel
+/**
  * Model ReturnRequest
  * 
  */

@@ -426,6 +426,7 @@ export const ModelName = {
   ShippingZone: 'ShippingZone',
   ShippingPartner: 'ShippingPartner',
   Invoice: 'Invoice',
+  CreditNote: 'CreditNote',
   ReturnRequest: 'ReturnRequest',
   ReturnRequestItem: 'ReturnRequestItem',
   ReturnEvidence: 'ReturnEvidence',
@@ -468,7 +469,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2615,6 +2616,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.InvoiceCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.InvoiceCountAggregateOutputType> | number
+        }
+      }
+    }
+    CreditNote: {
+      payload: Prisma.$CreditNotePayload<ExtArgs>
+      fields: Prisma.CreditNoteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.CreditNoteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.CreditNoteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        findFirst: {
+          args: Prisma.CreditNoteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.CreditNoteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        findMany: {
+          args: Prisma.CreditNoteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>[]
+        }
+        create: {
+          args: Prisma.CreditNoteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        createMany: {
+          args: Prisma.CreditNoteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.CreditNoteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>[]
+        }
+        delete: {
+          args: Prisma.CreditNoteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        update: {
+          args: Prisma.CreditNoteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        deleteMany: {
+          args: Prisma.CreditNoteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.CreditNoteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.CreditNoteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>[]
+        }
+        upsert: {
+          args: Prisma.CreditNoteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$CreditNotePayload>
+        }
+        aggregate: {
+          args: Prisma.CreditNoteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateCreditNote>
+        }
+        groupBy: {
+          args: Prisma.CreditNoteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditNoteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.CreditNoteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.CreditNoteCountAggregateOutputType> | number
         }
       }
     }
@@ -4897,6 +4972,7 @@ export const OrderScalarFieldEnum = {
   id: 'id',
   orderNumber: 'orderNumber',
   checkoutRequestKey: 'checkoutRequestKey',
+  dispatchDueAt: 'dispatchDueAt',
   userId: 'userId',
   customerName: 'customerName',
   customerEmail: 'customerEmail',
@@ -4935,6 +5011,7 @@ export type OrderStatusHistoryScalarFieldEnum = (typeof OrderStatusHistoryScalar
 export const ShipmentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
+  shippingPartnerId: 'shippingPartnerId',
   carrier: 'carrier',
   trackingNumber: 'trackingNumber',
   trackingUrl: 'trackingUrl',
@@ -5016,6 +5093,10 @@ export const PaymentScalarFieldEnum = {
   refundId: 'refundId',
   refundedAmount: 'refundedAmount',
   refundedAt: 'refundedAt',
+  collectionReference: 'collectionReference',
+  reconciliationStatus: 'reconciliationStatus',
+  reconciledAt: 'reconciledAt',
+  reconciliationNote: 'reconciliationNote',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -5080,6 +5161,7 @@ export const StoreSettingScalarFieldEnum = {
   supportEmail: 'supportEmail',
   supportPhone: 'supportPhone',
   gstin: 'gstin',
+  pan: 'pan',
   addressLine1: 'addressLine1',
   addressLine2: 'addressLine2',
   city: 'city',
@@ -5088,6 +5170,8 @@ export const StoreSettingScalarFieldEnum = {
   country: 'country',
   invoicePrefix: 'invoicePrefix',
   invoiceNextNumber: 'invoiceNextNumber',
+  creditNotePrefix: 'creditNotePrefix',
+  creditNoteNextNumber: 'creditNoteNextNumber',
   freeShippingThreshold: 'freeShippingThreshold',
   flatShippingFee: 'flatShippingFee',
   codFee: 'codFee',
@@ -5187,8 +5271,13 @@ export const ShippingZoneScalarFieldEnum = {
   shippingFee: 'shippingFee',
   freeShippingThreshold: 'freeShippingThreshold',
   codAllowed: 'codAllowed',
+  codFee: 'codFee',
+  codMaxOrderAmount: 'codMaxOrderAmount',
+  dispatchWithinDays: 'dispatchWithinDays',
   deliveryMinDays: 'deliveryMinDays',
   deliveryMaxDays: 'deliveryMaxDays',
+  maxWeightGrams: 'maxWeightGrams',
+  preferredShippingPartnerId: 'preferredShippingPartnerId',
   isActive: 'isActive',
   priority: 'priority',
   createdAt: 'createdAt',
@@ -5203,6 +5292,8 @@ export const ShippingPartnerScalarFieldEnum = {
   name: 'name',
   code: 'code',
   trackingUrlTemplate: 'trackingUrlTemplate',
+  supportsCod: 'supportsCod',
+  maxWeightGrams: 'maxWeightGrams',
   isActive: 'isActive',
   sortOrder: 'sortOrder',
   createdAt: 'createdAt',
@@ -5219,6 +5310,8 @@ export const InvoiceScalarFieldEnum = {
   issuedAt: 'issuedAt',
   sellerName: 'sellerName',
   sellerGstin: 'sellerGstin',
+  sellerPan: 'sellerPan',
+  placeOfSupply: 'placeOfSupply',
   sellerAddress: 'sellerAddress',
   buyerName: 'buyerName',
   buyerAddress: 'buyerAddress',
@@ -5234,6 +5327,29 @@ export const InvoiceScalarFieldEnum = {
 } as const
 
 export type InvoiceScalarFieldEnum = (typeof InvoiceScalarFieldEnum)[keyof typeof InvoiceScalarFieldEnum]
+
+
+export const CreditNoteScalarFieldEnum = {
+  id: 'id',
+  creditNoteNumber: 'creditNoteNumber',
+  sourceKey: 'sourceKey',
+  issuedAt: 'issuedAt',
+  invoiceId: 'invoiceId',
+  orderId: 'orderId',
+  returnRequestId: 'returnRequestId',
+  reason: 'reason',
+  taxableTotal: 'taxableTotal',
+  cgstTotal: 'cgstTotal',
+  sgstTotal: 'sgstTotal',
+  igstTotal: 'igstTotal',
+  taxTotal: 'taxTotal',
+  grandTotal: 'grandTotal',
+  lines: 'lines',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CreditNoteScalarFieldEnum = (typeof CreditNoteScalarFieldEnum)[keyof typeof CreditNoteScalarFieldEnum]
 
 
 export const ReturnRequestScalarFieldEnum = {
@@ -6007,6 +6123,20 @@ export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'PaymentReconciliationStatus'
+ */
+export type EnumPaymentReconciliationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReconciliationStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentReconciliationStatus[]'
+ */
+export type ListEnumPaymentReconciliationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReconciliationStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'CheckoutSessionStatus'
  */
 export type EnumCheckoutSessionStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CheckoutSessionStatus'>
@@ -6507,6 +6637,7 @@ export type GlobalOmitConfig = {
   shippingZone?: Prisma.ShippingZoneOmit
   shippingPartner?: Prisma.ShippingPartnerOmit
   invoice?: Prisma.InvoiceOmit
+  creditNote?: Prisma.CreditNoteOmit
   returnRequest?: Prisma.ReturnRequestOmit
   returnRequestItem?: Prisma.ReturnRequestItemOmit
   returnEvidence?: Prisma.ReturnEvidenceOmit

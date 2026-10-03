@@ -22,8 +22,8 @@ export default function InvoiceDocument({ data, admin = false }) {
       </div>
       <article className="invoice-sheet">
         <header className="invoice-header">
-          <div><div className="invoice-brand-logo"><BrandLogo /></div><p className="eyebrow">TAX INVOICE</p><h1>{invoice.sellerName}</h1><p>{addressText(invoice.sellerAddress)}</p>{invoice.sellerGstin && <p><strong>GSTIN:</strong> {invoice.sellerGstin}</p>}</div>
-          <div className="invoice-meta"><strong>{invoice.invoiceNumber}</strong><span>Issued {new Date(invoice.issuedAt).toLocaleDateString()}</span><span>Order {order.orderNumber}</span><span>Payment: {order.paymentMethod}</span></div>
+          <div><div className="invoice-brand-logo"><BrandLogo /></div><p className="eyebrow">TAX INVOICE</p><h1>{invoice.sellerName}</h1><p>{addressText(invoice.sellerAddress)}</p>{invoice.sellerGstin && <p><strong>GSTIN:</strong> {invoice.sellerGstin}</p>}{invoice.sellerPan && <p><strong>PAN:</strong> {invoice.sellerPan}</p>}</div>
+          <div className="invoice-meta"><strong>{invoice.invoiceNumber}</strong><span>Issued {new Date(invoice.issuedAt).toLocaleDateString()}</span><span>Order {order.orderNumber}</span><span>Payment: {order.paymentMethod}</span>{invoice.placeOfSupply && <span>Place of supply: {invoice.placeOfSupply}</span>}</div>
         </header>
 
         <section className="invoice-bill-grid">

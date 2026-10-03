@@ -79,10 +79,13 @@
     "Campaign",
     "CampaignProduct",
     "MediaAsset",
-    "Banner.imageAlt"
+    "Banner.imageAlt",
+    "Order.dispatchDueAt",
+    "ShippingZone courier/COD/weight/SLA overrides",
+    "Shipment.shippingPartnerId"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": "Phase 43 \u2014 Content Studio, Campaign Publishing & Media Library V2",
+  "latestPhase": "Phase 45 \u2014 Finance, GST & Payment Reconciliation V2",
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -249,7 +252,7 @@
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
   },
-  "currentPhase": "Phase 43 \u2014 Content Studio, Campaign Publishing & Media Library V2",
+  "currentPhase": "Phase 45 \u2014 Finance, GST & Payment Reconciliation V2",
   "lastUpdated": "2026-10-03",
   "phase36": {
     "name": "Riseora Rewards & Referrals V2",
@@ -377,5 +380,35 @@
     ],
     "migration": "20261003213000_phase43_content_campaign_studio",
     "verification": "npm run verify:phase43"
+  },
+  "phase44": {
+    "name": "Fulfilment, Delivery Zones & Courier Operations V2",
+    "features": [
+      "repairs missing Phase 38 backend refill route/email/in-app notification dependencies that caused Phase 43 typecheck failure",
+      "zone-level dispatch SLA, COD fee/max-order override, parcel-weight limit and preferred courier controls",
+      "courier capability controls for COD support and maximum parcel weight",
+      "weight-aware checkout serviceability with server-side final enforcement",
+      "order-level promised dispatch deadline snapshots for future orders",
+      "Admin Fulfilment control center with overdue/due-soon dispatch queues and shipment exceptions",
+      "preferred courier suggestions flow from delivery zone into order fulfilment while final courier validation remains server-side",
+      "shipment records link to configured courier partners while preserving carrier/tracking snapshots"
+    ],
+    "migration": "20261003231500_phase44_fulfilment_shipping_v2",
+    "verification": "npm run verify:phase44"
+  },
+  "phase45": {
+    "name": "Finance, GST & Payment Reconciliation V2",
+    "features": [
+      "restores the missing RefillPlanner component that caused Phase 44 verification to stop before typecheck",
+      "Admin Finance control center with GST summaries, collections, refunds, invoice coverage and payment exceptions",
+      "payment reconciliation states plus delivered COD collection/reference tracking",
+      "tax credit notes for refunded returns and previously invoiced full-order refunds",
+      "PAN/place-of-supply invoice snapshots and configurable credit-note numbering",
+      "GST rate summary net of issued credit notes and catalog HSN data-quality checks",
+      "customer printable credit notes and Admin credit-note copies",
+      "finance CSV export and explicit batch issuance of missing invoices/credit notes"
+    ],
+    "migration": "20261003193000_phase45_finance_gst_reconciliation",
+    "verification": "npm run verify:phase45"
   }
 }

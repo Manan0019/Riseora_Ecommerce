@@ -6,6 +6,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
 import { normalizePostalPrefixes } from "../services/shipping-zone.service";
 import { getInvoiceWithOrder } from "../services/invoice.service";
+import { ensureCreditNoteForCancelledOrder, ensureCreditNoteForReturn } from "../services/credit-note.service";
 import { refundRazorpayPayment } from "../services/payment.service";
 import { sendOrderStatusNotification, sendReturnStatusNotification } from "../services/notification.service";
 import { createOrderStatusInAppNotification, createReturnStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
@@ -22,6 +23,7 @@ const settingsSchema = z.object({
   supportEmail: z.string().trim().email().nullable().optional(),
   supportPhone: z.string().trim().max(30).nullable().optional(),
   gstin: z.string().trim().max(30).nullable().optional(),
+  pan: z.string().trim().max(20).nullable().optional(),
   addressLine1: z.string().trim().max(180).nullable().optional(),
   addressLine2: z.string().trim().max(180).nullable().optional(),
   city: z.string().trim().max(100).nullable().optional(),
@@ -29,6 +31,7 @@ const settingsSchema = z.object({
   postalCode: z.string().trim().max(20).nullable().optional(),
   country: z.string().trim().max(100).optional(),
   invoicePrefix: z.string().trim().min(2).max(20).optional(),
+  creditNotePrefix: z.string().trim().min(2).max(20).optional(),
   freeShippingThreshold: z.number().nonnegative().nullable().optional(),
   flatShippingFee: z.number().nonnegative().optional(),
   codFee: z.number().nonnegative().optional(),
@@ -99,8 +102,13 @@ const shippingZoneSchema = z.object({
   shippingFee: z.number().nonnegative().nullable().optional(),
   freeShippingThreshold: z.number().nonnegative().nullable().optional(),
   codAllowed: z.boolean().default(true),
+  codFee: z.number().nonnegative().nullable().optional(),
+  codMaxOrderAmount: z.number().nonnegative().nullable().optional(),
+  dispatchWithinDays: z.number().int().min(0).max(30).nullable().optional(),
   deliveryMinDays: z.number().int().min(1).max(45).nullable().optional(),
   deliveryMaxDays: z.number().int().min(1).max(60).nullable().optional(),
+  maxWeightGrams: z.number().int().positive().max(100000).nullable().optional(),
+  preferredShippingPartnerId: z.string().uuid().nullable().optional(),
   priority: z.number().int().min(0).max(9999).default(0),
   isActive: z.boolean().default(true),
 });
@@ -112,8 +120,13 @@ const shippingZonePatchSchema = z.object({
   shippingFee: z.number().nonnegative().nullable().optional(),
   freeShippingThreshold: z.number().nonnegative().nullable().optional(),
   codAllowed: z.boolean().optional(),
+  codFee: z.number().nonnegative().nullable().optional(),
+  codMaxOrderAmount: z.number().nonnegative().nullable().optional(),
+  dispatchWithinDays: z.number().int().min(0).max(30).nullable().optional(),
   deliveryMinDays: z.number().int().min(1).max(45).nullable().optional(),
   deliveryMaxDays: z.number().int().min(1).max(60).nullable().optional(),
+  maxWeightGrams: z.number().int().positive().max(100000).nullable().optional(),
+  preferredShippingPartnerId: z.string().uuid().nullable().optional(),
   priority: z.number().int().min(0).max(9999).optional(),
   isActive: z.boolean().optional(),
 });
@@ -121,7 +134,7 @@ const shippingZonePatchSchema = z.object({
 router.get(
   "/shipping-zones",
   asyncHandler(async (_req, res) => {
-    const zones = await prisma.shippingZone.findMany({ orderBy: [{ priority: "desc" }, { name: "asc" }] });
+    const zones = await prisma.shippingZone.findMany({ include: { preferredShippingPartner: true }, orderBy: [{ priority: "desc" }, { name: "asc" }] });
     res.json({ success: true, data: zones });
   }),
 );
@@ -136,7 +149,11 @@ router.post(
     const minDays = parsed.data.deliveryMinDays ?? null;
     const maxDays = parsed.data.deliveryMaxDays ?? null;
     if (minDays != null && maxDays != null && minDays > maxDays) return res.status(400).json({ success: false, message: "Delivery minimum days cannot exceed maximum days" });
-    const zone = await prisma.shippingZone.create({ data: { ...parsed.data, postalPrefixes: prefixes, city: parsed.data.city || null, state: parsed.data.state || null } });
+    if (parsed.data.preferredShippingPartnerId) {
+      const partner = await prisma.shippingPartner.findFirst({ where: { id: parsed.data.preferredShippingPartnerId, isActive: true } });
+      if (!partner) return res.status(400).json({ success: false, message: "Choose an active preferred courier" });
+    }
+    const zone = await prisma.shippingZone.create({ data: { ...parsed.data, postalPrefixes: prefixes, city: parsed.data.city || null, state: parsed.data.state || null }, include: { preferredShippingPartner: true } });
     res.status(201).json({ success: true, data: zone });
   }),
 );
@@ -158,7 +175,11 @@ router.patch(
     const minDays = parsed.data.deliveryMinDays !== undefined ? parsed.data.deliveryMinDays : existing.deliveryMinDays;
     const maxDays = parsed.data.deliveryMaxDays !== undefined ? parsed.data.deliveryMaxDays : existing.deliveryMaxDays;
     if (minDays != null && maxDays != null && minDays > maxDays) return res.status(400).json({ success: false, message: "Delivery minimum days cannot exceed maximum days" });
-    const zone = await prisma.shippingZone.update({ where: { id: String(req.params.id) }, data });
+    if (parsed.data.preferredShippingPartnerId) {
+      const partner = await prisma.shippingPartner.findFirst({ where: { id: parsed.data.preferredShippingPartnerId, isActive: true } });
+      if (!partner) return res.status(400).json({ success: false, message: "Choose an active preferred courier" });
+    }
+    const zone = await prisma.shippingZone.update({ where: { id: String(req.params.id) }, data, include: { preferredShippingPartner: true } });
     res.json({ success: true, data: zone });
   }),
 );
@@ -183,6 +204,8 @@ const partnerSchema = z.object({
   name: z.string().trim().min(2).max(100),
   code: z.string().trim().min(2).max(40).transform((value) => value.toUpperCase().replace(/\s+/g, "_")),
   trackingUrlTemplate: z.string().trim().max(500).optional().or(z.literal("")),
+  supportsCod: z.boolean().default(true),
+  maxWeightGrams: z.number().int().positive().max(100000).nullable().optional(),
   sortOrder: z.number().int().min(0).max(999).default(0),
 });
 
@@ -196,6 +219,8 @@ router.post(
         name: parsed.data.name,
         code: parsed.data.code,
         trackingUrlTemplate: parsed.data.trackingUrlTemplate || null,
+        supportsCod: parsed.data.supportsCod,
+        maxWeightGrams: parsed.data.maxWeightGrams ?? null,
         sortOrder: parsed.data.sortOrder,
       },
     });
@@ -210,6 +235,8 @@ router.patch(
       name: z.string().trim().min(2).max(100).optional(),
       trackingUrlTemplate: z.string().trim().max(500).nullable().optional(),
       isActive: z.boolean().optional(),
+      supportsCod: z.boolean().optional(),
+      maxWeightGrams: z.number().int().positive().max(100000).nullable().optional(),
       sortOrder: z.number().int().min(0).max(999).optional(),
     }).safeParse(req.body);
     if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid courier update" });
@@ -254,6 +281,44 @@ router.get(
       };
     });
     res.json({ success: true, data });
+  }),
+);
+
+router.get(
+  "/fulfilment/overview",
+  asyncHandler(async (_req, res) => {
+    const now = new Date();
+    const next24h = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+    const openStatuses = ["CONFIRMED", "PROCESSING"] as const;
+    const orders = await prisma.order.findMany({
+      where: { status: { in: [...openStatuses] } },
+      include: { payment: true, cancellationRequest: true, items: { include: { variant: { select: { weightGrams: true } } } } },
+      orderBy: [{ dispatchDueAt: "asc" }, { createdAt: "asc" }],
+      take: 300,
+    });
+    const enriched = orders.map((order) => {
+      const estimate = order.deliveryEstimate && typeof order.deliveryEstimate === "object" && !Array.isArray(order.deliveryEstimate) ? order.deliveryEstimate as Record<string, unknown> : null;
+      const fallbackDays = Math.max(0, Number(estimate?.dispatchWithinDays || 2));
+      const dispatchDueAt = order.dispatchDueAt || new Date(order.createdAt.getTime() + fallbackDays * 24 * 60 * 60 * 1000);
+      const totalWeightGrams = Number(estimate?.totalWeightGrams || order.items.reduce((sum, item) => sum + Math.max(0, Number(item.variant?.weightGrams || 0)) * item.quantity, 0));
+      const overdue = dispatchDueAt.getTime() < now.getTime();
+      const dueSoon = !overdue && dispatchDueAt.getTime() <= next24h.getTime();
+      return {
+        id: order.id, orderNumber: order.orderNumber, status: order.status, customerName: order.customerName, customerPhone: order.customerPhone, paymentMethod: order.paymentMethod, paymentStatus: order.payment?.status || "PENDING", totalAmount: Number(order.totalAmount), shippingZoneName: order.shippingZoneName, createdAt: order.createdAt, dispatchDueAt, totalWeightGrams, preferredShippingPartnerName: typeof estimate?.preferredShippingPartnerName === "string" ? estimate.preferredShippingPartnerName : null, cancellationPending: Boolean(order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status)), overdue, dueSoon,
+      };
+    });
+    const inTransit = await prisma.order.count({ where: { status: "SHIPPED" } });
+    const exceptionEvents = await prisma.shipmentEvent.findMany({
+      where: { type: { in: ["EXCEPTION", "RTO_INITIATED"] }, eventAt: { gte: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000) } },
+      include: { shipment: { include: { order: { select: { id: true, orderNumber: true, status: true, customerName: true } } } } },
+      orderBy: { eventAt: "desc" },
+      take: 30,
+    });
+    const activeExceptions = exceptionEvents.filter((event) => event.shipment.order.status === "SHIPPED").map((event) => ({ id: event.id, orderId: event.shipment.order.id, orderNumber: event.shipment.order.orderNumber, customerName: event.shipment.order.customerName, type: event.type, title: event.title, note: event.note, location: event.location, eventAt: event.eventAt }));
+    res.json({ success: true, data: {
+      counts: { awaiting: enriched.filter((row) => row.status === "CONFIRMED").length, processing: enriched.filter((row) => row.status === "PROCESSING").length, overdue: enriched.filter((row) => row.overdue).length, dueSoon: enriched.filter((row) => row.dueSoon).length, inTransit, exceptions: activeExceptions.length },
+      orders: enriched, exceptions: activeExceptions,
+    } });
   }),
 );
 
@@ -326,6 +391,7 @@ router.patch(
 
     try {
       const order = await approveOrderCancellationRequest(request.id, parsed.data.adminNote || null);
+      if (order?.payment?.status === "REFUNDED") { try { await ensureCreditNoteForCancelledOrder(order.id); } catch (error) { console.error("Cancellation credit note issuance failed", error); } }
       if (order) {
         void sendOrderStatusNotification(order).catch((error) => console.error("Cancellation email failed", error));
         void createOrderStatusInAppNotification(order).catch((error) => console.error("Cancellation in-app notification failed", error));
@@ -476,6 +542,7 @@ router.patch(
               refundedAmount: newRefunded,
               refundedAt: new Date(),
               status: newRefunded + 0.009 >= paymentTotal ? "REFUNDED" : "PARTIALLY_REFUNDED",
+              reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null,
             },
           });
         }
@@ -499,6 +566,7 @@ router.patch(
       void sendReturnStatusNotification(updated).catch((error) => console.error("Return refund email failed", error));
       void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return refund in-app notification failed", error));
       void reverseRefundedOrderRewards(updated.id).catch((error) => console.error("Reward refund reversal failed", error));
+      try { await ensureCreditNoteForReturn(updated.id); } catch (error) { console.error("Credit note issuance failed", error); }
       return res.json({ success: true, data: updated });
     }
 

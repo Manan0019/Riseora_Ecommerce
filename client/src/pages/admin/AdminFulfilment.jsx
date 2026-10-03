@@ -1,0 +1,66 @@
+import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import { apiFetch } from "../../api/http";
+
+function relativeDeadline(value) {
+  if (!value) return "No SLA";
+  const ms = new Date(value).getTime() - Date.now();
+  const hours = Math.round(Math.abs(ms) / 36e5);
+  if (ms < 0) return `${hours}h overdue`;
+  if (hours < 24) return `due in ${hours}h`;
+  return `due in ${Math.ceil(hours / 24)}d`;
+}
+
+export default function AdminFulfilment() {
+  const [data, setData] = useState(null);
+  const [filter, setFilter] = useState("attention");
+  const [error, setError] = useState("");
+
+  async function load() {
+    setError("");
+    const response = await apiFetch("/admin/fulfilment/overview");
+    setData(response.data);
+  }
+  useEffect(() => { load().catch((e) => setError(e.message)); }, []);
+
+  const orders = useMemo(() => {
+    const rows = data?.orders || [];
+    if (filter === "overdue") return rows.filter((row) => row.overdue);
+    if (filter === "due") return rows.filter((row) => row.dueSoon);
+    if (filter === "confirmed") return rows.filter((row) => row.status === "CONFIRMED");
+    if (filter === "processing") return rows.filter((row) => row.status === "PROCESSING");
+    if (filter === "all") return rows;
+    return rows.filter((row) => row.overdue || row.dueSoon || row.cancellationPending);
+  }, [data, filter]);
+
+  if (!data && !error) return <div className="admin-panel"><div className="skeleton-card tall" /></div>;
+  const counts = data?.counts || {};
+
+  return <>
+    <div className="admin-page-heading"><div><p className="eyebrow">OPERATIONS CONTROL</p><h1>Fulfilment</h1><p>Dispatch SLA, courier preference, shipment exceptions and orders that need attention.</p></div><button type="button" className="button button-secondary" onClick={() => load().catch((e) => setError(e.message))}>Refresh</button></div>
+    {error && <p className="alert error">{error}</p>}
+
+    <section className="phase44-kpi-grid">
+      <button type="button" onClick={() => setFilter("confirmed")}><small>AWAITING PROCESSING</small><strong>{counts.awaiting || 0}</strong><span>Confirmed orders</span></button>
+      <button type="button" onClick={() => setFilter("processing")}><small>PROCESSING</small><strong>{counts.processing || 0}</strong><span>Being prepared</span></button>
+      <button type="button" className={(counts.overdue || 0) > 0 ? "danger" : ""} onClick={() => setFilter("overdue")}><small>DISPATCH OVERDUE</small><strong>{counts.overdue || 0}</strong><span>Past promised dispatch</span></button>
+      <button type="button" onClick={() => setFilter("due")}><small>DUE NEXT 24H</small><strong>{counts.dueSoon || 0}</strong><span>Protect the SLA</span></button>
+      <div><small>IN TRANSIT</small><strong>{counts.inTransit || 0}</strong><span>Shipped orders</span></div>
+      <div className={(counts.exceptions || 0) > 0 ? "danger" : ""}><small>SHIPMENT EXCEPTIONS</small><strong>{counts.exceptions || 0}</strong><span>Last 14 days</span></div>
+    </section>
+
+    <section className="admin-panel phase44-fulfilment-queue">
+      <div className="admin-panel-head"><div><h2>Dispatch queue</h2><p>Orders are sorted by promised dispatch time. Open an order to pack, ship and add tracking.</p></div><div className="phase44-filter-row">{[["attention","Attention"],["overdue","Overdue"],["due","Due soon"],["confirmed","Confirmed"],["processing","Processing"],["all","All"]].map(([value,label]) => <button type="button" key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
+      {orders.length === 0 ? <div className="admin-empty"><strong>Nothing in this queue</strong><p>There are no orders matching the selected fulfilment view.</p></div> : <div className="phase44-fulfilment-list">{orders.map((order) => <article key={order.id} className={`${order.overdue ? "overdue" : order.dueSoon ? "due" : ""}`}>
+        <div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span><strong>{order.orderNumber}</strong><small>{order.customerName} · {order.shippingZoneName || "Store-wide delivery"}</small></div>
+        <div className="phase44-fulfilment-facts"><span><b>{relativeDeadline(order.dispatchDueAt)}</b>Dispatch SLA</span><span><b>{order.totalWeightGrams ? `${(Number(order.totalWeightGrams) / 1000).toFixed(2)} kg` : "—"}</b>Parcel weight</span><span><b>{order.preferredShippingPartnerName || "Any active courier"}</b>Suggested courier</span><span><b>{order.paymentMethod}</b>{order.paymentStatus}</span></div>
+        <div className="phase44-fulfilment-actions">{order.cancellationPending && <span className="phase44-warning">Cancellation pending</span>}<Link className="button button-secondary" to={`/admin/orders/${order.id}`}>Open order</Link></div>
+      </article>)}</div>}
+    </section>
+
+    {(data?.exceptions || []).length > 0 && <section className="admin-panel">
+      <div className="admin-panel-head"><div><h2>Courier exceptions</h2><p>Recent exception and RTO events that may need follow-up.</p></div></div>
+      <div className="phase44-exception-list">{data.exceptions.map((event) => <article key={event.id}><span>{event.type.replaceAll("_", " ")}</span><div><strong>{event.orderNumber} · {event.title}</strong><small>{event.customerName}{event.location ? ` · ${event.location}` : ""} · {new Date(event.eventAt).toLocaleString()}</small>{event.note && <p>{event.note}</p>}</div><Link to={`/admin/orders/${event.orderId}`}>Review →</Link></article>)}</div>
+    </section>}
+  </>;
+}

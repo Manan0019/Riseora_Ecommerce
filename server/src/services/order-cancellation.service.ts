@@ -48,7 +48,7 @@ export async function approveOrderCancellationRequest(requestId: string, adminNo
       const freshRequest = await tx.orderCancellationRequest.findUnique({ where: { id: request.id }, include: { order: { include: { payment: true } } } });
       if (!freshRequest || freshRequest.status !== "REQUESTED") throw new Error("CANCELLATION_NOT_PENDING");
       if (!["PENDING", "CONFIRMED"].includes(freshRequest.order.status)) throw new Error("ORDER_TOO_FAR_ALONG");
-      const paymentLock = await tx.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING" } });
+      const paymentLock = await tx.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
       if (paymentLock.count !== 1) throw new Error("PAYMENT_NOT_REFUNDABLE");
       await tx.orderCancellationRequest.update({ where: { id: request.id }, data: { status: "APPROVED", adminNote: adminNote || null } });
       return true;
@@ -60,7 +60,7 @@ export async function approveOrderCancellationRequest(requestId: string, adminNo
       providerRefundId = refund.id;
     } catch (error) {
       await prisma.$transaction(async (tx) => {
-        await tx.payment.updateMany({ where: { orderId: order.id, status: "REFUNDING" }, data: { status: "PAID" } });
+        await tx.payment.updateMany({ where: { orderId: order.id, status: "REFUNDING" }, data: { status: "PAID", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
         await tx.orderCancellationRequest.updateMany({ where: { id: request.id, status: "APPROVED" }, data: { status: "REQUESTED", adminNote: adminNote || null } });
       });
       throw error;
@@ -87,6 +87,7 @@ export async function approveOrderCancellationRequest(requestId: string, adminNo
             refundId: providerRefundId,
             refundedAmount: fresh.totalAmount,
             refundedAt: new Date(),
+            reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null,
           },
         });
       } else if (fresh.payment.status === "PENDING") {

@@ -86,6 +86,15 @@ export const PaymentStatus = {
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 
+export const PaymentReconciliationStatus = {
+  UNCHECKED: 'UNCHECKED',
+  MATCHED: 'MATCHED',
+  REVIEW_REQUIRED: 'REVIEW_REQUIRED'
+} as const
+
+export type PaymentReconciliationStatus = (typeof PaymentReconciliationStatus)[keyof typeof PaymentReconciliationStatus]
+
+
 export const CouponDiscountType = {
   PERCENTAGE: 'PERCENTAGE',
   FIXED: 'FIXED'

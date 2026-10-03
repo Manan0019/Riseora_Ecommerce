@@ -43,6 +43,7 @@ function toCartLine(product, variant, quantity = 1) {
     price: Number(variant.sellingPrice),
     mrp: Number(variant.mrp),
     stockQuantity: stock,
+    weightGrams: Math.max(0, Number(variant?.weightGrams || 0)),
     maxPurchaseQuantity,
     imageUrl: primary?.url || "",
     quantity: Math.max(1, Math.min(allowed, Number(quantity || 1))),

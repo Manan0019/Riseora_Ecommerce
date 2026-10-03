@@ -105,6 +105,8 @@ export async function ensureInvoice(orderId: string) {
         invoiceNumber,
         sellerName: settings.legalName || settings.storeName,
         sellerGstin: settings.gstin || null,
+        sellerPan: settings.pan || null,
+        placeOfSupply: String((order.shippingAddress as any)?.state || "") || null,
         sellerAddress: sellerAddressSnapshot(settings) as unknown as Prisma.InputJsonValue,
         buyerName: order.customerName,
         buyerAddress: order.shippingAddress as Prisma.InputJsonValue,
