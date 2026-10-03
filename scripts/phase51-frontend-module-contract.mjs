@@ -104,8 +104,8 @@ String(scripts.predev || "").includes("client:doctor") && String(scripts.predev 
   ? pass("npm run dev blocks before Vite on frontend contract failure") : fail("predev frontend contract gate");
 String(scripts["verify:phase51"] || "").includes("client:doctor") && String(scripts["verify:phase51"] || "").includes("npm run build")
   ? pass("verify:phase51 command") : fail("verify:phase51 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase51")
-  ? pass("prelaunch uses Phase 51 verification") : fail("prelaunch uses Phase 51 verification");
+(["verify:phase51", "verify:phase52"].some((token) => String(scripts["prelaunch:check"] || "").includes(token)))
+  ? pass("prelaunch uses Phase 51+ verification") : fail("prelaunch uses Phase 51+ verification");
 
 const risky = ["prisma migrate reset", "prisma db push --force-reset"];
 const packageText = read("package.json").toLowerCase();

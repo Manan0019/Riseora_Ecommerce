@@ -18,7 +18,7 @@ export function createClientErrorReference() {
     crypto.getRandomValues(bytes);
     random = Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join("").toUpperCase();
   } catch {}
-  return `R50-${stamp}-${random}`;
+  return `R52-${stamp}-${random}`;
 }
 
 export function prepareClientRuntime() {

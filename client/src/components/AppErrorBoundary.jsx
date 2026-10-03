@@ -32,7 +32,7 @@ export default class AppErrorBoundary extends React.Component {
 
   render() {
     if (!this.state.failed) return this.props.children;
-    const referenceId = this.state.referenceId || "R50-UNKNOWN";
+    const referenceId = this.state.referenceId || "R52-UNKNOWN";
     return (
       <main className="phase47-fatal-shell" role="alert">
         <section className="phase47-fatal-card">
@@ -40,7 +40,7 @@ export default class AppErrorBoundary extends React.Component {
           <h1>We couldn't open this page.</h1>
           <p>Your cart and account are safe. Riseora recorded this browser error so it can be diagnosed without exposing private data.</p>
           {import.meta.env.DEV && this.state.error?.message && (
-            <div className="phase50-dev-error"><strong>Development detail</strong><code>{String(this.state.error.message).slice(0, 500)}</code></div>
+            <div className="phase50-dev-error"><strong>Development detail</strong><code>{String(this.state.error.message).slice(0, 500)}</code><small>React {React.version} · Phase 52 runtime guard active</small></div>
           )}
           <div className="phase47-fatal-actions">
             <button className="button" type="button" onClick={() => window.location.reload()}>Refresh page</button>

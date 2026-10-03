@@ -77,7 +77,7 @@ for (const [label, content] of [["backup", backupScript], ["doctor", doctorScrip
 }
 
 const prepare = read("scripts/phase49-release-prepare.mjs");
-const finalVerifyToken = prepare.includes("verify:phase51") ? "verify:phase51" : "verify:phase49";
+const finalVerifyToken = prepare.includes("verify:phase52") ? "verify:phase52" : (prepare.includes("verify:phase51") ? "verify:phase51" : "verify:phase49");
 const order = ["phase49-release-doctor", "db:backup", "db:deploy", "db:generate", "db-schema-status", finalVerifyToken].map((token) => prepare.indexOf(token));
 order.every((value) => value >= 0) && order.every((value, index) => index === 0 || value > order[index - 1])
   ? pass(`release order backup-before-migrate-before-build · ${finalVerifyToken}`) : fail("release order backup-before-migrate-before-build");
