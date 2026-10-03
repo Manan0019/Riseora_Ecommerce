@@ -5,6 +5,8 @@ import { prisma } from "../config/prisma";
 import { env } from "../config/env";
 import { backupDirectory, listDatabaseBackups, postgresBackupTools } from "./database-backup.service";
 import { isRuntimeDraining, runtimeObservabilitySnapshot } from "./runtime-observability.service";
+import { databaseSchemaStatus } from "./database-readiness.service";
+import { systemJobsSnapshot } from "./system-job.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -28,10 +30,12 @@ async function checkWritableDirectory(directory: string) {
 
 export async function readinessStatus() {
   const database = await checkDatabase();
+  const schema = database.ok ? await databaseSchemaStatus() : { ok: false, missing: ["Database unavailable"] };
   const draining = isRuntimeDraining();
   return {
-    ok: database.ok && !draining,
+    ok: database.ok && schema.ok && !draining,
     database,
+    schema,
     draining,
     uptimeSeconds: Math.round(process.uptime()),
     timestamp: new Date().toISOString(),
@@ -40,12 +44,14 @@ export async function readinessStatus() {
 
 export async function adminSystemHealth() {
   const uploadsDir = path.resolve(process.cwd(), "uploads");
-  const [database, uploadsWritable, backupsWritable, backupTool, backups] = await Promise.all([
+  const [database, uploadsWritable, backupsWritable, backupTool, backups, schema, jobs] = await Promise.all([
     checkDatabase(),
     checkWritableDirectory(uploadsDir),
     checkWritableDirectory(backupDirectory()),
     postgresBackupTools(),
     listDatabaseBackups().catch(() => []),
+    databaseSchemaStatus(),
+    systemJobsSnapshot().catch(() => ({ instance: null, jobs: [] })),
   ]);
 
   const integrations = {
@@ -58,11 +64,13 @@ export async function adminSystemHealth() {
   const runtime = runtimeObservabilitySnapshot();
 
   return {
-    status: database.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
+    status: database.ok && schema.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
     environment: env.NODE_ENV,
     nodeVersion: process.version,
     uptimeSeconds: Math.round(process.uptime()),
     database,
+    schema,
+    jobs,
     storage: { uploadsWritable, backupsWritable },
     backup: {
       pgDumpAvailable: backupTool.ready,

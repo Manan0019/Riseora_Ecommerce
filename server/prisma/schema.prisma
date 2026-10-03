@@ -1715,6 +1715,26 @@ model RefillReminder {
   @@index([variantId, status])
 }
 
+model SystemJobState {
+  key String @id
+
+  lastStartedAt   DateTime?
+  lastSucceededAt DateTime?
+  lastFailedAt    DateTime?
+  lastDurationMs  Int?
+  lastSummary     Json?
+  lastError       String?
+
+  leaseOwner String?
+  leaseUntil DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([leaseUntil])
+  @@index([lastFailedAt])
+}
+
 model ErpSyncState {
   id String @id @default("primary")
 

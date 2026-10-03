@@ -7,6 +7,8 @@ import { adminSystemHealth, readinessStatus } from "../services/system-health.se
 import { createDatabaseBackup, listDatabaseBackups } from "../services/database-backup.service";
 import { recordClientError } from "../services/runtime-observability.service";
 import { launchReadinessSnapshot } from "../services/launch-readiness.service";
+import { runBackgroundJob } from "../services/background-jobs.service";
+import { SYSTEM_JOB_KEYS } from "../services/system-job.service";
 
 export const publicSystemRoutes = Router();
 
@@ -60,6 +62,17 @@ router.get(
   "/system/launch-readiness",
   asyncHandler(async (_req, res) => {
     res.json({ success: true, data: await launchReadinessSnapshot() });
+  }),
+);
+
+router.post(
+  "/system/jobs/:key/run",
+  rateLimit({ windowMs: 60 * 1000, limit: 20, standardHeaders: "draft-8", legacyHeaders: false }),
+  asyncHandler(async (req, res) => {
+    const parsed = z.enum(SYSTEM_JOB_KEYS).safeParse(String(req.params.key || ""));
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Unknown background job" });
+    const result = await runBackgroundJob(parsed.data);
+    res.json({ success: true, data: result, message: result.ran ? "Background job completed" : "Background job is already running" });
   }),
 );
 

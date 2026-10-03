@@ -22,6 +22,7 @@ export default function AdminSystem() {
   const [launch, setLaunch] = useState(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [runningJob, setRunningJob] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
 
@@ -45,6 +46,20 @@ export default function AdminSystem() {
 
   useEffect(() => { load(); }, [load]);
 
+
+  async function runJob(key) {
+    setRunningJob(key); setMessage(""); setError("");
+    try {
+      const response = await apiFetch(`/admin/system/jobs/${key}/run`, { method: "POST" });
+      setMessage(response.message || "Background job completed");
+      await load();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setRunningJob("");
+    }
+  }
+
   async function createBackup() {
     setCreating(true); setMessage(""); setError("");
     try {
@@ -62,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 41 · OBSERVABILITY</p><h1>System health, observability & recovery</h1><p>Live API performance, request tracing, PostgreSQL tooling, verified backups and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 48 · DATABASE & JOB RELIABILITY</p><h1>System health, observability & recovery</h1><p>Live API performance, request tracing, PostgreSQL tooling, verified backups and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -81,6 +96,27 @@ export default function AdminSystem() {
           <ToolRow label="pg_restore" path={health.backup?.restorePath} version={health.backup?.restoreVersion} />
         </div>
         {!backupReady && <div className="phase24-warning">{health.backup?.setupHint || "Set PG_BIN to your PostgreSQL bin directory."}</div>}
+      </section>
+
+      <section className="admin-panel phase24-system-panel phase48-schema-panel">
+        <div className="admin-panel-head"><div><p className="eyebrow">DATABASE CONTRACT</p><h2>Schema & migration integrity</h2><p>The running API now refuses to start against a database that is behind the committed Prisma schema.</p></div><StatusPill ok={Boolean(health.schema?.ok)} yes="Schema ready" no="Migration required" /></div>
+        <div className="phase48-schema-grid">
+          <article><small>Expected migration head</small><strong>{health.schema?.expectedMigrationHead || "Unknown"}</strong></article>
+          <article><small>Applied migrations</small><strong>{health.schema?.appliedMigrationCount ?? "—"}</strong></article>
+          <article><small>Latest applied</small><strong>{health.schema?.latestAppliedMigration || "None"}</strong></article>
+        </div>
+        {(health.schema?.missing || []).length > 0 && <div className="phase24-warning"><strong>Missing database contract:</strong><ul>{health.schema.missing.map((item) => <li key={item}>{item}</li>)}</ul><code>npm run db:backup && npm run db:deploy && npm run db:generate</code></div>}
+      </section>
+
+      <section className="admin-panel phase24-system-panel phase48-jobs-panel">
+        <div className="admin-panel-head"><div><p className="eyebrow">BACKGROUND JOBS</p><h2>Lifecycle job reliability</h2><p>Database-backed leases prevent multiple API instances from sending the same recovery/refill alert at the same time.</p></div><span className="phase24-runtime">{health.jobs?.instance || "Instance unavailable"}</span></div>
+        <div className="phase48-job-list">
+          {(health.jobs?.jobs || []).map((job) => <article key={job.key} className={job.lastError ? "has-error" : ""}>
+            <div><strong>{job.key.replaceAll("_", " ")}</strong><small>{job.running ? "Running now" : job.lastSucceededAt ? `Last success ${new Date(job.lastSucceededAt).toLocaleString()}` : "Not run yet"}</small>{job.lastError && <em>{job.lastError}</em>}</div>
+            <span>{job.lastDurationMs != null ? `${job.lastDurationMs} ms` : "—"}</span>
+            <button className="button button-secondary" disabled={runningJob === job.key || job.running} onClick={() => runJob(job.key)}>{runningJob === job.key ? "Running…" : job.running ? "Running" : "Run now"}</button>
+          </article>)}
+        </div>
       </section>
 
       <section className="admin-panel phase24-system-panel">

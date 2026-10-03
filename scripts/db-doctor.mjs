@@ -45,6 +45,13 @@ else {
     if (validate.error) fail("Prisma schema validation", validate.error.message);
     else if (validate.status === 0) pass("Prisma schema validation");
     else fail("Prisma schema validation", `exit ${validate.status ?? "unknown"}${validate.signal ? ` signal ${validate.signal}` : ""}`);
+
+    if (!failed) {
+      const contract = spawnSync(process.execPath, [path.join(root, "scripts/db-schema-status.mjs")], { cwd: root, stdio: "inherit", windowsHide: true, env: { ...process.env, ...values } });
+      if (contract.error) fail("Database schema contract", contract.error.message);
+      else if (contract.status === 0) pass("Database migration/schema status");
+      else fail("Database migration/schema status", "pending migration or schema drift detected");
+    }
   } catch (error) {
     fail("Prisma schema validation", error instanceof Error ? error.message : String(error));
   }

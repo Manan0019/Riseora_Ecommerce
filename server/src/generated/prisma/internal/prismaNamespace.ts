@@ -455,6 +455,7 @@ export const ModelName = {
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
   RefillReminder: 'RefillReminder',
+  SystemJobState: 'SystemJobState',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -472,7 +473,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4768,6 +4769,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SystemJobState: {
+      payload: Prisma.$SystemJobStatePayload<ExtArgs>
+      fields: Prisma.SystemJobStateFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SystemJobStateFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SystemJobStateFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        findFirst: {
+          args: Prisma.SystemJobStateFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SystemJobStateFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        findMany: {
+          args: Prisma.SystemJobStateFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>[]
+        }
+        create: {
+          args: Prisma.SystemJobStateCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        createMany: {
+          args: Prisma.SystemJobStateCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SystemJobStateCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>[]
+        }
+        delete: {
+          args: Prisma.SystemJobStateDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        update: {
+          args: Prisma.SystemJobStateUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        deleteMany: {
+          args: Prisma.SystemJobStateDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SystemJobStateUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SystemJobStateUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>[]
+        }
+        upsert: {
+          args: Prisma.SystemJobStateUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SystemJobStatePayload>
+        }
+        aggregate: {
+          args: Prisma.SystemJobStateAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSystemJobState>
+        }
+        groupBy: {
+          args: Prisma.SystemJobStateGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SystemJobStateGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SystemJobStateCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SystemJobStateCountAggregateOutputType> | number
+        }
+      }
+    }
     ErpSyncState: {
       payload: Prisma.$ErpSyncStatePayload<ExtArgs>
       fields: Prisma.ErpSyncStateFieldRefs
@@ -6067,6 +6142,23 @@ export const RefillReminderScalarFieldEnum = {
 export type RefillReminderScalarFieldEnum = (typeof RefillReminderScalarFieldEnum)[keyof typeof RefillReminderScalarFieldEnum]
 
 
+export const SystemJobStateScalarFieldEnum = {
+  key: 'key',
+  lastStartedAt: 'lastStartedAt',
+  lastSucceededAt: 'lastSucceededAt',
+  lastFailedAt: 'lastFailedAt',
+  lastDurationMs: 'lastDurationMs',
+  lastSummary: 'lastSummary',
+  lastError: 'lastError',
+  leaseOwner: 'leaseOwner',
+  leaseUntil: 'leaseUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SystemJobStateScalarFieldEnum = (typeof SystemJobStateScalarFieldEnum)[keyof typeof SystemJobStateScalarFieldEnum]
+
+
 export const ErpSyncStateScalarFieldEnum = {
   id: 'id',
   lastCatalogSyncAt: 'lastCatalogSyncAt',
@@ -7001,6 +7093,7 @@ export type GlobalOmitConfig = {
   stockAlert?: Prisma.StockAlertOmit
   priceAlert?: Prisma.PriceAlertOmit
   refillReminder?: Prisma.RefillReminderOmit
+  systemJobState?: Prisma.SystemJobStateOmit
   erpSyncState?: Prisma.ErpSyncStateOmit
   erpSyncLog?: Prisma.ErpSyncLogOmit
 }

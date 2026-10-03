@@ -49,8 +49,12 @@
     "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase46": "node scripts/phase46-privacy-consent-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase47": "node scripts/phase47-launch-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "prelaunch:check": "npm run db:doctor && npm run verify:phase47 && npm run security:audit:prod",
-    "smoke:local": "node scripts/phase47-smoke.mjs"
+    "prelaunch:check": "npm run db:doctor && npm run db:status && npm run verify:phase48 && npm run security:audit:prod",
+    "smoke:local": "node scripts/phase47-smoke.mjs",
+    "predev": "node scripts/phase48-dev-prepare.mjs",
+    "db:status": "node scripts/db-schema-status.mjs",
+    "verify:phase48": "node scripts/phase48-database-integrity-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "db:repair": "npm run db:backup && npm run db:deploy && npm run db:generate && npm run db:status"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

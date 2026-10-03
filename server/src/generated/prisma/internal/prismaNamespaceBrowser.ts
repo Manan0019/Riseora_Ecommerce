@@ -109,6 +109,7 @@ export const ModelName = {
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
   RefillReminder: 'RefillReminder',
+  SystemJobState: 'SystemJobState',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -1239,6 +1240,23 @@ export const RefillReminderScalarFieldEnum = {
 } as const
 
 export type RefillReminderScalarFieldEnum = (typeof RefillReminderScalarFieldEnum)[keyof typeof RefillReminderScalarFieldEnum]
+
+
+export const SystemJobStateScalarFieldEnum = {
+  key: 'key',
+  lastStartedAt: 'lastStartedAt',
+  lastSucceededAt: 'lastSucceededAt',
+  lastFailedAt: 'lastFailedAt',
+  lastDurationMs: 'lastDurationMs',
+  lastSummary: 'lastSummary',
+  lastError: 'lastError',
+  leaseOwner: 'leaseOwner',
+  leaseUntil: 'leaseUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SystemJobStateScalarFieldEnum = (typeof SystemJobStateScalarFieldEnum)[keyof typeof SystemJobStateScalarFieldEnum]
 
 
 export const ErpSyncStateScalarFieldEnum = {

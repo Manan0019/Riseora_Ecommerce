@@ -92,3 +92,19 @@ AUTH_LOCK_MINUTES=15
 ```
 
 Changing the JWT secret invalidates both old and new sessions. Password changes/resets and staff-role changes also revoke previous managed sessions.
+
+## Phase 48 database integrity gate
+
+Development now runs `npm run predev` automatically before API/Vite startup. It validates Prisma, applies committed pending migrations with `prisma migrate deploy`, and verifies critical database tables/columns. This is intended only for the local development command.
+
+Production deployment remains explicit: create/verify a backup, deploy committed migrations, run `npm run db:status`, then start the production server. The API also performs a schema contract check before accepting traffic and fails fast when the database is behind the application release.
+
+Useful commands:
+
+```powershell
+npm run db:status
+npm run db:repair
+npm run db:doctor
+```
+
+`db:repair` creates a verified backup, deploys migrations, regenerates Prisma Client, and verifies the deployed schema contract.

@@ -47,10 +47,8 @@ import { errorHandler, notFound } from "./middleware/error-handler";
 import { requestObservability } from "./middleware/request-observability";
 import { requireAdmin, requireAuth } from "./middleware/auth";
 import { adminAuditTrail, enforceAdminPermission } from "./middleware/admin-security";
-import { releaseExpiredCheckoutSessions } from "./services/checkout.service";
-import { processCartRecoveryReminders } from "./services/cart-recovery.service";
-import { notifyEligiblePriceAlerts } from "./services/price-alert.service";
-import { processDueRefillReminders } from "./services/refill-reminder.service";
+import { runBackgroundJob, runLifecycleJobs } from "./services/background-jobs.service";
+import { assertDatabaseSchemaReady } from "./services/database-readiness.service";
 import { logRuntimeEvent, setRuntimeDraining } from "./services/runtime-observability.service";
 import { cleanupExpiredAuthSessions } from "./services/auth-security.service";
 
@@ -137,32 +135,45 @@ if (env.SERVE_CLIENT) {
 app.use(notFound);
 app.use(errorHandler);
 
-const server = app.listen(env.PORT, () => {
-  logRuntimeEvent("info", "server_started", { port: env.PORT, environment: env.NODE_ENV, releaseName: env.RELEASE_NAME || null, releaseSha: env.RELEASE_SHA || null });
-  if (env.NODE_ENV !== "production") console.log(`Riseora API running on http://localhost:${env.PORT}`);
-  void releaseExpiredCheckoutSessions().catch((error) => console.error("Checkout cleanup failed", error));
-  void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
-  void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
-  void processDueRefillReminders().catch((error) => console.error("Refill reminder processing failed", error));
-  void cleanupExpiredAuthSessions().catch((error) => console.error("Auth session cleanup failed", error));
+let server: ReturnType<typeof app.listen> | null = null;
+let checkoutCleanupTimer: NodeJS.Timeout | null = null;
+let cartRecoveryTimer: NodeJS.Timeout | null = null;
+let authSessionCleanupTimer: NodeJS.Timeout | null = null;
+
+async function startServer() {
+  const schema = await assertDatabaseSchemaReady();
+  logRuntimeEvent("info", "database_schema_ready", { migrationHead: schema.expectedMigrationHead, appliedMigrationCount: schema.appliedMigrationCount });
+
+  server = app.listen(env.PORT, () => {
+    logRuntimeEvent("info", "server_started", { port: env.PORT, environment: env.NODE_ENV, releaseName: env.RELEASE_NAME || null, releaseSha: env.RELEASE_SHA || null });
+    if (env.NODE_ENV !== "production") console.log(`Riseora API running on http://localhost:${env.PORT}`);
+    void runBackgroundJob("CHECKOUT_CLEANUP").catch((error) => console.error("Checkout cleanup failed", error));
+    void runLifecycleJobs().catch((error) => console.error("Lifecycle processing failed", error));
+    void runBackgroundJob("AUTH_SESSION_CLEANUP").catch((error) => console.error("Auth session cleanup failed", error));
+  });
+
+  checkoutCleanupTimer = setInterval(() => {
+    void runBackgroundJob("CHECKOUT_CLEANUP").catch((error) => console.error("Checkout cleanup failed", error));
+  }, 5 * 60 * 1000);
+  checkoutCleanupTimer.unref();
+
+  cartRecoveryTimer = setInterval(() => {
+    void runLifecycleJobs().catch((error) => console.error("Lifecycle processing failed", error));
+  }, 10 * 60 * 1000);
+  cartRecoveryTimer.unref();
+
+  authSessionCleanupTimer = setInterval(() => {
+    void runBackgroundJob("AUTH_SESSION_CLEANUP").catch((error) => console.error("Auth session cleanup failed", error));
+  }, 24 * 60 * 60 * 1000);
+  authSessionCleanupTimer.unref();
+}
+
+void startServer().catch((error) => {
+  logRuntimeEvent("error", "server_start_failed", { error: error instanceof Error ? error.message : String(error) });
+  console.error("Riseora API could not start because the database schema is not ready.");
+  console.error("Run: npm run db:backup && npm run db:deploy && npm run db:generate");
+  process.exitCode = 1;
 });
-
-const checkoutCleanupTimer = setInterval(() => {
-  void releaseExpiredCheckoutSessions().catch((error) => console.error("Checkout cleanup failed", error));
-}, 5 * 60 * 1000);
-checkoutCleanupTimer.unref();
-
-const cartRecoveryTimer = setInterval(() => {
-  void processCartRecoveryReminders().catch((error) => console.error("Cart recovery processing failed", error));
-  void notifyEligiblePriceAlerts().catch((error) => console.error("Price alert processing failed", error));
-  void processDueRefillReminders().catch((error) => console.error("Refill reminder processing failed", error));
-}, 10 * 60 * 1000);
-cartRecoveryTimer.unref();
-
-const authSessionCleanupTimer = setInterval(() => {
-  void cleanupExpiredAuthSessions().catch((error) => console.error("Auth session cleanup failed", error));
-}, 24 * 60 * 60 * 1000);
-authSessionCleanupTimer.unref();
 
 let shuttingDown = false;
 async function shutdown(signal: string, exitCode = 0) {
@@ -170,9 +181,9 @@ async function shutdown(signal: string, exitCode = 0) {
   shuttingDown = true;
   setRuntimeDraining(true);
   logRuntimeEvent("warn", "server_shutdown_started", { signal, activeGraceMs: env.SHUTDOWN_GRACE_MS });
-  clearInterval(checkoutCleanupTimer);
-  clearInterval(cartRecoveryTimer);
-  clearInterval(authSessionCleanupTimer);
+  if (checkoutCleanupTimer) clearInterval(checkoutCleanupTimer);
+  if (cartRecoveryTimer) clearInterval(cartRecoveryTimer);
+  if (authSessionCleanupTimer) clearInterval(authSessionCleanupTimer);
 
   const forceTimer = setTimeout(() => {
     logRuntimeEvent("error", "server_shutdown_forced", { signal });
@@ -180,6 +191,7 @@ async function shutdown(signal: string, exitCode = 0) {
   }, env.SHUTDOWN_GRACE_MS);
   forceTimer.unref();
 
+  if (!server) { clearTimeout(forceTimer); await prisma.$disconnect().catch(() => undefined); process.exit(exitCode); return; }
   server.close(async () => {
     clearTimeout(forceTimer);
     try { await prisma.$disconnect(); } catch (error) { logRuntimeEvent("error", "database_disconnect_failed", { message: error instanceof Error ? error.message : String(error) }); }

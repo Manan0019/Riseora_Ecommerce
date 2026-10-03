@@ -332,6 +332,11 @@ export type PriceAlert = Prisma.PriceAlertModel
  */
 export type RefillReminder = Prisma.RefillReminderModel
 /**
+ * Model SystemJobState
+ * 
+ */
+export type SystemJobState = Prisma.SystemJobStateModel
+/**
  * Model ErpSyncState
  * 
  */
