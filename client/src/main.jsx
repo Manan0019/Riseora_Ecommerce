@@ -2,6 +2,8 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
+import AppErrorBoundary from "./components/AppErrorBoundary";
+import { reportClientError } from "./api/http";
 import { AuthProvider } from "./context/AuthContext";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -10,7 +12,15 @@ import { StoreProvider } from "./context/StoreContext";
 import { NotificationProvider } from "./context/NotificationContext";
 import "./styles.css";
 
-ReactDOM.createRoot(document.getElementById("root")).render(<React.StrictMode><BrowserRouter><StoreProvider><AuthProvider><NotificationProvider><CartProvider><WishlistProvider><CompareProvider><App /></CompareProvider></WishlistProvider></CartProvider></NotificationProvider></AuthProvider></StoreProvider></BrowserRouter></React.StrictMode>);
+window.addEventListener("error", (event) => {
+  reportClientError({ message: event.error?.message || event.message || "Unhandled browser error", route: window.location.pathname, source: "window-error" });
+});
+window.addEventListener("unhandledrejection", (event) => {
+  const reason = event.reason;
+  reportClientError({ message: reason?.message || String(reason || "Unhandled promise rejection"), route: window.location.pathname, source: "unhandled-rejection" });
+});
+
+ReactDOM.createRoot(document.getElementById("root")).render(<React.StrictMode><AppErrorBoundary><BrowserRouter><StoreProvider><AuthProvider><NotificationProvider><CartProvider><WishlistProvider><CompareProvider><App /></CompareProvider></WishlistProvider></CartProvider></NotificationProvider></AuthProvider></StoreProvider></BrowserRouter></AppErrorBoundary></React.StrictMode>);
 
 if (import.meta.env.PROD && "serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("/sw.js").catch(() => {}));

@@ -4,6 +4,7 @@ import { env } from "../config/env";
 import { prisma } from "../config/prisma";
 import { optionalAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
+import { currentMaintenance } from "../services/maintenance.service";
 import { createOnlineCheckoutReservation, finalizeOnlineCheckout, finalizeOnlineCheckoutByProviderOrder, releaseCheckoutSession, releaseExpiredCheckoutSessions } from "../services/checkout.service";
 import { createRazorpayOrder, onlinePaymentsEnabled, verifyRazorpayPaymentSignature, verifyRazorpayWebhookSignature } from "../services/payment.service";
 
@@ -40,6 +41,15 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
   if (!onlinePaymentsEnabled) return res.status(503).json({ success: false, message: "Online payments are not configured yet" });
   const parsed = checkoutSchema.safeParse(req.body);
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid checkout details", errors: parsed.error.flatten() });
+  const maintenance = await currentMaintenance();
+  if (maintenance.active) {
+    const existing = parsed.data.checkoutRequestKey
+      ? await prisma.checkoutSession.findUnique({ where: { checkoutRequestKey: parsed.data.checkoutRequestKey }, select: { status: true } })
+      : null;
+    if (!existing || existing.status !== "PENDING") {
+      return res.status(503).json({ success: false, code: "STORE_MAINTENANCE", message: maintenance.message || "Riseora is briefly unavailable while we complete scheduled maintenance. Please try again shortly." });
+    }
+  }
   await releaseExpiredCheckoutSessions();
   let session;
   try {

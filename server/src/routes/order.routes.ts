@@ -5,6 +5,7 @@ import { optionalAuth, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { createCodOrder, getCodEligibility } from "../services/checkout.service";
 import { createUserNotification } from "../services/notification-center.service";
+import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
 const router = Router();
 
@@ -36,6 +37,7 @@ const codEligibilitySchema = z.object({
 
 router.post(
   "/cod-eligibility",
+  blockCommerceDuringMaintenance,
   optionalAuth,
   asyncHandler(async (req, res) => {
     const parsed = codEligibilitySchema.safeParse(req.body);
@@ -59,6 +61,7 @@ router.post(
 
 router.post(
   "/",
+  blockCommerceDuringMaintenance,
   optionalAuth,
   asyncHandler(async (req, res) => {
     const parsed = createOrderSchema.safeParse(req.body);

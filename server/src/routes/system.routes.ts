@@ -1,11 +1,29 @@
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
+import { z } from "zod";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { adminSystemHealth, readinessStatus } from "../services/system-health.service";
 import { createDatabaseBackup, listDatabaseBackups } from "../services/database-backup.service";
+import { recordClientError } from "../services/runtime-observability.service";
+import { launchReadinessSnapshot } from "../services/launch-readiness.service";
 
 export const publicSystemRoutes = Router();
+
+publicSystemRoutes.post(
+  "/client-errors",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, standardHeaders: "draft-8", legacyHeaders: false }),
+  (req, res) => {
+    const parsed = z.object({
+      message: z.string().trim().min(1).max(500),
+      route: z.string().trim().max(300).optional(),
+      source: z.string().trim().max(80).optional(),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid client error report" });
+    recordClientError(parsed.data);
+    return res.status(202).json({ success: true });
+  },
+);
 
 publicSystemRoutes.get("/health/live", (_req, res) => {
   res.json({ success: true, status: "live", uptimeSeconds: Math.round(process.uptime()), timestamp: new Date().toISOString() });
@@ -35,6 +53,13 @@ router.get(
   "/system/health",
   asyncHandler(async (_req, res) => {
     res.json({ success: true, data: await adminSystemHealth() });
+  }),
+);
+
+router.get(
+  "/system/launch-readiness",
+  asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: await launchReadinessSnapshot() });
   }),
 );
 

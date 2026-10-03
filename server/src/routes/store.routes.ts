@@ -3,6 +3,7 @@ import { z } from "zod";
 import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
 import { getShippingQuote } from "../services/shipping-zone.service";
+import { evaluateMaintenance } from "../services/maintenance.service";
 
 const router = Router();
 
@@ -10,6 +11,7 @@ router.get(
   "/config",
   asyncHandler(async (_req, res) => {
     const settings = await getStoreSettings();
+    const maintenance = evaluateMaintenance(settings);
     res.json({
       success: true,
       data: {
@@ -53,6 +55,11 @@ router.get(
         facebookUrl: settings.facebookUrl,
         youtubeUrl: settings.youtubeUrl,
         whatsappNumber: settings.whatsappNumber,
+        maintenanceActive: maintenance.active,
+        maintenanceConfigured: maintenance.configured,
+        maintenanceMessage: maintenance.message,
+        maintenanceStartsAt: maintenance.startsAt,
+        maintenanceEndsAt: maintenance.endsAt,
       },
     });
   }),

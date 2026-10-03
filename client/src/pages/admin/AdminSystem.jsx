@@ -19,6 +19,7 @@ function ToolRow({ label, path, version }) {
 export default function AdminSystem() {
   const [health, setHealth] = useState(null);
   const [backups, setBackups] = useState([]);
+  const [launch, setLaunch] = useState(null);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [message, setMessage] = useState("");
@@ -27,12 +28,14 @@ export default function AdminSystem() {
   const load = useCallback(async () => {
     setError("");
     try {
-      const [healthResponse, backupResponse] = await Promise.all([
+      const [healthResponse, backupResponse, launchResponse] = await Promise.all([
         apiFetch("/admin/system/health"),
         apiFetch("/admin/system/backups"),
+        apiFetch("/admin/system/launch-readiness"),
       ]);
       setHealth(healthResponse.data);
       setBackups(backupResponse.data || []);
+      setLaunch(launchResponse.data);
     } catch (e) {
       setError(e.message);
     } finally {
@@ -97,6 +100,7 @@ export default function AdminSystem() {
           <article><small>P95 API latency</small><strong>{health.runtime?.p95Ms ?? 0} ms</strong><span>P50 {health.runtime?.p50Ms ?? 0} ms</span></article>
           <article><small>Server errors</small><strong>{health.runtime?.error5xx ?? 0}</strong><span>{health.runtime?.errorRatePercent ?? 0}% error rate</span></article>
           <article><small>Slow requests</small><strong>{health.runtime?.slowRequestCount ?? 0}</strong><span>Threshold {health.runtime?.slowThresholdMs ?? 1000} ms</span></article>
+          <article><small>Client errors · 15 min</small><strong>{health.runtime?.clientErrorCount ?? 0}</strong><span>Browser/runtime reports</span></article>
           <article><small>Process memory</small><strong>{health.runtime?.memory?.rssMb ?? 0} MB</strong><span>Heap {health.runtime?.memory?.heapUsedMb ?? 0} MB</span></article>
           <article><small>Event loop lag</small><strong>{health.runtime?.eventLoopLagMs ?? 0} ms</strong><span>{health.runtime?.eventLoopLagMs > 250 ? "Investigate load" : "Normal"}</span></article>
         </div>
@@ -104,10 +108,18 @@ export default function AdminSystem() {
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>
           {(health.runtime?.routes || []).map((row) => <div key={row.route}><code>{row.route}</code><span>{row.requests} req</span><span>{row.errors} errors</span><b>{row.p95Ms} / {row.maxMs} ms</b></div>)}
         </div>}
+        {(health.runtime?.recentClientErrors || []).length > 0 && <div className="phase47-client-errors"><div className="phase41-route-head"><span>Recent client errors</span><small>Sanitized browser reports · rolling 15 minutes</small></div>{health.runtime.recentClientErrors.map((item, index) => <div key={`${item.at}-${index}`}><code>{item.route}</code><span>{item.source}</span><b>{item.message}</b><small>{new Date(item.at).toLocaleTimeString()}</small></div>)}</div>}
         <p className="admin-help-note">Release: {health.release?.name || "local / unnamed"}{health.release?.sha ? ` · ${health.release.sha}` : ""}. A graceful shutdown first marks readiness as unavailable, then waits up to the configured grace window before forcing exit.</p>
       </section>
 
     </>}
+
+    {launch && <section className="admin-panel phase24-system-panel phase47-launch-panel">
+      <div className="admin-panel-head"><div><p className="eyebrow">LAUNCH GATE</p><h2>Production readiness</h2><p>A consolidated check across database recovery, catalog, tax data, policies, delivery, payments and storefront availability.</p></div><div className={`phase47-launch-score ${launch.ready ? "ready" : "blocked"}`}><strong>{launch.score}%</strong><span>{launch.ready ? "READY" : `${launch.blocks} BLOCKER${launch.blocks === 1 ? "" : "S"}`}</span></div></div>
+      <div className="phase47-launch-summary"><span><b>{launch.passed}</b> passed</span><span><b>{launch.warnings}</b> warnings</span><span><b>{launch.blocks}</b> blockers</span></div>
+      <div className="phase47-launch-checks">{(launch.checks || []).map((item) => <article key={item.key} className={`phase47-launch-check ${item.status.toLowerCase()}`}><span>{item.status === "PASS" ? "✓" : item.status === "WARN" ? "!" : "×"}</span><div><strong>{item.label}</strong><small>{item.detail}</small></div></article>)}</div>
+      <p className="admin-help-note">Use this together with <code>npm run prelaunch:check</code> and <code>npm run smoke:local</code>. A green launch gate does not replace final payment, tax and policy review with the owner/accountant.</p>
+    </section>}
 
     <section className="admin-panel phase24-system-panel">
       <div className="admin-panel-head"><div><h2>Verified database backups</h2><p>Custom-format PostgreSQL archives are validated with <code>pg_restore --list</code> and receive a SHA-256 checksum before they are accepted.</p></div><button className="button" disabled={creating || !backupReady || !health?.storage?.backupsWritable} onClick={createBackup}>{creating ? "Creating & verifying…" : "Backup now"}</button></div>

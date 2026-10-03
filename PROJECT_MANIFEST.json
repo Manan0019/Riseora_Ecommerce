@@ -1,7 +1,7 @@
 {
   "project": "Riseora E-Commerce",
-  "phase": "23 - Repeat Purchase & Private Wishlist Sharing",
-  "direction": "mobile-first D2C storefront with production-ready customer retention, admin operations and safe checkout foundations",
+  "phase": "47 - Launch Readiness & Quality Gate V2",
+  "direction": "production launch-ready D2C storefront with resilient checkout, observability, privacy, finance, fulfilment and automated quality gates",
   "customer": [
     "campaign-led mobile storefront",
     "predictive search",
@@ -82,7 +82,8 @@
     "Banner.imageAlt",
     "Order.dispatchDueAt",
     "ShippingZone courier/COD/weight/SLA overrides",
-    "Shipment.shippingPartnerId"
+    "Shipment.shippingPartnerId",
+    "StoreSetting maintenance window and message"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
   "latestPhase": "Phase 45 \u2014 Finance, GST & Payment Reconciliation V2",
@@ -427,5 +428,19 @@
     ],
     "migration": "20261004003000_phase46_privacy_consent_v2",
     "verification": "npm run verify:phase46"
+  },
+  "phase47": {
+    "features": [
+      "scheduled storefront maintenance mode with server-side checkout guard",
+      "global React error boundary and sanitized client-error telemetry",
+      "offline connectivity banner and request timeouts",
+      "Admin System production launch-readiness gate",
+      "deployment-safe service worker cache strategy",
+      "local/public endpoint smoke-test command",
+      "improved 404 recovery experience"
+    ],
+    "migration": "20261004123000_phase47_launch_readiness_v2",
+    "verification": "npm run verify:phase47",
+    "smoke": "npm run smoke:local"
   }
 }

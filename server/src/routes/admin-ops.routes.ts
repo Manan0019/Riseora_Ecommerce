@@ -57,6 +57,10 @@ const settingsSchema = z.object({
   logoAlt: z.string().trim().max(160).nullable().optional(),
   announcementText: z.string().trim().max(180).nullable().optional(),
   announcementSecondary: z.string().trim().max(180).nullable().optional(),
+  maintenanceEnabled: z.boolean().optional(),
+  maintenanceMessage: z.string().trim().max(1000).nullable().optional(),
+  maintenanceStartsAt: z.coerce.date().nullable().optional(),
+  maintenanceEndsAt: z.coerce.date().nullable().optional(),
   siteUrl: z.string().trim().url().nullable().optional(),
   seoTitle: z.string().trim().max(120).nullable().optional(),
   seoDescription: z.string().trim().max(320).nullable().optional(),
@@ -89,6 +93,11 @@ router.patch(
     const nextCodMax = parsed.data.codMaxOrderAmount !== undefined ? parsed.data.codMaxOrderAmount : currentSettings.codMaxOrderAmount == null ? null : Number(currentSettings.codMaxOrderAmount);
     if (nextCodMin != null && nextCodMax != null && nextCodMin > nextCodMax) {
       return res.status(400).json({ success: false, message: "COD minimum amount cannot be higher than the COD maximum amount" });
+    }
+    const nextMaintenanceStart = parsed.data.maintenanceStartsAt !== undefined ? parsed.data.maintenanceStartsAt : currentSettings.maintenanceStartsAt;
+    const nextMaintenanceEnd = parsed.data.maintenanceEndsAt !== undefined ? parsed.data.maintenanceEndsAt : currentSettings.maintenanceEndsAt;
+    if (nextMaintenanceStart && nextMaintenanceEnd && nextMaintenanceStart >= nextMaintenanceEnd) {
+      return res.status(400).json({ success: false, message: "Maintenance end time must be after the start time" });
     }
     const settings = await prisma.storeSetting.update({ where: { id: "primary" }, data: parsed.data });
     res.json({ success: true, data: settings });

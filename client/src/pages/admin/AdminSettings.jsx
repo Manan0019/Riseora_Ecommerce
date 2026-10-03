@@ -9,6 +9,14 @@ function csvEscape(value) {
   return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 }
 
+function toLocalDateTime(value) {
+  if (!value) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+  const offset = date.getTimezoneOffset();
+  return new Date(date.getTime() - offset * 60000).toISOString().slice(0, 16);
+}
+
 export default function AdminSettings() {
   const [settings, setSettings] = useState(null);
   const [partners, setPartners] = useState([]);
@@ -23,7 +31,7 @@ export default function AdminSettings() {
   async function load() {
     const [settingResponse, partnerResponse, zoneResponse] = await Promise.all([apiFetch("/admin/settings"), apiFetch("/admin/shipping-partners"), apiFetch("/admin/shipping-zones")]);
     const value = settingResponse.data;
-    setSettings({ ...value, freeShippingThreshold: value.freeShippingThreshold == null ? "" : String(Number(value.freeShippingThreshold)), flatShippingFee: String(Number(value.flatShippingFee || 0)), codFee: String(Number(value.codFee || 0)), codMinOrderAmount: value.codMinOrderAmount == null ? "" : String(Number(value.codMinOrderAmount)), codMaxOrderAmount: value.codMaxOrderAmount == null ? "" : String(Number(value.codMaxOrderAmount)), maxOpenCodOrdersPerCustomer: value.maxOpenCodOrdersPerCustomer == null ? "" : String(value.maxOpenCodOrdersPerCustomer), dispatchWithinDays: String(value.dispatchWithinDays ?? 2), deliveryMinDays: String(value.deliveryMinDays ?? 3), deliveryMaxDays: String(value.deliveryMaxDays ?? 7), lowStockUrgencyThreshold: String(value.lowStockUrgencyThreshold ?? 5), returnWindowDays: String(value.returnWindowDays ?? 7) });
+    setSettings({ ...value, maintenanceStartsAt: toLocalDateTime(value.maintenanceStartsAt), maintenanceEndsAt: toLocalDateTime(value.maintenanceEndsAt), freeShippingThreshold: value.freeShippingThreshold == null ? "" : String(Number(value.freeShippingThreshold)), flatShippingFee: String(Number(value.flatShippingFee || 0)), codFee: String(Number(value.codFee || 0)), codMinOrderAmount: value.codMinOrderAmount == null ? "" : String(Number(value.codMinOrderAmount)), codMaxOrderAmount: value.codMaxOrderAmount == null ? "" : String(Number(value.codMaxOrderAmount)), maxOpenCodOrdersPerCustomer: value.maxOpenCodOrdersPerCustomer == null ? "" : String(value.maxOpenCodOrdersPerCustomer), dispatchWithinDays: String(value.dispatchWithinDays ?? 2), deliveryMinDays: String(value.deliveryMinDays ?? 3), deliveryMaxDays: String(value.deliveryMaxDays ?? 7), lowStockUrgencyThreshold: String(value.lowStockUrgencyThreshold ?? 5), returnWindowDays: String(value.returnWindowDays ?? 7) });
     setPartners(partnerResponse.data);
     setZones(zoneResponse.data || []);
   }
@@ -63,6 +71,7 @@ export default function AdminSettings() {
         logoMarkUrl: settings.logoMarkUrl?.trim() || null,
         logoAlt: settings.logoAlt?.trim() || null,
         announcementText: settings.announcementText?.trim() || null, announcementSecondary: settings.announcementSecondary?.trim() || null,
+        maintenanceEnabled: Boolean(settings.maintenanceEnabled), maintenanceMessage: settings.maintenanceMessage?.trim() || null, maintenanceStartsAt: settings.maintenanceStartsAt ? new Date(settings.maintenanceStartsAt).toISOString() : null, maintenanceEndsAt: settings.maintenanceEndsAt ? new Date(settings.maintenanceEndsAt).toISOString() : null,
         siteUrl: settings.siteUrl?.trim() || null, seoTitle: settings.seoTitle?.trim() || null, seoDescription: settings.seoDescription?.trim() || null,
         aboutTitle: settings.aboutTitle?.trim() || null, aboutBody: settings.aboutBody?.trim() || null, contactIntro: settings.contactIntro?.trim() || null,
         instagramUrl: settings.instagramUrl?.trim() || null, facebookUrl: settings.facebookUrl?.trim() || null, youtubeUrl: settings.youtubeUrl?.trim() || null, whatsappNumber: settings.whatsappNumber?.trim() || null,
@@ -169,6 +178,13 @@ export default function AdminSettings() {
       <label className="checkbox-row"><input type="checkbox" name="returnsEnabled" checked={Boolean(settings.returnsEnabled)} onChange={update} /> Allow customer return requests</label>
       <div className="admin-field-grid two"><label>Shipping policy<textarea name="shippingPolicy" value={settings.shippingPolicy || ""} onChange={update} /></label><label>Return policy<textarea name="returnPolicy" value={settings.returnPolicy || ""} onChange={update} /></label></div>
       <div className="admin-field-grid two"><label>Privacy policy<textarea name="privacyPolicy" value={settings.privacyPolicy || ""} onChange={update} /></label><label>Terms & conditions<textarea name="termsPolicy" value={settings.termsPolicy || ""} onChange={update} /></label></div><label>Privacy policy version<input name="privacyPolicyVersion" value={settings.privacyPolicyVersion || "2026-10"} onChange={update} placeholder="2026-10" /><small>Increment this when the published privacy/consent wording materially changes. New consent events snapshot this version.</small></label>
+      <section className="phase47-maintenance-settings">
+        <div className="editor-section-head"><div><strong>Storefront maintenance</strong><small>Use this for controlled deployments or urgent store maintenance. Admin remains available.</small></div><label className="checkbox-row"><input type="checkbox" name="maintenanceEnabled" checked={Boolean(settings.maintenanceEnabled)} onChange={update} /> Enable maintenance mode</label></div>
+        <label>Customer message<textarea name="maintenanceMessage" value={settings.maintenanceMessage || ""} onChange={update} rows="3" placeholder="We're briefly polishing Riseora. Please check back shortly." /></label>
+        <div className="admin-field-grid two"><label>Start time (optional)<input type="datetime-local" name="maintenanceStartsAt" value={settings.maintenanceStartsAt || ""} onChange={update} /></label><label>End time (optional)<input type="datetime-local" name="maintenanceEndsAt" value={settings.maintenanceEndsAt || ""} onChange={update} /></label></div>
+        <p className="admin-help-note">When active, the public storefront shows a branded maintenance page and new COD/Razorpay checkout starts are blocked server-side. Existing payment verification, order tracking and Admin access remain available.</p>
+      </section>
+
       <div className="editor-section-head"><div><strong>Storefront, SEO & social</strong><small>Used by mobile navigation, search previews and customer pages.</small></div></div>
       <section className="phase12-brand-settings">
         <div className="phase12-brand-upload-card">

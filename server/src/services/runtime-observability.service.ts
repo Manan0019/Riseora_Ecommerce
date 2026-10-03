@@ -9,7 +9,16 @@ type RequestSample = {
   requestId: string;
 };
 
+type ClientErrorSample = {
+  at: number;
+  message: string;
+  route: string;
+  source: string;
+};
+
 const samples: RequestSample[] = [];
+const clientErrors: ClientErrorSample[] = [];
+const MAX_CLIENT_ERRORS = 100;
 const MAX_SAMPLES = 2000;
 const WINDOW_MS = 15 * 60 * 1000;
 let activeRequests = 0;
@@ -44,6 +53,23 @@ export function recordObservedRequest(sample: Omit<RequestSample, "at">) {
 
 export function setRuntimeDraining(value: boolean) {
   draining = value;
+}
+
+function sanitizeClientErrorMessage(value: string) {
+  return String(value || "Client error")
+    .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[email]")
+    .replace(/\b[0-9a-f]{8}-[0-9a-f-]{27,}\b/gi, ":id")
+    .slice(0, 500);
+}
+
+export function recordClientError(input: { message: string; route?: string; source?: string }) {
+  clientErrors.push({
+    at: Date.now(),
+    message: sanitizeClientErrorMessage(input.message),
+    route: String(input.route || "/").split("?")[0].slice(0, 240),
+    source: String(input.source || "client").slice(0, 80),
+  });
+  if (clientErrors.length > MAX_CLIENT_ERRORS) clientErrors.splice(0, clientErrors.length - MAX_CLIENT_ERRORS);
 }
 
 export function isRuntimeDraining() {
@@ -88,6 +114,9 @@ export function runtimeObservabilitySnapshot() {
     .sort((a, b) => b.p95Ms - a.p95Ms || b.requests - a.requests)
     .slice(0, 8);
 
+  const clientCutoff = Date.now() - WINDOW_MS;
+  while (clientErrors.length && clientErrors[0].at < clientCutoff) clientErrors.shift();
+  const recentClientErrors = clientErrors.filter((item) => item.at >= clientCutoff);
   const memory = process.memoryUsage();
   return {
     windowMinutes: WINDOW_MS / 60000,
@@ -102,6 +131,8 @@ export function runtimeObservabilitySnapshot() {
     maxMs: durations.length ? Math.max(...durations) : 0,
     slowThresholdMs: env.SLOW_REQUEST_MS,
     slowRequestCount: slow.length,
+    clientErrorCount: recentClientErrors.length,
+    recentClientErrors: recentClientErrors.slice(-8).reverse().map((item) => ({ ...item, at: new Date(item.at).toISOString() })),
     eventLoopLagMs: Math.round(eventLoopLagMs),
     memory: {
       rssMb: Number((memory.rss / 1024 / 1024).toFixed(1)),

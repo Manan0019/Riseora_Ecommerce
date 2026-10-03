@@ -917,6 +917,12 @@ model StoreSetting {
   logoAlt               String?
   announcementText      String?
   announcementSecondary String?
+
+  maintenanceEnabled    Boolean  @default(false)
+  maintenanceMessage    String?
+  maintenanceStartsAt   DateTime?
+  maintenanceEndsAt     DateTime?
+
   siteUrl               String?
   seoTitle              String?
   seoDescription        String?
