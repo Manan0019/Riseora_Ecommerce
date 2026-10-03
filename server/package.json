@@ -21,8 +21,8 @@
     "verify:phase24": "prisma generate && tsc --noEmit && npm run build"
   },
   "dependencies": {
-    "@prisma/adapter-pg": "^7.0.0",
-    "@prisma/client": "^7.0.0",
+    "@prisma/adapter-pg": "7.10.0",
+    "@prisma/client": "7.10.0",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.2",
@@ -42,9 +42,9 @@
     "@types/morgan": "^1.9.10",
     "@types/node": "^24.5.2",
     "@types/pg": "^8.15.5",
-    "prisma": "^7.0.0",
-    "tsup": "^8.5.0",
-    "tsx": "^4.20.5",
+    "prisma": "7.10.0",
+    "tsup": "8.5.1",
+    "tsx": "4.23.15",
     "typescript": "5.9.2",
     "@types/multer": "^2.0.0"
   }

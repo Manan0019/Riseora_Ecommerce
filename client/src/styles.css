@@ -2691,3 +2691,12 @@ textarea { min-height: 105px; resize: vertical; }
   .phase39-adjust-reason { grid-column: 1 / 4; }
   .phase39-inventory-actions { grid-column: 4; justify-content: flex-end; }
 }
+
+/* Phase 40 — production resilience & verified backup diagnostics */
+.phase40-tool-list { display: grid; gap: 10px; margin-top: 14px; }
+.phase40-tool-row { display: grid; grid-template-columns: minmax(180px,.65fr) minmax(0,1.35fr); align-items: center; gap: 16px; padding: 13px 14px; border: 1px solid #e3e9e2; border-radius: 14px; background: #fbfcfa; }
+.phase40-tool-row > span { display: grid; gap: 3px; }
+.phase40-tool-row strong { color: #264332; }
+.phase40-tool-row small { color: #718078; }
+.phase40-tool-row code { min-width: 0; overflow-wrap: anywhere; color: #53675a; background: #f2f6f1; border-radius: 9px; padding: 8px 10px; }
+@media (max-width: 700px) { .phase40-tool-row { grid-template-columns: 1fr; } }

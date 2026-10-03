@@ -63,6 +63,11 @@ export type Product = Prisma.ProductModel
  */
 export type ProductVariant = Prisma.ProductVariantModel
 /**
+ * Model InventoryMovement
+ * 
+ */
+export type InventoryMovement = Prisma.InventoryMovementModel
+/**
  * Model ProductImage
  * 
  */
@@ -252,6 +257,11 @@ export type StockAlert = Prisma.StockAlertModel
  * 
  */
 export type PriceAlert = Prisma.PriceAlertModel
+/**
+ * Model RefillReminder
+ * 
+ */
+export type RefillReminder = Prisma.RefillReminderModel
 /**
  * Model ErpSyncState
  * 

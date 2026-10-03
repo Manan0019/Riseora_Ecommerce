@@ -406,6 +406,7 @@ export const ModelName = {
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
+  InventoryMovement: 'InventoryMovement',
   ProductImage: 'ProductImage',
   Order: 'Order',
   OrderStatusHistory: 'OrderStatusHistory',
@@ -444,6 +445,7 @@ export const ModelName = {
   NewsletterSubscriber: 'NewsletterSubscriber',
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
+  RefillReminder: 'RefillReminder',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -461,7 +463,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "stockAlert" | "priceAlert" | "refillReminder" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1128,6 +1130,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ProductVariantCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ProductVariantCountAggregateOutputType> | number
+        }
+      }
+    }
+    InventoryMovement: {
+      payload: Prisma.$InventoryMovementPayload<ExtArgs>
+      fields: Prisma.InventoryMovementFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.InventoryMovementFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.InventoryMovementFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        findFirst: {
+          args: Prisma.InventoryMovementFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.InventoryMovementFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        findMany: {
+          args: Prisma.InventoryMovementFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>[]
+        }
+        create: {
+          args: Prisma.InventoryMovementCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        createMany: {
+          args: Prisma.InventoryMovementCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.InventoryMovementCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>[]
+        }
+        delete: {
+          args: Prisma.InventoryMovementDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        update: {
+          args: Prisma.InventoryMovementUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        deleteMany: {
+          args: Prisma.InventoryMovementDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.InventoryMovementUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.InventoryMovementUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>[]
+        }
+        upsert: {
+          args: Prisma.InventoryMovementUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$InventoryMovementPayload>
+        }
+        aggregate: {
+          args: Prisma.InventoryMovementAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateInventoryMovement>
+        }
+        groupBy: {
+          args: Prisma.InventoryMovementGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryMovementGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.InventoryMovementCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.InventoryMovementCountAggregateOutputType> | number
         }
       }
     }
@@ -3943,6 +4019,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RefillReminder: {
+      payload: Prisma.$RefillReminderPayload<ExtArgs>
+      fields: Prisma.RefillReminderFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RefillReminderFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RefillReminderFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        findFirst: {
+          args: Prisma.RefillReminderFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RefillReminderFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        findMany: {
+          args: Prisma.RefillReminderFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>[]
+        }
+        create: {
+          args: Prisma.RefillReminderCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        createMany: {
+          args: Prisma.RefillReminderCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RefillReminderCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>[]
+        }
+        delete: {
+          args: Prisma.RefillReminderDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        update: {
+          args: Prisma.RefillReminderUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        deleteMany: {
+          args: Prisma.RefillReminderDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RefillReminderUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RefillReminderUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>[]
+        }
+        upsert: {
+          args: Prisma.RefillReminderUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RefillReminderPayload>
+        }
+        aggregate: {
+          args: Prisma.RefillReminderAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRefillReminder>
+        }
+        groupBy: {
+          args: Prisma.RefillReminderGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RefillReminderGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RefillReminderCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RefillReminderCountAggregateOutputType> | number
+        }
+      }
+    }
     ErpSyncState: {
       payload: Prisma.$ErpSyncStatePayload<ExtArgs>
       fields: Prisma.ErpSyncStateFieldRefs
@@ -4261,6 +4411,9 @@ export const ProductScalarFieldEnum = {
   badge: 'badge',
   maxPurchaseQuantity: 'maxPurchaseQuantity',
   codAllowed: 'codAllowed',
+  replenishmentEnabled: 'replenishmentEnabled',
+  replenishmentDays: 'replenishmentDays',
+  replenishmentLabel: 'replenishmentLabel',
   erpId: 'erpId',
   erpManaged: 'erpManaged',
   createdAt: 'createdAt',
@@ -4282,6 +4435,7 @@ export const ProductVariantScalarFieldEnum = {
   costPrice: 'costPrice',
   stockQuantity: 'stockQuantity',
   lowStockThreshold: 'lowStockThreshold',
+  safetyStock: 'safetyStock',
   weightGrams: 'weightGrams',
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
@@ -4293,6 +4447,25 @@ export const ProductVariantScalarFieldEnum = {
 } as const
 
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
+
+
+export const InventoryMovementScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  type: 'type',
+  source: 'source',
+  quantityChange: 'quantityChange',
+  stockBefore: 'stockBefore',
+  stockAfter: 'stockAfter',
+  safetyStockSnapshot: 'safetyStockSnapshot',
+  reason: 'reason',
+  referenceType: 'referenceType',
+  referenceId: 'referenceId',
+  actorUserId: 'actorUserId',
+  createdAt: 'createdAt'
+} as const
+
+export type InventoryMovementScalarFieldEnum = (typeof InventoryMovementScalarFieldEnum)[keyof typeof InventoryMovementScalarFieldEnum]
 
 
 export const ProductImageScalarFieldEnum = {
@@ -5012,6 +5185,24 @@ export const PriceAlertScalarFieldEnum = {
 export type PriceAlertScalarFieldEnum = (typeof PriceAlertScalarFieldEnum)[keyof typeof PriceAlertScalarFieldEnum]
 
 
+export const RefillReminderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  variantId: 'variantId',
+  intervalDays: 'intervalDays',
+  quantity: 'quantity',
+  status: 'status',
+  nextReminderAt: 'nextReminderAt',
+  lastReminderAt: 'lastReminderAt',
+  lastOrderedAt: 'lastOrderedAt',
+  reminderCount: 'reminderCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RefillReminderScalarFieldEnum = (typeof RefillReminderScalarFieldEnum)[keyof typeof RefillReminderScalarFieldEnum]
+
+
 export const ErpSyncStateScalarFieldEnum = {
   id: 'id',
   lastCatalogSyncAt: 'lastCatalogSyncAt',
@@ -5231,6 +5422,34 @@ export type DecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
  * Reference to a field of type 'Decimal[]'
  */
 export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Decimal[]'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryMovementType'
+ */
+export type EnumInventoryMovementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryMovementType'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryMovementType[]'
+ */
+export type ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryMovementType[]'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryMovementSource'
+ */
+export type EnumInventoryMovementSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryMovementSource'>
+    
+
+
+/**
+ * Reference to a field of type 'InventoryMovementSource[]'
+ */
+export type ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'InventoryMovementSource[]'>
     
 
 
@@ -5543,6 +5762,20 @@ export type ListEnumPriceAlertStatusFieldRefInput<$PrismaModel> = FieldRefInputT
 
 
 /**
+ * Reference to a field of type 'RefillReminderStatus'
+ */
+export type EnumRefillReminderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefillReminderStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RefillReminderStatus[]'
+ */
+export type ListEnumRefillReminderStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefillReminderStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'ErpSyncDirection'
  */
 export type EnumErpSyncDirectionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ErpSyncDirection'>
@@ -5757,6 +5990,7 @@ export type GlobalOmitConfig = {
   category?: Prisma.CategoryOmit
   product?: Prisma.ProductOmit
   productVariant?: Prisma.ProductVariantOmit
+  inventoryMovement?: Prisma.InventoryMovementOmit
   productImage?: Prisma.ProductImageOmit
   order?: Prisma.OrderOmit
   orderStatusHistory?: Prisma.OrderStatusHistoryOmit
@@ -5795,6 +6029,7 @@ export type GlobalOmitConfig = {
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
   stockAlert?: Prisma.StockAlertOmit
   priceAlert?: Prisma.PriceAlertOmit
+  refillReminder?: Prisma.RefillReminderOmit
   erpSyncState?: Prisma.ErpSyncStateOmit
   erpSyncLog?: Prisma.ErpSyncLogOmit
 }

@@ -429,6 +429,40 @@ export type DecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
 }
 
+export type EnumInventoryMovementTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementType | Prisma.EnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel> | $Enums.InventoryMovementType
+}
+
+export type EnumInventoryMovementSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementSource | Prisma.EnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel> | $Enums.InventoryMovementSource
+}
+
+export type EnumInventoryMovementTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementType | Prisma.EnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementTypeWithAggregatesFilter<$PrismaModel> | $Enums.InventoryMovementType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel>
+}
+
+export type EnumInventoryMovementSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementSource | Prisma.EnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementSourceWithAggregatesFilter<$PrismaModel> | $Enums.InventoryMovementSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel>
+}
+
 export type JsonFilter<$PrismaModel = never> =
 | Prisma.PatchUndefined<
     Prisma.Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
@@ -852,6 +886,23 @@ export type EnumPriceAlertStatusWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
+}
+
+export type EnumRefillReminderStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RefillReminderStatus | Prisma.EnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel> | $Enums.RefillReminderStatus
+}
+
+export type EnumRefillReminderStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RefillReminderStatus | Prisma.EnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRefillReminderStatusWithAggregatesFilter<$PrismaModel> | $Enums.RefillReminderStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel>
 }
 
 export type EnumErpSyncDirectionFilter<$PrismaModel = never> = {
@@ -1302,6 +1353,40 @@ export type NestedDecimalNullableWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedDecimalNullableFilter<$PrismaModel>
 }
 
+export type NestedEnumInventoryMovementTypeFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementType | Prisma.EnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel> | $Enums.InventoryMovementType
+}
+
+export type NestedEnumInventoryMovementSourceFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementSource | Prisma.EnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel> | $Enums.InventoryMovementSource
+}
+
+export type NestedEnumInventoryMovementTypeWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementType | Prisma.EnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementType[] | Prisma.ListEnumInventoryMovementTypeFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementTypeWithAggregatesFilter<$PrismaModel> | $Enums.InventoryMovementType
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryMovementTypeFilter<$PrismaModel>
+}
+
+export type NestedEnumInventoryMovementSourceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.InventoryMovementSource | Prisma.EnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  in?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.InventoryMovementSource[] | Prisma.ListEnumInventoryMovementSourceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumInventoryMovementSourceWithAggregatesFilter<$PrismaModel> | $Enums.InventoryMovementSource
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumInventoryMovementSourceFilter<$PrismaModel>
+}
+
 export type NestedEnumOrderStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.OrderStatus | Prisma.EnumOrderStatusFieldRefInput<$PrismaModel>
   in?: $Enums.OrderStatus[] | Prisma.ListEnumOrderStatusFieldRefInput<$PrismaModel>
@@ -1698,6 +1783,23 @@ export type NestedEnumPriceAlertStatusWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPriceAlertStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumRefillReminderStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RefillReminderStatus | Prisma.EnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel> | $Enums.RefillReminderStatus
+}
+
+export type NestedEnumRefillReminderStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RefillReminderStatus | Prisma.EnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RefillReminderStatus[] | Prisma.ListEnumRefillReminderStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRefillReminderStatusWithAggregatesFilter<$PrismaModel> | $Enums.RefillReminderStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRefillReminderStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumErpSyncDirectionFilter<$PrismaModel = never> = {

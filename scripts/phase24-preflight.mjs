@@ -1,3 +1,4 @@
+import { resolvePostgresTool } from "./postgres-tools.mjs";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -56,6 +57,10 @@ if (errors.length === 0) {
   cloudReady ? ok("Cloudinary variables present") : warn("Cloudinary is not fully configured; production image uploads may remain local");
   const emailReady = server.RESEND_API_KEY && server.EMAIL_FROM;
   emailReady ? ok("Transactional email variables present") : warn("Transactional email is not fully configured");
+  const dumpTool = resolvePostgresTool("pg_dump", server);
+  const restoreTool = resolvePostgresTool("pg_restore", server);
+  dumpTool.command ? ok(`pg_dump available (${dumpTool.command})`) : fail("pg_dump unavailable; set PG_BIN/PG_DUMP_PATH before production");
+  restoreTool.command ? ok(`pg_restore available (${restoreTool.command})`) : fail("pg_restore unavailable; set PG_BIN/PG_RESTORE_PATH before production");
 }
 
 for (const relative of ["package-lock.json", "Dockerfile", "server/prisma/schema.prisma", "server/backups/.gitkeep"]) {

@@ -60,6 +60,7 @@ export const ModelName = {
   Category: 'Category',
   Product: 'Product',
   ProductVariant: 'ProductVariant',
+  InventoryMovement: 'InventoryMovement',
   ProductImage: 'ProductImage',
   Order: 'Order',
   OrderStatusHistory: 'OrderStatusHistory',
@@ -98,6 +99,7 @@ export const ModelName = {
   NewsletterSubscriber: 'NewsletterSubscriber',
   StockAlert: 'StockAlert',
   PriceAlert: 'PriceAlert',
+  RefillReminder: 'RefillReminder',
   ErpSyncState: 'ErpSyncState',
   ErpSyncLog: 'ErpSyncLog'
 } as const
@@ -249,6 +251,9 @@ export const ProductScalarFieldEnum = {
   badge: 'badge',
   maxPurchaseQuantity: 'maxPurchaseQuantity',
   codAllowed: 'codAllowed',
+  replenishmentEnabled: 'replenishmentEnabled',
+  replenishmentDays: 'replenishmentDays',
+  replenishmentLabel: 'replenishmentLabel',
   erpId: 'erpId',
   erpManaged: 'erpManaged',
   createdAt: 'createdAt',
@@ -270,6 +275,7 @@ export const ProductVariantScalarFieldEnum = {
   costPrice: 'costPrice',
   stockQuantity: 'stockQuantity',
   lowStockThreshold: 'lowStockThreshold',
+  safetyStock: 'safetyStock',
   weightGrams: 'weightGrams',
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
@@ -281,6 +287,25 @@ export const ProductVariantScalarFieldEnum = {
 } as const
 
 export type ProductVariantScalarFieldEnum = (typeof ProductVariantScalarFieldEnum)[keyof typeof ProductVariantScalarFieldEnum]
+
+
+export const InventoryMovementScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  type: 'type',
+  source: 'source',
+  quantityChange: 'quantityChange',
+  stockBefore: 'stockBefore',
+  stockAfter: 'stockAfter',
+  safetyStockSnapshot: 'safetyStockSnapshot',
+  reason: 'reason',
+  referenceType: 'referenceType',
+  referenceId: 'referenceId',
+  actorUserId: 'actorUserId',
+  createdAt: 'createdAt'
+} as const
+
+export type InventoryMovementScalarFieldEnum = (typeof InventoryMovementScalarFieldEnum)[keyof typeof InventoryMovementScalarFieldEnum]
 
 
 export const ProductImageScalarFieldEnum = {
@@ -998,6 +1023,24 @@ export const PriceAlertScalarFieldEnum = {
 } as const
 
 export type PriceAlertScalarFieldEnum = (typeof PriceAlertScalarFieldEnum)[keyof typeof PriceAlertScalarFieldEnum]
+
+
+export const RefillReminderScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  variantId: 'variantId',
+  intervalDays: 'intervalDays',
+  quantity: 'quantity',
+  status: 'status',
+  nextReminderAt: 'nextReminderAt',
+  lastReminderAt: 'lastReminderAt',
+  lastOrderedAt: 'lastOrderedAt',
+  reminderCount: 'reminderCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RefillReminderScalarFieldEnum = (typeof RefillReminderScalarFieldEnum)[keyof typeof RefillReminderScalarFieldEnum]
 
 
 export const ErpSyncStateScalarFieldEnum = {

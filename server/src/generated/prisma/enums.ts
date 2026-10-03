@@ -252,10 +252,20 @@ export const NotificationType = {
   PRICE_DROP: 'PRICE_DROP',
   STOCK_ALERT: 'STOCK_ALERT',
   CAMPAIGN: 'CAMPAIGN',
-  SUPPORT: 'SUPPORT'
+  SUPPORT: 'SUPPORT',
+  REFILL: 'REFILL'
 } as const
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType]
+
+
+export const RefillReminderStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type RefillReminderStatus = (typeof RefillReminderStatus)[keyof typeof RefillReminderStatus]
 
 
 export const RewardTransactionType = {
@@ -303,3 +313,30 @@ export const ErpSyncStatus = {
 } as const
 
 export type ErpSyncStatus = (typeof ErpSyncStatus)[keyof typeof ErpSyncStatus]
+
+
+export const InventoryMovementType = {
+  OPENING_STOCK: 'OPENING_STOCK',
+  ADMIN_ADJUSTMENT: 'ADMIN_ADJUSTMENT',
+  ORDER_RESERVATION: 'ORDER_RESERVATION',
+  ORDER_RELEASE: 'ORDER_RELEASE',
+  ORDER_CANCELLATION: 'ORDER_CANCELLATION',
+  RETURN_RESTOCK: 'RETURN_RESTOCK',
+  REFUND_RESTOCK: 'REFUND_RESTOCK',
+  ERP_SYNC: 'ERP_SYNC',
+  CORRECTION: 'CORRECTION'
+} as const
+
+export type InventoryMovementType = (typeof InventoryMovementType)[keyof typeof InventoryMovementType]
+
+
+export const InventoryMovementSource = {
+  ADMIN: 'ADMIN',
+  CHECKOUT: 'CHECKOUT',
+  ORDER: 'ORDER',
+  RETURN: 'RETURN',
+  ERP: 'ERP',
+  SYSTEM: 'SYSTEM'
+} as const
+
+export type InventoryMovementSource = (typeof InventoryMovementSource)[keyof typeof InventoryMovementSource]

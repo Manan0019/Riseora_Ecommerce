@@ -3,7 +3,7 @@ import { access, mkdir } from "node:fs/promises";
 import path from "node:path";
 import { prisma } from "../config/prisma";
 import { env } from "../config/env";
-import { backupDirectory, listDatabaseBackups, pgDumpAvailable } from "./database-backup.service";
+import { backupDirectory, listDatabaseBackups, postgresBackupTools } from "./database-backup.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -41,7 +41,7 @@ export async function adminSystemHealth() {
     checkDatabase(),
     checkWritableDirectory(uploadsDir),
     checkWritableDirectory(backupDirectory()),
-    pgDumpAvailable(),
+    postgresBackupTools(),
     listDatabaseBackups().catch(() => []),
   ]);
 
@@ -60,7 +60,13 @@ export async function adminSystemHealth() {
     database,
     storage: { uploadsWritable, backupsWritable },
     backup: {
-      pgDumpAvailable: backupTool,
+      pgDumpAvailable: backupTool.ready,
+      pgRestoreAvailable: Boolean(backupTool.restore.command),
+      dumpPath: backupTool.dump.command,
+      dumpVersion: backupTool.dump.version,
+      restorePath: backupTool.restore.command,
+      restoreVersion: backupTool.restore.version,
+      setupHint: backupTool.hint,
       retentionCount: env.BACKUP_RETENTION_COUNT,
       count: backups.length,
       latest: backups[0] || null,

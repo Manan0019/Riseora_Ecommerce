@@ -257,7 +257,7 @@ model User {
   adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
   supportTickets ContactMessage[]
   refillReminders RefillReminder[]
-  inventoryMovements InventoryMovement[]
+  inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -463,6 +463,7 @@ model ProductVariant {
   stockAlerts StockAlert[]
   priceAlerts PriceAlert[]
   refillReminders RefillReminder[]
+  inventoryMovements InventoryMovement[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -488,6 +489,7 @@ model InventoryMovement {
   referenceType String?
   referenceId String?
   actorUserId String? @db.Uuid
+  actorUser User? @relation("InventoryMovementActor", fields: [actorUserId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
 

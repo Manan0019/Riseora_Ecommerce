@@ -12,6 +12,10 @@ function formatBytes(value) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
+function ToolRow({ label, path, version }) {
+  return <div className="phase40-tool-row"><span><strong>{label}</strong><small>{version || "Not detected"}</small></span><code>{path || "Unavailable"}</code></div>;
+}
+
 export default function AdminSystem() {
   const [health, setHealth] = useState(null);
   const [backups, setBackups] = useState([]);
@@ -42,7 +46,7 @@ export default function AdminSystem() {
     setCreating(true); setMessage(""); setError("");
     try {
       const response = await apiFetch("/admin/system/backups", { method: "POST" });
-      setMessage(`Backup created: ${response.data.name}`);
+      setMessage(`Verified backup created: ${response.data.name}`);
       await load();
     } catch (e) {
       setError(e.message);
@@ -53,8 +57,9 @@ export default function AdminSystem() {
 
   if (loading) return <div className="admin-page-heading"><div><p className="eyebrow">SYSTEM</p><h1>Checking production health…</h1></div></div>;
 
+  const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 24 · OPERATIONS</p><h1>System health & backups</h1><p>Production readiness, integrations and server-side database backup history.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 40 · RESILIENCE</p><h1>System health, backups & recovery</h1><p>Runtime health, PostgreSQL tooling, verified backup archives and production-service readiness.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -62,12 +67,21 @@ export default function AdminSystem() {
       <section className="phase24-health-grid">
         <article><small>Overall</small><strong>{health.status === "healthy" ? "Healthy" : "Degraded"}</strong><StatusPill ok={health.status === "healthy"} yes="Healthy" no="Degraded" /></article>
         <article><small>Database</small><strong>{health.database?.ok ? `${health.database.latencyMs} ms` : "Offline"}</strong><StatusPill ok={health.database?.ok} yes="Connected" no="Disconnected" /></article>
-        <article><small>Uploads</small><strong>{health.storage?.uploadsWritable ? "Writable" : "Blocked"}</strong><StatusPill ok={health.storage?.uploadsWritable} /></article>
-        <article><small>Backup tool</small><strong>{health.backup?.pgDumpAvailable ? "pg_dump ready" : "Unavailable"}</strong><StatusPill ok={health.backup?.pgDumpAvailable} /></article>
+        <article><small>Backup tools</small><strong>{backupReady ? "Ready" : "Setup needed"}</strong><StatusPill ok={backupReady} /></article>
+        <article><small>Latest backup</small><strong>{health.backup?.latest ? formatBytes(health.backup.latest.sizeBytes) : "None"}</strong><StatusPill ok={Boolean(health.backup?.latest?.verified)} yes="Checksum recorded" no="Create backup" /></article>
       </section>
 
       <section className="admin-panel phase24-system-panel">
-        <div className="admin-panel-head"><div><h2>Production services</h2><p>Configuration presence only. Secret values are never returned to the browser.</p></div><span className="phase24-runtime">{health.environment} · {health.nodeVersion}</span></div>
+        <div className="admin-panel-head"><div><h2>PostgreSQL recovery tools</h2><p>Phase 40 automatically discovers PostgreSQL client tools from PATH, PG_BIN, the Windows registry and common PostgreSQL install folders.</p></div><span className="phase24-runtime">{health.environment} · {health.nodeVersion}</span></div>
+        <div className="phase40-tool-list">
+          <ToolRow label="pg_dump" path={health.backup?.dumpPath} version={health.backup?.dumpVersion} />
+          <ToolRow label="pg_restore" path={health.backup?.restorePath} version={health.backup?.restoreVersion} />
+        </div>
+        {!backupReady && <div className="phase24-warning">{health.backup?.setupHint || "Set PG_BIN to your PostgreSQL bin directory."}</div>}
+      </section>
+
+      <section className="admin-panel phase24-system-panel">
+        <div className="admin-panel-head"><div><h2>Production services</h2><p>Configuration presence only. Secret values are never returned to the browser.</p></div></div>
         <div className="phase24-integration-grid">
           <div><span>Razorpay</span><StatusPill ok={health.integrations?.razorpay} yes="Configured" no="Not configured" /></div>
           <div><span>Cloudinary</span><StatusPill ok={health.integrations?.cloudinary} yes="Configured" no="Not configured" /></div>
@@ -79,13 +93,12 @@ export default function AdminSystem() {
     </>}
 
     <section className="admin-panel phase24-system-panel">
-      <div className="admin-panel-head"><div><h2>Database backups</h2><p>Creates PostgreSQL custom-format backups on the application host. Old backups are automatically pruned to the configured retention count.</p></div><button className="button" disabled={creating || !health?.backup?.pgDumpAvailable || !health?.storage?.backupsWritable} onClick={createBackup}>{creating ? "Creating…" : "Backup now"}</button></div>
-      {!health?.backup?.pgDumpAvailable && <div className="phase24-warning">PostgreSQL client tools are not available on this host. Install pg_dump or use the Phase 24 Docker image, which includes it.</div>}
+      <div className="admin-panel-head"><div><h2>Verified database backups</h2><p>Custom-format PostgreSQL archives are validated with <code>pg_restore --list</code> and receive a SHA-256 checksum before they are accepted.</p></div><button className="button" disabled={creating || !backupReady || !health?.storage?.backupsWritable} onClick={createBackup}>{creating ? "Creating & verifying…" : "Backup now"}</button></div>
       <div className="phase24-backup-list">
-        {backups.length === 0 && <div className="admin-empty"><strong>No backups yet</strong><p>Create the first backup before production launch.</p></div>}
-        {backups.map((item) => <div key={item.name}><span><strong>{item.name}</strong><small>{new Date(item.createdAt).toLocaleString()}</small></span><b>{formatBytes(item.sizeBytes)}</b></div>)}
+        {backups.length === 0 && <div className="admin-empty"><strong>No backups yet</strong><p>Create the first verified backup before production launch.</p></div>}
+        {backups.map((item) => <div key={item.name}><span><strong>{item.name}</strong><small>{new Date(item.createdAt).toLocaleString()} · {item.verified ? "SHA-256 recorded" : "Legacy/unverified backup"}</small></span><b>{formatBytes(item.sizeBytes)}</b></div>)}
       </div>
-      <p className="admin-help-note">Restore is deliberately not available in the browser. Use <code>RESTORE_DATABASE.bat</code>, which requires explicit typed confirmation.</p>
+      <p className="admin-help-note">Run <code>npm run db:doctor</code> from PowerShell to diagnose local PostgreSQL tools. Restore remains CLI-only and requires typed confirmation.</p>
     </section>
   </>;
 }

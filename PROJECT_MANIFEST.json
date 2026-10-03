@@ -70,10 +70,11 @@
     "NotificationType.REFILL",
     "Product replenishment reminder configuration",
     "InventoryMovement",
-    "ProductVariant.safetyStock"
+    "ProductVariant.safetyStock",
+    "InventoryMovement.actorUser referential integrity"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 39,
+  "latestPhase": 40,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -240,7 +241,7 @@
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
   },
-  "currentPhase": "Phase 39 \u2014 Inventory Control & Availability V2",
+  "currentPhase": "Phase 40 \u2014 Production Resilience & Dependency Security V2",
   "lastUpdated": "2026-10-03",
   "phase36": {
     "name": "Riseora Rewards & Referrals V2",
@@ -303,5 +304,22 @@
     ],
     "migration": "20261003130000_phase39_inventory_control_v2",
     "verification": "npm run verify:phase39"
+  },
+  "phase40": {
+    "name": "Production Resilience & Dependency Security V2",
+    "features": [
+      "repairs Phase 39 Prisma reverse relations for User/ProductVariant InventoryMovement navigation and adds actor-user foreign-key integrity",
+      "PostgreSQL pg_dump/pg_restore auto-discovery through PATH, PG_BIN, explicit executable paths, Windows registry and common PostgreSQL install folders",
+      "verified database backups with pg_restore archive validation plus SHA-256 sidecar checksums",
+      "restore checksum/archive validation before destructive confirmation",
+      "db:doctor local diagnostics for PostgreSQL tools, backup directory and Prisma schema validation",
+      "Admin System V2 surfaces actual detected PostgreSQL client tool path/version and backup verification state",
+      "Vite 8.3.2 and React plugin 6.1.1 toolchain refresh",
+      "targeted deepmerge-ts/mysql2/esbuild security remediations without npm audit fix --force",
+      "version-pinned npm install-script allowlist for reviewed Prisma/esbuild build tooling; unreviewed future scripts remain blocked with a review warning",
+      "offline dependency-tree security gate plus online npm audit commands"
+    ],
+    "migration": "20261003153000_phase40_inventory_relation_integrity",
+    "verification": "npm run verify:phase40"
   }
 }
