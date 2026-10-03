@@ -90,7 +90,7 @@ router.get("/google-merchant.xml", asyncHandler(async (_req, res) => {
 <g:id>${xml(variant.sku || variant.id)}</g:id>
 <g:brand>${xml(settings.storeName || "Riseora Herbals")}</g:brand>
 <g:condition>new</g:condition>
-<g:availability>${variant.stockQuantity > 0 ? "in_stock" : "out_of_stock"}</g:availability>
+<g:availability>${Math.max(0, Number(variant.stockQuantity || 0) - Number(variant.safetyStock || 0)) > 0 ? "in_stock" : "out_of_stock"}</g:availability>
 <g:price>${mrp.toFixed(2)} INR</g:price>
 ${sale < mrp ? `<g:sale_price>${sale.toFixed(2)} INR</g:sale_price>` : ""}
 <g:image_link>${xml(image)}</g:image_link>

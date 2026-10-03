@@ -33,7 +33,9 @@
     "verify:phase34": "node scripts/phase34-admin-bi-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase35": "node scripts/phase35-discovery-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase36": "node scripts/phase36-rewards-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
-    "verify:phase37": "node scripts/phase37-support-audit.mjs && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase37": "node scripts/phase37-support-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase38": "node scripts/phase38-refill-audit.mjs && npm run db:generate && npm run typecheck && npm run build",
+    "verify:phase39": "node scripts/phase39-inventory-audit.mjs && npm run db:generate && npm run typecheck && npm run build"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

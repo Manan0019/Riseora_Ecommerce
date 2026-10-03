@@ -5,6 +5,7 @@ import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { signAuthToken } from "../utils/jwt";
+import { availableToSell } from "../services/inventory.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -260,7 +261,7 @@ router.post(
         skipped.push({ sku: item.sku, productName: item.productName, reason: "No longer available" });
         continue;
       }
-      const stock = Math.max(0, Number(variant.stockQuantity || 0));
+      const stock = availableToSell(variant);
       if (stock <= 0) {
         skipped.push({ sku: item.sku, productName: item.productName, reason: "Out of stock" });
         continue;
@@ -276,7 +277,7 @@ router.post(
       usedByProduct.set(variant.productId, already + quantity);
       ready.push({
         product: variant.product,
-        variant,
+        variant: { ...variant, stockQuantity: stock, availableQuantity: stock },
         quantity,
         previousUnitPrice: Number(item.unitPrice),
         currentUnitPrice: Number(variant.sellingPrice),

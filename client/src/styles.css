@@ -2618,3 +2618,76 @@ textarea { min-height: 105px; resize: vertical; }
 
 @media(max-width:980px){.phase37-support-kpis{grid-template-columns:repeat(2,1fr)}.phase37-admin-support-shell{grid-template-columns:1fr}.phase37-admin-support-shell>aside{border-right:0;border-bottom:1px solid #e3e7e2}.phase37-admin-ticket-list{max-height:360px}.phase37-email-health article{grid-template-columns:1fr}}
 @media(max-width:760px){.phase37-support-heading{align-items:start;flex-direction:column}.phase37-support-layout{grid-template-columns:1fr}.phase37-ticket-list{border-right:0;border-bottom:1px solid #e5e9e3;max-height:310px;overflow:auto}.phase37-ticket-workspace{padding:16px}.phase37-ticket-head{flex-direction:column}.phase37-thread-message{max-width:94%}.phase37-help-hero{border-radius:22px}.phase37-support-kpis{grid-template-columns:1fr 1fr}.phase37-admin-ticket-controls{grid-template-columns:1fr}.phase37-support-filters{grid-template-columns:1fr}.phase37-support-filters input{grid-column:auto}}
+
+/* Phase 38 — Refill reminders & replenishment intelligence */
+.phase38-product-refill{margin-top:14px;padding:18px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:14px;align-items:center;border:1px solid #dce6dd;border-radius:18px;background:linear-gradient(135deg,#f5faf4,#fffdf9)}
+.phase38-product-refill-icon{width:44px;height:44px;display:grid;place-items:center;border-radius:14px;background:#e8f3ea;color:#24583f}.phase38-product-refill-copy{min-width:0}.phase38-product-refill-copy small{font-size:8px;font-weight:900;letter-spacing:.14em;color:#537262}.phase38-product-refill-copy h3{margin:3px 0 5px;font:700 18px/1.15 Georgia,serif;color:#17392b}.phase38-product-refill-copy p{margin:0;color:#66766d;font-size:10px;line-height:1.55}.phase38-product-refill-controls{display:grid;grid-template-columns:auto auto auto;gap:8px;align-items:end}.phase38-product-refill-controls label{display:grid;gap:4px;font-size:8px;font-weight:850;color:#627269}.phase38-product-refill-controls select,.phase38-product-refill-controls input{min-height:38px}.phase38-product-refill-controls input{width:72px}.phase38-refill-inline-message{grid-column:1/-1;color:#3e684f}.phase38-refill-inline-message a{font-weight:800;color:#245a40}.phase38-product-refill-login{display:grid;gap:5px;justify-items:end}.phase38-product-refill-login small{color:#78847c;font-size:8px}
+.phase38-refills-page{padding-bottom:90px}.phase38-refills-hero{padding:28px 30px;margin-bottom:18px;display:flex;justify-content:space-between;gap:24px;align-items:end;border-radius:24px;background:linear-gradient(135deg,#0f392a,#24543f);color:#fff}.phase38-refills-hero h1{margin:4px 0 8px}.phase38-refills-hero p:last-child{max-width:690px;margin:0;color:#d7e5dc}.phase38-refill-summary{display:flex;gap:8px;flex-wrap:wrap}.phase38-refill-summary span{min-width:96px;padding:12px;border:1px solid rgba(255,255,255,.16);border-radius:14px;background:rgba(255,255,255,.08);display:grid}.phase38-refill-summary b{font-size:20px}.phase38-refill-summary span{font-size:9px;color:#d6e3da}.phase38-refill-list{display:grid;gap:12px}.phase38-refill-card{padding:18px;display:grid;grid-template-columns:minmax(270px,1.1fr) minmax(300px,.9fr) auto;gap:18px;align-items:center;border:1px solid #e0e6df;border-radius:20px;background:#fff;box-shadow:0 10px 34px rgba(30,56,43,.04)}.phase38-refill-card.due{border-color:#bfd8c4;background:linear-gradient(90deg,#f1f9f2,#fff)}.phase38-refill-card.paused{opacity:.78}.phase38-refill-product{display:flex;gap:13px;align-items:center;min-width:0}.phase38-refill-image{width:82px;height:82px;flex:0 0 82px;display:grid;place-items:center;overflow:hidden;border-radius:16px;background:#f1f4ef;color:#315c45;font-weight:900}.phase38-refill-image img{width:100%;height:100%;object-fit:cover}.phase38-refill-product>div:last-child{min-width:0;display:grid;gap:2px}.phase38-refill-product small{font-size:8px;font-weight:900;letter-spacing:.1em;color:#527060}.phase38-refill-product h2{margin:2px 0;font:700 17px/1.2 Georgia,serif;color:#1e3e30}.phase38-refill-product p{margin:0;color:#7a867f;font-size:9px}.phase38-refill-product strong{margin-top:3px;color:#224e39}.phase38-refill-schedule{display:grid;grid-template-columns:1fr 90px;gap:8px 10px}.phase38-refill-schedule label,.phase38-refill-schedule>div{display:grid;gap:4px;font-size:8px;color:#6b796f}.phase38-refill-schedule label{font-weight:850}.phase38-refill-schedule select,.phase38-refill-schedule input{min-height:36px}.phase38-refill-schedule>div b{font-size:10px;color:#354b3f}.phase38-refill-actions{display:flex;flex-direction:column;gap:7px;align-items:stretch;min-width:130px}.phase38-refill-actions .text-link,.phase38-refill-actions .danger-text{border:0;background:transparent;text-align:center;font-size:8px;cursor:pointer}.phase38-refill-empty{padding:52px 24px;display:grid;place-items:center;text-align:center;border:1px dashed #cfd9d0;border-radius:22px;background:#fafcf9}.phase38-refill-empty h2{margin:10px 0 4px}.phase38-refill-empty p{max-width:520px;color:#748078}.phase38-refill-trust{margin-top:16px;padding:15px 17px;display:flex;gap:12px;align-items:flex-start;border:1px solid #dce5dd;border-radius:16px;background:#f7faf6;color:#315441}.phase38-refill-trust strong{font-size:10px}.phase38-refill-trust p{margin:3px 0 0;font-size:9px;line-height:1.55;color:#69786f}
+.phase38-admin-refill-config{margin-top:10px;padding:14px;border:1px solid #e1e6df;border-radius:15px;background:#fafbf8;display:grid;gap:10px}.phase38-admin-refill-config.enabled{border-color:#c9ddcd;background:#f3f8f3}.phase38-admin-refill-config>small{color:#748178;font-size:9px}.phase38-admin-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.phase38-admin-kpis article{padding:16px;border:1px solid #dde3dc;border-radius:17px;background:#fff;display:grid;gap:3px}.phase38-admin-kpis small{font-size:8px;font-weight:900;letter-spacing:.08em;color:#78857d}.phase38-admin-kpis strong{font-size:25px;color:#17392b}.phase38-admin-kpis span{font-size:9px;color:#7b877f}.phase38-admin-grid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(280px,.65fr);gap:14px;margin-bottom:14px}.phase38-popular-refills{display:grid}.phase38-popular-refills article{padding:12px 0;display:grid;grid-template-columns:38px minmax(0,1fr) 70px 70px;gap:10px;align-items:center;border-top:1px solid #edf0eb}.phase38-popular-refills article>span{width:34px;height:34px;display:grid;place-items:center;border-radius:11px;background:#eef5ef;color:#2d6045}.phase38-popular-refills article>div{display:grid;gap:2px}.phase38-popular-refills strong,.phase38-popular-refills b{font-size:10px}.phase38-popular-refills small{font-size:8px;color:#7c8980}.phase38-refill-guidance ul{margin:0 0 16px;padding-left:18px;color:#5f6d64;font-size:10px;line-height:1.75}.admin-table td>small{display:block;margin-top:3px;color:#818d85}.phase38-lifecycle-refill{border-color:#d7e4d8}
+@media(max-width:980px){.phase38-product-refill{grid-template-columns:auto 1fr}.phase38-product-refill-controls,.phase38-product-refill-login{grid-column:1/-1;justify-items:stretch}.phase38-refill-card{grid-template-columns:1fr}.phase38-refill-actions{flex-direction:row;flex-wrap:wrap}.phase38-admin-kpis{grid-template-columns:repeat(2,1fr)}.phase38-admin-grid{grid-template-columns:1fr}}
+@media(max-width:680px){.phase38-refills-hero{align-items:flex-start;flex-direction:column;padding:22px}.phase38-refill-summary{width:100%}.phase38-refill-summary span{flex:1}.phase38-refill-product{align-items:flex-start}.phase38-refill-image{width:70px;height:70px;flex-basis:70px}.phase38-refill-schedule{grid-template-columns:1fr 85px}.phase38-refill-actions .button{flex:1}.phase38-product-refill{grid-template-columns:1fr}.phase38-product-refill-icon{display:none}.phase38-product-refill-controls{grid-template-columns:1fr 80px}.phase38-product-refill-controls .button{grid-column:1/-1}.phase38-admin-kpis{grid-template-columns:1fr 1fr}.phase38-popular-refills article{grid-template-columns:34px minmax(0,1fr) 58px}.phase38-popular-refills article>div:last-child{display:none}}
+
+/* Phase 39 — Inventory Control & Availability V2 */
+.phase39-inventory-heading { align-items: flex-end; }
+.phase39-inventory-kpis { margin: 0 0 18px; display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.phase39-inventory-kpis article { min-width: 0; padding: 14px; display: grid; gap: 4px; border: 1px solid #dfe5de; border-radius: 15px; background: #fff; box-shadow: var(--shadow-sm); }
+.phase39-inventory-kpis small { color: var(--muted); font-size: 8px; font-weight: 850; text-transform: uppercase; letter-spacing: .06em; }
+.phase39-inventory-kpis strong { overflow: hidden; text-overflow: ellipsis; font-size: 20px; line-height: 1.1; letter-spacing: -.03em; }
+.phase39-inventory-kpis span { color: #78837c; font-size: 8px; }
+.phase39-inventory-panel { overflow: visible; }
+.phase39-inventory-tabs { margin: 12px 0 14px; display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; }
+.phase39-inventory-tabs button { flex: 0 0 auto; min-height: 34px; padding: 0 12px; border: 1px solid #dde4dc; border-radius: 999px; background: #f8faf7; color: #53645a; font-size: 8px; font-weight: 900; }
+.phase39-inventory-tabs button.active { border-color: #173d2b; background: #173d2b; color: white; }
+.phase39-inventory-list { display: grid; gap: 10px; }
+.phase39-inventory-row { position: relative; padding: 14px; display: grid; gap: 11px; border: 1px solid #dfe5dd; border-radius: 16px; background: #fff; box-shadow: 0 8px 24px rgba(26,59,42,.035); }
+.phase39-inventory-row.low { border-color: #e6c990; background: #fffcf5; }
+.phase39-inventory-row.out { border-color: #e6b2aa; background: #fff9f8; }
+.phase39-inventory-product { display: flex; gap: 10px; align-items: center; min-width: 0; }
+.phase39-stock-dot { width: 9px; height: 9px; flex: 0 0 9px; border-radius: 50%; background: #3d8b62; box-shadow: 0 0 0 5px rgba(61,139,98,.08); }
+.phase39-inventory-row.low .phase39-stock-dot { background: #c58c31; box-shadow: 0 0 0 5px rgba(197,140,49,.09); }
+.phase39-inventory-row.out .phase39-stock-dot { background: #b65d54; box-shadow: 0 0 0 5px rgba(182,93,84,.09); }
+.phase39-inventory-product > div:last-child { min-width: 0; display: grid; gap: 2px; }
+.phase39-inventory-product strong { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; }
+.phase39-inventory-product span, .phase39-inventory-product small { color: var(--muted); font-size: 8px; }
+.phase39-stock-metrics { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 7px; }
+.phase39-stock-metrics > span { padding: 9px; display: grid; gap: 3px; border-radius: 11px; background: #f6f8f4; }
+.phase39-stock-metrics small { color: #7c8981; font-size: 7px; font-weight: 900; }
+.phase39-stock-metrics b { overflow: hidden; text-overflow: ellipsis; font-size: 10px; }
+.phase39-inventory-fields { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+.phase39-inventory-fields label, .phase39-adjust-reason { display: grid; gap: 5px; color: #647269; font-size: 8px; font-weight: 850; }
+.phase39-inventory-fields label small { color: #8a958e; font-size: 7px; font-weight: 650; }
+.phase39-inventory-fields input, .phase39-adjust-reason input { min-width: 0; min-height: 40px; padding: 0 10px; border: 1px solid #dce2db; border-radius: 10px; background: #fff; color: var(--ink); }
+.phase39-inventory-fields input:disabled { background: #f1f4f0; color: #748079; }
+.phase39-adjust-reason { padding: 10px; border: 1px dashed #d7c99d; border-radius: 12px; background: #fffdf5; }
+.phase39-inventory-actions { display: flex; gap: 7px; justify-content: flex-end; }
+.phase39-inventory-actions button { min-width: 86px; }
+.phase39-history-backdrop { position: fixed; inset: 0; z-index: 130; display: flex; justify-content: flex-end; background: rgba(11,25,18,.42); backdrop-filter: blur(3px); }
+.phase39-history-drawer { width: min(520px,100%); height: 100%; overflow-y: auto; padding: 20px; background: #f8faf6; box-shadow: -20px 0 50px rgba(11,28,18,.2); }
+.phase39-history-drawer > header { display: flex; justify-content: space-between; gap: 15px; align-items: flex-start; padding-bottom: 15px; border-bottom: 1px solid #dce3dc; }
+.phase39-history-drawer header h2 { margin: 3px 0; font-size: 22px; }
+.phase39-history-drawer header span { color: var(--muted); font-size: 9px; }
+.phase39-history-drawer header > button { width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #d9e0d9; border-radius: 50%; background: white; }
+.phase39-history-summary { margin: 14px 0; display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+.phase39-history-summary span { padding: 11px; display: grid; gap: 3px; border-radius: 12px; background: white; border: 1px solid #e0e5df; }
+.phase39-history-summary small { color: var(--muted); font-size: 7px; font-weight: 900; }.phase39-history-summary b { font-size: 17px; }
+.phase39-history-list { display: grid; gap: 8px; }
+.phase39-history-list article { padding: 11px; display: grid; grid-template-columns: 42px minmax(0,1fr) auto; gap: 10px; align-items: center; border: 1px solid #e0e5de; border-radius: 12px; background: white; }
+.phase39-history-list article > div:first-child { width: 42px; height: 34px; display: grid; place-items: center; border-radius: 9px; font-size: 11px; font-weight: 950; }
+.phase39-history-list .positive { color: #246743; background: #edf6ef; }.phase39-history-list .negative { color: #a24f48; background: #fff0ee; }
+.phase39-history-list article > div:nth-child(2) { min-width: 0; display: grid; gap: 2px; }.phase39-history-list strong { font-size: 9px; }.phase39-history-list span, .phase39-history-list small { color: var(--muted); font-size: 8px; }
+.phase39-history-list time { color: #87928b; font-size: 7px; white-space: nowrap; }
+
+@media (min-width: 760px) {
+  .phase39-inventory-kpis { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .phase39-inventory-row { grid-template-columns: minmax(220px,1.05fr) minmax(300px,.95fr); align-items: start; }
+  .phase39-stock-metrics { grid-template-columns: repeat(4,minmax(0,1fr)); }
+  .phase39-inventory-fields, .phase39-adjust-reason, .phase39-inventory-actions { grid-column: 1 / -1; }
+  .phase39-inventory-fields { grid-template-columns: repeat(4,minmax(0,1fr)); }
+}
+@media (min-width: 1180px) {
+  .phase39-inventory-kpis { grid-template-columns: repeat(6,minmax(0,1fr)); }
+  .phase39-inventory-row { grid-template-columns: minmax(230px,1fr) minmax(290px,.85fr) minmax(480px,1.65fr) auto; align-items: center; }
+  .phase39-inventory-fields { grid-column: auto; grid-template-columns: repeat(4,minmax(95px,1fr)); }
+  .phase39-adjust-reason { grid-column: 1 / 4; }
+  .phase39-inventory-actions { grid-column: 4; justify-content: flex-end; }
+}

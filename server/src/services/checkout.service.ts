@@ -9,6 +9,7 @@ import { calculateShippingFee, getStoreSettings } from "./store.service";
 import { getShippingQuote, normalizePostalCode, resolveShippingZone } from "./shipping-zone.service";
 import { evaluateBestMerchandisingDeal } from "./merchandising.service";
 import { findCapturedRazorpayPaymentForOrder } from "./payment.service";
+import { adjustInventory } from "./inventory.service";
 
 export type CheckoutInput = {
   customerName: string;
@@ -311,7 +312,7 @@ async function assertCouponCustomerLimitInTransaction(
   if (redemptionCount + pendingCount >= limit) throw new Error(`COUPON_INVALID:This coupon can be used ${limit} time${limit === 1 ? "" : "s"} per customer`);
 }
 
-async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { items: SnapshotItem[]; coupon: any }) {
+async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { items: SnapshotItem[]; coupon: any }, referenceId?: string | null) {
   if (input.coupon) {
     if (input.coupon.usageLimit !== null) {
       const updated = await tx.coupon.updateMany({ where: { id: input.coupon.id, isActive: true, usageCount: { lt: input.coupon.usageLimit } }, data: { usageCount: { increment: 1 } } });
@@ -327,11 +328,18 @@ async function reserveCouponAndStock(tx: Prisma.TransactionClient, input: { item
     quantities.set(item.variantId, { quantity: (current?.quantity || 0) + item.quantity, sku: item.sku });
   }
   for (const [variantId, request] of quantities) {
-    const updated = await tx.productVariant.updateMany({
-      where: { id: variantId, isActive: true, stockQuantity: { gte: request.quantity } },
-      data: { stockQuantity: { decrement: request.quantity } },
+    const active = await tx.productVariant.findFirst({ where: { id: variantId, isActive: true }, select: { id: true } });
+    if (!active) throw new Error(`OUT_OF_STOCK:${request.sku}`);
+    await adjustInventory(tx, {
+      variantId,
+      delta: -request.quantity,
+      type: "ORDER_RESERVATION",
+      source: "CHECKOUT",
+      reason: "Checkout stock reservation",
+      referenceType: "CHECKOUT_REQUEST",
+      referenceId: referenceId || null,
+      enforceSafetyStock: true,
     });
-    if (updated.count !== 1) throw new Error(`OUT_OF_STOCK:${request.sku}`);
   }
 }
 
@@ -373,7 +381,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
     }
 
     await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
-    await reserveCouponAndStock(tx, prepared);
+    await reserveCouponAndStock(tx, prepared, requestKey);
     const created = await tx.order.create({
       data: {
         orderNumber: makeOrderNumber(), checkoutRequestKey: requestKey, userId, customerName: input.customerName, customerEmail: input.customerEmail || null,
@@ -424,7 +432,7 @@ export async function createOnlineCheckoutReservation(input: CheckoutInput, user
       }
     }
     await assertCouponCustomerLimitInTransaction(tx, prepared.coupon, userId, input.customerEmail, input.customerPhone);
-    await reserveCouponAndStock(tx, prepared);
+    await reserveCouponAndStock(tx, prepared, requestKey);
     return tx.checkoutSession.create({
       data: {
         checkoutRequestKey: requestKey,
@@ -460,7 +468,17 @@ export async function releaseCheckoutSession(sessionId: string) {
     if (session.stockReserved) {
       const quantities = new Map<string, number>();
       for (const item of parseItems(session.items)) quantities.set(item.variantId, (quantities.get(item.variantId) || 0) + item.quantity);
-      for (const [variantId, quantity] of quantities) await tx.productVariant.updateMany({ where: { id: variantId }, data: { stockQuantity: { increment: quantity } } });
+      for (const [variantId, quantity] of quantities) {
+        await adjustInventory(tx, {
+          variantId,
+          delta: quantity,
+          type: "ORDER_RELEASE",
+          source: "CHECKOUT",
+          reason: "Online checkout reservation released",
+          referenceType: "CHECKOUT_SESSION",
+          referenceId: session.id,
+        });
+      }
       if (session.couponCode) await tx.coupon.updateMany({ where: { code: session.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
     }
     return tx.checkoutSession.findUnique({ where: { id: session.id } });

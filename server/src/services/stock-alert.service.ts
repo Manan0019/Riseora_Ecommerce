@@ -1,10 +1,11 @@
 import { prisma } from "../config/prisma";
 import { sendBackInStockNotification } from "./notification.service";
 import { createUserNotification } from "./notification-center.service";
+import { availableToSell } from "./inventory.service";
 
 async function deliver(alert: any) {
   const variant = alert.variant;
-  if (!variant || Number(variant.stockQuantity) <= 0 || !variant.isActive || !variant.product?.isActive) return false;
+  if (!variant || availableToSell(variant) <= 0 || !variant.isActive || !variant.product?.isActive) return false;
   const sent = await sendBackInStockNotification({
     email: alert.email,
     name: alert.name,
@@ -35,7 +36,7 @@ async function deliver(alert: any) {
 
 export async function notifyStockAlertsForVariant(variantId: string) {
   const alerts = await prisma.stockAlert.findMany({
-    where: { variantId, status: "PENDING", variant: { stockQuantity: { gt: 0 }, isActive: true, product: { isActive: true } } },
+    where: { variantId, status: "PENDING", variant: { isActive: true, product: { isActive: true } } },
     include: { variant: { include: { product: true } } },
     take: 250,
   });
@@ -49,7 +50,7 @@ export async function notifyStockAlertsForVariant(variantId: string) {
 
 export async function notifyReadyStockAlerts(limit = 250) {
   const alerts = await prisma.stockAlert.findMany({
-    where: { status: "PENDING", variant: { stockQuantity: { gt: 0 }, isActive: true, product: { isActive: true } } },
+    where: { status: "PENDING", variant: { isActive: true, product: { isActive: true } } },
     include: { variant: { include: { product: true } } },
     orderBy: { subscribedAt: "asc" },
     take: limit,

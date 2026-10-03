@@ -182,6 +182,13 @@ enum NotificationType {
   STOCK_ALERT
   CAMPAIGN
   SUPPORT
+  REFILL
+}
+
+enum RefillReminderStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
 }
 
 enum RewardTransactionType {
@@ -249,6 +256,8 @@ model User {
   rewardCoupons Coupon[] @relation("RewardCouponOwner")
   adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
   supportTickets ContactMessage[]
+  refillReminders RefillReminder[]
+  inventoryMovements InventoryMovement[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -365,6 +374,27 @@ model Category {
   updatedAt DateTime @updatedAt
 }
 
+enum InventoryMovementType {
+  OPENING_STOCK
+  ADMIN_ADJUSTMENT
+  ORDER_RESERVATION
+  ORDER_RELEASE
+  ORDER_CANCELLATION
+  RETURN_RESTOCK
+  REFUND_RESTOCK
+  ERP_SYNC
+  CORRECTION
+}
+
+enum InventoryMovementSource {
+  ADMIN
+  CHECKOUT
+  ORDER
+  RETURN
+  ERP
+  SYSTEM
+}
+
 model Product {
   id String @id @default(uuid()) @db.Uuid
 
@@ -385,6 +415,9 @@ model Product {
   badge            String?
   maxPurchaseQuantity Int?
   codAllowed          Boolean @default(true)
+  replenishmentEnabled Boolean @default(false)
+  replenishmentDays    Int?
+  replenishmentLabel   String?
   erpId               String? @unique
   erpManaged          Boolean @default(false)
 
@@ -418,6 +451,7 @@ model ProductVariant {
   costPrice         Decimal? @db.Decimal(12, 2)
   stockQuantity     Int      @default(0)
   lowStockThreshold Int      @default(5)
+  safetyStock        Int      @default(0)
   weightGrams       Decimal? @db.Decimal(10, 2)
   hsnCode           String?
   gstRate           Decimal  @default(0) @db.Decimal(5, 2)
@@ -428,12 +462,39 @@ model ProductVariant {
   orderItems OrderItem[]
   stockAlerts StockAlert[]
   priceAlerts PriceAlert[]
+  refillReminders RefillReminder[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([productId])
   @@index([isActive])
+  @@index([safetyStock])
+}
+
+model InventoryMovement {
+  id String @id @default(uuid()) @db.Uuid
+
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  type InventoryMovementType
+  source InventoryMovementSource
+  quantityChange Int
+  stockBefore Int
+  stockAfter Int
+  safetyStockSnapshot Int @default(0)
+  reason String?
+  referenceType String?
+  referenceId String?
+  actorUserId String? @db.Uuid
+
+  createdAt DateTime @default(now())
+
+  @@index([variantId, createdAt])
+  @@index([type, createdAt])
+  @@index([referenceType, referenceId])
+  @@index([actorUserId, createdAt])
 }
 
 model ProductImage {
@@ -1333,6 +1394,32 @@ model PriceAlert {
   @@unique([variantId, email])
   @@index([status, createdAt])
   @@index([email])
+  @@index([variantId, status])
+}
+
+model RefillReminder {
+  id String @id @default(uuid()) @db.Uuid
+
+  userId String @db.Uuid
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  intervalDays Int
+  quantity Int @default(1)
+  status RefillReminderStatus @default(ACTIVE)
+  nextReminderAt DateTime
+  lastReminderAt DateTime?
+  lastOrderedAt DateTime?
+  reminderCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, variantId])
+  @@index([status, nextReminderAt])
+  @@index([userId, status, nextReminderAt])
   @@index([variantId, status])
 }
 

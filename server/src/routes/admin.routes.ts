@@ -10,6 +10,8 @@ import { notifyStockAlertsForVariant } from "../services/stock-alert.service";
 import { notifyPriceAlertsForVariant } from "../services/price-alert.service";
 import { createOrderStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
 import { awardDeliveredOrderRewards, awardApprovedReviewReward, reverseReviewReward } from "../services/rewards.service";
+import { rescheduleRefillsAfterDeliveredOrder } from "../services/refill-reminder.service";
+import { availableToSell, inventoryState, setInventoryQuantity, adjustInventory } from "../services/inventory.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -101,6 +103,9 @@ const productSchema = z.object({
   badge: z.string().trim().max(40).optional().or(z.literal("")),
   maxPurchaseQuantity: z.number().int().min(1).max(10000).nullable().optional(),
   codAllowed: z.boolean().default(true),
+  replenishmentEnabled: z.boolean().default(false),
+  replenishmentDays: z.number().int().min(7).max(180).nullable().optional(),
+  replenishmentLabel: z.string().trim().max(80).optional().or(z.literal("")),
   images: z
     .array(
       z.object({
@@ -123,6 +128,7 @@ const productSchema = z.object({
         costPrice: z.number().nonnegative().optional(),
         stockQuantity: z.number().int().nonnegative().default(0),
         lowStockThreshold: z.number().int().nonnegative().default(5),
+        safetyStock: z.number().int().nonnegative().default(0),
         weightGrams: z.number().positive().optional(),
         hsnCode: z.string().trim().max(30).optional().or(z.literal("")),
         gstRate: z.number().min(0).max(100).default(0),
@@ -178,6 +184,9 @@ router.post(
         badge: parsed.data.badge || null,
         maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
         codAllowed: parsed.data.codAllowed,
+        replenishmentEnabled: parsed.data.replenishmentEnabled,
+        replenishmentDays: parsed.data.replenishmentEnabled ? (parsed.data.replenishmentDays ?? 30) : null,
+        replenishmentLabel: parsed.data.replenishmentEnabled ? (parsed.data.replenishmentLabel || null) : null,
         images: {
           create: normalizedProductImages(parsed.data.images, parsed.data.name),
         },
@@ -192,6 +201,7 @@ router.post(
             costPrice: variant.costPrice ?? null,
             stockQuantity: variant.stockQuantity,
             lowStockThreshold: variant.lowStockThreshold,
+            safetyStock: variant.safetyStock,
             weightGrams: variant.weightGrams ?? null,
             hsnCode: variant.hsnCode || null,
             gstRate: variant.gstRate,
@@ -201,6 +211,23 @@ router.post(
       },
       include: { category: true, images: true, variants: true },
     });
+
+    const openingMovements = product.variants
+      .filter((variant) => Number(variant.stockQuantity || 0) !== 0)
+      .map((variant) => ({
+        variantId: variant.id,
+        type: "OPENING_STOCK" as any,
+        source: "ADMIN" as any,
+        quantityChange: Number(variant.stockQuantity || 0),
+        stockBefore: 0,
+        stockAfter: Number(variant.stockQuantity || 0),
+        safetyStockSnapshot: Math.max(0, Number(variant.safetyStock || 0)),
+        reason: "Initial stock entered when product was created",
+        referenceType: "PRODUCT",
+        referenceId: product.id,
+        actorUserId: req.user!.id,
+      }));
+    if (openingMovements.length) await prisma.inventoryMovement.createMany({ data: openingMovements });
 
     res.status(201).json({ success: true, data: product });
   }),
@@ -215,6 +242,9 @@ router.patch(
       isFeatured: z.boolean().optional(),
       badge: z.string().trim().max(40).nullable().optional(),
       codAllowed: z.boolean().optional(),
+      replenishmentEnabled: z.boolean().optional(),
+      replenishmentDays: z.number().int().min(7).max(180).nullable().optional(),
+      replenishmentLabel: z.string().trim().max(80).nullable().optional(),
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid product update" });
     const existingProduct = await prisma.product.findUnique({ where: { id: String(req.params.id) }, select: { erpManaged: true } });
@@ -311,7 +341,16 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
       if (order.paymentMethod === "ONLINE" && order.payment?.status === "PAID") throw new Error("PREPAID_REFUND_REQUIRED");
       for (const item of order.items) {
         if (item.variantId) {
-          await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
+          await adjustInventory(tx, {
+            variantId: item.variantId,
+            delta: item.quantity,
+            type: "ORDER_CANCELLATION",
+            source: "ORDER",
+            reason: "Admin order cancellation restored stock",
+            referenceType: "ORDER",
+            referenceId: order.id,
+            actorUserId: null,
+          });
         }
       }
       if (order.couponCode) {
@@ -484,7 +523,16 @@ router.post(
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      for (const item of order.items) if (item.variantId) await tx.productVariant.updateMany({ where: { id: item.variantId }, data: { stockQuantity: { increment: item.quantity } } });
+      for (const item of order.items) if (item.variantId) await adjustInventory(tx, {
+        variantId: item.variantId,
+        delta: item.quantity,
+        type: "REFUND_RESTOCK",
+        source: "ORDER",
+        reason: "Online payment refund cancelled order and restored stock",
+        referenceType: "ORDER",
+        referenceId: order.id,
+        actorUserId: req.user!.id,
+      });
       if (order.couponCode) { await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } }); await tx.couponRedemption.deleteMany({ where: { orderId: order.id } }); }
       await tx.payment.update({ where: { orderId: order.id }, data: { status: "REFUNDED", refundId: refund.id, refundedAmount: order.totalAmount, refundedAt: new Date() } });
       await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
@@ -510,7 +558,10 @@ router.patch(
       if (order) {
         void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
         void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
-        if (order.status === "DELIVERED") void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
+        if (order.status === "DELIVERED") {
+          void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
+          void rescheduleRefillsAfterDeliveredOrder(order.id).catch((error) => console.error("Refill delivery reschedule failed", error));
+        }
       }
       res.json({ success: true, data: order });
     } catch (error) {
@@ -535,7 +586,10 @@ router.patch(
       if (order) {
         void sendOrderStatusNotification(order).catch((error) => console.error("Order status email failed", error));
         void createOrderStatusInAppNotification(order).catch((error) => console.error("Order status in-app notification failed", error));
-        if (order.status === "DELIVERED") void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
+        if (order.status === "DELIVERED") {
+          void awardDeliveredOrderRewards(order.id).catch((error) => console.error("Rewards delivery award failed", error));
+          void rescheduleRefillsAfterDeliveredOrder(order.id).catch((error) => console.error("Refill delivery reschedule failed", error));
+        }
       }
       res.json({ success: true, data: order });
     } catch (error) {
@@ -861,7 +915,7 @@ router.get(
       }),
       prisma.productVariant.findMany({
         where: { isActive: true, product: { isActive: true } },
-        select: { id: true, name: true, sku: true, stockQuantity: true, lowStockThreshold: true, sellingPrice: true, costPrice: true, product: { select: { id: true, name: true } } },
+        select: { id: true, name: true, sku: true, stockQuantity: true, safetyStock: true, lowStockThreshold: true, sellingPrice: true, costPrice: true, product: { select: { id: true, name: true } } },
         orderBy: { stockQuantity: "asc" },
       }),
       prisma.returnRequest.count({ where: { status: { in: ["REQUESTED", "APPROVED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED"] } } }),
@@ -877,8 +931,8 @@ router.get(
     const monthSales = sum(monthOrders);
     const percentChange = (current: number, previous: number) => previous === 0 ? (current > 0 ? 100 : 0) : ((current - previous) / previous) * 100;
 
-    const lowStock = variants.filter((variant) => variant.stockQuantity <= variant.lowStockThreshold);
-    const outOfStock = variants.filter((variant) => variant.stockQuantity <= 0);
+    const lowStock = variants.filter((variant) => availableToSell(variant) > 0 && availableToSell(variant) <= variant.lowStockThreshold);
+    const outOfStock = variants.filter((variant) => availableToSell(variant) <= 0);
     const inventoryCostValue = variants.reduce((total, variant) => total + variant.stockQuantity * Number(variant.costPrice || 0), 0);
     const inventoryRetailValue = variants.reduce((total, variant) => total + variant.stockQuantity * Number(variant.sellingPrice || 0), 0);
     const missingCostCount = variants.filter((variant) => variant.costPrice == null).length;
@@ -983,21 +1037,68 @@ router.get(
   "/inventory",
   asyncHandler(async (req, res) => {
     const search = typeof req.query.search === "string" ? req.query.search.trim() : "";
-    const variants = await prisma.productVariant.findMany({
-      where: search
-        ? {
-            OR: [
-              { sku: { contains: search, mode: "insensitive" } },
-              { name: { contains: search, mode: "insensitive" } },
-              { product: { name: { contains: search, mode: "insensitive" } } },
-            ],
-          }
-        : undefined,
-      include: { product: { select: { id: true, name: true, isActive: true } } },
-      orderBy: [{ stockQuantity: "asc" }, { updatedAt: "desc" }],
-      take: 300,
+    const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const [variants, salesRows] = await Promise.all([
+      prisma.productVariant.findMany({
+        where: search
+          ? {
+              OR: [
+                { sku: { contains: search, mode: "insensitive" } },
+                { name: { contains: search, mode: "insensitive" } },
+                { product: { name: { contains: search, mode: "insensitive" } } },
+              ],
+            }
+          : undefined,
+        include: { product: { select: { id: true, name: true, isActive: true } } },
+        orderBy: [{ stockQuantity: "asc" }, { updatedAt: "desc" }],
+        take: 300,
+      }),
+      prisma.orderItem.groupBy({
+        by: ["variantId"],
+        where: { variantId: { not: null }, createdAt: { gte: since }, order: { status: "DELIVERED" } },
+        _sum: { quantity: true },
+      }),
+    ]);
+    const sales = new Map(salesRows.filter((row) => row.variantId).map((row) => [String(row.variantId), Number(row._sum.quantity || 0)]));
+    const data = variants.map((variant) => {
+      const state = inventoryState(variant);
+      const sold30d = sales.get(variant.id) || 0;
+      const avgDailySales = sold30d / 30;
+      const daysCover = avgDailySales > 0 ? Number((state.available / avgDailySales).toFixed(1)) : null;
+      const targetUnits = avgDailySales > 0 ? Math.ceil(avgDailySales * 30) : Math.max(0, Number(variant.lowStockThreshold || 0));
+      const suggestedReorder = Math.max(0, targetUnits + state.safetyStock - state.onHand);
+      return { ...variant, availableQuantity: state.available, inventoryStatus: state.status, sold30d, avgDailySales: Number(avgDailySales.toFixed(2)), daysCover, suggestedReorder };
     });
-    res.json({ success: true, data: variants });
+    const summary = data.reduce((acc, variant) => {
+      acc.onHand += Number(variant.stockQuantity || 0);
+      acc.safetyStock += Number(variant.safetyStock || 0);
+      acc.available += Number(variant.availableQuantity || 0);
+      if (variant.inventoryStatus === "OUT_OF_STOCK") acc.outOfStock += 1;
+      else if (variant.inventoryStatus === "LOW_STOCK") acc.lowStock += 1;
+      acc.costValue += Number(variant.stockQuantity || 0) * Number(variant.costPrice || 0);
+      acc.retailValue += Number(variant.stockQuantity || 0) * Number(variant.sellingPrice || 0);
+      acc.suggestedReorder += Number(variant.suggestedReorder || 0);
+      return acc;
+    }, { onHand: 0, safetyStock: 0, available: 0, lowStock: 0, outOfStock: 0, costValue: 0, retailValue: 0, suggestedReorder: 0 });
+    res.json({ success: true, data, summary, windowDays: 30 });
+  }),
+);
+
+router.get(
+  "/inventory/:id/movements",
+  asyncHandler(async (req, res) => {
+    const limit = Math.min(100, Math.max(10, Number(req.query.limit || 40)));
+    const variant = await prisma.productVariant.findUnique({
+      where: { id: String(req.params.id) },
+      include: { product: { select: { id: true, name: true } } },
+    });
+    if (!variant) return res.status(404).json({ success: false, message: "Variant not found" });
+    const movements = await prisma.inventoryMovement.findMany({
+      where: { variantId: variant.id },
+      orderBy: { createdAt: "desc" },
+      take: limit,
+    });
+    return res.json({ success: true, data: { variant: { ...variant, ...inventoryState(variant), availableQuantity: availableToSell(variant) }, movements } });
   }),
 );
 
@@ -1007,26 +1108,53 @@ router.patch(
     const parsed = z.object({
       stockQuantity: z.number().int().nonnegative().optional(),
       lowStockThreshold: z.number().int().nonnegative().optional(),
+      safetyStock: z.number().int().nonnegative().optional(),
       sellingPrice: z.number().positive().optional(),
       mrp: z.number().positive().optional(),
       isActive: z.boolean().optional(),
+      reason: z.string().trim().max(240).optional().or(z.literal("")),
     }).safeParse(req.body);
-    if (!parsed.success || Object.keys(parsed.data).length === 0) return res.status(400).json({ success: false, message: "Invalid inventory update" });
-    if (parsed.data.mrp !== undefined && parsed.data.sellingPrice !== undefined && parsed.data.sellingPrice > parsed.data.mrp) {
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid inventory update", errors: parsed.error.flatten() });
+    const { reason, ...changes } = parsed.data;
+    if (Object.keys(changes).length === 0) return res.status(400).json({ success: false, message: "No inventory changes supplied" });
+    if (changes.mrp !== undefined && changes.sellingPrice !== undefined && changes.sellingPrice > changes.mrp) {
       return res.status(400).json({ success: false, message: "Selling price cannot be higher than MRP" });
     }
-    const before = await prisma.productVariant.findUnique({ where: { id: String(req.params.id) }, select: { stockQuantity: true, erpManaged: true } });
+    const before = await prisma.productVariant.findUnique({ where: { id: String(req.params.id) }, select: { stockQuantity: true, safetyStock: true, erpManaged: true } });
     if (!before) return res.status(404).json({ success: false, message: "Variant not found" });
     if (before.erpManaged) {
-      const erpOwnedFields = ["stockQuantity", "sellingPrice", "mrp", "isActive"].filter((key) => (parsed.data as any)[key] !== undefined);
-      if (erpOwnedFields.length) return res.status(409).json({ success: false, message: "This variant is managed by Riseora ERP. Update stock, price and active state in ERP; only the website low-stock warning can be edited here." });
+      const erpOwnedFields = ["stockQuantity", "sellingPrice", "mrp", "isActive"].filter((key) => (changes as any)[key] !== undefined);
+      if (erpOwnedFields.length) return res.status(409).json({ success: false, message: "This variant is managed by Riseora ERP. Update stock, price and active state in ERP; website safety stock and warning levels remain editable here." });
     }
-    const variant = await prisma.productVariant.update({ where: { id: String(req.params.id) }, data: parsed.data });
-    if (before.stockQuantity <= 0 && variant.stockQuantity > 0) {
+    if (changes.stockQuantity !== undefined && changes.stockQuantity !== before.stockQuantity && !String(reason || "").trim()) {
+      return res.status(400).json({ success: false, message: "Enter a reason when changing physical stock." });
+    }
+
+    const variant = await prisma.$transaction(async (tx) => {
+      if (changes.stockQuantity !== undefined && changes.stockQuantity !== before.stockQuantity) {
+        await setInventoryQuantity(tx, {
+          variantId: String(req.params.id),
+          nextQuantity: changes.stockQuantity,
+          type: "ADMIN_ADJUSTMENT",
+          source: "ADMIN",
+          reason: String(reason || "Inventory adjustment"),
+          referenceType: "ADMIN_INVENTORY",
+          actorUserId: req.user!.id,
+        });
+      }
+      const other: any = { ...changes };
+      delete other.stockQuantity;
+      if (Object.keys(other).length) await tx.productVariant.update({ where: { id: String(req.params.id) }, data: other });
+      return tx.productVariant.findUniqueOrThrow({ where: { id: String(req.params.id) } });
+    });
+
+    const beforeAvailable = Math.max(0, Number(before.stockQuantity || 0) - Number(before.safetyStock || 0));
+    const afterAvailable = availableToSell(variant);
+    if (beforeAvailable <= 0 && afterAvailable > 0) {
       void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
     }
     void notifyPriceAlertsForVariant(variant.id).catch((error) => console.error("Price alert notification failed", error));
-    res.json({ success: true, data: variant });
+    res.json({ success: true, data: { ...variant, availableQuantity: afterAvailable, inventoryStatus: inventoryState(variant).status } });
   }),
 );
 
@@ -1082,7 +1210,7 @@ router.put(
         select: {
           id: true, erpManaged: true, name: true, sku: true, size: true, unit: true,
           mrp: true, sellingPrice: true, costPrice: true, stockQuantity: true,
-          lowStockThreshold: true, weightGrams: true, hsnCode: true, gstRate: true, isActive: true,
+          lowStockThreshold: true, safetyStock: true, weightGrams: true, hsnCode: true, gstRate: true, isActive: true,
         },
       });
       const existingIds = new Set(existingVariants.map((variant) => variant.id));
@@ -1104,6 +1232,7 @@ router.put(
           costPrice: currentVariant.costPrice,
           stockQuantity: currentVariant.stockQuantity,
           lowStockThreshold: variant.lowStockThreshold,
+          safetyStock: variant.safetyStock,
           weightGrams: currentVariant.weightGrams,
           hsnCode: currentVariant.hsnCode,
           gstRate: currentVariant.gstRate,
@@ -1118,13 +1247,47 @@ router.put(
           costPrice: variant.costPrice ?? null,
           stockQuantity: variant.stockQuantity,
           lowStockThreshold: variant.lowStockThreshold,
+          safetyStock: variant.safetyStock,
           weightGrams: variant.weightGrams ?? null,
           hsnCode: variant.hsnCode || null,
           gstRate: variant.gstRate,
           isActive: variant.isActive,
         };
-        if (variant.id) await tx.productVariant.update({ where: { id: variant.id }, data });
-        else await tx.productVariant.create({ data: { ...data, productId: existing.id } });
+        if (variant.id) {
+          const desiredStock = Number(data.stockQuantity || 0);
+          const updateData: any = { ...data };
+          delete updateData.stockQuantity;
+          if (!currentVariant?.erpManaged && currentVariant && desiredStock !== Number(currentVariant.stockQuantity || 0)) {
+            await setInventoryQuantity(tx, {
+              variantId: variant.id,
+              nextQuantity: desiredStock,
+              type: "ADMIN_ADJUSTMENT",
+              source: "ADMIN",
+              reason: "Stock changed from Catalog product editor",
+              referenceType: "PRODUCT",
+              referenceId: existing.id,
+              actorUserId: req.user!.id,
+            });
+          }
+          await tx.productVariant.update({ where: { id: variant.id }, data: updateData });
+        } else {
+          const createdVariant = await tx.productVariant.create({ data: { ...data, productId: existing.id } });
+          if (Number(createdVariant.stockQuantity || 0) !== 0) {
+            await tx.inventoryMovement.create({ data: {
+              variantId: createdVariant.id,
+              type: "OPENING_STOCK" as any,
+              source: "ADMIN" as any,
+              quantityChange: Number(createdVariant.stockQuantity || 0),
+              stockBefore: 0,
+              stockAfter: Number(createdVariant.stockQuantity || 0),
+              safetyStockSnapshot: Math.max(0, Number(createdVariant.safetyStock || 0)),
+              reason: "Initial stock entered for new variant",
+              referenceType: "PRODUCT",
+              referenceId: existing.id,
+              actorUserId: req.user!.id,
+            } });
+          }
+        }
       }
 
       const effectiveProductName = existing.erpManaged ? existing.name : parsed.data.name;
@@ -1146,6 +1309,9 @@ router.put(
           badge: parsed.data.badge || null,
           maxPurchaseQuantity: parsed.data.maxPurchaseQuantity ?? null,
           codAllowed: parsed.data.codAllowed,
+          replenishmentEnabled: parsed.data.replenishmentEnabled,
+          replenishmentDays: parsed.data.replenishmentEnabled ? (parsed.data.replenishmentDays ?? 30) : null,
+          replenishmentLabel: parsed.data.replenishmentEnabled ? (parsed.data.replenishmentLabel || null) : null,
           images: {
             create: normalizedProductImages(parsed.data.images, effectiveProductName),
           },
@@ -1155,7 +1321,7 @@ router.put(
     });
 
     for (const variant of product.variants) {
-      if (variant.stockQuantity > 0) void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
+      if (availableToSell(variant) > 0) void notifyStockAlertsForVariant(variant.id).catch((error) => console.error("Back-in-stock notification failed", error));
       void notifyPriceAlertsForVariant(variant.id).catch((error) => console.error("Price alert notification failed", error));
     }
     res.json({ success: true, data: product });
@@ -1318,7 +1484,7 @@ router.get(
       prisma.user.count({ where: { role: "CUSTOMER", createdAt: { gte: previousFrom, lte: previousTo } } }),
       prisma.productVariant.findMany({
         where: { isActive: true, product: { isActive: true } },
-        select: { id: true, sku: true, name: true, stockQuantity: true, lowStockThreshold: true, costPrice: true, sellingPrice: true, product: { select: { name: true, category: { select: { name: true } } } } },
+        select: { id: true, sku: true, name: true, stockQuantity: true, safetyStock: true, lowStockThreshold: true, costPrice: true, sellingPrice: true, product: { select: { name: true, category: { select: { name: true } } } } },
       }),
     ]);
 
@@ -1432,8 +1598,9 @@ router.get(
       acc.units += variant.stockQuantity;
       acc.costValue += variant.stockQuantity * cost;
       acc.retailValue += variant.stockQuantity * retail;
-      if (variant.stockQuantity <= 0) acc.outOfStock += 1;
-      else if (variant.stockQuantity <= variant.lowStockThreshold) acc.lowStock += 1;
+      const sellable = availableToSell(variant);
+      if (sellable <= 0) acc.outOfStock += 1;
+      else if (sellable <= variant.lowStockThreshold) acc.lowStock += 1;
       if (variant.costPrice == null) acc.missingCost += 1;
       return acc;
     }, { units: 0, costValue: 0, retailValue: 0, lowStock: 0, outOfStock: 0, missingCost: 0 });

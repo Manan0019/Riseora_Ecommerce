@@ -11,6 +11,7 @@ import { sendOrderStatusNotification, sendReturnStatusNotification } from "../se
 import { createOrderStatusInAppNotification, createReturnStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
 import { approveOrderCancellationRequest } from "../services/order-cancellation.service";
 import { reverseRefundedOrderRewards } from "../services/rewards.service";
+import { adjustInventory } from "../services/inventory.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -515,7 +516,16 @@ router.patch(
         if (!current.restockedAt) {
           for (const item of current.items) {
             const orderItem = await tx.orderItem.findUnique({ where: { id: item.orderItemId }, select: { variantId: true } });
-            if (orderItem?.variantId) await tx.productVariant.updateMany({ where: { id: orderItem.variantId }, data: { stockQuantity: { increment: item.quantity } } });
+            if (orderItem?.variantId) await adjustInventory(tx, {
+              variantId: orderItem.variantId,
+              delta: item.quantity,
+              type: "RETURN_RESTOCK",
+              source: "RETURN",
+              reason: "Returned item received and restocked",
+              referenceType: "RETURN",
+              referenceId: current.id,
+              actorUserId: req.user!.id,
+            });
           }
           data.restockedAt = new Date();
         }

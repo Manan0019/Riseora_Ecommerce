@@ -6,11 +6,20 @@ import { asyncHandler } from "../utils/async-handler";
 
 const router = Router();
 
+function publicVariant<T extends { stockQuantity?: number | null; safetyStock?: number | null }>(variant: T) {
+  const availableQuantity = Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));
+  return { ...variant, stockQuantity: availableQuantity, availableQuantity };
+}
+
+function publicStock<T extends { variants?: any[] }>(product: T) {
+  return { ...product, variants: Array.isArray(product.variants) ? product.variants.map(publicVariant) : product.variants };
+}
+
 function withRating<T extends { reviews?: Array<{ rating: number }> }>(product: T) {
   const ratings = product.reviews || [];
   const ratingAverage = ratings.length ? ratings.reduce((sum, review) => sum + review.rating, 0) / ratings.length : 0;
   const { reviews: _reviews, ...rest } = product;
-  return { ...rest, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
+  return { ...publicStock(rest), ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
 }
 
 function plainText(value: unknown) {
@@ -113,7 +122,8 @@ router.get(
       take: limit,
     });
 
-    const enriched = products.map(withRating);
+    let enriched = products.map(withRating);
+    if (inStock) enriched = enriched.filter((product: any) => product.variants?.some((variant: any) => Number(variant.stockQuantity || 0) > 0));
     enriched.sort((a: any, b: any) => {
       if (search && sort === "featured") {
         const relevance = relevanceScore(b, search) - relevanceScore(a, search);
@@ -202,7 +212,7 @@ router.get(
         include: {
           category: { select: { id: true, name: true, slug: true } },
           images: { orderBy: { sortOrder: "asc" }, take: 2 },
-          variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" }, take: 1 },
+          variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
         },
         orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
         take: limit,
@@ -226,7 +236,7 @@ router.get(
           badge: product.badge,
           category: product.category,
           images: product.images,
-          variants: product.variants,
+          variants: product.variants.map(publicVariant),
         })),
         categories,
       },
@@ -313,7 +323,7 @@ router.get(
     if (!product?.isActive) return res.status(404).json({ success: false, message: "Product not found" });
     const ratings = product.reviews.map((review) => review.rating);
     const ratingAverage = ratings.length ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
-    res.json({ success: true, data: { ...product, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length } });
+    res.json({ success: true, data: { ...publicStock(product), ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length } });
   }),
 );
 

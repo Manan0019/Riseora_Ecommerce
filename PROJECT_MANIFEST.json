@@ -65,10 +65,15 @@
     "ContactMessage support ticket/thread fields",
     "SupportMessage",
     "EmailDeliveryLog",
-    "NotificationType.SUPPORT"
+    "NotificationType.SUPPORT",
+    "RefillReminder",
+    "NotificationType.REFILL",
+    "Product replenishment reminder configuration",
+    "InventoryMovement",
+    "ProductVariant.safetyStock"
   ],
   "erp_sync": "deferred until standalone ecommerce production workflows are stable",
-  "latestPhase": 37,
+  "latestPhase": 39,
   "phase24": {
     "name": "Production Release & Deployment Readiness",
     "features": [
@@ -235,8 +240,8 @@
     "migration": "20261002211500_phase35_discovery_cross_device_wishlist",
     "verification": "npm run verify:phase35"
   },
-  "currentPhase": "Phase 36 \u2014 Rewards & Referrals V2",
-  "lastUpdated": "2026-10-02",
+  "currentPhase": "Phase 39 \u2014 Inventory Control & Availability V2",
+  "lastUpdated": "2026-10-03",
   "phase36": {
     "name": "Riseora Rewards & Referrals V2",
     "features": [
@@ -266,5 +271,37 @@
     ],
     "migration": "20261003003000_phase37_support_communications_v2",
     "verification": "npm run verify:phase37"
+  },
+  "phase38": {
+    "name": "Refill & Replenishment V2",
+    "features": [
+      "opt-in customer refill reminders for replenishable product variants without automatic charging or recurring order creation",
+      "customer refill planner on Product Details with configurable interval and quantity",
+      "My Refills account workspace with pause, resume, snooze, cancel and current-price/current-stock Refill Now actions",
+      "product-level Admin Catalog controls for suggested refill cycle and optional customer-facing refill label",
+      "automatic due-reminder processing with branded email plus in-app REFILL notifications",
+      "delivered orders reschedule existing refill plans from the actual fulfilment date instead of creating unsolicited plans",
+      "Admin Refills demand dashboard with active/due/upcoming/paused KPIs and most-requested variants",
+      "Lifecycle Automation Center integration for scheduled and manual refill processing",
+      "out-of-stock reminders defer safely while inactive products/variants pause the plan",
+      "Phase 38 audit verifies refill routes, lifecycle wiring, product configuration and all relative client imports"
+    ],
+    "migration": "20261003024500_phase38_refill_replenishment_v2",
+    "verification": "npm run verify:phase38"
+  },
+  "phase39": {
+    "name": "Inventory Control & Availability V2",
+    "features": [
+      "per-variant safety stock keeps a configurable physical buffer unavailable to customer checkout",
+      "checkout reservations enforce sellable stock atomically and cannot consume the safety buffer",
+      "inventory movement ledger records opening stock, checkout reservations/releases, cancellations, refunds, returns and manual adjustments",
+      "Admin Inventory V2 separates on-hand, safety and sellable quantities with 30-day sales velocity, days cover and reorder guidance",
+      "physical stock changes require an adjustment reason and expose variant-level stock history",
+      "public product, wishlist, deal, recovery, refill and Merchant availability use sellable stock rather than raw physical stock",
+      "back-in-stock/refill lifecycle respects safety stock so protected units are never advertised as customer available",
+      "catalog editor supports website safety-stock configuration including ERP-managed variants without taking ownership of ERP stock"
+    ],
+    "migration": "20261003130000_phase39_inventory_control_v2",
+    "verification": "npm run verify:phase39"
   }
 }

@@ -29,7 +29,11 @@ function withRating(product: any) {
     ? ratings.reduce((sum: number, review: any) => sum + review.rating, 0) / ratings.length
     : 0;
   const { reviews: _reviews, ...rest } = product;
-  return { ...rest, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
+  const variants = Array.isArray(rest.variants) ? rest.variants.map((variant: any) => {
+    const availableQuantity = Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));
+    return { ...variant, stockQuantity: availableQuantity, availableQuantity };
+  }) : rest.variants;
+  return { ...rest, variants, ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length };
 }
 
 

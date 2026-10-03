@@ -9,6 +9,22 @@ import { enrichDeals, getActiveDeals, previewMerchandisingDeals } from "../servi
 export const publicDealRoutes = Router();
 export const adminDealRoutes = Router();
 
+function publicDealVariant(variant: any) {
+  if (!variant) return variant;
+  const availableQuantity = Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));
+  return { ...variant, stockQuantity: availableQuantity, availableQuantity };
+}
+
+function publicDeal(deal: any) {
+  if (!deal) return deal;
+  return {
+    ...deal,
+    resolvedItems: (deal.resolvedItems || []).map((item: any) => ({ ...item, variant: publicDealVariant(item.variant) })),
+    buyVariant: publicDealVariant(deal.buyVariant),
+    giftVariant: publicDealVariant(deal.giftVariant),
+  };
+}
+
 const bundleItemSchema = z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(20) });
 const dealSchema = z.object({
   name: z.string().trim().min(2).max(140),
@@ -103,7 +119,7 @@ publicDealRoutes.get(
         || deal.buyVariant?.productId === productId
         || deal.giftVariant?.productId === productId;
     });
-    res.json({ success: true, data: filtered });
+    res.json({ success: true, data: filtered.map(publicDeal) });
   }),
 );
 
@@ -122,7 +138,7 @@ publicDealRoutes.post(
     const priceMap = new Map(variants.map((variant) => [variant.id, Number(variant.sellingPrice)]));
     const subtotal = parsed.data.items.reduce((sum, item) => sum + (priceMap.get(item.variantId) || 0) * item.quantity, 0);
     const preview = await previewMerchandisingDeals(parsed.data.items, subtotal);
-    res.json({ success: true, data: { ...preview, subtotal } });
+    res.json({ success: true, data: { ...preview, winner: preview.winner ? { ...preview.winner, deal: publicDeal(preview.winner.deal) } : null, deals: preview.deals.map((row: any) => ({ ...row, deal: publicDeal(row.deal) })), subtotal } });
   }),
 );
 
@@ -132,7 +148,7 @@ publicDealRoutes.get(
     const deals = await getActiveDeals() as any[];
     const deal = deals.find((item: any) => item.slug === String(req.params.slug));
     if (!deal) return res.status(404).json({ success: false, message: "Offer not found or no longer active" });
-    res.json({ success: true, data: deal });
+    res.json({ success: true, data: publicDeal(deal) });
   }),
 );
 

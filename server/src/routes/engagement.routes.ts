@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { optionalAuth } from "../middleware/auth";
 import { createUserNotification } from "../services/notification-center.service";
 import { sendSupportAdminNotification, sendSupportTicketReceived } from "../services/notification.service";
+import { availableToSell } from "../services/inventory.service";
 
 const router = Router();
 router.use(optionalAuth);
@@ -113,7 +114,7 @@ router.post("/stock-alerts", publicWriteLimit, asyncHandler(async (req, res) => 
     include: { product: true },
   });
   if (!variant) return res.status(404).json({ success: false, message: "Product option not found" });
-  if (variant.stockQuantity > 0) return res.status(409).json({ success: false, message: "This option is already back in stock." });
+  if (availableToSell(variant) > 0) return res.status(409).json({ success: false, message: "This option is already available to order." });
 
   const email = parsed.data.email.toLowerCase();
   await prisma.stockAlert.upsert({
@@ -182,8 +183,9 @@ router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (r
   let unavailableCount = 0;
   const items = storedItems.flatMap((stored) => {
     const variant = stored.variantId ? byId.get(stored.variantId) : null;
-    if (!variant || variant.stockQuantity <= 0) { unavailableCount += 1; return []; }
-    const quantity = Math.max(1, Math.min(variant.stockQuantity, Number(stored.quantity || 1)));
+    if (!variant || availableToSell(variant) <= 0) { unavailableCount += 1; return []; }
+    const available = availableToSell(variant);
+    const quantity = Math.max(1, Math.min(available, Number(stored.quantity || 1)));
     return [{
       variantId: variant.id,
       productId: variant.product.id,
@@ -193,7 +195,7 @@ router.get("/cart-recovery/:cartToken", cartRecoveryLimit, asyncHandler(async (r
       sku: variant.sku,
       price: Number(variant.sellingPrice),
       mrp: Number(variant.mrp),
-      stockQuantity: variant.stockQuantity,
+      stockQuantity: available,
       maxPurchaseQuantity: variant.product.maxPurchaseQuantity,
       imageUrl: variant.product.images[0]?.url || "",
       quantity,

@@ -1,12 +1,18 @@
 import { prisma } from "../config/prisma";
 import { refundRazorpayPayment } from "./payment.service";
+import { adjustInventory } from "./inventory.service";
 
 async function restoreOrderInventoryAndCoupon(tx: any, order: any) {
   for (const item of order.items) {
     if (item.variantId) {
-      await tx.productVariant.updateMany({
-        where: { id: item.variantId },
-        data: { stockQuantity: { increment: item.quantity } },
+      await adjustInventory(tx, {
+        variantId: item.variantId,
+        delta: item.quantity,
+        type: "ORDER_CANCELLATION",
+        source: "ORDER",
+        reason: "Cancelled order stock restored",
+        referenceType: "ORDER",
+        referenceId: order.id,
       });
     }
   }

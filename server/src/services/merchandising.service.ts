@@ -1,4 +1,5 @@
 import { prisma } from "../config/prisma";
+import { availableToSell } from "./inventory.service";
 
 export type CartQuantityInput = { variantId: string; quantity: number };
 
@@ -97,7 +98,7 @@ export async function evaluateBestMerchandisingDeal(cart: CartQuantityInput[], p
       const freeQuantity = groups * giftQty;
       if (freeQuantity < 1) continue;
       const stockNeeded = (cartQty.get(deal.giftVariant.id) || 0) + freeQuantity;
-      if (!deal.giftVariant.isActive || !deal.giftVariant.product?.isActive || Number(deal.giftVariant.stockQuantity || 0) < stockNeeded) continue;
+      if (!deal.giftVariant.isActive || !deal.giftVariant.product?.isActive || availableToSell(deal.giftVariant) < stockNeeded) continue;
       const value = round2(Number(deal.giftVariant.sellingPrice) * freeQuantity);
       candidates.push({
         deal,
@@ -114,7 +115,7 @@ export async function evaluateBestMerchandisingDeal(cart: CartQuantityInput[], p
       const freeQuantity = Math.max(1, Number(deal.giftQuantity || 1));
       if (paidSubtotal + 0.009 < threshold) continue;
       const stockNeeded = (cartQty.get(deal.giftVariant.id) || 0) + freeQuantity;
-      if (!deal.giftVariant.isActive || !deal.giftVariant.product?.isActive || Number(deal.giftVariant.stockQuantity || 0) < stockNeeded) continue;
+      if (!deal.giftVariant.isActive || !deal.giftVariant.product?.isActive || availableToSell(deal.giftVariant) < stockNeeded) continue;
       const value = round2(Number(deal.giftVariant.sellingPrice) * freeQuantity);
       candidates.push({
         deal,
@@ -154,7 +155,7 @@ export async function previewMerchandisingDeals(cart: CartQuantityInput[], paidS
 
     if (deal.type === "BUNDLE_DISCOUNT") {
       const rules = (deal.resolvedItems || []).map((item: any) => ({ variantId: item.variantId, quantity: Number(item.quantity || 1), variant: item.variant }));
-      available = rules.length >= 2 && rules.every((rule: any) => rule.variant?.isActive && rule.variant?.product?.isActive && Number(rule.variant?.stockQuantity || 0) >= rule.quantity);
+      available = rules.length >= 2 && rules.every((rule: any) => rule.variant?.isActive && rule.variant?.product?.isActive && availableToSell(rule.variant || {}) >= rule.quantity);
       if (rules.length >= 2) {
         const satisfied = rules.reduce((sum: number, rule: any) => sum + Math.min(rule.quantity, cartQty.get(rule.variantId) || 0), 0);
         const required = rules.reduce((sum: number, rule: any) => sum + rule.quantity, 0);
@@ -188,7 +189,7 @@ export async function previewMerchandisingDeals(cart: CartQuantityInput[], paidS
       const groups = Math.floor(current / buyQty);
       const freeQuantity = groups * giftQty;
       progress = Math.min(1, current / buyQty);
-      available = Boolean(deal.buyVariant?.isActive && deal.buyVariant?.product?.isActive && deal.giftVariant?.isActive && deal.giftVariant?.product?.isActive && Number(deal.giftVariant?.stockQuantity || 0) >= Math.max(giftQty, freeQuantity));
+      available = Boolean(deal.buyVariant?.isActive && deal.buyVariant?.product?.isActive && deal.giftVariant?.isActive && deal.giftVariant?.product?.isActive && availableToSell(deal.giftVariant || {}) >= Math.max(giftQty, freeQuantity));
       eligible = available && freeQuantity >= 1;
       promotionValue = round2(Number(deal.giftVariant?.sellingPrice || 0) * Math.max(giftQty, freeQuantity || giftQty));
       const missing = Math.max(0, buyQty - Math.min(current, buyQty));
@@ -210,7 +211,7 @@ export async function previewMerchandisingDeals(cart: CartQuantityInput[], paidS
       remainingAmount = Math.max(0, round2(threshold - paidSubtotal));
       progress = threshold > 0 ? Math.min(1, paidSubtotal / threshold) : 1;
       const giftQty = Math.max(1, Number(deal.giftQuantity || 1));
-      available = Boolean(deal.giftVariant?.isActive && deal.giftVariant?.product?.isActive && Number(deal.giftVariant?.stockQuantity || 0) >= giftQty);
+      available = Boolean(deal.giftVariant?.isActive && deal.giftVariant?.product?.isActive && availableToSell(deal.giftVariant || {}) >= giftQty);
       eligible = available && remainingAmount <= 0;
       promotionValue = round2(Number(deal.giftVariant?.sellingPrice || 0) * giftQty);
       message = eligible
