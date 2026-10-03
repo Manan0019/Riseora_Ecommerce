@@ -77,9 +77,10 @@ for (const [label, content] of [["backup", backupScript], ["doctor", doctorScrip
 }
 
 const prepare = read("scripts/phase49-release-prepare.mjs");
-const order = ["phase49-release-doctor", "db:backup", "db:deploy", "db:generate", "db-schema-status", "verify:phase49"].map((token) => prepare.indexOf(token));
+const finalVerifyToken = prepare.includes("verify:phase51") ? "verify:phase51" : "verify:phase49";
+const order = ["phase49-release-doctor", "db:backup", "db:deploy", "db:generate", "db-schema-status", finalVerifyToken].map((token) => prepare.indexOf(token));
 order.every((value) => value >= 0) && order.every((value, index) => index === 0 || value > order[index - 1])
-  ? pass("release order backup-before-migrate-before-build") : fail("release order backup-before-migrate-before-build");
+  ? pass(`release order backup-before-migrate-before-build · ${finalVerifyToken}`) : fail("release order backup-before-migrate-before-build");
 !/migrate\s+dev|migrate:dev|migrate\s+reset|db\s+push/i.test(prepare) ? pass("production release has no destructive/dev migration command") : fail("production release has no destructive/dev migration command");
 
 for (const script of ["scripts/phase49-release-doctor.mjs", "scripts/phase49-release-prepare.mjs", "scripts/phase49-release-smoke.mjs"]) {

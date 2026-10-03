@@ -15,7 +15,7 @@ function requireText(relative, needles) {
 }
 
 requireText("server/src/config/env.ts", ["AUTH_SESSION_TTL_DAYS", "AUTH_MAX_FAILED_LOGINS", "AUTH_LOCK_MINUTES", "RELEASE_BUILD_TIME"]);
-requireText("client/src/analytics.js", ["./lib/analytics.js"]);
+requireText("client/src/analytics.js", ["export function analyticsConsent", "export function trackEvent", "export function trackCommerce"]);
 requireText("client/src/lib/persisted-state.js", ["readPersistedArray", "riseora_state_quarantine:"]);
 requireText("client/src/lib/client-runtime.js", ["prepareClientRuntime", "cleanupDevelopmentServiceWorkers", "repairTransientClientState", "createClientErrorReference"]);
 requireText("client/src/main.jsx", ["prepareClientRuntime();", "cleanupDevelopmentServiceWorkers"]);
@@ -40,7 +40,7 @@ missingEnv.length ? fail(`environment schema missing used keys: ${missingEnv.joi
 
 const packageJson = JSON.parse(read("package.json"));
 packageJson.scripts?.["verify:phase50"]?.includes("phase50-runtime-recovery-audit.mjs") ? pass("verify:phase50 command") : fail("verify:phase50 command");
-packageJson.scripts?.["prelaunch:check"]?.includes("verify:phase50") ? pass("prelaunch uses Phase 50 verification") : fail("prelaunch uses Phase 50 verification");
+(packageJson.scripts?.["prelaunch:check"]?.includes("verify:phase50") || packageJson.scripts?.["prelaunch:check"]?.includes("verify:phase51")) ? pass("prelaunch includes Phase 50+ verification") : fail("prelaunch includes Phase 50+ verification");
 
 const clientFiles = walk(path.join(root, "client/src")).filter((file) => /\.(?:js|jsx|mjs|ts|tsx)$/.test(file));
 const unresolved = [];
