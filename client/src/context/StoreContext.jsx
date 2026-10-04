@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
-import { apiFetch, mediaUrl } from "../api/http";
+import { apiFetchCached, mediaUrl } from "../api/http";
 
 const StoreContext = createContext(null);
 const fallback = { storeName: "Riseora Herbals", brandTagline: "Everyday herbal care, thoughtfully made.", freeShippingThreshold: 599, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, lowStockUrgencyThreshold: 5, requireServiceablePostalCode: false };
@@ -8,7 +8,7 @@ export function StoreProvider({ children }) {
   const [store, setStore] = useState(fallback);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    apiFetch("/store/config").then((response) => {
+    apiFetchCached("/store/config", { ttlMs: 30000 }).then((response) => {
       const data = response?.data && typeof response.data === "object" && !Array.isArray(response.data) ? response.data : {};
       setStore({ ...fallback, ...data });
     }).catch(() => {}).finally(() => setLoading(false));

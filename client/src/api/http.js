@@ -1,6 +1,17 @@
 const API_URL = import.meta.env.VITE_API_URL || (import.meta.env.PROD ? "/api" : "http://localhost:5000/api");
 const API_ORIGIN = API_URL.replace(/\/api\/?$/, "");
 const DEFAULT_TIMEOUT_MS = 20000;
+const inFlightGets = new Map();
+const responseCache = new Map();
+
+function authCacheKey(token, path) {
+  return `${token || "anon"}|${path}`;
+}
+
+function canDedupe(options) {
+  const method = String(options.method || "GET").toUpperCase();
+  return method === "GET" && !options.body && !options.signal && !options.headers && options.dedupe !== false;
+}
 
 export class ApiError extends Error {
   constructor(message, { status = 0, code = null, requestId = null, payload = null } = {}) {
@@ -36,21 +47,46 @@ export function reportClientError({ message, route, source, referenceId } = {}) 
   } catch {}
 }
 
-export async function apiFetch(path, options = {}) {
-  const token = localStorage.getItem("riseora_token");
-  const headers = new Headers(options.headers || {});
-  const timeoutMs = Number(options.timeoutMs || (options.body instanceof FormData ? 60000 : DEFAULT_TIMEOUT_MS));
-  const controller = options.signal ? null : new AbortController();
-  const signal = options.signal || controller?.signal;
+export function reportClientPerformance(sample = {}) {
+  const payload = JSON.stringify({
+    route: String(sample.route || window.location.pathname).split("?")[0].slice(0, 300),
+    lcpMs: Number(sample.lcpMs || 0),
+    cls: Number(sample.cls || 0),
+    interactionMs: Number(sample.interactionMs || 0),
+    domContentLoadedMs: Number(sample.domContentLoadedMs || 0),
+    loadMs: Number(sample.loadMs || 0),
+    longTaskCount: Number(sample.longTaskCount || 0),
+    longTaskTotalMs: Number(sample.longTaskTotalMs || 0),
+    resourceCount: Number(sample.resourceCount || 0),
+    connectionType: sample.connectionType ? String(sample.connectionType).slice(0, 20) : undefined,
+    saveData: Boolean(sample.saveData),
+    reason: sample.reason ? String(sample.reason).slice(0, 20) : undefined,
+  });
+  try {
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon(`${API_URL}/client-performance`, new Blob([payload], { type: "application/json" }));
+      return;
+    }
+    fetch(`${API_URL}/client-performance`, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload, keepalive: true }).catch(() => {});
+  } catch {}
+}
+
+async function performApiFetch(path, options, token) {
+  const { dedupe: _dedupe, ttlMs: _ttlMs, ...fetchOptions } = options;
+  const headers = new Headers(fetchOptions.headers || {});
+  const timeoutMs = Number(fetchOptions.timeoutMs || (fetchOptions.body instanceof FormData ? 60000 : DEFAULT_TIMEOUT_MS));
+  delete fetchOptions.timeoutMs;
+  const controller = fetchOptions.signal ? null : new AbortController();
+  const signal = fetchOptions.signal || controller?.signal;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
 
-  if (options.body && !(options.body instanceof FormData) && !headers.has("Content-Type")) {
+  if (fetchOptions.body && !(fetchOptions.body instanceof FormData) && !headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
   }
   if (token) headers.set("Authorization", `Bearer ${token}`);
 
   try {
-    const response = await fetch(`${API_URL}${path}`, { ...options, headers, signal });
+    const response = await fetch(`${API_URL}${path}`, { ...fetchOptions, headers, signal });
     const payload = await response.json().catch(() => ({}));
     const requestId = response.headers.get("x-request-id") || payload.requestId || null;
 
@@ -75,5 +111,38 @@ export async function apiFetch(path, options = {}) {
     throw new ApiError(error?.message || "Unable to reach Riseora right now. Please try again.", { code: "NETWORK_ERROR" });
   } finally {
     if (timer) clearTimeout(timer);
+  }
+}
+
+export async function apiFetch(path, options = {}) {
+  const token = localStorage.getItem("riseora_token");
+  if (!canDedupe(options)) return performApiFetch(path, options, token);
+
+  const key = authCacheKey(token, path);
+  const existing = inFlightGets.get(key);
+  if (existing) return existing;
+
+  const request = performApiFetch(path, options, token).finally(() => inFlightGets.delete(key));
+  inFlightGets.set(key, request);
+  return request;
+}
+
+export async function apiFetchCached(path, options = {}) {
+  const token = localStorage.getItem("riseora_token");
+  const ttlMs = Math.max(0, Number(options.ttlMs ?? 15000));
+  const key = authCacheKey(token, path);
+  const cached = responseCache.get(key);
+  if (cached && cached.expiresAt > Date.now()) return cached.payload;
+
+  const payload = await apiFetch(path, { ...options, method: options.method || "GET" });
+  responseCache.set(key, { payload, expiresAt: Date.now() + ttlMs });
+  return payload;
+}
+
+export function invalidateApiCache(pathPrefix = "") {
+  for (const key of responseCache.keys()) {
+    const separator = key.indexOf("|");
+    const path = separator >= 0 ? key.slice(separator + 1) : key;
+    if (!pathPrefix || path.startsWith(pathPrefix)) responseCache.delete(key);
   }
 }

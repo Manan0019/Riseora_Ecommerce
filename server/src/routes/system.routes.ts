@@ -5,7 +5,7 @@ import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { adminSystemHealth, readinessStatus } from "../services/system-health.service";
 import { createDatabaseBackup, listDatabaseBackups } from "../services/database-backup.service";
-import { recordClientError } from "../services/runtime-observability.service";
+import { recordClientError, recordClientPerformance } from "../services/runtime-observability.service";
 import { launchReadinessSnapshot } from "../services/launch-readiness.service";
 import { runBackgroundJob } from "../services/background-jobs.service";
 import { SYSTEM_JOB_KEYS } from "../services/system-job.service";
@@ -26,6 +26,31 @@ publicSystemRoutes.post(
     }).safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid client error report" });
     recordClientError(parsed.data);
+    return res.status(202).json({ success: true });
+  },
+);
+
+publicSystemRoutes.post(
+  "/client-performance",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 60, standardHeaders: "draft-8", legacyHeaders: false }),
+  (req, res) => {
+    const metric = z.number().finite().min(0).max(600000).optional();
+    const parsed = z.object({
+      route: z.string().trim().max(300).optional(),
+      lcpMs: metric,
+      cls: z.number().finite().min(0).max(10).optional(),
+      interactionMs: metric,
+      domContentLoadedMs: metric,
+      loadMs: metric,
+      longTaskCount: z.number().int().min(0).max(10000).optional(),
+      longTaskTotalMs: metric,
+      resourceCount: z.number().int().min(0).max(10000).optional(),
+      connectionType: z.string().trim().max(20).optional(),
+      saveData: z.boolean().optional(),
+      reason: z.string().trim().max(20).optional(),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid client performance report" });
+    recordClientPerformance(parsed.data);
     return res.status(202).json({ success: true });
   },
 );

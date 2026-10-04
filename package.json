@@ -49,7 +49,7 @@
     "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase46": "node scripts/phase46-privacy-consent-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase47": "node scripts/phase47-launch-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "prelaunch:check": "npm run db:doctor && npm run db:status && npm run verify:phase52 && npm run security:audit:prod",
+    "prelaunch:check": "npm run db:doctor && npm run db:status && npm run verify:phase53 && npm run security:audit:prod",
     "smoke:local": "npm run release:smoke",
     "predev": "npm run client:doctor && node scripts/phase48-dev-prepare.mjs",
     "db:status": "node scripts/db-schema-status.mjs",
@@ -65,11 +65,13 @@
     "db:status:production": "node scripts/db-schema-status.mjs --production",
     "release:start": "npm run start:production",
     "verify:phase50": "node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "client:doctor": "node scripts/phase52-react-runtime-doctor.mjs && node scripts/phase51-frontend-module-contract.mjs && node scripts/phase51-analytics-contract-test.mjs",
+    "client:doctor": "node scripts/phase52-react-runtime-doctor.mjs && node scripts/phase51-frontend-module-contract.mjs && node scripts/phase51-analytics-contract-test.mjs && node scripts/phase53-storefront-performance-audit.mjs",
     "verify:phase51": "npm run client:doctor && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "react:doctor": "node scripts/phase52-react-runtime-doctor.mjs",
     "deps:repair": "npm dedupe && node scripts/phase52-clear-vite-cache.mjs && npm run react:doctor",
-    "verify:phase52": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build"
+    "verify:phase52": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
+    "performance:budget": "node scripts/phase53-bundle-budget.mjs",
+    "verify:phase53": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

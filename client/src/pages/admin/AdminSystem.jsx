@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 49 · PRODUCTION RELEASE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, live performance, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 53 · STOREFRONT PERFORMANCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -153,6 +153,20 @@ export default function AdminSystem() {
           <article><small>Client errors · 15 min</small><strong>{health.runtime?.clientErrorCount ?? 0}</strong><span>Browser/runtime reports</span></article>
           <article><small>Process memory</small><strong>{health.runtime?.memory?.rssMb ?? 0} MB</strong><span>Heap {health.runtime?.memory?.heapUsedMb ?? 0} MB</span></article>
           <article><small>Event loop lag</small><strong>{health.runtime?.eventLoopLagMs ?? 0} ms</strong><span>{health.runtime?.eventLoopLagMs > 250 ? "Investigate load" : "Normal"}</span></article>
+        </div>
+        <div className="phase53-web-experience">
+          <div className="phase41-route-head"><span>Customer web experience</span><small>Privacy-safe browser performance samples · rolling 15 minutes</small></div>
+          <div className="phase53-web-vitals-grid">
+            <article><small>Samples</small><strong>{health.runtime?.webExperience?.sampleCount ?? 0}</strong><span>Recent page loads</span></article>
+            <article><small>LCP · P75</small><strong>{health.runtime?.webExperience?.lcpP75Ms ?? 0} ms</strong><span>{(health.runtime?.webExperience?.lcpP75Ms ?? 0) > 2500 ? "Needs attention" : "Healthy target ≤ 2500 ms"}</span></article>
+            <article><small>CLS · P75</small><strong>{health.runtime?.webExperience?.clsP75 ?? 0}</strong><span>{(health.runtime?.webExperience?.clsP75 ?? 0) > 0.1 ? "Needs attention" : "Healthy target ≤ 0.1"}</span></article>
+            <article><small>Interaction · P75</small><strong>{health.runtime?.webExperience?.interactionP75Ms ?? 0} ms</strong><span>Longest observed interaction</span></article>
+            <article><small>Page load · P75</small><strong>{health.runtime?.webExperience?.loadP75Ms ?? 0} ms</strong><span>Navigation load event</span></article>
+            <article><small>Long tasks · P75</small><strong>{health.runtime?.webExperience?.longTaskP75Ms ?? 0} ms</strong><span>Main-thread blocking</span></article>
+          </div>
+          {(health.runtime?.webExperience?.routes || []).length > 0 && <div className="phase53-route-performance">
+            {(health.runtime.webExperience.routes || []).map((row) => <div key={row.route}><code>{row.route}</code><span>{row.samples} sample{row.samples === 1 ? "" : "s"}</span><span>LCP {row.lcpP75Ms} ms</span><b>CLS {row.clsP75}</b></div>)}
+          </div>}
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>

@@ -2892,3 +2892,21 @@ textarea { min-height: 105px; resize: vertical; }
 
 /* Phase 50 · runtime recovery diagnostics */
 .phase50-dev-error{margin:14px 0 4px;padding:12px 14px;border:1px solid #e8ddd6;border-radius:12px;background:#fff9f5;text-align:left}.phase50-dev-error strong{display:block;margin-bottom:5px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#7b4d3f}.phase50-dev-error code{display:block;white-space:normal;overflow-wrap:anywhere;font-size:12px;line-height:1.45;color:#4d403b}.phase47-fatal-actions{flex-wrap:wrap}
+
+/* Phase 53 — Storefront performance & web-experience telemetry */
+.phase53-web-experience { margin-top: 22px; border-top: 1px solid rgba(17,37,28,.1); padding-top: 20px; }
+.phase53-web-vitals-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 14px; }
+.phase53-web-vitals-grid article { min-height: 108px; padding: 16px; border: 1px solid rgba(17,37,28,.1); border-radius: 16px; background: rgba(255,255,255,.68); display: flex; flex-direction: column; gap: 6px; }
+.phase53-web-vitals-grid small { color: var(--muted, #667069); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.phase53-web-vitals-grid strong { font-size: 24px; color: var(--green-900); }
+.phase53-web-vitals-grid span { font-size: 12px; color: var(--muted, #667069); }
+.phase53-route-performance { margin-top: 14px; border: 1px solid rgba(17,37,28,.1); border-radius: 14px; overflow: hidden; }
+.phase53-route-performance > div { display: grid; grid-template-columns: minmax(180px, 1fr) auto auto auto; gap: 16px; align-items: center; padding: 11px 14px; border-bottom: 1px solid rgba(17,37,28,.08); }
+.phase53-route-performance > div:last-child { border-bottom: 0; }
+.phase53-route-performance code { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.phase53-route-performance span, .phase53-route-performance b { font-size: 12px; white-space: nowrap; }
+@media (max-width: 760px) {
+  .phase53-web-vitals-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .phase53-route-performance > div { grid-template-columns: 1fr auto; }
+  .phase53-route-performance > div span:nth-of-type(2), .phase53-route-performance > div b { display: none; }
+}

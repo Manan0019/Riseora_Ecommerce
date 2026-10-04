@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { apiFetch, mediaUrl } from "../api/http";
+import { apiFetchCached, mediaUrl } from "../api/http";
 import { readPersistedArray } from "../lib/persisted-state";
 import { Icon } from "../components/Icons";
 import RichText from "../components/RichText";
@@ -43,12 +43,12 @@ export default function Home() {
   useEffect(() => {
     setRecent(readRecentProducts());
     Promise.allSettled([
-      apiFetch("/products"),
-      apiFetch("/categories"),
-      apiFetch("/promotions/offers"),
-      apiFetch("/promotions/banners?placement=HOME_HERO"),
-      apiFetch("/promotions/deals?featured=true"),
-      apiFetch("/campaigns?featured=true&limit=3"),
+      apiFetchCached("/products", { ttlMs: 15000 }),
+      apiFetchCached("/categories", { ttlMs: 30000 }),
+      apiFetchCached("/promotions/offers", { ttlMs: 15000 }),
+      apiFetchCached("/promotions/banners?placement=HOME_HERO", { ttlMs: 15000 }),
+      apiFetchCached("/promotions/deals?featured=true", { ttlMs: 15000 }),
+      apiFetchCached("/campaigns?featured=true&limit=3", { ttlMs: 15000 }),
     ]).then(([productResult, categoryResult, offerResult, bannerResult, dealResult, campaignResult]) => {
       const productData = responseArray(productResult);
       setProducts(productData);

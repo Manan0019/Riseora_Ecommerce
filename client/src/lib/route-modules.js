@@ -1,0 +1,170 @@
+import { lazy } from "react";
+
+function memoImport(importer) {
+  let promise = null;
+  return () => {
+    if (!promise) promise = importer();
+    return promise;
+  };
+}
+
+export const routeModules = {
+  CampaignDetails: memoImport(() => import("../pages/CampaignDetails")),
+  Rewards: memoImport(() => import("../pages/Rewards")),
+  Refills: memoImport(() => import("../pages/Refills")),
+  HelpCenter: memoImport(() => import("../pages/HelpCenter")),
+  Support: memoImport(() => import("../pages/Support")),
+  SecurityCenter: memoImport(() => import("../pages/SecurityCenter")),
+  PrivacyCenter: memoImport(() => import("../pages/PrivacyCenter")),
+  Unsubscribe: memoImport(() => import("../pages/Unsubscribe")),
+  SharedWishlist: memoImport(() => import("../pages/SharedWishlist")),
+  Compare: memoImport(() => import("../pages/Compare")),
+  DealDetails: memoImport(() => import("../pages/DealDetails")),
+  Notifications: memoImport(() => import("../pages/Notifications")),
+  Home: memoImport(() => import("../pages/Home")),
+  RoutineBuilder: memoImport(() => import("../pages/RoutineBuilder")),
+  Shop: memoImport(() => import("../pages/Shop")),
+  Offers: memoImport(() => import("../pages/Offers")),
+  ProductDetails: memoImport(() => import("../pages/ProductDetails")),
+  Cart: memoImport(() => import("../pages/Cart")),
+  Wishlist: memoImport(() => import("../pages/Wishlist")),
+  Checkout: memoImport(() => import("../pages/Checkout")),
+  Login: memoImport(() => import("../pages/Login")),
+  Register: memoImport(() => import("../pages/Register")),
+  OrderSuccess: memoImport(() => import("../pages/OrderSuccess")),
+  Orders: memoImport(() => import("../pages/Orders")),
+  OrderDetail: memoImport(() => import("../pages/OrderDetail")),
+  TrackOrder: memoImport(() => import("../pages/TrackOrder")),
+  Account: memoImport(() => import("../pages/Account")),
+  Returns: memoImport(() => import("../pages/Returns")),
+  ReturnRequest: memoImport(() => import("../pages/ReturnRequest")),
+  ReturnDetail: memoImport(() => import("../pages/ReturnDetail")),
+  Invoice: memoImport(() => import("../pages/Invoice")),
+  CreditNote: memoImport(() => import("../pages/CreditNote")),
+  Policy: memoImport(() => import("../pages/Policy")),
+  About: memoImport(() => import("../pages/About")),
+  Contact: memoImport(() => import("../pages/Contact")),
+  NotFound: memoImport(() => import("../pages/NotFound")),
+  ForgotPassword: memoImport(() => import("../pages/ForgotPassword")),
+  ResetPassword: memoImport(() => import("../pages/ResetPassword")),
+  RecoverCart: memoImport(() => import("../pages/RecoverCart")),
+  AdminContentStudio: memoImport(() => import("../pages/admin/AdminContentStudio")),
+  AdminGrowth: memoImport(() => import("../pages/admin/AdminGrowth")),
+  AdminSecurity: memoImport(() => import("../pages/admin/AdminSecurity")),
+  AdminCancellations: memoImport(() => import("../pages/admin/AdminCancellations")),
+  AdminErpSync: memoImport(() => import("../pages/admin/AdminErpSync")),
+  AdminRetention: memoImport(() => import("../pages/admin/AdminRetention")),
+  AdminLifecycle: memoImport(() => import("../pages/admin/AdminLifecycle")),
+  AdminSystem: memoImport(() => import("../pages/admin/AdminSystem")),
+  AdminCatalog: memoImport(() => import("../pages/admin/AdminCatalog")),
+  AdminMerchandising: memoImport(() => import("../pages/admin/AdminMerchandising")),
+  AdminReports: memoImport(() => import("../pages/admin/AdminReports")),
+  AdminReviews: memoImport(() => import("../pages/admin/AdminReviews")),
+  AdminCustomers: memoImport(() => import("../pages/admin/AdminCustomers")),
+  AdminInventory: memoImport(() => import("../pages/admin/AdminInventory")),
+  AdminDashboard: memoImport(() => import("../pages/admin/AdminDashboard")),
+  AdminOrders: memoImport(() => import("../pages/admin/AdminOrders")),
+  AdminOrderDetail: memoImport(() => import("../pages/admin/AdminOrderDetail")),
+  AdminPromotions: memoImport(() => import("../pages/admin/AdminPromotions")),
+  AdminReturns: memoImport(() => import("../pages/admin/AdminReturns")),
+  AdminSettings: memoImport(() => import("../pages/admin/AdminSettings")),
+  AdminInvoice: memoImport(() => import("../pages/admin/AdminInvoice")),
+  AdminAudience: memoImport(() => import("../pages/admin/AdminAudience")),
+  AdminPayments: memoImport(() => import("../pages/admin/AdminPayments")),
+  AdminFinance: memoImport(() => import("../pages/admin/AdminFinance")),
+  AdminCreditNote: memoImport(() => import("../pages/admin/AdminCreditNote")),
+  AdminFulfilment: memoImport(() => import("../pages/admin/AdminFulfilment")),
+  AdminRewards: memoImport(() => import("../pages/admin/AdminRewards")),
+  AdminRefills: memoImport(() => import("../pages/admin/AdminRefills")),
+  AdminSupport: memoImport(() => import("../pages/admin/AdminSupport")),
+  AdminCompliance: memoImport(() => import("../pages/admin/AdminCompliance")),
+};
+
+export function lazyRoute(name) {
+  const loader = routeModules[name];
+  if (!loader) throw new Error(`Unknown Riseora route module: ${name}`);
+  return lazy(loader);
+}
+
+const routeMatchers = [
+  [/^\/$/, "Home"],
+  [/^\/shop(?:\/|$)/, "Shop"],
+  [/^\/routine-builder(?:\/|$)/, "RoutineBuilder"],
+  [/^\/offers\/[^/]+/, "DealDetails"],
+  [/^\/offers(?:\/|$)/, "Offers"],
+  [/^\/campaigns\/[^/]+/, "CampaignDetails"],
+  [/^\/product\/[^/]+/, "ProductDetails"],
+  [/^\/cart(?:\/|$)/, "Cart"],
+  [/^\/wishlist\/shared\/[^/]+/, "SharedWishlist"],
+  [/^\/wishlist(?:\/|$)/, "Wishlist"],
+  [/^\/compare(?:\/|$)/, "Compare"],
+  [/^\/checkout(?:\/|$)/, "Checkout"],
+  [/^\/login(?:\/|$)/, "Login"],
+  [/^\/register(?:\/|$)/, "Register"],
+  [/^\/forgot-password(?:\/|$)/, "ForgotPassword"],
+  [/^\/reset-password(?:\/|$)/, "ResetPassword"],
+  [/^\/unsubscribe(?:\/|$)/, "Unsubscribe"],
+  [/^\/recover-cart\/[^/]+/, "RecoverCart"],
+  [/^\/order-success\/[^/]+/, "OrderSuccess"],
+  [/^\/orders\/[^/]+/, "OrderDetail"],
+  [/^\/orders(?:\/|$)/, "Orders"],
+  [/^\/track-order(?:\/|$)/, "TrackOrder"],
+  [/^\/account(?:\/|$)/, "Account"],
+  [/^\/security(?:\/|$)/, "SecurityCenter"],
+  [/^\/privacy-center(?:\/|$)/, "PrivacyCenter"],
+  [/^\/notifications(?:\/|$)/, "Notifications"],
+  [/^\/rewards(?:\/|$)/, "Rewards"],
+  [/^\/refills(?:\/|$)/, "Refills"],
+  [/^\/returns\/new\/[^/]+/, "ReturnRequest"],
+  [/^\/returns\/[^/]+/, "ReturnDetail"],
+  [/^\/returns(?:\/|$)/, "Returns"],
+  [/^\/invoice\/[^/]+/, "Invoice"],
+  [/^\/credit-note\/[^/]+/, "CreditNote"],
+  [/^\/policies\/[^/]+/, "Policy"],
+  [/^\/about(?:\/|$)/, "About"],
+  [/^\/contact(?:\/|$)/, "Contact"],
+  [/^\/help(?:\/|$)/, "HelpCenter"],
+  [/^\/support(?:\/|$)/, "Support"],
+  [/^\/admin\/orders\/[^/]+\/invoice(?:\/|$)/, "AdminInvoice"],
+  [/^\/admin\/orders\/[^/]+/, "AdminOrderDetail"],
+  [/^\/admin\/credit-notes\/[^/]+/, "AdminCreditNote"],
+  [/^\/admin\/catalog(?:\/|$)/, "AdminCatalog"],
+  [/^\/admin\/reports(?:\/|$)/, "AdminReports"],
+  [/^\/admin\/reviews(?:\/|$)/, "AdminReviews"],
+  [/^\/admin\/inventory(?:\/|$)/, "AdminInventory"],
+  [/^\/admin\/customers(?:\/|$)/, "AdminCustomers"],
+  [/^\/admin\/support(?:\/|$)/, "AdminSupport"],
+  [/^\/admin\/orders(?:\/|$)/, "AdminOrders"],
+  [/^\/admin\/fulfilment(?:\/|$)/, "AdminFulfilment"],
+  [/^\/admin\/payments(?:\/|$)/, "AdminPayments"],
+  [/^\/admin\/finance(?:\/|$)/, "AdminFinance"],
+  [/^\/admin\/promotions(?:\/|$)/, "AdminPromotions"],
+  [/^\/admin\/content(?:\/|$)/, "AdminContentStudio"],
+  [/^\/admin\/merchandising(?:\/|$)/, "AdminMerchandising"],
+  [/^\/admin\/returns(?:\/|$)/, "AdminReturns"],
+  [/^\/admin\/cancellations(?:\/|$)/, "AdminCancellations"],
+  [/^\/admin\/audience(?:\/|$)/, "AdminAudience"],
+  [/^\/admin\/retention(?:\/|$)/, "AdminRetention"],
+  [/^\/admin\/lifecycle(?:\/|$)/, "AdminLifecycle"],
+  [/^\/admin\/growth(?:\/|$)/, "AdminGrowth"],
+  [/^\/admin\/rewards(?:\/|$)/, "AdminRewards"],
+  [/^\/admin\/refills(?:\/|$)/, "AdminRefills"],
+  [/^\/admin\/settings(?:\/|$)/, "AdminSettings"],
+  [/^\/admin\/erp-sync(?:\/|$)/, "AdminErpSync"],
+  [/^\/admin\/security(?:\/|$)/, "AdminSecurity"],
+  [/^\/admin\/compliance(?:\/|$)/, "AdminCompliance"],
+  [/^\/admin\/system(?:\/|$)/, "AdminSystem"],
+  [/^\/admin(?:\/|$)/, "AdminDashboard"],
+];
+
+export function routeModuleNameForPath(pathname) {
+  const clean = String(pathname || "/").split("?")[0].split("#")[0] || "/";
+  const match = routeMatchers.find(([pattern]) => pattern.test(clean));
+  return match?.[1] || null;
+}
+
+export function preloadRoutePath(pathname) {
+  const name = routeModuleNameForPath(pathname);
+  if (!name) return Promise.resolve(null);
+  return routeModules[name]();
+}
