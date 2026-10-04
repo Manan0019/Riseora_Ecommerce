@@ -2947,3 +2947,31 @@ textarea { min-height: 105px; resize: vertical; }
   .phase54-related-searches button { flex: 0 0 auto; }
   .phase54-search-health-grid, .phase54-search-lists { grid-template-columns: 1fr; }
 }
+
+/* Phase 55 · product recommendation intelligence */
+.phase55-recommendation-section { position: relative; overflow: hidden; }
+.phase55-recommendation-section .section-title-row { align-items: flex-end; gap: 16px; }
+.phase55-recommendation-copy { max-width: 640px; margin: 7px 0 0; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.phase55-recommendation-strategy { flex: 0 0 auto; display: inline-flex; align-items: center; min-height: 30px; padding: 7px 11px; border: 1px solid rgba(20,74,52,.18); border-radius: 999px; background: rgba(236,246,239,.8); color: var(--green-800); font-size: 9px; font-weight: 800; letter-spacing: .12em; }
+.phase55-recommendation-item { min-width: 0; position: relative; scroll-snap-align: start; }
+.phase55-recommendation-item .product-card { height: calc(100% - 30px); }
+.phase55-recommendation-reason { display: inline-flex; align-items: center; margin: 8px 2px 0; min-height: 22px; padding: 4px 8px; border-radius: 999px; background: #f3f5f1; color: #4e6257; font-size: 9px; font-weight: 700; letter-spacing: .04em; }
+.phase55-recommendation-rail { align-items: stretch; }
+.phase55-recommendation-health { margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(17,37,28,.1); }
+.phase55-recommendation-health-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 14px; }
+.phase55-recommendation-health-grid article { min-height: 104px; padding: 15px; border: 1px solid rgba(17,37,28,.1); border-radius: 16px; background: rgba(255,255,255,.68); display: flex; flex-direction: column; gap: 6px; }
+.phase55-recommendation-health-grid small { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.phase55-recommendation-health-grid strong { color: var(--green-900); font-size: 24px; }
+.phase55-recommendation-health-grid span { color: var(--muted); font-size: 11px; }
+.phase55-recommendation-shelves { margin-top: 12px; display: grid; gap: 8px; }
+.phase55-recommendation-shelves > div { display: grid; grid-template-columns: minmax(0,1fr) auto auto auto; gap: 12px; align-items: center; padding: 10px 12px; border: 1px solid rgba(17,37,28,.1); border-radius: 12px; background: #fff; font-size: 11px; }
+.phase55-recommendation-shelves code { color: var(--green-800); font-size: 10px; }
+.phase55-recommendation-shelves span { color: var(--muted); }
+.phase55-recommendation-shelves b { color: var(--green-900); }
+@media (max-width: 720px) {
+  .phase55-recommendation-section .section-title-row { align-items: flex-start; }
+  .phase55-recommendation-strategy { margin-top: 4px; }
+  .phase55-recommendation-health-grid { grid-template-columns: 1fr; }
+  .phase55-recommendation-shelves > div { grid-template-columns: 1fr auto; }
+  .phase55-recommendation-shelves > div span { display: none; }
+}

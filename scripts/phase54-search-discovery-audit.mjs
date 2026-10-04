@@ -32,7 +32,7 @@ requireText("server/src/services/system-health.service.ts", ["searchDiscoverySna
 requireText("client/src/components/SmartSearch.jsx", ["Did you mean", "RELATED SEARCHES", "phase54-smart-search"]);
 requireText("client/src/components/Header.jsx", ["/products/search/intelligence", "SmartSearch", "POPULAR PICKS"]);
 requireText("client/src/pages/Shop.jsx", ["searchIntelligence", "search_recovery", "No exact matches", "phase54-rescue-products"]);
-requireText("client/src/pages/admin/AdminSystem.jsx", ["PHASE 54 · DISCOVERY INTELLIGENCE CONTROL", "Search discovery health", "zeroResultRatePercent"]);
+requireText("client/src/pages/admin/AdminSystem.jsx", ["Search discovery health", "zeroResultRatePercent"]);
 requireText("client/src/styles.css", ["phase54-smart-search", "phase54-search-health", "phase54-zero-results"]);
 
 const pkg = JSON.parse(read("package.json"));
@@ -40,7 +40,7 @@ const scripts = pkg.scripts || {};
 String(scripts["search:doctor"] || "").includes("phase54-search-discovery-audit.mjs") ? pass("search:doctor command") : fail("search:doctor command");
 String(scripts["client:doctor"] || "").includes("search:doctor") ? pass("client:doctor includes Phase 54 discovery gate") : fail("client:doctor Phase 54 gate");
 String(scripts["verify:phase54"] || "").includes("performance:budget") && String(scripts["verify:phase54"] || "").includes("npm run build") ? pass("verify:phase54 command") : fail("verify:phase54 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase54") ? pass("prelaunch uses Phase 54 verification") : fail("prelaunch Phase 54 verification");
+(["verify:phase54", "verify:phase55"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 54+ verification") : fail("prelaunch Phase 54+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

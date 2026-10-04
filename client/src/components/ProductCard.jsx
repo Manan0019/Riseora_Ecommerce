@@ -7,7 +7,7 @@ import { useCompare } from "../context/CompareContext";
 import { Icon } from "./Icons";
 import ProductQuickView from "./ProductQuickView";
 
-export default function ProductCard({ product, compact = false }) {
+export default function ProductCard({ product, compact = false, onProductOpen }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const { toggle: toggleCompare, has: comparing, count: compareCount, max: compareMax } = useCompare();
@@ -65,7 +65,7 @@ export default function ProductCard({ product, compact = false }) {
   return <>
     <article className={`product-card mc-product-card phase16-product-card ${compact ? "compact" : ""}`} onMouseEnter={beginSlideshow} onMouseLeave={stopSlideshow}>
       <div className="product-image-shell">
-        <Link to={`/product/${product.slug}`} className="product-image-wrap" aria-label={product.name}>
+        <Link to={`/product/${product.slug}`} className="product-image-wrap" aria-label={product.name} onClick={() => onProductOpen?.(product)}>
           <div className="product-badge-stack">
             {product.badge && <span className="brand-badge">{product.badge}</span>}
             {discount > 0 && <span className="sale-badge">{discount}% OFF</span>}
@@ -106,7 +106,7 @@ export default function ProductCard({ product, compact = false }) {
           <p className="product-kicker">{product.category?.name || "Riseora"}</p>
           {product.reviewCount > 0 && <span className="mini-rating">★ {product.ratingAverage} <small>({product.reviewCount})</small></span>}
         </div>
-        <Link className="product-title" to={`/product/${product.slug}`}>{product.name}</Link>
+        <Link className="product-title" to={`/product/${product.slug}`} onClick={() => onProductOpen?.(product)}>{product.name}</Link>
         {!compact && <p className="product-copy">{product.shortDescription || "Thoughtful herbal care for your daily ritual."}</p>}
         {variant ? (
           <>

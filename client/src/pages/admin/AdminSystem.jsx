@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 54 · DISCOVERY INTELLIGENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery quality, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 55 · RECOMMENDATION INTELLIGENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, product recommendation engagement, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -179,6 +179,15 @@ export default function AdminSystem() {
             <section><strong>Top searches</strong>{(health.discovery?.topQueries || []).length ? (health.discovery.topQueries || []).map((item) => <div key={item.query}><span>{item.query}</span><b>{item.count}</b></div>) : <p>No search samples yet.</p>}</section>
             <section><strong>Zero-result searches</strong>{(health.discovery?.zeroResultQueries || []).length ? (health.discovery.zeroResultQueries || []).map((item) => <div key={item.query}><span>{item.query}</span><b>{item.count}</b></div>) : <p>No zero-result searches in the current window.</p>}</section>
           </div>
+        </div>
+        <div className="phase55-recommendation-health">
+          <div className="phase41-route-head"><span>Product recommendation engagement</span><small>Privacy-safe in-memory recommendation signals · rolling {health.recommendations?.windowMinutes ?? 60} minutes</small></div>
+          <div className="phase55-recommendation-health-grid">
+            <article><small>Shelf impressions</small><strong>{health.recommendations?.impressions ?? 0}</strong><span>Product-detail recommendation views</span></article>
+            <article><small>Recommendation clicks</small><strong>{health.recommendations?.clicks ?? 0}</strong><span>Product opens from recommendation shelves</span></article>
+            <article><small>Click-through rate</small><strong>{health.recommendations?.clickThroughRatePercent ?? 0}%</strong><span>{(health.recommendations?.clickThroughRatePercent ?? 0) >= 5 ? "Customers are engaging" : "Build signal with more browsing"}</span></article>
+          </div>
+          {(health.recommendations?.shelves || []).length > 0 && <div className="phase55-recommendation-shelves">{health.recommendations.shelves.map((row) => <div key={row.shelf}><code>{row.shelf}</code><span>{row.impressions} impressions</span><span>{row.clicks} clicks</span><b>{row.clickThroughRatePercent}% CTR</b></div>)}</div>}
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>

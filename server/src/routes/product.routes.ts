@@ -1,11 +1,14 @@
 import { Router } from "express";
 import { z } from "zod";
+import rateLimit from "express-rate-limit";
 import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, suggestedCorrection } from "../services/search-intelligence.service";
+import { recordRecommendationEvent, smartProductRecommendations } from "../services/product-recommendation.service";
 
 const router = Router();
+const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
 
 function publicVariant<T extends { stockQuantity?: number | null; safetyStock?: number | null }>(variant: T) {
   const availableQuantity = Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));
@@ -339,6 +342,30 @@ router.get(
         categories,
       },
     });
+  }),
+);
+
+router.post(
+  "/recommendations/event",
+  recommendationEventLimiter,
+  asyncHandler(async (req, res) => {
+    const body = z.object({
+      type: z.enum(["impression", "click"]),
+      shelf: z.string().trim().min(1).max(40).default("product-detail"),
+      sourceProductId: z.string().uuid(),
+      targetProductId: z.string().uuid().optional(),
+    }).parse(req.body);
+    recordRecommendationEvent(body);
+    return res.json({ success: true });
+  }),
+);
+
+router.get(
+  "/:slug/recommendations/similar",
+  asyncHandler(async (req, res) => {
+    const result = await smartProductRecommendations(String(req.params.slug), Number(req.query.limit || 8));
+    if (!result) return res.status(404).json({ success: false, message: "Product not found" });
+    return res.json({ success: true, data: result });
   }),
 );
 

@@ -76,6 +76,7 @@ export default function ProductDetails() {
   const [priceAlertMessage, setPriceAlertMessage] = useState("");
   const [priceAlertBusy, setPriceAlertBusy] = useState(false);
   const [related, setRelated] = useState([]);
+  const [recommendationStrategy, setRecommendationStrategy] = useState("relevance");
   const [frequentlyBought, setFrequentlyBought] = useState([]);
   const [productDeals, setProductDeals] = useState([]);
   const [recent, setRecent] = useState([]);
@@ -86,6 +87,7 @@ export default function ProductDetails() {
   const [deliveryBusy, setDeliveryBusy] = useState(false);
   const [shareMessage, setShareMessage] = useState("");
   const galleryTouchStart = useRef(null);
+  const recommendationImpressionRef = useRef("");
 
   function loadProduct() {
     return apiFetch(`/products/${slug}`).then((response) => {
@@ -101,11 +103,12 @@ export default function ProductDetails() {
       apiFetch(`/promotions/deals?productId=${encodeURIComponent(response.data.id)}`)
         .then((dealResponse) => setProductDeals(Array.isArray(dealResponse.data) ? dealResponse.data : []))
         .catch(() => setProductDeals([]));
-      if (response.data.category?.slug) {
-        apiFetch(`/products?category=${encodeURIComponent(response.data.category.slug)}&limit=8`)
-          .then((relatedResponse) => setRelated(relatedResponse.data.filter((item) => item.id !== response.data.id).slice(0, 6)))
-          .catch(() => setRelated([]));
-      }
+      apiFetch(`/products/${encodeURIComponent(response.data.slug)}/recommendations/similar?limit=8`)
+        .then((recommendationResponse) => {
+          setRelated(Array.isArray(recommendationResponse.data?.products) ? recommendationResponse.data.products : []);
+          setRecommendationStrategy(recommendationResponse.data?.strategy || "catalog");
+        })
+        .catch(() => { setRelated([]); setRecommendationStrategy("catalog"); });
     });
   }
   useEffect(() => { setError(""); loadProduct().catch((err) => setError(err.message)); }, [slug]);
@@ -115,12 +118,20 @@ export default function ProductDetails() {
     const ids = frequentlyBought.filter((item) => item.variants?.some((v) => Number(v.stockQuantity || 0) > 0)).slice(0, 2).map((item) => item.id);
     setFbtSelected(ids);
   }, [frequentlyBought]);
+  useEffect(() => {
+    if (!product?.id || related.length === 0) return;
+    const key = `${product.id}:${related.map((item) => item.id).join(",")}`;
+    if (recommendationImpressionRef.current === key) return;
+    recommendationImpressionRef.current = key;
+    apiFetch("/products/recommendations/event", { method: "POST", body: JSON.stringify({ type: "impression", shelf: "similar-products", sourceProductId: product.id }) }).catch(() => {});
+  }, [product?.id, related]);
 
   const variant = useMemo(() => product?.variants?.find((item) => item.id === variantId), [product, variantId]);
   useEffect(() => {
     if (!product || !variant) return;
     trackCommerce("view_item", { items: [{ sku: variant.sku, variantId: variant.id, productName: product.name, variantName: variant.name, price: Number(variant.sellingPrice), quantity: 1 }], value: Number(variant.sellingPrice || 0), item_category: product.category?.name || undefined });
   }, [product?.id, variant?.id]);
+  useEffect(() => { apiFetch("/rewards/public").then((response) => setRewardConfig(response.data)).catch(() => {}); }, []);
   if (error) return <div className="container page-space"><p className="alert error">{error}</p></div>;
   if (!product) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
 
@@ -158,7 +169,12 @@ export default function ProductDetails() {
   const isComparing = comparing(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
   const publicQuestions = Array.isArray(product.questions) ? product.questions : [];
-  useEffect(() => { apiFetch("/rewards/public").then((response) => setRewardConfig(response.data)).catch(() => {}); }, []);
+
+  function trackRecommendationClick(item) {
+    if (!product?.id || !item?.id) return;
+    trackEvent("recommendation_click", { shelf: "similar-products", source_product: product.slug, target_product: item.slug, strategy: recommendationStrategy });
+    apiFetch("/products/recommendations/event", { method: "POST", body: JSON.stringify({ type: "click", shelf: "similar-products", sourceProductId: product.id, targetProductId: item.id }) }).catch(() => {});
+  }
 
   const publicReviews = Array.isArray(product.reviews) ? product.reviews : [];
   const visibleReviews = reviewFilter ? publicReviews.filter((item) => Number(item.rating) === reviewFilter) : publicReviews;
@@ -327,9 +343,6 @@ export default function ProductDetails() {
 
       {inStock && fbtProducts.length > 0 && <section className="container phase3-section phase14-fbt"><div className="section-title-row"><div><p className="phase3-eyebrow">COMPLETE THE ROUTINE</p><h2>Frequently bought together</h2></div><Link to="/routine-builder">BUILD A ROUTINE</Link></div><div className="phase14-fbt-box"><div className="phase14-fbt-products"><FbtItem product={product} variant={variant} checked locked /><span className="phase14-fbt-plus">+</span>{fbtProducts.map((item, index) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); const checked = fbtSelected.includes(item.id); return <div className="phase14-fbt-fragment" key={item.id}><FbtItem product={item} variant={v} checked={checked} onChange={() => setFbtSelected((current) => checked ? current.filter((id) => id !== item.id) : [...current, item.id])} />{index < fbtProducts.length - 1 && <span className="phase14-fbt-plus">+</span>}</div>; })}</div><div className="phase14-fbt-summary"><small>{1 + fbtChosen.length} item{fbtChosen.length ? "s" : ""} selected</small><strong>₹{fbtTotal.toFixed(0)}</strong><button className="button" onClick={addFrequentlyBought}>ADD TOGETHER <Icon name="plus" size={16} /></button></div></div></section>}
 
-      {related.length > 0 && <ProductShelf title="You may also like" eyebrow="PAIR IT WITH" products={related} />}
-      {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
-
       <section className="container phase3-section phase22-qa-section" id="questions">
         <div className="section-title-row"><div><p className="phase3-eyebrow">ASK BEFORE YOU BUY</p><h2>Product questions &amp; answers</h2></div>{publicQuestions.length > 0 && <span className="phase22-qa-count">{publicQuestions.length} answered</span>}</div>
         <div className="phase22-qa-layout">
@@ -353,6 +366,9 @@ export default function ProductDetails() {
         </div>
       </section>
 
+      {related.length > 0 && <RecommendationShelf products={related} strategy={recommendationStrategy} onOpen={trackRecommendationClick} />}
+      {recent.length > 0 && <ProductShelf title="Recently viewed" eyebrow="PICK UP WHERE YOU LEFT OFF" products={recent} />}
+
       <div className="mobile-buy-bar phase3-buy-bar phase17-mobile-buy"><div className="phase17-mobile-price"><small>{variant?.name || "Select size"}</small><strong>{variant ? `₹${Number(variant.sellingPrice).toFixed(0)}` : "—"}</strong></div>{inStock ? <div className="phase17-mobile-actions"><button className="button button-secondary" onClick={addCurrent}>ADD</button><button className="button" onClick={buyCurrent}>BUY NOW</button></div> : <button className="button" onClick={() => document.getElementById("stock-alert-email")?.focus()}>NOTIFY ME</button>}</div>
     </div>
   </>;
@@ -361,6 +377,13 @@ export default function ProductDetails() {
 function FbtItem({ product, variant, checked, locked = false, onChange }) {
   const imageItem = product.images?.find((item) => item.isPrimary) || product.images?.[0];
   return <article className={checked ? "phase14-fbt-item selected" : "phase14-fbt-item"}><div className="phase14-fbt-thumb">{imageItem?.url ? <img src={mediaUrl(imageItem.url)} alt={product.name} /> : <span>R</span>}<label><input type="checkbox" checked={checked} disabled={locked} onChange={onChange} /><span>{locked ? "MAIN" : checked ? "✓" : "+"}</span></label></div><Link to={`/product/${product.slug}`}><strong>{product.name}</strong></Link><small>{variant?.name}</small><b>₹{Number(variant?.sellingPrice || 0).toFixed(0)}</b></article>;
+}
+
+function RecommendationShelf({ products, strategy, onOpen }) {
+  return <section className="container phase3-section phase55-recommendation-section">
+    <div className="section-title-row"><div><p className="phase3-eyebrow">DISCOVER MORE</p><h2>Other products you may like</h2><p className="phase55-recommendation-copy">Chosen from category, ingredients, routine fit, price range and current catalogue quality.</p></div><span className="phase55-recommendation-strategy">{strategy === "relevance" ? "SMART MATCH" : "RISEORA PICKS"}</span></div>
+    <div className="phase3-product-rail phase55-recommendation-rail">{products.map((item) => <div className="phase55-recommendation-item" key={item.id}><ProductCard product={item} compact onProductOpen={onOpen} />{item.recommendationReason && <span className="phase55-recommendation-reason">{item.recommendationReason}</span>}</div>)}</div>
+  </section>;
 }
 
 function ProductShelf({ title, eyebrow, products }) {
