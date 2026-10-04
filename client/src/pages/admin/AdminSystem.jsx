@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 53 · STOREFRONT PERFORMANCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 54 · DISCOVERY INTELLIGENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery quality, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -167,6 +167,18 @@ export default function AdminSystem() {
           {(health.runtime?.webExperience?.routes || []).length > 0 && <div className="phase53-route-performance">
             {(health.runtime.webExperience.routes || []).map((row) => <div key={row.route}><code>{row.route}</code><span>{row.samples} sample{row.samples === 1 ? "" : "s"}</span><span>LCP {row.lcpP75Ms} ms</span><b>CLS {row.clsP75}</b></div>)}
           </div>}
+        </div>
+        <div className="phase54-search-health">
+          <div className="phase41-route-head"><span>Search discovery health</span><small>Privacy-safe in-memory search signals · rolling {health.discovery?.windowMinutes ?? 60} minutes</small></div>
+          <div className="phase54-search-health-grid">
+            <article><small>Searches</small><strong>{health.discovery?.searchCount ?? 0}</strong><span>Header + shop discovery requests</span></article>
+            <article><small>Zero-result rate</small><strong>{health.discovery?.zeroResultRatePercent ?? 0}%</strong><span>{(health.discovery?.zeroResultRatePercent ?? 0) > 20 ? "Review unmatched terms" : "Healthy discovery coverage"}</span></article>
+            <article><small>Corrections</small><strong>{health.discovery?.correctionCount ?? 0}</strong><span>{health.discovery?.correctionRatePercent ?? 0}% received typo recovery</span></article>
+          </div>
+          <div className="phase54-search-lists">
+            <section><strong>Top searches</strong>{(health.discovery?.topQueries || []).length ? (health.discovery.topQueries || []).map((item) => <div key={item.query}><span>{item.query}</span><b>{item.count}</b></div>) : <p>No search samples yet.</p>}</section>
+            <section><strong>Zero-result searches</strong>{(health.discovery?.zeroResultQueries || []).length ? (health.discovery.zeroResultQueries || []).map((item) => <div key={item.query}><span>{item.query}</span><b>{item.count}</b></div>) : <p>No zero-result searches in the current window.</p>}</section>
+          </div>
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>

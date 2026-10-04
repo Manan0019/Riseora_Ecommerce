@@ -8,6 +8,7 @@ import { isRuntimeDraining, runtimeObservabilitySnapshot } from "./runtime-obser
 import { databaseSchemaStatus } from "./database-readiness.service";
 import { systemJobsSnapshot } from "./system-job.service";
 import { productionConfigurationStatus, releaseMetadata } from "./production-readiness.service";
+import { searchDiscoverySnapshot } from "./search-intelligence.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -68,6 +69,7 @@ export async function adminSystemHealth() {
   const runtime = runtimeObservabilitySnapshot();
   const configuration = productionConfigurationStatus();
   const release = releaseMetadata();
+  const discovery = searchDiscoverySnapshot();
 
   return {
     status: database.ok && schema.ok && configuration.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
@@ -99,6 +101,7 @@ export async function adminSystemHealth() {
     },
     release,
     runtime,
+    discovery,
     timestamp: new Date().toISOString(),
   };
 }

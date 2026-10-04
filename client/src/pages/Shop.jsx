@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Icon } from "../components/Icons";
 import ProductCard from "../components/ProductCard";
+import SmartSearch from "../components/SmartSearch";
 import Seo from "../components/Seo";
 import { trackEvent } from "../analytics";
 
@@ -23,6 +24,7 @@ export default function Shop() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [searchIntelligence, setSearchIntelligence] = useState(null);
   const lastTrackedSearch = useRef("");
   const hydrated = useRef(false);
 
@@ -58,10 +60,29 @@ export default function Shop() {
     return () => { cancelled = true; clearTimeout(timer); };
   }, [query]);
   useEffect(() => { const term = search.trim().toLowerCase(); if (loading || term.length < 2 || lastTrackedSearch.current === term) return; lastTrackedSearch.current = term; trackEvent("search", { search_term: term.slice(0, 100), results_count: products.length }); }, [search, loading, products.length]);
+  useEffect(() => {
+    const term = search.trim();
+    if (term.length < 2) { setSearchIntelligence(null); return undefined; }
+    if (loading) return undefined;
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      apiFetch(`/products/search/intelligence?q=${encodeURIComponent(term)}&limit=6&source=shop`)
+        .then((response) => { if (!cancelled) setSearchIntelligence(response.data || null); })
+        .catch(() => { if (!cancelled) setSearchIntelligence(null); });
+    }, 80);
+    return () => { cancelled = true; window.clearTimeout(timer); };
+  }, [search, loading, products.length]);
 
   const activeFilterCount = [category, inStock, minPrice !== "", maxPrice !== "", badge, suitableFor, ingredient].filter(Boolean).length;
   const activeCategory = categories.find((item) => item.slug === category);
   function clearFilters() { setCategory(""); setInStock(false); setMinPrice(""); setMaxPrice(""); setBadge(""); setSuitableFor(""); setIngredient(""); }
+  function resetDiscovery() { setSearch(""); clearFilters(); setSearchIntelligence(null); }
+  function applySearchTerm(term) {
+    const next = String(term || "").trim();
+    if (!next) return;
+    trackEvent("search_recovery", { from_term: search.trim().slice(0, 100), to_term: next.slice(0, 100), source: "shop" });
+    setSearch(next);
+  }
   const activeChips = [
     category && { key:"category", label: activeCategory?.name || category, clear:()=>setCategory("") },
     suitableFor && { key:"suitable", label:`For: ${suitableFor}`, clear:()=>setSuitableFor("") },
@@ -92,7 +113,12 @@ export default function Shop() {
 
       <div className="shop-result-row"><strong>{loading ? "Finding the best matches…" : `${products.length} ${products.length === 1 ? "product" : "products"}`}</strong>{search.trim() && !loading && <span className="phase35-result-context">for “{search.trim()}”</span>}</div>
       {error && <p className="alert error">{error}</p>}
-      {!loading && !error && products.length === 0 && <div className="empty-state premium-empty"><span className="empty-icon"><Icon name="search" /></span><h3>No matching products</h3><p>Try fewer words or remove one of the filters.</p><button className="button button-secondary" onClick={clearFilters}>Clear filters</button></div>}
+      {!loading && !error && products.length > 0 && search.trim().length >= 2 && <SmartSearch intelligence={searchIntelligence} query={search} compact onSearch={applySearchTerm} />}
+      {!loading && !error && products.length === 0 && <section className="phase54-zero-results">
+        <div className="empty-state premium-empty"><span className="empty-icon"><Icon name="search" /></span><h3>No exact matches</h3><p>Riseora can broaden the search, correct a likely spelling or take you back to the full catalogue.</p><div className="phase54-zero-actions"><button className="button button-secondary" onClick={clearFilters}>Clear filters</button><button className="link-button" onClick={resetDiscovery}>View all products</button></div></div>
+        <SmartSearch intelligence={searchIntelligence} query={search} onSearch={applySearchTerm} />
+        {((searchIntelligence?.products?.length || 0) > 0 || (searchIntelligence?.rescueProducts?.length || 0) > 0) && <div className="phase54-rescue-products"><div><small>{searchIntelligence?.products?.length ? "POSSIBLE MATCHES" : "POPULAR PRODUCTS"}</small><strong>{searchIntelligence?.products?.length ? `Products matching “${searchIntelligence.didYouMean || search.trim()}”` : "Explore these while you refine your search"}</strong></div><div className="product-grid shop-grid">{(searchIntelligence?.products?.length ? searchIntelligence.products : searchIntelligence.rescueProducts).slice(0,4).map((product) => <ProductCard key={product.id} product={product} compact />)}</div></div>}
+      </section>}
       <div className="product-grid shop-grid">{products.map((product) => <ProductCard key={product.id} product={product} compact />)}</div>
     </div>
   </>;

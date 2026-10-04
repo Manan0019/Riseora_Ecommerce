@@ -9,9 +9,11 @@ import { Icon } from "./Icons";
 import BrandLogo from "./BrandLogo";
 import { useStore } from "../context/StoreContext";
 import NotificationBell from "./NotificationBell";
+import SmartSearch from "./SmartSearch";
 
 const SEARCH_KEY = "riseora_recent_searches";
 const RECENT_PRODUCT_KEY = "riseora_recent_products";
+const EMPTY_INTELLIGENCE = { products: [], categories: [], didYouMean: null, relatedTerms: [], resultCount: 0, rescueProducts: [] };
 
 function readJson(key, fallback = []) {
   if (typeof window === "undefined") return fallback;
@@ -34,7 +36,7 @@ export default function Header() {
   const { store } = useStore();
   const [searchOpen, setSearchOpen] = useState(false);
   const [search, setSearch] = useState("");
-  const [suggestions, setSuggestions] = useState({ products: [], categories: [] });
+  const [suggestions, setSuggestions] = useState(EMPTY_INTELLIGENCE);
   const [searching, setSearching] = useState(false);
   const [recentSearches, setRecentSearches] = useState([]);
   const [recentProducts, setRecentProducts] = useState([]);
@@ -43,7 +45,7 @@ export default function Header() {
   useEffect(() => {
     if (!searchOpen) {
       setSearch("");
-      setSuggestions({ products: [], categories: [] });
+      setSuggestions(EMPTY_INTELLIGENCE);
       setSearching(false);
       return;
     }
@@ -55,16 +57,16 @@ export default function Header() {
     if (!searchOpen) return undefined;
     const query = search.trim();
     if (query.length < 2) {
-      setSuggestions({ products: [], categories: [] });
+      setSuggestions(EMPTY_INTELLIGENCE);
       setSearching(false);
       return undefined;
     }
     let cancelled = false;
     setSearching(true);
     const timer = window.setTimeout(() => {
-      apiFetch(`/products/search/suggestions?q=${encodeURIComponent(query)}&limit=6`)
-        .then((response) => { if (!cancelled) setSuggestions(response.data || { products: [], categories: [] }); })
-        .catch(() => { if (!cancelled) setSuggestions({ products: [], categories: [] }); })
+      apiFetch(`/products/search/intelligence?q=${encodeURIComponent(query)}&limit=6&source=header`)
+        .then((response) => { if (!cancelled) setSuggestions(response.data || EMPTY_INTELLIGENCE); })
+        .catch(() => { if (!cancelled) setSuggestions(EMPTY_INTELLIGENCE) })
         .finally(() => { if (!cancelled) setSearching(false); });
     }, 180);
     return () => { cancelled = true; window.clearTimeout(timer); };
@@ -90,7 +92,7 @@ export default function Header() {
   }
 
   const hasQuery = search.trim().length >= 2;
-  const hasSuggestions = suggestions.products?.length > 0 || suggestions.categories?.length > 0;
+  const hasSuggestions = suggestions.products?.length > 0 || suggestions.categories?.length > 0 || suggestions.didYouMean || suggestions.relatedTerms?.length > 0 || suggestions.rescueProducts?.length > 0;
 
   return (
     <>
@@ -131,7 +133,8 @@ export default function Header() {
             {searching && <div className="phase16-searching"><span /><span /><span /> Searching Riseora…</div>}
             {!searching && hasSuggestions && <>
               {suggestions.categories?.length > 0 && <section><div className="phase16-search-section-head"><span>CATEGORIES</span></div><div className="phase16-category-results">{suggestions.categories.map((category) => <Link key={category.id} to={`/shop?category=${category.slug}`} onClick={closeSearch}><Icon name="tag" size={15} />{category.name}<Icon name="arrow" size={13} /></Link>)}</div></section>}
-              {suggestions.products?.length > 0 && <section><div className="phase16-search-section-head"><span>PRODUCTS</span><button type="button" onClick={submitSearch}>See all results</button></div><div className="phase16-product-results">{suggestions.products.map((product) => { const image = product.images?.find((row) => row.isPrimary) || product.images?.[0]; const variant = product.variants?.[0]; return <Link key={product.id} to={`/product/${product.slug}`} onClick={() => { rememberSearch(search); closeSearch(); }}><div className="phase16-search-thumb">{image?.url ? <img src={mediaUrl(image.url)} alt="" /> : <span>R</span>}</div><div><small>{product.category?.name || "Riseora"}</small><strong>{product.name}</strong>{variant && <b>₹{Number(variant.sellingPrice || 0).toFixed(0)}</b>}</div><Icon name="arrow" size={15} /></Link>; })}</div></section>}
+              {(suggestions.products?.length > 0 || suggestions.rescueProducts?.length > 0) && <section><div className="phase16-search-section-head"><span>{suggestions.products?.length ? "PRODUCTS" : "POPULAR PICKS"}</span>{suggestions.products?.length ? <button type="button" onClick={submitSearch}>See all results</button> : <button type="button" onClick={() => { closeSearch(); navigate("/shop"); }}>Browse all</button>}</div><div className="phase16-product-results">{(suggestions.products?.length ? suggestions.products : suggestions.rescueProducts).map((product) => { const image = product.images?.find((row) => row.isPrimary) || product.images?.[0]; const variant = product.variants?.[0]; return <Link key={product.id} to={`/product/${product.slug}`} onClick={() => { rememberSearch(search); closeSearch(); }}><div className="phase16-search-thumb">{image?.url ? <img src={mediaUrl(image.url)} alt="" /> : <span>R</span>}</div><div><small>{product.category?.name || "Riseora"}</small><strong>{product.name}</strong>{variant && <b>₹{Number(variant.sellingPrice || 0).toFixed(0)}</b>}</div><Icon name="arrow" size={15} /></Link>; })}</div></section>}
+              <SmartSearch intelligence={suggestions} query={search} compact onSearch={useRecent} />
             </>}
             {!searching && !hasSuggestions && <div className="phase16-search-empty"><Icon name="search" size={26} /><strong>No quick matches</strong><p>Press Search to look through the full catalogue for “{search.trim()}”.</p><button className="button button-secondary" type="button" onClick={() => { rememberSearch(search); closeSearch(); navigate(`/shop?search=${encodeURIComponent(search.trim())}`); }}>SEARCH ALL PRODUCTS</button></div>}
           </div>}

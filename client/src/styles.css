@@ -2910,3 +2910,40 @@ textarea { min-height: 105px; resize: vertical; }
   .phase53-route-performance > div { grid-template-columns: 1fr auto; }
   .phase53-route-performance > div span:nth-of-type(2), .phase53-route-performance > div b { display: none; }
 }
+
+/* Phase 54 — Search Intelligence, Zero-Result Recovery & Discovery Analytics */
+.phase54-smart-search { margin: 14px 0; padding: 16px; border: 1px solid #dce6de; border-radius: 16px; background: linear-gradient(135deg, rgba(246,250,246,.96), rgba(255,252,246,.96)); display: grid; gap: 12px; }
+.phase54-smart-search.compact { margin: 10px 0 0; padding: 12px 14px; }
+.phase54-correction { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #52645a; font-size: 12px; }
+.phase54-correction span { font-weight: 700; }
+.phase54-correction button { border: 0; padding: 0; background: transparent; color: var(--green-800); font: 700 16px/1.2 Georgia, serif; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.phase54-related-searches { display: grid; gap: 8px; }
+.phase54-related-searches > small { color: var(--green-700); font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.phase54-related-searches > div { display: flex; flex-wrap: wrap; gap: 7px; }
+.phase54-related-searches button { min-height: 31px; padding: 6px 10px; border: 1px solid #d6e1d8; border-radius: 999px; background: #fff; color: #345145; font-size: 10px; font-weight: 750; cursor: pointer; transition: .18s ease; }
+.phase54-related-searches button:hover { border-color: var(--green-700); background: #edf5ef; transform: translateY(-1px); }
+.phase54-zero-results { display: grid; gap: 16px; }
+.phase54-zero-actions { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+.phase54-rescue-products { margin-top: 4px; padding-top: 18px; border-top: 1px solid #e3e9e3; display: grid; gap: 14px; }
+.phase54-rescue-products > div:first-child { display: grid; gap: 4px; }
+.phase54-rescue-products > div:first-child small { color: var(--green-700); font-size: 9px; font-weight: 900; letter-spacing: .14em; }
+.phase54-rescue-products > div:first-child strong { color: var(--green-900); font: 700 20px/1.2 Georgia, serif; }
+.phase54-search-health { margin-top: 22px; padding-top: 20px; border-top: 1px solid rgba(17,37,28,.1); }
+.phase54-search-health-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 12px; margin-top: 14px; }
+.phase54-search-health-grid article { min-height: 104px; padding: 15px; border: 1px solid rgba(17,37,28,.1); border-radius: 16px; background: rgba(255,255,255,.68); display: flex; flex-direction: column; gap: 6px; }
+.phase54-search-health-grid small { color: var(--muted); text-transform: uppercase; letter-spacing: .08em; font-size: 10px; }
+.phase54-search-health-grid strong { color: var(--green-900); font-size: 24px; }
+.phase54-search-health-grid span { color: var(--muted); font-size: 11px; }
+.phase54-search-lists { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px; margin-top: 12px; }
+.phase54-search-lists section { padding: 14px; border: 1px solid rgba(17,37,28,.1); border-radius: 14px; background: #fff; }
+.phase54-search-lists section > strong { display: block; margin-bottom: 9px; color: var(--green-900); font-size: 12px; }
+.phase54-search-lists section > div { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 7px 0; border-top: 1px solid #edf0ed; }
+.phase54-search-lists section > div span { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #44564c; font-size: 11px; }
+.phase54-search-lists section > div b { color: var(--green-800); font-size: 11px; }
+.phase54-search-lists p { margin: 0; color: var(--muted); font-size: 11px; }
+@media (max-width: 820px) {
+  .phase54-smart-search { padding: 13px; }
+  .phase54-related-searches > div { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding-bottom: 2px; }
+  .phase54-related-searches button { flex: 0 0 auto; }
+  .phase54-search-health-grid, .phase54-search-lists { grid-template-columns: 1fr; }
+}

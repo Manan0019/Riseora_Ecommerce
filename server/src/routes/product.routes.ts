@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
+import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, suggestedCorrection } from "../services/search-intelligence.service";
 
 const router = Router();
 
@@ -72,6 +73,49 @@ function relevanceScore(product: any, query: string) {
   }
   if (product.isFeatured) score += 2;
   return score;
+}
+
+
+function searchWhere(query: string) {
+  const terms = query.split(/\s+/).map((term) => term.trim()).filter(Boolean).slice(0, 5);
+  return terms.length ? { AND: terms.map((term) => ({ OR: searchClauses(term) })) } : {};
+}
+
+async function searchPreviewProducts(query: string, limit: number) {
+  const rows = await prisma.product.findMany({
+    where: { isActive: true, ...searchWhere(query) },
+    include: {
+      category: { select: { id: true, name: true, slug: true } },
+      images: { orderBy: { sortOrder: "asc" }, take: 2 },
+      variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
+    },
+    orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+    take: Math.max(limit * 4, 20),
+  });
+  return rows
+    .sort((a: any, b: any) => relevanceScore(b, query) - relevanceScore(a, query))
+    .slice(0, limit)
+    .map((product: any) => ({
+      id: product.id, slug: product.slug, name: product.name, shortDescription: product.shortDescription, badge: product.badge,
+      category: product.category, images: product.images, variants: product.variants.map(publicVariant),
+    }));
+}
+
+async function searchFallbackProducts(limit: number) {
+  const rows = await prisma.product.findMany({
+    where: { isActive: true },
+    include: {
+      category: { select: { id: true, name: true, slug: true } },
+      images: { orderBy: { sortOrder: "asc" }, take: 2 },
+      variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
+    },
+    orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+    take: Math.max(1, Math.min(8, limit)),
+  });
+  return rows.map((product: any) => ({
+    id: product.id, slug: product.slug, name: product.name, shortDescription: product.shortDescription, badge: product.badge,
+    category: product.category, images: product.images, variants: product.variants.map(publicVariant),
+  }));
 }
 
 router.get(
@@ -185,6 +229,60 @@ router.get(
     });
     const map = new Map(products.map((product) => [product.id, withRating(product)]));
     return res.json({ success: true, data: ids.map((id) => map.get(id)).filter(Boolean) });
+  }),
+);
+
+router.get(
+  "/search/intelligence",
+  asyncHandler(async (req, res) => {
+    const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    const source = typeof req.query.source === "string" ? req.query.source.trim().slice(0, 24) : "search";
+    const limit = Math.min(8, Math.max(3, Number(req.query.limit || 6)));
+    if (query.length < 2) {
+      return res.json({ success: true, data: { products: [], categories: [], didYouMean: null, relatedTerms: [], resultCount: 0, rescueProducts: [] } });
+    }
+
+    const [dictionaryProducts, categoryRows, suitabilityRows] = await Promise.all([
+      prisma.product.findMany({
+        where: { isActive: true },
+        select: { name: true, ingredients: true, suitableFor: true, category: { select: { name: true } }, variants: { where: { isActive: true }, select: { sku: true }, take: 4 } },
+        orderBy: { createdAt: "desc" },
+        take: 300,
+      }),
+      prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true, imageUrl: true }, orderBy: { name: "asc" } }),
+      prisma.suitabilityOption.findMany({ where: { isActive: true }, select: { name: true }, orderBy: { sortOrder: "asc" } }),
+    ]);
+
+    const dictionaryValues: unknown[] = [];
+    for (const product of dictionaryProducts) {
+      dictionaryValues.push(product.name, product.category?.name, ...listTokens(product.ingredients), ...listTokens(product.suitableFor));
+      for (const variant of product.variants || []) dictionaryValues.push(variant.sku);
+    }
+    for (const category of categoryRows) dictionaryValues.push(category.name);
+    for (const option of suitabilityRows) dictionaryValues.push(option.name);
+    const dictionary = buildSearchDictionary(dictionaryValues);
+
+    let products = await searchPreviewProducts(query, limit);
+    const correction = products.length === 0 ? suggestedCorrection(query, dictionary) : null;
+    if (!products.length && correction) products = await searchPreviewProducts(correction, limit);
+
+    const categoryQuery = correction || query;
+    const categoryTerms = categoryQuery.toLowerCase().split(/\s+/).filter(Boolean);
+    const categories = categoryRows
+      .map((category) => ({ category, score: categoryTerms.reduce((score, term) => score + (category.name.toLowerCase().includes(term) ? 1 : 0), 0) }))
+      .filter((row) => row.score > 0)
+      .sort((a, b) => b.score - a.score || a.category.name.localeCompare(b.category.name))
+      .slice(0, 4)
+      .map((row) => row.category);
+
+    const relatedTerms = relatedSearchTerms(correction || query, dictionary, 7);
+    const rescueProducts = products.length ? [] : await searchFallbackProducts(4);
+    recordSearchObservation({ query, source, resultCount: products.length, correctedQuery: correction });
+
+    return res.json({
+      success: true,
+      data: { products, categories, didYouMean: correction, relatedTerms, resultCount: products.length, rescueProducts },
+    });
   }),
 );
 
