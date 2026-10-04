@@ -5,7 +5,7 @@ import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, suggestedCorrection } from "../services/search-intelligence.service";
-import { recordRecommendationEvent, smartProductRecommendations } from "../services/product-recommendation.service";
+import { recordRecommendationEvent, smartCartRecommendations, smartProductRecommendations } from "../services/product-recommendation.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -346,11 +346,24 @@ router.get(
 );
 
 router.post(
+  "/recommendations/cart",
+  recommendationEventLimiter,
+  asyncHandler(async (req, res) => {
+    const body = z.object({
+      productIds: z.array(z.string().uuid()).min(1).max(20),
+      limit: z.number().int().min(3).max(8).optional(),
+    }).parse(req.body);
+    const result = await smartCartRecommendations(body.productIds, body.limit || 6);
+    return res.json({ success: true, data: result });
+  }),
+);
+
+router.post(
   "/recommendations/event",
   recommendationEventLimiter,
   asyncHandler(async (req, res) => {
     const body = z.object({
-      type: z.enum(["impression", "click"]),
+      type: z.enum(["impression", "click", "add"]),
       shelf: z.string().trim().min(1).max(40).default("product-detail"),
       sourceProductId: z.string().uuid(),
       targetProductId: z.string().uuid().optional(),

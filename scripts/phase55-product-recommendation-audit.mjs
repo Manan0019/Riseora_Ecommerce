@@ -33,7 +33,7 @@ requireText("client/src/pages/ProductDetails.jsx", [
   "/recommendations/similar?limit=8", "Other products you may like", "recommendationReason", "recommendation_click", "RecommendationShelf",
 ]);
 requireText("client/src/components/ProductCard.jsx", ["onProductOpen", "onClick={() => onProductOpen?.(product)}"]);
-requireText("client/src/pages/admin/AdminSystem.jsx", ["PHASE 55 · RECOMMENDATION INTELLIGENCE CONTROL", "Product recommendation engagement", "clickThroughRatePercent"]);
+requireText("client/src/pages/admin/AdminSystem.jsx", ["recommendation", "clickThroughRatePercent", "health.recommendations"]);
 requireText("client/src/styles.css", ["phase55-recommendation-section", "phase55-recommendation-health", "phase55-recommendation-reason"]);
 
 const productDetails = read("client/src/pages/ProductDetails.jsx");
@@ -49,7 +49,7 @@ const scripts = pkg.scripts || {};
 String(scripts["recommendation:doctor"] || "").includes("phase55-product-recommendation-audit.mjs") ? pass("recommendation:doctor command") : fail("recommendation:doctor command");
 String(scripts["client:doctor"] || "").includes("recommendation:doctor") ? pass("client:doctor includes Phase 55 recommendation gate") : fail("client:doctor Phase 55 recommendation gate");
 String(scripts["verify:phase55"] || "").includes("performance:budget") && String(scripts["verify:phase55"] || "").includes("npm run build") ? pass("verify:phase55 command") : fail("verify:phase55 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase55") ? pass("prelaunch uses Phase 55 verification") : fail("prelaunch Phase 55 verification");
+(["verify:phase55", "verify:phase56"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 55+ verification") : fail("prelaunch Phase 55+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

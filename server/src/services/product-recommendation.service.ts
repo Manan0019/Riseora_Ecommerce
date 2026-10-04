@@ -3,7 +3,7 @@ import { prisma } from "../config/prisma";
 const RECOMMENDATION_WINDOW_MS = 60 * 60 * 1000;
 const MAX_EVENTS = 2000;
 
-type RecommendationEventType = "impression" | "click";
+type RecommendationEventType = "impression" | "click" | "add";
 type RecommendationEvent = {
   at: number;
   type: RecommendationEventType;
@@ -30,22 +30,27 @@ export function recommendationEngagementSnapshot() {
   trimEvents();
   const impressions = recommendationEvents.filter((event) => event.type === "impression");
   const clicks = recommendationEvents.filter((event) => event.type === "click");
-  const shelfMap = new Map<string, { shelf: string; impressions: number; clicks: number }>();
+  const adds = recommendationEvents.filter((event) => event.type === "add");
+  const shelfMap = new Map<string, { shelf: string; impressions: number; clicks: number; adds: number }>();
   for (const event of recommendationEvents) {
-    const row = shelfMap.get(event.shelf) || { shelf: event.shelf, impressions: 0, clicks: 0 };
+    const row = shelfMap.get(event.shelf) || { shelf: event.shelf, impressions: 0, clicks: 0, adds: 0 };
     if (event.type === "impression") row.impressions += 1;
     if (event.type === "click") row.clicks += 1;
+    if (event.type === "add") row.adds += 1;
     shelfMap.set(event.shelf, row);
   }
   const shelves = [...shelfMap.values()].map((row) => ({
     ...row,
     clickThroughRatePercent: row.impressions ? Number(((row.clicks / row.impressions) * 100).toFixed(1)) : 0,
-  })).sort((a, b) => b.impressions - a.impressions || b.clicks - a.clicks);
+    addToCartRatePercent: row.impressions ? Number(((row.adds / row.impressions) * 100).toFixed(1)) : 0,
+  })).sort((a, b) => b.impressions - a.impressions || b.adds - a.adds || b.clicks - a.clicks);
   return {
     windowMinutes: Math.round(RECOMMENDATION_WINDOW_MS / 60000),
     impressions: impressions.length,
     clicks: clicks.length,
+    adds: adds.length,
     clickThroughRatePercent: impressions.length ? Number(((clicks.length / impressions.length) * 100).toFixed(1)) : 0,
+    addToCartRatePercent: impressions.length ? Number(((adds.length / impressions.length) * 100).toFixed(1)) : 0,
     shelves,
   };
 }
@@ -185,3 +190,133 @@ export async function smartProductRecommendations(slug: string, requestedLimit =
     strategy: selected.some((product: any) => product.recommendationReason !== "Popular Riseora pick" && product.recommendationReason !== "You may also like") ? "relevance" : "catalog",
   };
 }
+
+function mergeTokens(products: any[], field: "ingredients" | "suitableFor" | "benefits") {
+  const merged = new Set<string>();
+  for (const product of products) for (const token of tokens(product?.[field])) merged.add(token);
+  return merged;
+}
+
+function cartRecommendationReason({ coPurchaseCount, suitabilityOverlap, ingredientOverlap, sameCategory, categoryName, affordable, featured }: {
+  coPurchaseCount: number;
+  suitabilityOverlap: number;
+  ingredientOverlap: number;
+  sameCategory: boolean;
+  categoryName?: string | null;
+  affordable: boolean;
+  featured: boolean;
+}) {
+  if (coPurchaseCount >= 2) return "Frequently paired with your bag";
+  if (suitabilityOverlap >= 1) return "Complements your routine";
+  if (ingredientOverlap >= 2) return "Pairs with similar ingredients";
+  if (sameCategory) return categoryName ? `More from ${categoryName}` : "More from this category";
+  if (affordable) return "Easy routine add-on";
+  if (featured) return "Popular Riseora pick";
+  return "Complete your routine";
+}
+
+export async function smartCartRecommendations(productIds: string[], requestedLimit = 6) {
+  const sourceIds = [...new Set((Array.isArray(productIds) ? productIds : []).map((id) => String(id || "").trim()).filter(Boolean))].slice(0, 20);
+  const limit = Math.max(3, Math.min(8, Number(requestedLimit || 6)));
+  if (!sourceIds.length) return { sourceProductIds: [], products: [], strategy: "empty", explanation: "Add products to your bag to unlock suggestions." };
+
+  const include = {
+    category: true,
+    images: { orderBy: { sortOrder: "asc" as const } },
+    variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" as const } },
+    reviews: { where: { isApproved: true }, select: { rating: true } },
+  };
+
+  const [sources, recentOrders, candidates] = await Promise.all([
+    prisma.product.findMany({ where: { id: { in: sourceIds }, isActive: true }, include }),
+    prisma.order.findMany({
+      where: { status: "DELIVERED", items: { some: { variant: { productId: { in: sourceIds } } } } },
+      select: { items: { select: { variant: { select: { productId: true } } } } },
+      orderBy: { createdAt: "desc" },
+      take: 220,
+    }),
+    prisma.product.findMany({
+      where: { isActive: true, id: { notIn: sourceIds } },
+      include,
+      orderBy: [{ isFeatured: "desc" }, { createdAt: "desc" }],
+      take: 160,
+    }),
+  ]);
+
+  if (!sources.length) return { sourceProductIds: sourceIds, products: [], strategy: "empty", explanation: "Your bag products are no longer available." };
+
+  const coPurchaseCounts = new Map<string, number>();
+  for (const order of recentOrders) {
+    const orderProductIds = new Set((order.items || []).map((item: any) => item.variant?.productId).filter(Boolean));
+    if (![...orderProductIds].some((id) => sourceIds.includes(id))) continue;
+    for (const productId of orderProductIds) {
+      if (sourceIds.includes(productId)) continue;
+      coPurchaseCounts.set(productId, (coPurchaseCounts.get(productId) || 0) + 1);
+    }
+  }
+
+  const sourceCategories = new Set(sources.map((product: any) => product.categoryId).filter(Boolean));
+  const sourceIngredients = mergeTokens(sources, "ingredients");
+  const sourceSuitable = mergeTokens(sources, "suitableFor");
+  const sourceBenefits = mergeTokens(sources, "benefits");
+  const sourcePrices = sources.map(availablePrice).filter((value) => value > 0);
+  const averageSourcePrice = sourcePrices.length ? sourcePrices.reduce((sum, value) => sum + value, 0) / sourcePrices.length : 0;
+
+  const scored = candidates.map((product: any) => {
+    const inStock = (product.variants || []).some((variant: any) => Number(variant.stockQuantity || 0) > Number(variant.safetyStock || 0));
+    const coPurchaseCount = coPurchaseCounts.get(product.id) || 0;
+    const sameCategory = sourceCategories.has(product.categoryId);
+    const ingredientOverlap = overlap(sourceIngredients, tokens(product.ingredients));
+    const suitabilityOverlap = overlap(sourceSuitable, tokens(product.suitableFor));
+    const benefitOverlap = overlap(sourceBenefits, tokens(product.benefits));
+    const candidatePrice = availablePrice(product);
+    const affordable = averageSourcePrice > 0 && candidatePrice > 0 && candidatePrice <= Math.max(499, averageSourcePrice * 1.15);
+    const averageRating = rating(product);
+
+    let score = 0;
+    score += Math.min(72, coPurchaseCount * 18);
+    if (sameCategory) score += 18;
+    score += Math.min(24, ingredientOverlap * 8);
+    score += Math.min(30, suitabilityOverlap * 10);
+    score += Math.min(12, benefitOverlap * 4);
+    if (affordable) score += 8;
+    if (product.isFeatured) score += 7;
+    if (inStock) score += 10;
+    else score -= 100;
+    score += Math.min(8, averageRating * 1.6);
+
+    return {
+      product, score, coPurchaseCount,
+      reason: cartRecommendationReason({
+        coPurchaseCount, suitabilityOverlap, ingredientOverlap, sameCategory,
+        categoryName: product.category?.name, affordable, featured: Boolean(product.isFeatured),
+      }),
+    };
+  }).filter((row) => row.score > 0);
+
+  scored.sort((a, b) => b.score - a.score || b.coPurchaseCount - a.coPurchaseCount || String(a.product.name).localeCompare(String(b.product.name)));
+  const selected = scored.slice(0, limit).map(({ product, reason, coPurchaseCount }) => {
+    const ratings = product.reviews || [];
+    const ratingAverage = ratings.length ? ratings.reduce((sum: number, review: any) => sum + Number(review.rating || 0), 0) / ratings.length : 0;
+    const { reviews: _reviews, ...rest } = product;
+    return {
+      ...rest,
+      variants: (rest.variants || []).map(publicVariant),
+      ratingAverage: Number(ratingAverage.toFixed(1)),
+      reviewCount: ratings.length,
+      recommendationReason: reason,
+      recommendationSignal: coPurchaseCount > 0 ? "order-history" : "catalog-fit",
+    };
+  });
+
+  const usesOrderHistory = selected.some((product: any) => product.recommendationSignal === "order-history");
+  return {
+    sourceProductIds: sources.map((product: any) => product.id),
+    products: selected,
+    strategy: usesOrderHistory ? "orders+relevance" : "relevance",
+    explanation: usesOrderHistory
+      ? "Chosen from real purchase patterns plus routine fit."
+      : "Chosen from category, ingredient and routine fit.",
+  };
+}
+

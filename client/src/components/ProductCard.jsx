@@ -7,7 +7,7 @@ import { useCompare } from "../context/CompareContext";
 import { Icon } from "./Icons";
 import ProductQuickView from "./ProductQuickView";
 
-export default function ProductCard({ product, compact = false, onProductOpen }) {
+export default function ProductCard({ product, compact = false, onProductOpen, onAddToCart }) {
   const { addItem } = useCart();
   const { toggle, has } = useWishlist();
   const { toggle: toggleCompare, has: comparing, count: compareCount, max: compareMax } = useCompare();
@@ -111,7 +111,7 @@ export default function ProductCard({ product, compact = false, onProductOpen })
         {variant ? (
           <>
             <div className="product-price-row"><strong>₹{sellingPrice.toFixed(0)}</strong>{mrp > sellingPrice && <del>₹{mrp.toFixed(0)}</del>}{discount > 0 && <span>{discount}% off</span>}</div>
-            <button className="card-add-button" disabled={!inStock} onClick={() => inStock && addItem(product, variant, 1)}>{inStock ? <>ADD TO CART <Icon name="plus" size={16} strokeWidth={2.2} /></> : "SOLD OUT"}</button>
+            <button className="card-add-button" disabled={!inStock} onClick={() => { if (!inStock) return; addItem(product, variant, 1); onAddToCart?.(product, variant); }}>{inStock ? <>ADD TO CART <Icon name="plus" size={16} strokeWidth={2.2} /></> : "SOLD OUT"}</button>
           </>
         ) : <p className="muted product-unavailable">No active variant</p>}
       </div>
