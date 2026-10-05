@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase49` PASS
+- `verify:phase62` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists

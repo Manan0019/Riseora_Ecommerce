@@ -27,13 +27,13 @@ function run(command, args, env = productionEnv) {
   if (result.status !== 0) process.exit(result.status || 1);
 }
 
-console.log("Phase 59 safe production release preparation");
+console.log("Phase 62 safe production release preparation");
 console.log("Order: doctor -> verified backup -> committed migrations -> Prisma -> schema check -> verification/build\n");
 run("node", ["scripts/phase49-release-doctor.mjs"]);
 run("npm", ["run", "db:backup", "--", "--env=server/.env.production"]);
 run("npm", ["run", "db:deploy"]);
 run("npm", ["run", "db:generate"]);
 run("node", ["scripts/db-schema-status.mjs", "--production"]);
-run("npm", ["run", "verify:phase61"]);
-console.log("\nPhase 59 production release preparation: PASS");
+run("npm", ["run", "verify:phase62"]);
+console.log("\nPhase 62 production release preparation: PASS");
 console.log("Database rollback is intentionally not automated. Recover from a verified backup or ship an explicit forward-fix migration.");

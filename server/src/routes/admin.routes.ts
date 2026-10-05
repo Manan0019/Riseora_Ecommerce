@@ -13,6 +13,7 @@ import { awardDeliveredOrderRewards, awardApprovedReviewReward, reverseReviewRew
 import { rescheduleRefillsAfterDeliveredOrder } from "../services/refill-reminder.service";
 import { availableToSell, inventoryState, setInventoryQuantity, adjustInventory } from "../services/inventory.service";
 import { ensureCreditNoteForCancelledOrder } from "../services/credit-note.service";
+import { adminSavingsAdvisorHealth } from "../services/savings-advisor.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -619,6 +620,14 @@ router.patch(
   }),
 );
 
+
+
+router.get(
+  "/promotions/savings-health",
+  asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: adminSavingsAdvisorHealth() });
+  }),
+);
 
 const couponSchema = z.object({
   code: z.string().trim().min(3).max(40),

@@ -1,4 +1,5 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
@@ -6,6 +7,7 @@ import { optionalAuth } from "../middleware/auth";
 import { evaluateCoupon } from "../utils/coupon";
 import type { CouponLike } from "../utils/coupon";
 import { prepareCheckout } from "../services/checkout.service";
+import { getSavingsAdvisor, recordSavingsAdvisorEvent } from "../services/savings-advisor.service";
 
 const router = Router();
 
@@ -48,6 +50,49 @@ router.get(
   }),
 );
 
+
+
+const savingsAdvisorSchema = z.object({
+  paymentMethod: z.enum(["COD", "ONLINE"]).default("COD"),
+  currentCouponCode: z.string().trim().max(40).optional().or(z.literal("")),
+  customerEmail: z.string().trim().email().optional().or(z.literal("")),
+  customerPhone: z.string().trim().max(24).optional().or(z.literal("")),
+  postalCode: z.string().trim().regex(/^\d{6}$/).optional().or(z.literal("")),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(1000) })).min(1).max(100),
+});
+
+const savingsAdvisorLimit = rateLimit({ windowMs: 60 * 1000, limit: 60, standardHeaders: "draft-8", legacyHeaders: false });
+router.post(
+  "/offer-wallet",
+  savingsAdvisorLimit,
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = savingsAdvisorSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid savings request" });
+    try {
+      const advisor = await getSavingsAdvisor(parsed.data, req.user?.id ?? null);
+      res.json({ success: true, data: advisor });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "SAVINGS_ADVISOR_FAILED";
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(400).json({ success: false, message: "One or more products are unavailable" });
+      if (message.startsWith("PURCHASE_LIMIT:")) return res.status(400).json({ success: false, message: "Your cart needs an adjustment before savings can be compared" });
+      throw error;
+    }
+  }),
+);
+
+const savingsEventLimit = rateLimit({ windowMs: 60 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false });
+router.post(
+  "/offer-wallet/event",
+  savingsEventLimit,
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ type: z.literal("APPLY"), saving: z.number().nonnegative().max(100000).optional() }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid savings event" });
+    recordSavingsAdvisorEvent(parsed.data);
+    res.json({ success: true });
+  }),
+);
 
 const cartPreviewSchema = z.object({
   paymentMethod: z.enum(["COD", "ONLINE"]).default("COD"),

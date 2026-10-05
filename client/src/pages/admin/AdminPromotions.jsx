@@ -23,6 +23,7 @@ export default function AdminPromotions() {
   const [banners, setBanners] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
+  const [savingsHealth, setSavingsHealth] = useState(null);
   const [coupon, setCoupon] = useState(emptyCoupon);
   const [offer, setOffer] = useState(emptyOffer);
   const [banner, setBanner] = useState(emptyBanner);
@@ -32,10 +33,10 @@ export default function AdminPromotions() {
   const [error, setError] = useState("");
 
   async function refresh() {
-    const [couponResponse, offerResponse, bannerResponse, productResponse, categoryResponse] = await Promise.all([
-      apiFetch("/admin/coupons"), apiFetch("/admin/offers"), apiFetch("/admin/banners"), apiFetch("/admin/products"), apiFetch("/admin/categories"),
+    const [couponResponse, offerResponse, bannerResponse, productResponse, categoryResponse, savingsResponse] = await Promise.all([
+      apiFetch("/admin/coupons"), apiFetch("/admin/offers"), apiFetch("/admin/banners"), apiFetch("/admin/products"), apiFetch("/admin/categories"), apiFetch("/admin/promotions/savings-health").catch(() => ({ data: null })),
     ]);
-    setCoupons(couponResponse.data); setOffers(offerResponse.data); setBanners(bannerResponse.data); setProducts(productResponse.data); setCategories(categoryResponse.data);
+    setCoupons(couponResponse.data); setOffers(offerResponse.data); setBanners(bannerResponse.data); setProducts(productResponse.data); setCategories(categoryResponse.data); setSavingsHealth(savingsResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -140,6 +141,17 @@ export default function AdminPromotions() {
   return <>
     <div className="admin-page-heading"><div><p className="eyebrow">GROWTH</p><h1>Promotions & campaigns</h1><p>Control campaign typography, targeted coupons, offer cards and the homepage slideshow.</p></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
+
+    <section className="admin-panel phase62-savings-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 62 · SAVINGS GUIDANCE</p><h2>Offer wallet health</h2><p>Automatic deals and customer-owned reward vouchers are surfaced safely at checkout. General admin coupon codes stay manual unless the customer already knows them.</p></div></div>
+      <div className="phase62-savings-health-grid">
+        <article><small>WALLET VIEWS · 60 MIN</small><strong>{Number(savingsHealth?.views || 0)}</strong><span>{Number(savingsHealth?.signedInViews || 0)} signed-in</span></article>
+        <article><small>VOUCHERS SUGGESTED</small><strong>{Number(savingsHealth?.privateVoucherSuggestions || 0)}</strong><span>eligible private rewards</span></article>
+        <article><small>ADVISOR APPLIES</small><strong>{Number(savingsHealth?.applyEvents || 0)}</strong><span>one-click voucher applies</span></article>
+        <article><small>AVG APPLIED SAVING</small><strong>₹{Number(savingsHealth?.averageAppliedSaving || 0).toFixed(0)}</strong><span>advisor-applied vouchers</span></article>
+      </div>
+      <small className="phase62-savings-admin-policy">{savingsHealth?.privacy || "Aggregated operational counters only; no cart contents or customer identity are retained here."}</small>
+    </section>
 
     <div className="admin-promo-grid phase3-admin-promo phase19-promo-grid">
       <form className="admin-panel admin-form phase12-campaign-form phase19-campaign-form" onSubmit={saveBanner}>
