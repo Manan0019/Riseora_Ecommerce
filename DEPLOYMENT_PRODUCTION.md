@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase65` PASS
+- `verify:phase66` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -132,6 +132,6 @@ Before public traffic:
 - `release:smoke` PASS against the deployed URL
 
 
-## Phase 65 comparison acceptance
+## Phase 66 comparison acceptance
 
-Before public traffic, confirm `npm run comparison:doctor` and `npm run verify:phase65` both pass. Product comparison remains read-only against catalogue data; live customer availability subtracts safety stock and approved-review trust metrics do not imply medical efficacy.
+Before public traffic, confirm `npm run comparison:doctor` and `npm run verify:phase66` both pass. Product comparison remains read-only against catalogue data; live customer availability subtracts safety stock and approved-review trust metrics do not imply medical efficacy.

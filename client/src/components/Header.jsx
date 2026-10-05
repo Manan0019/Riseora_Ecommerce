@@ -105,7 +105,7 @@ export default function Header() {
             <BrandLogo />
           </Link>
           <nav className="main-nav" aria-label="Primary navigation">
-            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/routine-builder">Routine</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
+            <NavLink to="/" end>Home</NavLink><NavLink to="/shop">Shop</NavLink><NavLink to="/routine-builder">Routine</NavLink><NavLink to="/ingredients">Ingredients</NavLink><NavLink to="/offers">Offers</NavLink><NavLink to="/about">About</NavLink><NavLink to="/contact">Contact</NavLink>{user && <NavLink to="/orders">Orders</NavLink>}
           </nav>
           <div className="nav-actions">
             <button className="icon-action" onClick={() => setSearchOpen(true)} aria-label="Search"><Icon name="search" size={21} /></button>

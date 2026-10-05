@@ -20,17 +20,19 @@ export default function AdminCatalog() {
   const [search, setSearch] = useState("");
   const [uploadingImages, setUploadingImages] = useState(false);
   const [compareHealth, setCompareHealth] = useState(null);
+  const [ingredientHealth, setIngredientHealth] = useState(null);
   const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse, suitabilityResponse, compareResponse] = await Promise.all([
+    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse] = await Promise.all([
       apiFetch("/admin/categories"),
       apiFetch("/admin/products"),
       apiFetch("/admin/suitability-options"),
       apiFetch("/admin/catalog/comparison-health").catch(() => ({ data: null })),
+      apiFetch("/admin/catalog/ingredient-health").catch(() => ({ data: null })),
     ]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -251,6 +253,19 @@ export default function AdminCatalog() {
         <article><small>AVG PRODUCTS</small><strong>{compareHealth?.averageProductsPerComparison ?? 0}</strong><span>per comparison</span></article>
       </div>
       {compareHealth?.topCompared?.length ? <div className="phase65-admin-top-compare"><b>Most compared products</b>{compareHealth.topCompared.map((item) => <span key={item.id}>{item.name}<em>{item.comparisons}</em></span>)}</div> : <p className="muted">Comparison activity will appear after customers use the storefront compare tray.</p>}
+    </section>
+
+
+    <section className="admin-panel phase66-admin-ingredient-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 66 · PRODUCT EDUCATION</p><h2>Ingredient & usage completeness</h2><p>Catalogue coverage for customer-facing ingredients, usage guidance and suitable-for information. The public ingredient library is derived from active product content.</p></div><button type="button" className="state-toggle" onClick={() => refresh().catch((e) => setError(e.message))}>Refresh</button></div>
+      <div className="phase66-admin-metrics">
+        <article><small>INGREDIENT COVERAGE</small><strong>{ingredientHealth?.ingredientCoverage ?? 0}%</strong><span>{ingredientHealth?.productsWithIngredients ?? 0}/{ingredientHealth?.activeProducts ?? 0} active products</span></article>
+        <article><small>UNIQUE INGREDIENTS</small><strong>{ingredientHealth?.uniqueIngredients ?? 0}</strong><span>parsed catalogue names</span></article>
+        <article><small>HOW-TO COVERAGE</small><strong>{ingredientHealth?.usageCoverage ?? 0}%</strong><span>product-specific directions</span></article>
+        <article><small>BENEFITS COVERAGE</small><strong>{ingredientHealth?.benefitsCoverage ?? 0}%</strong><span>catalogue education copy</span></article>
+      </div>
+      {ingredientHealth?.topIngredients?.length > 0 && <div className="phase66-admin-top-ingredients"><b>Most-used catalogue ingredients</b>{ingredientHealth.topIngredients.map((item) => <a key={item.slug} href={`/ingredients/${item.slug}`} target="_blank" rel="noreferrer">{item.name}<em>{item.products}</em></a>)}</div>}
+      {ingredientHealth?.missingIngredientProducts?.length > 0 && <p className="phase66-admin-missing"><strong>Needs ingredient content:</strong> {ingredientHealth.missingIngredientProducts.map((item) => item.name).join(", ")}</p>}
     </section>
 
     <div className="admin-catalog-top-grid">

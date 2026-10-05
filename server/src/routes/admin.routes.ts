@@ -16,6 +16,7 @@ import { ensureCreditNoteForCancelledOrder } from "../services/credit-note.servi
 import { adminSavingsAdvisorHealth } from "../services/savings-advisor.service";
 import { communityTrustHealth } from "../services/product-trust.service";
 import { productComparisonHealth } from "../services/product-comparison.service";
+import { ingredientCatalogHealth } from "../services/ingredient-library.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1370,6 +1371,14 @@ router.get(
   "/catalog/comparison-health",
   asyncHandler(async (_req, res) => {
     const data = await productComparisonHealth();
+    res.json({ success: true, data });
+  }),
+);
+
+router.get(
+  "/catalog/ingredient-health",
+  asyncHandler(async (_req, res) => {
+    const data = await ingredientCatalogHealth();
     res.json({ success: true, data });
   }),
 );

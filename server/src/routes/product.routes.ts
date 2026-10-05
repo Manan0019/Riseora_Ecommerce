@@ -9,6 +9,7 @@ import { recordRecommendationEvent, smartCartRecommendations, smartProductRecomm
 import { getRoutineGuidance, previewRoutineSelections, recordRoutineBuilderEvent } from "../services/routine-builder.service";
 import { enrichReviewsForTrust, reviewTrustSummary } from "../services/product-trust.service";
 import { buildProductComparison, recordProductComparisonEvent } from "../services/product-comparison.service";
+import { ingredientDetail, ingredientGuideFromText, ingredientLibrary } from "../services/ingredient-library.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -292,6 +293,25 @@ router.post(
 );
 
 router.get(
+  "/ingredients/library",
+  asyncHandler(async (req, res) => {
+    const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
+    const limit = Math.min(200, Math.max(12, Number(req.query.limit || 120)));
+    const data = await ingredientLibrary(query, limit);
+    res.json({ success: true, data });
+  }),
+);
+
+router.get(
+  "/ingredients/:slug",
+  asyncHandler(async (req, res) => {
+    const data = await ingredientDetail(String(req.params.slug || ""));
+    if (!data) return res.status(404).json({ success: false, message: "Ingredient not found" });
+    res.json({ success: true, data });
+  }),
+);
+
+router.get(
   "/search/intelligence",
   asyncHandler(async (req, res) => {
     const query = typeof req.query.q === "string" ? req.query.q.trim() : "";
@@ -527,6 +547,7 @@ router.get(
         reviewCount: ratings.length,
         reviewTrustSummary: trustSummary,
         qaTrustSummary: { answeredCount: product.questions.length },
+        ingredientGuide: ingredientGuideFromText(product.ingredients).map(({ name, slug }) => ({ name, slug })),
       },
     });
   }),

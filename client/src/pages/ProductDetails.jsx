@@ -368,7 +368,7 @@ export default function ProductDetails() {
         <div className="phase9-story-intro"><p className="phase3-eyebrow">KNOW YOUR PRODUCT</p><h2>Everything you need to know</h2>{product.description ? <RichText value={product.description} /> : <p>Full product information can be added from the Riseora Admin dashboard.</p>}</div>
         <div className="phase9-info-grid">
           {product.benefits && <article><span>01</span><h3>Key benefits</h3><RichText value={product.benefits} /></article>}
-          {product.ingredients && <article><span>02</span><h3>Ingredients</h3><RichText value={product.ingredients} /></article>}
+          {product.ingredients && <article className="phase66-product-ingredients"><span>02</span><h3>Ingredients</h3><RichText value={product.ingredients} />{product.ingredientGuide?.length > 0 && <><div className="phase66-ingredient-chips">{product.ingredientGuide.slice(0, 14).map((item) => <Link key={item.slug} to={`/ingredients/${item.slug}`}>{item.name}</Link>)}</div><Link className="phase66-explore-link" to="/ingredients">EXPLORE INGREDIENT LIBRARY →</Link></>}</article>}
           {product.howToUse && <article><span>03</span><h3>How to use</h3><RichText value={product.howToUse} /></article>}
           {product.suitableFor && <article><span>04</span><h3>Suitable for</h3><div className="phase19-suitable-display">{String(product.suitableFor).split(/[\n,;|]+/).map((item) => item.trim()).filter(Boolean).map((item) => <b key={item}>{item}</b>)}</div></article>}
         </div>
