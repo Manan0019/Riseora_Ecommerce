@@ -13,6 +13,7 @@ const REQUEST_KEY = "riseora_checkout_request";
 
 function readSavedPin() { try { const value = localStorage.getItem("riseora_delivery_pin") || ""; return /^\d{6}$/.test(value) ? value : ""; } catch { return ""; } }
 function formatEta(days) { const date = new Date(); date.setDate(date.getDate() + Math.max(0, Number(days || 0))); return date.toLocaleDateString("en-IN", { day: "numeric", month: "short" }); }
+function formatPromiseDate(value) { if (!value) return ""; const date = new Date(`${value}T12:00:00`); return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-IN", { day: "numeric", month: "short" }); }
 function makeUuid() { if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID(); return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => { const r = Math.random() * 16 | 0; const v = c === "x" ? r : (r & 0x3) | 0x8; return v.toString(16); }); }
 function readJson(key) { try { return JSON.parse(localStorage.getItem(key) || "null"); } catch { return null; } }
 function writeJson(key, value) { try { localStorage.setItem(key, JSON.stringify(value)); } catch {} }
@@ -58,8 +59,17 @@ export default function Checkout() {
   const [pricing, setPricing] = useState(null);
   const [deliveryQuote, setDeliveryQuote] = useState(null);
   const [deliveryChecking, setDeliveryChecking] = useState(false);
+  const [checkoutReadiness, setCheckoutReadiness] = useState(null);
+  const [readinessChecking, setReadinessChecking] = useState(false);
   const beginCheckoutSignature = useRef("");
+  const checkoutSessionIdRef = useRef(makeUuid());
+  const checkoutEventKeysRef = useRef(new Set());
   const [form, setForm] = useState({ customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "", customerEmail: user?.email || "", customerPhone: user?.phone || "", line1: "", line2: "", landmark: "", city: "", state: "Gujarat", postalCode: readSavedPin() });
+  const emailReady = !form.customerEmail.trim() || /^\S+@\S+\.\S+$/.test(form.customerEmail.trim());
+  const contactReady = form.customerName.trim().length >= 2 && form.customerPhone.trim().length >= 8 && emailReady;
+  const addressReady = form.line1.trim().length >= 3 && form.city.trim().length >= 2 && form.state.trim().length >= 2 && /^\d{6}$/.test(form.postalCode);
+  const paymentReady = paymentMethod === "COD" ? codEligibility.eligible : onlinePaymentsEnabled;
+  const canCheckReadiness = checkoutItems.length > 0 && contactReady && addressReady && paymentReady && deliveryQuote?.serviceable !== false;
 
   function requestKey() {
     const current = readJson(REQUEST_KEY);
@@ -68,9 +78,17 @@ export default function Checkout() {
   }
   function rotateRequestKey() { const key = makeUuid(); writeJson(REQUEST_KEY, { signature, key }); return key; }
   function clearPaymentLocal() { removeLocal(ONLINE_SESSION_KEY); setPaymentRecovery(null); }
+  function reportCheckoutEvent(stage, { reasonCode = "", payment = paymentMethod, onceKey = stage } = {}) {
+    const key = `${signature}:${onceKey}`;
+    if (checkoutEventKeysRef.current.has(key)) return;
+    checkoutEventKeysRef.current.add(key);
+    apiFetch("/orders/checkout-event", { method: "POST", body: JSON.stringify({ sessionId: checkoutSessionIdRef.current, stage, mode: buyNowMode ? "buy-now" : "cart", ...(payment ? { paymentMethod: payment } : {}), ...(reasonCode ? { reasonCode } : {}) }) }).catch(() => { checkoutEventKeysRef.current.delete(key); });
+  }
 
   useEffect(() => { setAppliedCoupon(""); setDiscountAmount(0); setCouponMessage(""); }, [checkoutSubtotal]);
   useEffect(() => { if (!checkoutItems.length || beginCheckoutSignature.current === signature) return; beginCheckoutSignature.current = signature; trackCommerce("begin_checkout", { items: checkoutItems, value: checkoutSubtotal, checkout_mode: buyNowMode ? "buy_now" : "cart" }); }, [checkoutItems, checkoutSubtotal, buyNowMode, signature]);
+  useEffect(() => { if (checkoutItems.length) reportCheckoutEvent("view", { payment: null, onceKey: "view" }); }, [signature, checkoutItems.length]);
+  useEffect(() => { if (checkoutItems.length) reportCheckoutEvent("payment_selected", { onceKey: `payment_selected:${paymentMethod}` }); }, [signature, paymentMethod, checkoutItems.length]);
   useEffect(() => { apiFetch("/payments/config").then((r) => setOnlinePaymentsEnabled(Boolean(r.data.onlinePaymentsEnabled))).catch(() => setOnlinePaymentsEnabled(false)); apiFetch("/store/config").then((r) => setStoreConfig(r.data)).catch(() => {}); }, []);
 
   useEffect(() => {
@@ -100,6 +118,7 @@ export default function Checkout() {
     }).catch((err) => { if (!cancelled) setDeliveryQuote({ serviceable: false, matched: false, reason: err.message || "Delivery availability could not be checked." }); }).finally(() => { if (!cancelled) setDeliveryChecking(false); }), 220);
     return () => { cancelled = true; clearTimeout(timer); };
   }, [form.postalCode, checkoutSubtotal, checkoutWeightGrams, paymentMethod]);
+  useEffect(() => { if (deliveryQuote?.serviceable) reportCheckoutEvent("delivery_ready", { onceKey: `delivery_ready:${form.postalCode}` }); }, [deliveryQuote?.serviceable, form.postalCode, signature]);
 
   useEffect(() => { if (!user) return; apiFetch("/account/addresses").then((response) => { setSavedAddresses(response.data); const preferred = response.data.find((item) => item.isDefault) || response.data[0]; if (preferred) selectSavedAddress(preferred); }).catch(() => {}); }, [user]);
   useEffect(() => {
@@ -120,6 +139,19 @@ export default function Checkout() {
     return () => { cancelled = true; clearTimeout(timer); };
   }, [checkoutItems, paymentMethod, appliedCoupon, form.customerEmail, form.customerPhone, form.postalCode]);
 
+  useEffect(() => {
+    if (!canCheckReadiness) { setCheckoutReadiness(null); setReadinessChecking(false); return; }
+    let cancelled = false;
+    setReadinessChecking(true);
+    const timer = setTimeout(() => {
+      apiFetch("/orders/checkout-readiness", { method: "POST", body: JSON.stringify(readinessPayload()) })
+        .then((response) => { if (!cancelled) setCheckoutReadiness(response.data); })
+        .catch(() => { if (!cancelled) setCheckoutReadiness(null); })
+        .finally(() => { if (!cancelled) setReadinessChecking(false); });
+    }, 320);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [canCheckReadiness, signature, paymentMethod, appliedCoupon, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode]);
+
   function selectSavedAddress(item) { setSelectedAddressId(item.id); setSaveAddress(false); setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: String(item.postalCode || "").replace(/\D/g, "").slice(0, 6) })); }
   function update(event) { setSelectedAddressId(""); setForm((current) => ({ ...current, [event.target.name]: event.target.value })); }
   if (checkoutItems.length === 0) return <Navigate to={buyNowMode ? "/shop" : "/cart"} replace />;
@@ -130,6 +162,18 @@ export default function Checkout() {
   }
 
   function checkoutPayload() { return { checkoutRequestKey: requestKey(), customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }; }
+  function readinessPayload() { return { customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })), paymentMethod }; }
+  async function verifyCheckoutReadiness() {
+    setReadinessChecking(true);
+    try {
+      const response = await apiFetch("/orders/checkout-readiness", { method: "POST", body: JSON.stringify(readinessPayload()) });
+      const result = response.data;
+      setCheckoutReadiness(result);
+      if (!result?.ready) { reportCheckoutEvent("preflight_fail", { reasonCode: result?.code || "NOT_READY", onceKey: `preflight_fail:${result?.code || "NOT_READY"}` }); return result; }
+      reportCheckoutEvent("preflight_pass", { onceKey: "preflight_pass" });
+      return result;
+    } finally { setReadinessChecking(false); }
+  }
 
   async function persistAddress() {
     if (!user || !saveAddress || selectedAddressId) return;
@@ -158,7 +202,7 @@ export default function Checkout() {
     const response = await apiFetch("/payments/razorpay/session", { method: "POST", body: JSON.stringify(checkoutPayload()) });
     const session = response.data;
     if (session.status === "PAID" && session.orderNumber) return session.order || { orderNumber: session.orderNumber, totalAmount: session.amountPaise / 100, paymentMethod: "ONLINE" };
-    writeJson(ONLINE_SESSION_KEY, { sessionId: session.sessionId, signature }); setPaymentRecovery(session);
+    writeJson(ONLINE_SESSION_KEY, { sessionId: session.sessionId, signature }); setPaymentRecovery(session); reportCheckoutEvent("payment_recovery", { onceKey: "payment_recovery" });
     return openRazorpay(session);
   }
 
@@ -183,27 +227,37 @@ export default function Checkout() {
 
   async function finishRecoveredOrder(status) {
     const order = status.order || { orderNumber: status.orderNumber, status: "CONFIRMED", paymentMethod: "ONLINE", totalAmount: Number(status.amountPaise || 0) / 100 };
-    clearPaymentLocal(); await persistAddress(); if (buyNowMode) clearBuyNow(); else clearCart(); removeLocal(REQUEST_KEY); navigate(`/order-success/${order.orderNumber}`, { replace: true, state: { order, recoveredPayment: true } });
+    reportCheckoutEvent("success", { payment: "ONLINE", onceKey: "success" }); clearPaymentLocal(); await persistAddress(); if (buyNowMode) clearBuyNow(); else clearCart(); removeLocal(REQUEST_KEY); navigate(`/order-success/${order.orderNumber}`, { replace: true, state: { order, recoveredPayment: true } });
   }
 
   async function completeOrder(order) {
     try { const cartToken = localStorage.getItem(activeRecoveryKey); if (cartToken) { await apiFetch("/cart-recovery/converted", { method: "POST", body: JSON.stringify({ cartToken, orderNumber: order.orderNumber }) }); localStorage.removeItem(activeRecoveryKey); } } catch {}
     await persistAddress();
     trackPurchase({ transactionId: order.orderNumber, items: checkoutItems, value: Number(order.totalAmount ?? pricing?.totalAmount ?? checkoutSubtotal), coupon: appliedCoupon || undefined, payment_type: paymentMethod });
-    clearPaymentLocal(); removeLocal(REQUEST_KEY); if (buyNowMode) clearBuyNow(); else clearCart(); navigate(`/order-success/${order.orderNumber}`, { replace: true, state: { order } });
+    reportCheckoutEvent("success", { onceKey: "success" }); clearPaymentLocal(); removeLocal(REQUEST_KEY); if (buyNowMode) clearBuyNow(); else clearCart(); navigate(`/order-success/${order.orderNumber}`, { replace: true, state: { order } });
   }
 
   async function submit(event) {
     event.preventDefault(); setSubmitting(true); setError("");
-    try { await persistAddress(); let order; if (paymentMethod === "ONLINE") order = await payOnline(); else { const response = await apiFetch("/orders", { method: "POST", body: JSON.stringify({ ...checkoutPayload(), paymentMethod: "COD" }) }); order = response.data; } await completeOrder(order); }
+    try {
+      const readiness = await verifyCheckoutReadiness();
+      if (!readiness?.ready) { setError(readiness?.message || "Please review the checkout details before continuing."); return; }
+      reportCheckoutEvent("submit", { onceKey: "submit" });
+      await persistAddress();
+      let order;
+      if (paymentMethod === "ONLINE") order = await payOnline();
+      else { const response = await apiFetch("/orders", { method: "POST", body: JSON.stringify({ ...checkoutPayload(), paymentMethod: "COD" }) }); order = response.data; }
+      await completeOrder(order);
+    }
     catch (err) { if (err?.recoverablePayment) { const stored = readJson(ONLINE_SESSION_KEY); if (stored?.sessionId) checkPaymentStatus({ silent: true }); } setError(err.message); }
     finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = submitting || paymentChecking || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
 
   return <div className="container page-space checkout-page">
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
+    <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={checkoutReadiness?.ready ? "done" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
     {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small></div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
     <div className="checkout-layout">
       <form id="riseora-checkout-form" className="form-card checkout-form" onSubmit={submit}>
@@ -223,7 +277,19 @@ export default function Checkout() {
         <div className="payment-choice-grid">{onlinePaymentsEnabled && <button type="button" className={paymentMethod === "ONLINE" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("ONLINE")}><span><Icon name="shield" size={20} /></span><div><strong>Pay online</strong><p>UPI, cards, netbanking & supported wallets.</p></div><b>{paymentMethod === "ONLINE" ? "✓" : ""}</b></button>}<button type="button" disabled={!codEligibility.eligible || paymentRecovery?.status === "PENDING"} className={`${paymentMethod === "COD" ? "payment-box selected" : "payment-box"}${!codEligibility.eligible || paymentRecovery?.status === "PENDING" ? " disabled" : ""}`} onClick={() => codEligibility.eligible && !paymentRecovery?.status && setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>{codEligibility.eligible ? "Pay when your order arrives." : "Not available for this order."}</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button></div>
         {!codEligibility.eligible && <div className="phase20-cod-unavailable"><Icon name="shield" size={18} /><div><strong>COD unavailable for this order</strong>{codEligibility.reasons.map((reason) => <small key={reason}>{reason}</small>)}{onlinePaymentsEnabled && <small>Your cart and coupon stay unchanged when you switch to secure online payment.</small>}</div></div>}
         <div className="phase20-checkout-trust"><span><Icon name="shield" size={16} /> Duplicate-order protected</span><span><Icon name="truck" size={16} /> Tracked fulfilment</span><span><Icon name="refresh" size={16} /> {storeConfig.returnsEnabled === false ? "Return policy" : `${storeConfig.returnWindowDays ?? 7}-day return window`}</span></div>
-        <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
+        <div className={`phase57-checkout-confidence ${checkoutReadiness?.ready ? "ready" : checkoutReadiness ? "attention" : "pending"}`}>
+          <div className="phase57-confidence-head"><span><Icon name={checkoutReadiness?.ready ? "shield" : checkoutReadiness ? "alert" : "check"} size={20} /></span><div><strong>{readinessChecking ? "Reviewing your checkout…" : checkoutReadiness?.ready ? "Ready to place your order" : checkoutReadiness ? "One detail needs attention" : "Final checkout review"}</strong><small>{readinessChecking ? "Confirming live stock, delivery, payment and final pricing." : checkoutReadiness?.message || "Complete contact, delivery and payment details and Riseora will verify everything before order placement."}</small></div></div>
+          <div className="phase57-confidence-checks">
+            <span className={contactReady ? "ok" : ""}>✓ Contact</span>
+            <span className={addressReady && deliveryQuote?.serviceable ? "ok" : ""}>✓ Delivery</span>
+            <span className={paymentReady ? "ok" : ""}>✓ Payment</span>
+            <span className={checkoutReadiness?.checks?.stock ? "ok" : ""}>✓ Live stock</span>
+            <span className={checkoutReadiness?.checks?.pricing ? "ok" : ""}>✓ Final total</span>
+          </div>
+          {checkoutReadiness?.ready && <div className="phase57-confidence-promise"><div><small>DELIVERY PROMISE</small><strong>{formatPromiseDate(checkoutReadiness.delivery?.estimatedFrom)}–{formatPromiseDate(checkoutReadiness.delivery?.estimatedTo)}</strong><span>{checkoutReadiness.delivery?.shippingPartnerName ? `Usually via ${checkoutReadiness.delivery.shippingPartnerName}` : checkoutReadiness.delivery?.zoneName || "Verified for your PIN code"}</span></div><div><small>VERIFIED TOTAL</small><strong>₹{Number(checkoutReadiness.pricing?.totalAmount ?? total).toFixed(0)}</strong><span>{Number(checkoutReadiness.pricing?.shippingFee || 0) > 0 ? `Includes ₹${Number(checkoutReadiness.pricing.shippingFee).toFixed(0)} shipping` : "Shipping included / free"}</span></div></div>}
+          {checkoutReadiness?.stockIssues?.length > 0 && <div className="phase57-stock-warning">{checkoutReadiness.stockIssues.slice(0, 2).map((item) => <small key={item.variantId}>{item.productName}: {item.availableQuantity} available for {item.requestedQuantity} requested</small>)}</div>}
+        </div>
+        <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : readinessChecking ? "VERIFYING CHECKOUT…" : checkoutReadiness && !checkoutReadiness.ready ? "RECHECK & CONTINUE" : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
       </form>
 
       <aside className="summary-card checkout-summary"><h2>Order summary</h2><div className="checkout-items">{checkoutItems.map((item) => <div className="checkout-item" key={item.variantId}><div className="checkout-item-image">{item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt="" /> : "R"}<b>{item.quantity}</b></div><div><strong>{item.productName}</strong><span>{item.variantName}</span></div><strong>₹{(item.price * item.quantity).toFixed(0)}</strong></div>)}</div><div className="coupon-box"><label>Coupon code</label><div><input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Enter code" /><button type="button" onClick={applyCoupon}>Apply</button></div>{couponMessage && <small className="coupon-success">{couponMessage}</small>}{couponError && <small className="coupon-error">{couponError}</small>}</div>{pricing?.automaticPromotionName && <div className="phase13-auto-offer"><span>✨</span><div><strong>{pricing.automaticPromotionName}</strong><small>{automaticDiscountAmount > 0 ? `Automatic saving ₹${automaticDiscountAmount.toFixed(0)}` : freeItems.length ? "Free gift unlocked automatically" : "Automatic offer applied"}</small></div></div>}{freeItems.length > 0 && <div className="phase13-free-items">{freeItems.map((item) => <div key={`${item.variantId}-${item.promotionLabel}`}><span>FREE</span><strong>{item.productName}</strong><small>{item.variantName} × {item.quantity}</small></div>)}</div>}<div className="summary-row"><span>Subtotal</span><strong>₹{displaySubtotal.toFixed(0)}</strong></div>{automaticDiscountAmount > 0 && <div className="summary-row discount-row"><span>Automatic deal</span><strong>−₹{automaticDiscountAmount.toFixed(0)}</strong></div>}{couponDiscountAmount > 0 && <div className="summary-row discount-row"><span>Coupon {appliedCoupon}</span><strong>−₹{couponDiscountAmount.toFixed(0)}</strong></div>}<div className="summary-row"><span>Shipping{paymentMethod === "COD" && Number(storeConfig.codFee || 0) > 0 ? " + COD fee" : ""}</span><span>{shippingFee > 0 ? `₹${shippingFee.toFixed(0)}` : "FREE"}</span></div><div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div></aside>

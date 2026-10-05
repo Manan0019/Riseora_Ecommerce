@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 56 · CART INTELLIGENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, product and cart recommendation engagement, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 57 · CHECKOUT CONFIDENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, recommendation engagement, checkout conversion confidence, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -190,6 +190,22 @@ export default function AdminSystem() {
             <article><small>Add-to-cart rate</small><strong>{health.recommendations?.addToCartRatePercent ?? 0}%</strong><span>{(health.recommendations?.addToCartRatePercent ?? 0) >= 3 ? "Recommendations are assisting baskets" : "Build signal with more cart sessions"}</span></article>
           </div>
           {(health.recommendations?.shelves || []).length > 0 && <div className="phase56-recommendation-shelves">{health.recommendations.shelves.map((row) => <div key={row.shelf}><code>{row.shelf}</code><span>{row.impressions} impressions</span><span>{row.clicks} opens</span><span>{row.adds ?? 0} adds</span><b>{row.addToCartRatePercent ?? 0}% add rate</b></div>)}</div>}
+        </div>
+        <div className="phase57-checkout-funnel">
+          <div className="phase41-route-head"><span>Checkout conversion confidence</span><small>Privacy-safe in-memory checkout stages · rolling {health.checkout?.windowMinutes ?? 60} minutes</small></div>
+          <div className="phase57-checkout-funnel-grid">
+            <article><small>Checkout sessions</small><strong>{health.checkout?.sessions ?? 0}</strong><span>Checkout views in the current window</span></article>
+            <article><small>Delivery ready</small><strong>{health.checkout?.deliveryReadyRatePercent ?? 0}%</strong><span>{health.checkout?.deliveryReady ?? 0} verified delivery sessions</span></article>
+            <article><small>Preflight ready</small><strong>{health.checkout?.preflightPassRatePercent ?? 0}%</strong><span>{health.checkout?.preflightPass ?? 0} passed server review</span></article>
+            <article><small>Submit rate</small><strong>{health.checkout?.submitRatePercent ?? 0}%</strong><span>{health.checkout?.submits ?? 0} payment/order attempts</span></article>
+            <article><small>Completion rate</small><strong>{health.checkout?.completionRatePercent ?? 0}%</strong><span>{health.checkout?.successes ?? 0} completed checkouts</span></article>
+            <article><small>Payment recovery</small><strong>{health.checkout?.paymentRecovery ?? 0}</strong><span>Online-payment recovery sessions</span></article>
+          </div>
+          <div className="phase57-confidence-promise">
+            <div><small>PAYMENT MIX</small><strong>COD {health.checkout?.paymentMix?.codPercent ?? 0}% · Online {health.checkout?.paymentMix?.onlinePercent ?? 0}%</strong><span>{health.checkout?.paymentMix?.cod ?? 0} COD / {health.checkout?.paymentMix?.online ?? 0} online submits</span></div>
+            <div><small>PREFLIGHT FAILURES</small><strong>{health.checkout?.preflightFail ?? 0}</strong><span>Readiness blocks before any order/payment mutation</span></div>
+          </div>
+          {(health.checkout?.failureReasons || []).length > 0 && <div className="phase57-checkout-funnel-reasons">{health.checkout.failureReasons.map((row) => <div key={row.reasonCode}><code>{row.reasonCode}</code><b>{row.count} block{row.count === 1 ? "" : "s"}</b></div>)}</div>}
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>

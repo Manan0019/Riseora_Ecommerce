@@ -49,7 +49,7 @@ const scripts = pkg.scripts || {};
 String(scripts["recommendation:doctor"] || "").includes("phase55-product-recommendation-audit.mjs") ? pass("recommendation:doctor command") : fail("recommendation:doctor command");
 String(scripts["client:doctor"] || "").includes("recommendation:doctor") ? pass("client:doctor includes Phase 55 recommendation gate") : fail("client:doctor Phase 55 recommendation gate");
 String(scripts["verify:phase55"] || "").includes("performance:budget") && String(scripts["verify:phase55"] || "").includes("npm run build") ? pass("verify:phase55 command") : fail("verify:phase55 command");
-(["verify:phase55", "verify:phase56"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 55+ verification") : fail("prelaunch Phase 55+ verification");
+(["verify:phase55", "verify:phase56", "verify:phase57"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 55+ verification") : fail("prelaunch Phase 55+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

@@ -1,9 +1,11 @@
 import { Router } from "express";
+import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { optionalAuth, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { createCodOrder, getCodEligibility } from "../services/checkout.service";
+import { getCheckoutReadiness, recordCheckoutFunnelEvent } from "../services/checkout-confidence.service";
 import { createUserNotification } from "../services/notification-center.service";
 import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
@@ -34,6 +36,44 @@ const codEligibilitySchema = z.object({
   postalCode: z.string().trim().regex(/^\d{6}$/).optional().or(z.literal("")),
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
+
+const checkoutReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, paymentMethod: true }).extend({
+  paymentMethod: z.enum(["COD", "ONLINE"]),
+});
+
+const checkoutEventSchema = z.object({
+  sessionId: z.string().uuid(),
+  stage: z.enum(["view", "delivery_ready", "payment_selected", "preflight_pass", "preflight_fail", "submit", "success", "payment_recovery"]),
+  mode: z.enum(["cart", "buy-now"]).default("cart"),
+  paymentMethod: z.enum(["COD", "ONLINE"]).optional(),
+  reasonCode: z.string().trim().regex(/^[A-Za-z0-9_-]{1,60}$/).optional(),
+});
+
+
+router.post(
+  "/checkout-readiness",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
+  blockCommerceDuringMaintenance,
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = checkoutReadinessSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Complete the required checkout details before readiness can be verified", errors: parsed.error.flatten() });
+    const { paymentMethod, ...input } = parsed.data;
+    const result = await getCheckoutReadiness(input, paymentMethod, req.user?.id ?? null);
+    return res.json({ success: true, data: result });
+  }),
+);
+
+router.post(
+  "/checkout-event",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
+  (req, res) => {
+    const parsed = checkoutEventSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid checkout event" });
+    recordCheckoutFunnelEvent(parsed.data);
+    return res.status(202).json({ success: true });
+  },
+);
 
 router.post(
   "/cod-eligibility",
