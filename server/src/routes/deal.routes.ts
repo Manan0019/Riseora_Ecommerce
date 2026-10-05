@@ -5,6 +5,7 @@ import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { slugify } from "../utils/slugify";
 import { enrichDeals, getActiveDeals, previewMerchandisingDeals } from "../services/merchandising.service";
+import { routineBuilderEngagementSnapshot } from "../services/routine-builder.service";
 
 export const publicDealRoutes = Router();
 export const adminDealRoutes = Router();
@@ -153,6 +154,13 @@ publicDealRoutes.get(
 );
 
 adminDealRoutes.use(requireAuth, requireAdmin);
+
+adminDealRoutes.get(
+  "/merchandising/routine-health",
+  asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: routineBuilderEngagementSnapshot() });
+  }),
+);
 
 adminDealRoutes.get(
   "/deals",

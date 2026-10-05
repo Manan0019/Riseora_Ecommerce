@@ -28,11 +28,17 @@ export default function AdminMerchandising() {
   const [error, setError] = useState("");
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [routineHealth, setRoutineHealth] = useState(null);
 
   async function load() {
-    const [productResponse, dealResponse] = await Promise.all([apiFetch("/admin/products"), apiFetch("/admin/deals")]);
+    const [productResponse, dealResponse, routineResponse] = await Promise.all([
+      apiFetch("/admin/products"),
+      apiFetch("/admin/deals"),
+      apiFetch("/admin/merchandising/routine-health").catch(() => ({ data: null })),
+    ]);
     setProducts(productResponse.data || []);
     setDeals(dealResponse.data || []);
+    setRoutineHealth(routineResponse.data || null);
   }
   useEffect(() => { load().catch((e) => setError(e.message)); }, []);
 
@@ -105,6 +111,15 @@ export default function AdminMerchandising() {
   return <>
     <div className="admin-page-heading"><div><p className="eyebrow">MERCHANDISING V2</p><h1>Combos & automatic deals</h1><p>Create, edit, duplicate and schedule conversion-focused offers. Checkout still recalculates the single highest-value eligible automatic deal securely.</p></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
+
+    <section className="admin-panel phase63-routine-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 63 · ROUTINE MERCHANDISING</p><h2>Routine builder engagement</h2><p>Aggregated 60-minute signals from the customer Routine Builder. These are operational counters only; no customer identity or routine contents are retained.</p></div></div>
+      <div className="phase63-routine-health-grid">
+        <div><span>BUILDER VIEWS</span><strong>{routineHealth?.views ?? 0}</strong></div>
+        <div><span>GUIDED PICKS</span><strong>{routineHealth?.guidedPicks ?? 0}</strong><small>{Number(routineHealth?.guidedPickRatePercent || 0).toFixed(1)}% of views</small></div>
+        <div><span>ROUTINE ADDS</span><strong>{routineHealth?.routineAdds ?? 0}</strong><small>{Number(routineHealth?.addRatePercent || 0).toFixed(1)}% of views</small></div>
+      </div>
+    </section>
 
     <div className="phase13-merch-grid phase28-merch-grid">
       <form className={editingId ? "admin-panel admin-form phase28-editing-panel" : "admin-panel admin-form"} onSubmit={submit}>

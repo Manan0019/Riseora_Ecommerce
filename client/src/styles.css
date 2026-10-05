@@ -3116,3 +3116,45 @@ textarea { min-height: 105px; resize: vertical; }
 .phase62-savings-health{margin-bottom:18px}.phase62-savings-health-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}.phase62-savings-health-grid article{display:grid;gap:4px;padding:14px;border:1px solid #e4e9e2;border-radius:15px;background:#fbfcfa}.phase62-savings-health-grid small{font-size:.61rem;letter-spacing:.08em;color:#7e897f}.phase62-savings-health-grid strong{font-size:1.45rem;color:#244634}.phase62-savings-health-grid span{font-size:.68rem;color:#778178}.phase62-savings-admin-policy{display:block;margin-top:10px;color:#7b847d;font-size:.66rem;line-height:1.45}
 @media(max-width:900px){.phase62-savings-health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase62-offer-wallet-head{flex-direction:column}.phase62-offer-wallet-head>b{white-space:normal}}
 @media(max-width:560px){.phase62-savings-health-grid{grid-template-columns:1fr 1fr}.phase62-saving-line{align-items:flex-start}.phase62-signin-savings{grid-template-columns:1fr}.phase62-signin-savings button{grid-row:auto;grid-column:auto}.phase62-voucher-actions{flex-wrap:wrap}}
+
+/* Phase 63 · Smart Routine Builder & guided bundle merchandising */
+.phase63-routine-hero { position:relative; overflow:hidden; }
+.phase63-guided-panel { margin:0 0 24px; padding:22px; border:1px solid var(--line); border-radius:24px; background:linear-gradient(145deg,#fbf7ef,#f0f5ec); }
+.phase63-guided-panel .section-title-row { align-items:flex-start; gap:18px; }
+.phase63-guided-panel .section-title-row p:not(.phase3-eyebrow) { max-width:760px; color:var(--muted); line-height:1.55; }
+.phase63-guide-status { flex:0 0 auto; padding:8px 11px; border-radius:999px; background:#fff; border:1px solid rgba(26,62,39,.12); color:var(--green-900); font-size:9px; font-weight:900; letter-spacing:.08em; }
+.phase63-guided-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:16px; }
+.phase63-guided-card { min-width:0; padding:10px; display:grid; grid-template-columns:68px minmax(0,1fr) auto; gap:10px; align-items:center; border:1px solid rgba(37,64,42,.10); border-radius:17px; background:#fff; }
+.phase63-guided-card > a:first-child { width:68px; height:68px; overflow:hidden; display:grid; place-items:center; border-radius:13px; background:#f3f1eb; }
+.phase63-guided-card img { width:100%; height:100%; object-fit:cover; }
+.phase63-guided-fallback { font-size:24px; font-weight:900; color:var(--green-800); }
+.phase63-guided-card > div { min-width:0; display:grid; gap:2px; }
+.phase63-guided-card small { color:var(--muted); font-size:8px; text-transform:uppercase; letter-spacing:.06em; }
+.phase63-guided-card strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:var(--ink); font-size:11px; }
+.phase63-guided-card p { margin:2px 0; color:#6e756c; font-size:9px; line-height:1.35; }
+.phase63-guided-card b { color:var(--green-900); font-size:11px; }
+.phase63-guided-card .state-toggle { white-space:nowrap; }
+.phase63-routine-summary { border-color:rgba(39,74,49,.16); }
+.phase63-price-review { margin:14px 0; padding:13px; display:grid; gap:6px; border:1px solid rgba(39,74,49,.10); border-radius:15px; background:#f7faf4; }
+.phase63-price-review > div { display:flex; justify-content:space-between; gap:12px; align-items:baseline; }
+.phase63-price-review span { color:var(--muted); font-size:10px; }
+.phase63-price-review strong { font-size:24px; color:var(--green-900); }
+.phase63-price-review p { margin:0; color:#5b6c5d; font-size:9px; }
+.phase63-price-review p b { color:var(--green-900); }
+.phase63-routine-policy { display:block; margin-top:10px; color:var(--muted); line-height:1.5; }
+.phase63-routine-health { margin-bottom:18px; }
+.phase63-routine-health-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; }
+.phase63-routine-health-grid > div { padding:16px; display:grid; gap:4px; border:1px solid var(--line); border-radius:16px; background:#fafbf8; }
+.phase63-routine-health-grid span { color:var(--muted); font-size:8px; font-weight:900; letter-spacing:.08em; }
+.phase63-routine-health-grid strong { font-size:27px; color:var(--green-900); }
+.phase63-routine-health-grid small { color:var(--muted); font-size:9px; }
+@media (min-width:900px) { .phase63-guided-grid { grid-template-columns:repeat(3,minmax(0,1fr)); } }
+@media (max-width:700px) {
+  .phase63-guided-panel { padding:16px; border-radius:19px; }
+  .phase63-guided-panel .section-title-row { display:grid; }
+  .phase63-guide-status { width:fit-content; }
+  .phase63-guided-grid { grid-template-columns:1fr; }
+  .phase63-guided-card { grid-template-columns:58px minmax(0,1fr) auto; }
+  .phase63-guided-card > a:first-child { width:58px; height:58px; }
+  .phase63-routine-health-grid { grid-template-columns:1fr; }
+}

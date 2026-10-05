@@ -6,6 +6,7 @@ import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, suggestedCorrection } from "../services/search-intelligence.service";
 import { recordRecommendationEvent, smartCartRecommendations, smartProductRecommendations } from "../services/product-recommendation.service";
+import { getRoutineGuidance, previewRoutineSelections, recordRoutineBuilderEvent } from "../services/routine-builder.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -213,6 +214,52 @@ router.get(
       categories, suitability: suitabilityOptions, ingredients,
       price: { min: prices.length ? Math.floor(Math.min(...prices)) : 0, max: prices.length ? Math.ceil(Math.max(...prices)) : 0 },
     } });
+  }),
+);
+
+const routineGuidanceSchema = z.object({
+  productIds: z.array(z.string().uuid()).max(4).optional().default([]),
+  seedSlug: z.string().trim().max(180).optional().default(""),
+  limit: z.number().int().min(4).max(10).optional().default(8),
+});
+
+router.post(
+  "/routine/intelligence",
+  asyncHandler(async (req, res) => {
+    const parsed = routineGuidanceSchema.safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid routine request" });
+    const data = await getRoutineGuidance(parsed.data);
+    return res.json({ success: true, data });
+  }),
+);
+
+const routinePreviewSchema = z.object({
+  selections: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(4).optional().default(1) })).min(1).max(4),
+});
+
+router.post(
+  "/routine/preview",
+  asyncHandler(async (req, res) => {
+    const parsed = routinePreviewSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Choose up to four valid routine items" });
+    const data = await previewRoutineSelections(parsed.data.selections);
+    return res.json({ success: true, data });
+  }),
+);
+
+const routineEventSchema = z.object({
+  type: z.enum(["view", "guided_pick", "add"]),
+  selectedCount: z.number().int().min(0).max(4).optional().default(0),
+});
+
+router.post(
+  "/routine/event",
+  recommendationEventLimiter,
+  asyncHandler(async (req, res) => {
+    const parsed = routineEventSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid routine event" });
+    recordRoutineBuilderEvent(parsed.data);
+    return res.json({ success: true });
   }),
 );
 

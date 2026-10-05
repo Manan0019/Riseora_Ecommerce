@@ -40,7 +40,7 @@ const scripts = pkg.scripts || {};
 String(scripts["search:doctor"] || "").includes("phase54-search-discovery-audit.mjs") ? pass("search:doctor command") : fail("search:doctor command");
 String(scripts["client:doctor"] || "").includes("search:doctor") ? pass("client:doctor includes Phase 54 discovery gate") : fail("client:doctor Phase 54 gate");
 String(scripts["verify:phase54"] || "").includes("performance:budget") && String(scripts["verify:phase54"] || "").includes("npm run build") ? pass("verify:phase54 command") : fail("verify:phase54 command");
-(["verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61", "verify:phase62"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 54+ verification") : fail("prelaunch Phase 54+ verification");
+(["verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61", "verify:phase62", "verify:phase63"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 54+ verification") : fail("prelaunch Phase 54+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();
