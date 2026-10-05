@@ -15,6 +15,7 @@ import { availableToSell, inventoryState, setInventoryQuantity, adjustInventory 
 import { ensureCreditNoteForCancelledOrder } from "../services/credit-note.service";
 import { adminSavingsAdvisorHealth } from "../services/savings-advisor.service";
 import { communityTrustHealth } from "../services/product-trust.service";
+import { productComparisonHealth } from "../services/product-comparison.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1361,6 +1362,14 @@ router.get(
   "/community/trust-health",
   asyncHandler(async (_req, res) => {
     const data = await communityTrustHealth();
+    res.json({ success: true, data });
+  }),
+);
+
+router.get(
+  "/catalog/comparison-health",
+  asyncHandler(async (_req, res) => {
+    const data = await productComparisonHealth();
     res.json({ success: true, data });
   }),
 );

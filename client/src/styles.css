@@ -3181,3 +3181,35 @@ textarea { min-height: 105px; resize: vertical; }
 .phase64-trust-health-grid small{color:#6f776f}
 @media (max-width:1100px){.phase64-trust-health-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:700px){.phase64-review-controls{align-items:stretch}.phase64-review-controls label{justify-content:space-between}.phase64-trust-health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase64-qa-search{max-width:none}}
+
+/* Phase 65 · Product comparison intelligence & decision support */
+.phase65-compare-page { --phase65-soft:#f4f7f2; }
+.phase65-decision-panel { margin:20px 0; padding:22px; border:1px solid #dfe7df; border-radius:22px; background:linear-gradient(135deg,#fbfcf9,#f1f6f1); box-shadow:0 12px 34px rgba(21,62,43,.06); }
+.phase65-decision-head { display:flex; justify-content:space-between; gap:18px; align-items:flex-start; }
+.phase65-decision-head h2 { margin:3px 0 5px; font:700 25px/1.1 Georgia,serif; color:var(--green-900); }
+.phase65-decision-head p { margin:0; color:var(--muted); max-width:680px; }
+.phase65-decision-head > span { padding:7px 10px; border-radius:999px; background:#e8f1e9; color:#2f5b45; font-size:10px; font-weight:850; letter-spacing:.06em; white-space:nowrap; }
+.phase65-highlight-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:18px; }
+.phase65-highlight-grid article { padding:15px; border:1px solid #e0e7e0; border-radius:16px; background:#fff; }
+.phase65-highlight-grid strong { display:block; margin-bottom:9px; color:#244738; font:700 16px/1.2 Georgia,serif; }
+.phase65-highlight-grid article > div { display:flex; flex-wrap:wrap; gap:6px; min-height:27px; }
+.phase65-highlight-grid article > div span { padding:5px 7px; border-radius:999px; background:#edf5ee; color:#315844; font-size:9px; font-weight:800; }
+.phase65-highlight-grid small { display:block; margin-top:9px; color:var(--muted); }
+.phase65-shared-facts { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:14px; }
+.phase65-shared-facts > div { padding:12px 14px; border-radius:14px; background:#fff; border:1px solid #e5e9e3; }
+.phase65-shared-facts b { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:#53665a; }
+.phase65-shared-facts p { margin:5px 0 0; font-size:12px; color:#365044; line-height:1.55; }
+.phase65-methodology { margin:13px 0 0; font-size:10px; color:#6b756f; line-height:1.5; }
+.phase65-compare-table td { min-height:60px; }
+.phase65-admin-compare-health { margin-bottom:18px; }
+.phase65-admin-metrics { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; }
+.phase65-admin-metrics article { padding:14px; border:1px solid #e1e7e0; border-radius:14px; background:#fafcf8; display:grid; gap:3px; }
+.phase65-admin-metrics small { font-size:9px; font-weight:850; letter-spacing:.08em; color:#68766d; }
+.phase65-admin-metrics strong { font-size:24px; color:#214735; }
+.phase65-admin-metrics span { font-size:10px; color:var(--muted); }
+.phase65-admin-top-compare { margin-top:12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.phase65-admin-top-compare > b { margin-right:4px; font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:#5e6d63; }
+.phase65-admin-top-compare > span { display:flex; gap:8px; align-items:center; padding:7px 9px; border-radius:10px; background:#f2f6f1; color:#365346; font-size:10px; }
+.phase65-admin-top-compare em { min-width:20px; padding:2px 5px; border-radius:999px; background:#dfece1; font-style:normal; text-align:center; font-weight:800; }
+@media (max-width: 900px) { .phase65-highlight-grid,.phase65-admin-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 620px) { .phase65-decision-head { display:block; } .phase65-decision-head > span { display:inline-block; margin-top:10px; } .phase65-highlight-grid,.phase65-shared-facts,.phase65-admin-metrics { grid-template-columns:1fr; } }

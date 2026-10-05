@@ -19,12 +19,18 @@ export default function AdminCatalog() {
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
   const [uploadingImages, setUploadingImages] = useState(false);
+  const [compareHealth, setCompareHealth] = useState(null);
   const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse, suitabilityResponse] = await Promise.all([apiFetch("/admin/categories"), apiFetch("/admin/products"), apiFetch("/admin/suitability-options")]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data);
+    const [categoryResponse, productResponse, suitabilityResponse, compareResponse] = await Promise.all([
+      apiFetch("/admin/categories"),
+      apiFetch("/admin/products"),
+      apiFetch("/admin/suitability-options"),
+      apiFetch("/admin/catalog/comparison-health").catch(() => ({ data: null })),
+    ]);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -235,6 +241,17 @@ export default function AdminCatalog() {
   return <>
     <div className="admin-page-heading"><div><p className="eyebrow">CATALOG</p><h1>Products & categories</h1><p>Add products, variants, images, prices and storefront merchandising.</p></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
+
+    <section className="admin-panel phase65-admin-compare-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 65 · DECISION SUPPORT</p><h2>Product comparison engagement</h2><p>Rolling 60-minute operational signals from the storefront compare experience. No customer identity or comparison history is persisted.</p></div><button type="button" className="state-toggle" onClick={() => refresh().catch((e) => setError(e.message))}>Refresh</button></div>
+      <div className="phase65-admin-metrics">
+        <article><small>COMPARISON VIEWS</small><strong>{compareHealth?.comparisonViews ?? 0}</strong></article>
+        <article><small>PRODUCT OPENS</small><strong>{compareHealth?.productOpens ?? 0}</strong><span>{compareHealth?.openRate ?? 0}% of views</span></article>
+        <article><small>ASSISTED ADDS</small><strong>{compareHealth?.assistedAdds ?? 0}</strong><span>{compareHealth?.addRate ?? 0}% of views</span></article>
+        <article><small>AVG PRODUCTS</small><strong>{compareHealth?.averageProductsPerComparison ?? 0}</strong><span>per comparison</span></article>
+      </div>
+      {compareHealth?.topCompared?.length ? <div className="phase65-admin-top-compare"><b>Most compared products</b>{compareHealth.topCompared.map((item) => <span key={item.id}>{item.name}<em>{item.comparisons}</em></span>)}</div> : <p className="muted">Comparison activity will appear after customers use the storefront compare tray.</p>}
+    </section>
 
     <div className="admin-catalog-top-grid">
       <section className="admin-panel category-manager phase18-category-manager">

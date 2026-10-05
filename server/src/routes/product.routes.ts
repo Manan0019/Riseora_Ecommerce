@@ -8,6 +8,7 @@ import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, sug
 import { recordRecommendationEvent, smartCartRecommendations, smartProductRecommendations } from "../services/product-recommendation.service";
 import { getRoutineGuidance, previewRoutineSelections, recordRoutineBuilderEvent } from "../services/routine-builder.service";
 import { enrichReviewsForTrust, reviewTrustSummary } from "../services/product-trust.service";
+import { buildProductComparison, recordProductComparisonEvent } from "../services/product-comparison.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -268,18 +269,25 @@ router.get(
   "/compare",
   asyncHandler(async (req, res) => {
     const ids = typeof req.query.ids === "string" ? [...new Set(req.query.ids.split(",").map((id) => id.trim()).filter(Boolean))].slice(0, 3) : [];
-    if (!ids.length) return res.json({ success: true, data: [] });
-    const products = await prisma.product.findMany({
-      where: { id: { in: ids }, isActive: true },
-      include: {
-        category: true,
-        images: { orderBy: { sortOrder: "asc" } },
-        variants: { where: { isActive: true }, orderBy: { sellingPrice: "asc" } },
-        reviews: { where: { isApproved: true }, select: { rating: true } },
-      },
-    });
-    const map = new Map(products.map((product) => [product.id, withRating(product)]));
-    return res.json({ success: true, data: ids.map((id) => map.get(id)).filter(Boolean) });
+    const data = await buildProductComparison(ids);
+    return res.json({ success: true, data });
+  }),
+);
+
+const compareEventSchema = z.object({
+  type: z.enum(["view", "product_open", "add_to_cart"]),
+  productIds: z.array(z.string().uuid()).min(2).max(3),
+  productId: z.string().uuid().nullable().optional(),
+});
+
+router.post(
+  "/compare/event",
+  recommendationEventLimiter,
+  asyncHandler(async (req, res) => {
+    const parsed = compareEventSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid comparison event" });
+    recordProductComparisonEvent(parsed.data);
+    return res.json({ success: true });
   }),
 );
 

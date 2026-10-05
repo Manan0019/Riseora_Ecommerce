@@ -66,9 +66,9 @@ const scripts = pkg.scripts || {};
 String(scripts["savings:doctor"] || "").includes("phase62-savings-advisor-audit.mjs") ? pass("savings:doctor command") : fail("savings:doctor command");
 String(scripts["client:doctor"] || "").includes("savings:doctor") ? pass("client:doctor includes Phase 62 savings gate") : fail("client:doctor Phase 62 gate");
 String(scripts["verify:phase62"] || "").includes("performance:budget") && String(scripts["verify:phase62"] || "").includes("npm run build") ? pass("verify:phase62 command") : fail("verify:phase62 command");
-(String(scripts["prelaunch:check"] || "").includes("verify:phase62") || String(scripts["prelaunch:check"] || "").includes("verify:phase63") || String(scripts["prelaunch:check"] || "").includes("verify:phase64")) ? pass("prelaunch uses Phase 62+ verification") : fail("prelaunch Phase 62 verification");
+(String(scripts["prelaunch:check"] || "").includes("verify:phase62") || String(scripts["prelaunch:check"] || "").includes("verify:phase63") || String(scripts["prelaunch:check"] || "").includes("verify:phase65")) ? pass("prelaunch uses Phase 62+ verification") : fail("prelaunch Phase 62 verification");
 const prepare = read("scripts/phase49-release-prepare.mjs");
-(prepare.includes("verify:phase62") || prepare.includes("verify:phase63") || prepare.includes("verify:phase64")) ? pass("production release advances to Phase 62+") : fail("production release Phase 62 verification");
+(prepare.includes("verify:phase62") || prepare.includes("verify:phase63") || prepare.includes("verify:phase65")) ? pass("production release advances to Phase 62+") : fail("production release Phase 62 verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();
