@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 57 · CHECKOUT CONFIDENCE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, recommendation engagement, checkout conversion confidence, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, recommendation engagement, checkout conversion confidence, post-purchase self-service, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -206,6 +206,17 @@ export default function AdminSystem() {
             <div><small>PREFLIGHT FAILURES</small><strong>{health.checkout?.preflightFail ?? 0}</strong><span>Readiness blocks before any order/payment mutation</span></div>
           </div>
           {(health.checkout?.failureReasons || []).length > 0 && <div className="phase57-checkout-funnel-reasons">{health.checkout.failureReasons.map((row) => <div key={row.reasonCode}><code>{row.reasonCode}</code><b>{row.count} block{row.count === 1 ? "" : "s"}</b></div>)}</div>}
+        </div>
+        <div className="phase58-postpurchase-health">
+          <div className="phase41-route-head"><span>Post-purchase self-service</span><small>Privacy-safe in-memory order-care and reorder signals · rolling {health.postPurchase?.windowMinutes ?? 60} minutes</small></div>
+          <div className="phase58-postpurchase-health-grid">
+            <article><small>Order-care views</small><strong>{health.postPurchase?.careViews ?? 0}</strong><span>Customers reviewing aftercare guidance</span></article>
+            <article><small>Reorder previews</small><strong>{health.postPurchase?.reorderPreviews ?? 0}</strong><span>Delivered orders checked against today's stock</span></article>
+            <article><small>Reorder adds</small><strong>{health.postPurchase?.reorderAdds ?? 0}</strong><span>Confirmed buy-again actions</span></article>
+            <article><small>Preview → add</small><strong>{health.postPurchase?.reorderAddRatePercent ?? 0}%</strong><span>How often a reviewed reorder proceeds</span></article>
+            <article><small>Adjusted previews</small><strong>{health.postPurchase?.adjustedPreviews ?? 0}</strong><span>Stock or purchase-limit notes shown before adding</span></article>
+            <article><small>Price changes</small><strong>{health.postPurchase?.priceChangePreviews ?? 0}</strong><span>Previews where today's price differs</span></article>
+          </div>
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">
           <div className="phase41-route-head"><span>Slowest API routes</span><small>P95 / maximum over the rolling window</small></div>

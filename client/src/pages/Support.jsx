@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { apiFetch } from "../api/http";
 import { Icon } from "../components/Icons";
 import Seo from "../components/Seo";
@@ -10,6 +10,7 @@ const pretty = (value) => String(value || "").replaceAll("_", " ").toLowerCase()
 export default function Support() {
   const { ticketNumber } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [tickets, setTickets] = useState([]);
   const [ticket, setTicket] = useState(null);
   const [creating, setCreating] = useState(false);
@@ -23,6 +24,20 @@ export default function Support() {
   async function loadTicket(number = ticketNumber) { if (!number) { setTicket(null); return; } const r = await apiFetch(`/support/tickets/${encodeURIComponent(number)}`); setTicket(r.data); }
   useEffect(() => { loadTickets().catch((e) => setError(e.message)); }, []);
   useEffect(() => { loadTicket().catch((e) => setError(e.message)); }, [ticketNumber]);
+  useEffect(() => {
+    if (ticketNumber) return;
+    const orderNumber = searchParams.get("order")?.trim() || "";
+    const requestedCategory = searchParams.get("category")?.trim().toUpperCase() || "";
+    const subject = searchParams.get("subject")?.trim() || "";
+    if (!orderNumber && !subject) return;
+    setCreating(true);
+    setForm((current) => ({
+      ...current,
+      category: categories.includes(requestedCategory) ? requestedCategory : orderNumber ? "ORDER" : current.category,
+      orderNumber: orderNumber || current.orderNumber,
+      subject: subject || (orderNumber ? `Help with order ${orderNumber}` : current.subject),
+    }));
+  }, [ticketNumber, searchParams]);
 
   const openCount = useMemo(() => tickets.filter((item) => !["RESOLVED", "CLOSED", "SPAM"].includes(item.status)).length, [tickets]);
 

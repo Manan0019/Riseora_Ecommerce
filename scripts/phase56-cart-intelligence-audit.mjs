@@ -37,7 +37,7 @@ requireText("client/src/pages/admin/AdminSystem.jsx", [
   "Recommendation & cart assist engagement", "Assisted adds", "addToCartRatePercent",
 ]);
 const adminSystem = read("client/src/pages/admin/AdminSystem.jsx");
-(adminSystem.includes("PHASE 56 · CART INTELLIGENCE CONTROL") || adminSystem.includes("PHASE 57 · CHECKOUT CONFIDENCE CONTROL")) ? pass("Admin System Phase 56+ control heading") : fail("Admin System Phase 56+ control heading");
+(adminSystem.includes("PHASE 56 · CART INTELLIGENCE CONTROL") || adminSystem.includes("PHASE 57 · CHECKOUT CONFIDENCE CONTROL") || adminSystem.includes("PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL")) ? pass("Admin System Phase 56+ control heading") : fail("Admin System Phase 56+ control heading");
 requireText("client/src/styles.css", ["phase56-cart-intelligence", "phase56-cart-recommendation-grid", "phase56-recommendation-health-grid"]);
 
 const service = read("server/src/services/product-recommendation.service.ts");
@@ -56,10 +56,10 @@ const scripts = pkg.scripts || {};
 String(scripts["cart:doctor"] || "").includes("phase56-cart-intelligence-audit.mjs") ? pass("cart:doctor command") : fail("cart:doctor command");
 String(scripts["client:doctor"] || "").includes("cart:doctor") ? pass("client:doctor includes Phase 56 cart gate") : fail("client:doctor Phase 56 gate");
 String(scripts["verify:phase56"] || "").includes("performance:budget") && String(scripts["verify:phase56"] || "").includes("npm run build") ? pass("verify:phase56 command") : fail("verify:phase56 command");
-(["verify:phase56", "verify:phase57"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 56+ verification") : fail("prelaunch Phase 56+ verification");
+(["verify:phase56", "verify:phase57", "verify:phase58"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 56+ verification") : fail("prelaunch Phase 56+ verification");
 
 const prepare = read("scripts/phase49-release-prepare.mjs");
-(prepare.includes('verify:phase56') || prepare.includes('verify:phase57')) ? pass("production release advances to Phase 56+") : fail("production release Phase 56+ verification");
+(prepare.includes('verify:phase56') || prepare.includes('verify:phase57') || prepare.includes('verify:phase58')) ? pass("production release advances to Phase 56+") : fail("production release Phase 56+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

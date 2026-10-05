@@ -11,6 +11,7 @@ import { productionConfigurationStatus, releaseMetadata } from "./production-rea
 import { searchDiscoverySnapshot } from "./search-intelligence.service";
 import { recommendationEngagementSnapshot } from "./product-recommendation.service";
 import { checkoutConfidenceSnapshot } from "./checkout-confidence.service";
+import { postPurchaseSnapshot } from "./post-purchase.service";
 
 async function checkDatabase() {
   const started = Date.now();
@@ -74,6 +75,7 @@ export async function adminSystemHealth() {
   const discovery = searchDiscoverySnapshot();
   const recommendations = recommendationEngagementSnapshot();
   const checkout = checkoutConfidenceSnapshot();
+  const postPurchase = postPurchaseSnapshot();
 
   return {
     status: database.ok && schema.ok && configuration.ok && uploadsWritable && !runtime.draining ? "healthy" : "degraded",
@@ -108,6 +110,7 @@ export async function adminSystemHealth() {
     discovery,
     recommendations,
     checkout,
+    postPurchase,
     timestamp: new Date().toISOString(),
   };
 }

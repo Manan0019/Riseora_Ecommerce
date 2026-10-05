@@ -5,7 +5,7 @@ import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
-import { availableToSell } from "../services/inventory.service";
+import { buildReorderPreview, getOrderCare } from "../services/post-purchase.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -229,80 +229,54 @@ router.get(
   }),
 );
 
-router.post(
-  "/reorder/:orderNumber",
+router.get(
+  "/reorder/:orderNumber/preview",
   asyncHandler(async (req, res) => {
-    const order = await prisma.order.findFirst({
-      where: { orderNumber: String(req.params.orderNumber), userId: req.user!.id },
-      include: { items: true },
-    });
-    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    if (order.status !== "DELIVERED") return res.status(400).json({ success: false, message: "Buy Again is available after an order is delivered" });
-
-    const sourceItems = order.items.filter((item) => !item.isComplimentary && item.variantId);
-    const ids = [...new Set(sourceItems.map((item) => item.variantId!).filter(Boolean))];
-    const variants = ids.length ? await prisma.productVariant.findMany({
-      where: { id: { in: ids } },
-      include: {
-        product: {
-          include: {
-            category: true,
-            images: { orderBy: { sortOrder: "asc" } },
-          },
-        },
-      },
-    }) : [];
-    const variantMap = new Map<string, any>(variants.map((variant: any) => [variant.id, variant]));
-    const usedByProduct = new Map<string, number>();
-    const ready: any[] = [];
-    const skipped: any[] = [];
-
-    for (const item of sourceItems) {
-      const variant = item.variantId ? variantMap.get(item.variantId) : null;
-      if (!variant || !variant.isActive || !variant.product.isActive) {
-        skipped.push({ sku: item.sku, productName: item.productName, reason: "No longer available" });
-        continue;
-      }
-      const stock = availableToSell(variant);
-      if (stock <= 0) {
-        skipped.push({ sku: item.sku, productName: item.productName, reason: "Out of stock" });
-        continue;
-      }
-      const limit = variant.product.maxPurchaseQuantity == null ? null : Number(variant.product.maxPurchaseQuantity);
-      const already = usedByProduct.get(variant.productId) || 0;
-      const room = limit == null ? stock : Math.max(0, limit - already);
-      const quantity = Math.max(0, Math.min(Number(item.quantity || 1), stock, room));
-      if (quantity <= 0) {
-        skipped.push({ sku: item.sku, productName: item.productName, reason: "Current purchase limit reached" });
-        continue;
-      }
-      usedByProduct.set(variant.productId, already + quantity);
-      ready.push({
-        product: variant.product,
-        variant: { ...variant, stockQuantity: stock, availableQuantity: stock },
-        quantity,
-        previousUnitPrice: Number(item.unitPrice),
-        currentUnitPrice: Number(variant.sellingPrice),
-        priceChanged: Math.abs(Number(item.unitPrice) - Number(variant.sellingPrice)) >= 0.01,
-      });
-      if (quantity < Number(item.quantity || 1)) {
-        skipped.push({ sku: item.sku, productName: item.productName, reason: `Quantity adjusted to ${quantity} for current stock/limits` });
-      }
+    try {
+      const data = await buildReorderPreview(req.user!.id, String(req.params.orderNumber), "reorder_preview");
+      res.json({ success: true, data });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "REORDER_FAILED";
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      if (message === "REORDER_NOT_AVAILABLE") return res.status(400).json({ success: false, message: "Buy Again is available after an order is delivered" });
+      throw error;
     }
-
-    if (!ready.length) return res.status(409).json({ success: false, message: "None of the products from this order can currently be added again", data: { items: [], skipped } });
-    res.json({
-      success: true,
-      data: {
-        items: ready,
-        skipped,
-        priceChanged: ready.some((item) => item.priceChanged),
-      },
-      message: skipped.length ? "Available products are ready. Some items were adjusted or skipped." : "Order items refreshed using current prices and stock.",
-    });
   }),
 );
 
+router.post(
+  "/reorder/:orderNumber",
+  asyncHandler(async (req, res) => {
+    try {
+      const data = await buildReorderPreview(req.user!.id, String(req.params.orderNumber), "reorder_add");
+      if (!data.items.length) return res.status(409).json({ success: false, message: "None of the products from this order can currently be added again", data });
+      res.json({
+        success: true,
+        data,
+        message: data.skipped.length ? "Available products are ready. Some items were adjusted or skipped." : "Order items refreshed using current prices and stock.",
+      });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "REORDER_FAILED";
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      if (message === "REORDER_NOT_AVAILABLE") return res.status(400).json({ success: false, message: "Buy Again is available after an order is delivered" });
+      throw error;
+    }
+  }),
+);
+
+router.get(
+  "/order-care/:orderNumber",
+  asyncHandler(async (req, res) => {
+    try {
+      const data = await getOrderCare(req.user!.id, String(req.params.orderNumber));
+      res.json({ success: true, data });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "ORDER_CARE_FAILED";
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      throw error;
+    }
+  }),
+);
 
 router.get(
   "/shopping-alerts",
