@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { buildSearchDictionary, recordSearchObservation, relatedSearchTerms, suggestedCorrection } from "../services/search-intelligence.service";
 import { recordRecommendationEvent, smartCartRecommendations, smartProductRecommendations } from "../services/product-recommendation.service";
 import { getRoutineGuidance, previewRoutineSelections, recordRoutineBuilderEvent } from "../services/routine-builder.service";
+import { enrichReviewsForTrust, reviewTrustSummary } from "../services/product-trust.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -508,7 +509,18 @@ router.get(
     if (!product?.isActive) return res.status(404).json({ success: false, message: "Product not found" });
     const ratings = product.reviews.map((review) => review.rating);
     const ratingAverage = ratings.length ? ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length : 0;
-    res.json({ success: true, data: { ...publicStock(product), ratingAverage: Number(ratingAverage.toFixed(1)), reviewCount: ratings.length } });
+    const reviews = enrichReviewsForTrust(product.reviews);
+    const trustSummary = reviewTrustSummary(product.reviews);
+    res.json({
+      success: true,
+      data: {
+        ...publicStock({ ...product, reviews }),
+        ratingAverage: Number(ratingAverage.toFixed(1)),
+        reviewCount: ratings.length,
+        reviewTrustSummary: trustSummary,
+        qaTrustSummary: { answeredCount: product.questions.length },
+      },
+    });
   }),
 );
 

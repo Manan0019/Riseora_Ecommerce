@@ -14,6 +14,7 @@ import { rescheduleRefillsAfterDeliveredOrder } from "../services/refill-reminde
 import { availableToSell, inventoryState, setInventoryQuantity, adjustInventory } from "../services/inventory.service";
 import { ensureCreditNoteForCancelledOrder } from "../services/credit-note.service";
 import { adminSavingsAdvisorHealth } from "../services/savings-advisor.service";
+import { communityTrustHealth } from "../services/product-trust.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1352,6 +1353,15 @@ router.put(
       void notifyPriceAlertsForVariant(variant.id).catch((error) => console.error("Price alert notification failed", error));
     }
     res.json({ success: true, data: product });
+  }),
+);
+
+
+router.get(
+  "/community/trust-health",
+  asyncHandler(async (_req, res) => {
+    const data = await communityTrustHealth();
+    res.json({ success: true, data });
   }),
 );
 

@@ -34,6 +34,6 @@ run("npm", ["run", "db:backup", "--", "--env=server/.env.production"]);
 run("npm", ["run", "db:deploy"]);
 run("npm", ["run", "db:generate"]);
 run("node", ["scripts/db-schema-status.mjs", "--production"]);
-run("npm", ["run", "verify:phase63"]);
+run("npm", ["run", "verify:phase64"]);
 console.log("\nPhase 63 production release preparation: PASS");
 console.log("Database rollback is intentionally not automated. Recover from a verified backup or ship an explicit forward-fix migration.");

@@ -9,6 +9,7 @@ export default function AdminReviews() {
   const [error, setError] = useState("");
   const [savingId, setSavingId] = useState("");
   const [answers, setAnswers] = useState({});
+  const [trustHealth, setTrustHealth] = useState(null);
 
   async function load() {
     setError("");
@@ -16,8 +17,12 @@ export default function AdminReviews() {
       const path = section === "reviews"
         ? `/admin/reviews?status=${status}`
         : `/admin/product-questions?status=${status === "approved" ? "published" : "pending"}`;
-      const response = await apiFetch(path);
+      const [response, healthResponse] = await Promise.all([
+        apiFetch(path),
+        apiFetch("/admin/community/trust-health").catch(() => ({ data: null })),
+      ]);
       setItems(response.data || []);
+      if (healthResponse?.data) setTrustHealth(healthResponse.data);
       if (section === "questions") {
         setAnswers(Object.fromEntries((response.data || []).map((item) => [item.id, item.answer || ""])));
       }
@@ -71,8 +76,20 @@ export default function AdminReviews() {
   }, [items, search, section]);
 
   return <>
-    <div className="admin-page-heading"><div><p className="eyebrow">TRUST & COMMUNITY</p><h1>Reviews & product Q&amp;A</h1><p>Moderate visual reviews and answer customer product questions before they appear on the storefront.</p></div></div>
+    <div className="admin-page-heading"><div><p className="eyebrow">PHASE 64 · TRUST & COMMUNITY</p><h1>Reviews & product Q&amp;A</h1><p>Moderate visual reviews, protect verified-purchase trust signals and answer customer product questions before they appear on the storefront.</p></div></div>
     {error && <p className="alert error">{error}</p>}
+
+    {trustHealth && <section className="admin-panel phase64-trust-health">
+      <div className="admin-panel-head"><div><h2>Storefront trust health</h2><p>Approved review quality and moderated Q&amp;A from the existing community records.</p></div></div>
+      <div className="phase64-trust-health-grid">
+        <article><span>APPROVED REVIEWS</span><strong>{trustHealth.approvedReviews}</strong><small>{trustHealth.approvedLast30Days} approved in 30 days</small></article>
+        <article><span>VERIFIED SHARE</span><strong>{Number(trustHealth.verifiedShare || 0).toFixed(1)}%</strong><small>{trustHealth.verifiedReviews} verified purchases</small></article>
+        <article><span>PHOTO REVIEWS</span><strong>{trustHealth.photoReviews}</strong><small>{Number(trustHealth.photoShare || 0).toFixed(1)}% of approved reviews</small></article>
+        <article><span>AVERAGE RATING</span><strong>{Number(trustHealth.averageRating || 0).toFixed(2)}</strong><small>Approved reviews only</small></article>
+        <article><span>PENDING REVIEWS</span><strong>{trustHealth.pendingReviews}</strong><small>Waiting for moderation</small></article>
+        <article><span>PUBLISHED Q&amp;A</span><strong>{trustHealth.publishedQuestions}</strong><small>{trustHealth.pendingQuestions} questions pending</small></article>
+      </div>
+    </section>}
 
     <div className="phase22-admin-community-tabs" role="tablist" aria-label="Community moderation">
       <button className={section === "reviews" ? "active" : ""} onClick={() => { setSection("reviews"); setStatus("pending"); setSearch(""); }}>Reviews</button>

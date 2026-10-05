@@ -3158,3 +3158,26 @@ textarea { min-height: 105px; resize: vertical; }
   .phase63-guided-card > a:first-child { width:58px; height:58px; }
   .phase63-routine-health-grid { grid-template-columns:1fr; }
 }
+
+/* Phase 64 · Verified reviews, Q&A trust and community health */
+.phase64-trust-copy{margin:.35rem 0 0;color:var(--muted,#6f746f);max-width:680px}
+.phase64-qa-search{display:flex;gap:.55rem;align-items:center;margin:1rem 0 1.25rem;max-width:620px}
+.phase64-qa-search input{flex:1;min-width:0;border:1px solid rgba(32,56,42,.18);border-radius:999px;padding:.8rem 1rem;background:#fff}
+.phase64-qa-search button{border:0;background:transparent;font-weight:800;letter-spacing:.08em;font-size:.72rem;cursor:pointer}
+.phase64-review-trust-strip{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0 1.1rem}
+.phase64-review-trust-strip span{display:inline-flex;gap:.3rem;align-items:center;padding:.55rem .75rem;border-radius:999px;background:rgba(67,104,78,.08);border:1px solid rgba(67,104,78,.12);font-size:.82rem;color:#35453a}
+.phase64-review-trust-strip strong{color:#173a27}
+.phase64-review-controls{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;margin:0 0 1rem;padding:.8rem 0;border-top:1px solid rgba(29,56,39,.08);border-bottom:1px solid rgba(29,56,39,.08)}
+.phase64-review-toggles{display:flex;flex-wrap:wrap;gap:.5rem}
+.phase64-review-toggles button{border:1px solid rgba(31,62,43,.16);background:#fff;border-radius:999px;padding:.55rem .8rem;font-weight:700;cursor:pointer}
+.phase64-review-toggles button.active{background:#173a27;color:#fff;border-color:#173a27}
+.phase64-review-controls label{display:flex;align-items:center;gap:.55rem;font-size:.8rem;font-weight:700;color:#586259}
+.phase64-review-controls select{border:1px solid rgba(31,62,43,.16);border-radius:999px;background:#fff;padding:.55rem 2rem .55rem .75rem}
+.phase64-trust-health{margin-bottom:1rem}
+.phase64-trust-health-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:.75rem}
+.phase64-trust-health-grid article{padding:1rem;border:1px solid rgba(31,62,43,.1);border-radius:16px;background:linear-gradient(180deg,#fff,rgba(245,249,245,.9))}
+.phase64-trust-health-grid span{display:block;font-size:.68rem;font-weight:800;letter-spacing:.08em;color:#748078}
+.phase64-trust-health-grid strong{display:block;font-size:1.65rem;line-height:1.1;margin:.35rem 0;color:#173a27}
+.phase64-trust-health-grid small{color:#6f776f}
+@media (max-width:1100px){.phase64-trust-health-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:700px){.phase64-review-controls{align-items:stretch}.phase64-review-controls label{justify-content:space-between}.phase64-trust-health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.phase64-qa-search{max-width:none}}

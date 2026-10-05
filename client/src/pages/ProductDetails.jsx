@@ -63,9 +63,13 @@ export default function ProductDetails() {
   const [reviewFiles, setReviewFiles] = useState([]);
   const [reviewBusy, setReviewBusy] = useState(false);
   const [reviewFilter, setReviewFilter] = useState(0);
+  const [reviewSort, setReviewSort] = useState("recommended");
+  const [verifiedOnly, setVerifiedOnly] = useState(false);
+  const [photoOnly, setPhotoOnly] = useState(false);
   const [reviewMessage, setReviewMessage] = useState("");
   const [rewardConfig, setRewardConfig] = useState(null);
   const [questionText, setQuestionText] = useState("");
+  const [questionSearch, setQuestionSearch] = useState("");
   const [questionMessage, setQuestionMessage] = useState("");
   const [questionBusy, setQuestionBusy] = useState(false);
   const [stockEmail, setStockEmail] = useState("");
@@ -169,6 +173,10 @@ export default function ProductDetails() {
   const isComparing = comparing(product.id);
   const faq = Array.isArray(product.faq) ? product.faq : [];
   const publicQuestions = Array.isArray(product.questions) ? product.questions : [];
+  const normalizedQuestionSearch = questionSearch.trim().toLowerCase();
+  const visibleQuestions = normalizedQuestionSearch
+    ? publicQuestions.filter((item) => `${item.question || ""} ${item.answer || ""}`.toLowerCase().includes(normalizedQuestionSearch))
+    : publicQuestions;
 
   function trackRecommendationClick(item) {
     if (!product?.id || !item?.id) return;
@@ -177,7 +185,17 @@ export default function ProductDetails() {
   }
 
   const publicReviews = Array.isArray(product.reviews) ? product.reviews : [];
-  const visibleReviews = reviewFilter ? publicReviews.filter((item) => Number(item.rating) === reviewFilter) : publicReviews;
+  const reviewTrust = product.reviewTrustSummary || { verifiedCount: 0, verifiedPercent: 0, photoCount: 0, photoPercent: 0, commonThemes: [] };
+  const visibleReviews = publicReviews
+    .filter((item) => !reviewFilter || Number(item.rating) === reviewFilter)
+    .filter((item) => !verifiedOnly || item.verifiedPurchase)
+    .filter((item) => !photoOnly || (Array.isArray(item.images) && item.images.length > 0))
+    .sort((a, b) => {
+      if (reviewSort === "recent") return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      if (reviewSort === "highest") return Number(b.rating || 0) - Number(a.rating || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      if (reviewSort === "lowest") return Number(a.rating || 0) - Number(b.rating || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+      return Number(b.reviewTrustScore || 0) - Number(a.reviewTrustScore || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+    });
   const ratingDistribution = [5, 4, 3, 2, 1].map((rating) => {
     const count = publicReviews.filter((item) => Number(item.rating) === rating).length;
     return { rating, count, percent: publicReviews.length ? Math.round((count / publicReviews.length) * 100) : 0 };
@@ -292,7 +310,26 @@ export default function ProductDetails() {
   }
 
   const productUrl = `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}/product/${product.slug}`;
-  const productJson = { "@context": "https://schema.org", "@type": "Product", name: product.name, description: product.shortDescription || richTextToPlain(product.description) || undefined, image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean), sku: variant?.sku, category: product.category?.name || undefined, brand: { "@type": "Brand", name: store.storeName || "Riseora Herbals" }, url: productUrl, offers: variant ? { "@type": "Offer", url: productUrl, priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", itemCondition: "https://schema.org/NewCondition" } : undefined, aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined };
+  const productJson = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.shortDescription || richTextToPlain(product.description) || undefined,
+    image: product.images?.map((item) => mediaUrl(item.url)).filter(Boolean),
+    sku: variant?.sku,
+    category: product.category?.name || undefined,
+    brand: { "@type": "Brand", name: store.storeName || "Riseora Herbals" },
+    url: productUrl,
+    offers: variant ? { "@type": "Offer", url: productUrl, priceCurrency: "INR", price: Number(variant.sellingPrice), availability: inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock", itemCondition: "https://schema.org/NewCondition" } : undefined,
+    aggregateRating: product.reviewCount > 0 ? { "@type": "AggregateRating", ratingValue: Number(product.ratingAverage), reviewCount: product.reviewCount } : undefined,
+    review: publicReviews.slice(0, 5).map((item) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: item.user?.firstName || "Customer" },
+      reviewRating: { "@type": "Rating", ratingValue: Number(item.rating), bestRating: 5, worstRating: 1 },
+      name: item.title || undefined,
+      reviewBody: item.comment || undefined,
+    })),
+  };
   const breadcrumbJson = { "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}` }, { "@type": "ListItem", position: 2, name: product.category?.name || "Shop", item: `${(store.siteUrl || import.meta.env.VITE_PUBLIC_SITE_URL || window.location.origin).replace(/\/$/, "")}/shop${product.category?.slug ? `?category=${encodeURIComponent(product.category.slug)}` : ""}` }, { "@type": "ListItem", position: 3, name: product.name, item: productUrl }] };
 
   return <><Seo title={product.name} description={product.shortDescription || richTextToPlain(product.description)} image={image} type="product" jsonLd={[productJson, breadcrumbJson]} />
@@ -343,10 +380,11 @@ export default function ProductDetails() {
 
       {inStock && fbtProducts.length > 0 && <section className="container phase3-section phase14-fbt"><div className="section-title-row"><div><p className="phase3-eyebrow">COMPLETE THE ROUTINE</p><h2>Frequently bought together</h2></div><Link to={`/routine-builder?seed=${encodeURIComponent(product.slug)}`}>BUILD A ROUTINE</Link></div><div className="phase14-fbt-box"><div className="phase14-fbt-products"><FbtItem product={product} variant={variant} checked locked /><span className="phase14-fbt-plus">+</span>{fbtProducts.map((item, index) => { const v = item.variants?.find((row) => Number(row.stockQuantity || 0) > 0); const checked = fbtSelected.includes(item.id); return <div className="phase14-fbt-fragment" key={item.id}><FbtItem product={item} variant={v} checked={checked} onChange={() => setFbtSelected((current) => checked ? current.filter((id) => id !== item.id) : [...current, item.id])} />{index < fbtProducts.length - 1 && <span className="phase14-fbt-plus">+</span>}</div>; })}</div><div className="phase14-fbt-summary"><small>{1 + fbtChosen.length} item{fbtChosen.length ? "s" : ""} selected</small><strong>₹{fbtTotal.toFixed(0)}</strong><button className="button" onClick={addFrequentlyBought}>ADD TOGETHER <Icon name="plus" size={16} /></button></div></div></section>}
 
-      <section className="container phase3-section phase22-qa-section" id="questions">
-        <div className="section-title-row"><div><p className="phase3-eyebrow">ASK BEFORE YOU BUY</p><h2>Product questions &amp; answers</h2></div>{publicQuestions.length > 0 && <span className="phase22-qa-count">{publicQuestions.length} answered</span>}</div>
+      <section className="container phase3-section phase22-qa-section phase64-qa-section" id="questions">
+        <div className="section-title-row"><div><p className="phase3-eyebrow">ASK BEFORE YOU BUY</p><h2>Product questions &amp; answers</h2><p className="phase64-trust-copy">Published only after Riseora has reviewed and answered the question.</p></div>{publicQuestions.length > 0 && <span className="phase22-qa-count">{publicQuestions.length} answered</span>}</div>
+        {publicQuestions.length >= 4 && <div className="phase64-qa-search"><input value={questionSearch} onChange={(e) => setQuestionSearch(e.target.value)} placeholder="Search answered questions" aria-label="Search product questions" />{questionSearch && <button type="button" onClick={() => setQuestionSearch("")}>CLEAR</button>}</div>}
         <div className="phase22-qa-layout">
-          <div>{publicQuestions.length ? <ProductQuestions items={publicQuestions} /> : <div className="phase22-qa-empty"><strong>No published questions yet.</strong><p>Ask about usage, texture, routine pairing, pack size or other product details.</p></div>}</div>
+          <div>{visibleQuestions.length ? <ProductQuestions items={visibleQuestions} /> : <div className="phase22-qa-empty"><strong>{questionSearch ? "No answered question matches that search." : "No published questions yet."}</strong><p>{questionSearch ? "Try fewer words, or ask Riseora a new product question." : "Ask about usage, texture, routine pairing, pack size or other product details."}</p></div>}</div>
           <aside className="phase22-question-form-card">
             {user ? <form onSubmit={submitQuestion}><span className="phase3-eyebrow">NEED CLARITY?</span><h3>Ask Riseora</h3><p>Questions are reviewed and answered before they appear publicly.</p><textarea required minLength="8" maxLength="500" value={questionText} onChange={(e) => setQuestionText(e.target.value)} placeholder="Example: Can I use this with my evening hair-care routine?" /><div className="phase22-character-count">{questionText.length}/500</div><button className="button wide" disabled={questionBusy}>{questionBusy ? "SUBMITTING…" : "ASK A QUESTION"}</button>{questionMessage && <p className="review-message">{questionMessage}</p>}</form> : <div><span className="phase3-eyebrow">NEED CLARITY?</span><h3>Ask a product question</h3><p>Log in to ask Riseora something about this product.</p><Link className="button wide" to="/login">LOGIN TO ASK</Link></div>}
           </aside>
@@ -359,7 +397,19 @@ export default function ProductDetails() {
           <div className="phase22-rating-score"><strong>{product.reviewCount ? Number(product.ratingAverage).toFixed(1) : "—"}</strong><span>★★★★★</span><small>{product.reviewCount} approved review{product.reviewCount === 1 ? "" : "s"}</small></div>
           <div className="phase22-rating-bars">{ratingDistribution.map((row) => <button type="button" key={row.rating} className={reviewFilter === row.rating ? "active" : ""} onClick={() => setReviewFilter((current) => current === row.rating ? 0 : row.rating)}><span>{row.rating} ★</span><i><b style={{ width: `${row.percent}%` }} /></i><small>{row.count}</small></button>)}</div>
         </div>
-        {reviewFilter > 0 && <div className="phase22-review-filter-note">Showing {reviewFilter}-star reviews <button onClick={() => setReviewFilter(0)}>Show all</button></div>}
+        {publicReviews.length > 0 && <div className="phase64-review-trust-strip">
+          <span><strong>{reviewTrust.verifiedCount || 0}</strong> verified purchase{Number(reviewTrust.verifiedCount || 0) === 1 ? "" : "s"}</span>
+          <span><strong>{reviewTrust.photoCount || 0}</strong> with customer photos</span>
+          {(reviewTrust.commonThemes || []).map((theme) => <span key={theme.key}><strong>{theme.label}</strong> · {theme.mentions} mention{theme.mentions === 1 ? "" : "s"}</span>)}
+        </div>}
+        <div className="phase64-review-controls">
+          <div className="phase64-review-toggles">
+            <button type="button" className={verifiedOnly ? "active" : ""} onClick={() => setVerifiedOnly((value) => !value)}>Verified only</button>
+            <button type="button" className={photoOnly ? "active" : ""} onClick={() => setPhotoOnly((value) => !value)}>With photos</button>
+          </div>
+          <label>Sort reviews<select value={reviewSort} onChange={(e) => setReviewSort(e.target.value)}><option value="recommended">Recommended</option><option value="recent">Most recent</option><option value="highest">Highest rating</option><option value="lowest">Lowest rating</option></select></label>
+        </div>
+        {(reviewFilter > 0 || verifiedOnly || photoOnly) && <div className="phase22-review-filter-note">Showing {visibleReviews.length} matching review{visibleReviews.length === 1 ? "" : "s"} <button onClick={() => { setReviewFilter(0); setVerifiedOnly(false); setPhotoOnly(false); }}>Clear filters</button></div>}
         <div className="reviews-layout">
           <div className="review-list">{visibleReviews.length ? visibleReviews.map((item) => <article className="review-card phase22-review-card" key={item.id}><div><span className="review-stars">{"★".repeat(item.rating)}{"☆".repeat(5-item.rating)}</span>{item.verifiedPurchase && <b>Verified purchase</b>}</div><h3>{item.title || "Customer review"}</h3><p>{item.comment}</p>{Array.isArray(item.images) && item.images.length > 0 && <div className="phase22-review-images">{item.images.map((src, index) => <a key={`${src}-${index}`} href={mediaUrl(src)} target="_blank" rel="noreferrer"><img src={mediaUrl(src)} alt={`${product.name} customer review ${index + 1}`} loading="lazy" /></a>)}</div>}<small>{item.user?.firstName || "Customer"}</small></article>) : <div className="empty-review">{reviewFilter ? `No ${reviewFilter}-star reviews yet.` : "No approved reviews yet. Be the first to share your experience."}</div>}</div>
           <div className="review-form-card">{user ? <form onSubmit={submitReview}><h3>Write a review</h3><p className="muted">Reviews and photos are checked by Riseora before publishing.</p>{rewardConfig?.enabled && rewardConfig.reviewBonusPoints > 0 && <div className="phase36-review-reward-note"><Icon name="sparkles" size={16} /><span>Verified purchasers earn <strong>{rewardConfig.reviewBonusPoints} reward points</strong> after approval.</span></div>}<label>Rating<select value={review.rating} onChange={(e) => setReview({ ...review, rating: e.target.value })}><option value="5">5 - Excellent</option><option value="4">4 - Very good</option><option value="3">3 - Good</option><option value="2">2 - Fair</option><option value="1">1 - Poor</option></select></label><label>Title<input value={review.title} onChange={(e) => setReview({ ...review, title: e.target.value })} placeholder="Loved it" /></label><label>Review<textarea required minLength="5" value={review.comment} onChange={(e) => setReview({ ...review, comment: e.target.value })} placeholder="Tell others about your experience" /></label><label className="phase22-review-upload">Add photos <input type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={chooseReviewFiles} /><small>Optional · JPG, PNG or WEBP · up to 4 photos · 5 MB each</small></label>{reviewFiles.length > 0 && <div className="phase22-selected-files">{reviewFiles.map((file) => <span key={`${file.name}-${file.lastModified}`}>{file.name}</span>)}</div>}<button className="black-button" type="submit" disabled={reviewBusy}>{reviewBusy ? "SUBMITTING…" : "SUBMIT REVIEW"}</button>{reviewMessage && <p className="review-message">{reviewMessage}</p>}</form> : <div><h3>Want to review this product?</h3><p>Log in to share your experience.</p><Link className="black-button" to="/login">LOGIN</Link></div>}</div>
