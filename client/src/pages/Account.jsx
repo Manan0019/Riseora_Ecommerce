@@ -31,6 +31,7 @@ export default function Account() {
   const [passwordForm, setPasswordForm] = useState({ currentPassword: "", newPassword: "", confirmPassword: "" });
   const [buyAgain, setBuyAgain] = useState([]);
   const [shoppingAlerts, setShoppingAlerts] = useState({ stock: [], price: [] });
+  const [lifecycle, setLifecycle] = useState(null);
 
   async function refreshAddresses() {
     const response = await apiFetch("/account/addresses");
@@ -43,6 +44,7 @@ export default function Account() {
   }
 
   useEffect(() => {
+    apiFetch("/account/lifecycle").then((response) => setLifecycle(response.data || null)).catch(() => setLifecycle(null));
     Promise.all([apiFetch("/account/profile"), apiFetch("/account/addresses"), apiFetch("/account/buy-again"), apiFetch("/account/shopping-alerts")])
       .then(([profileResponse, addressResponse, buyAgainResponse, alertResponse]) => {
         const current = profileResponse.data;
@@ -124,6 +126,17 @@ export default function Account() {
       {message && <p className="alert success">{message}</p>}
       {error && <p className="alert error">{error}</p>}
 
+      {lifecycle && <section className="phase60-lifecycle-hub">
+        <div className="section-heading phase60-lifecycle-heading"><div><p className="eyebrow">YOUR RISEORA TODAY</p><h2>What needs your attention</h2><p className="muted">A live summary across orders, refills, rewards, support and saved shopping activity.</p></div><span className="phase60-live-pill"><i /> LIVE ACCOUNT</span></div>
+        <div className="phase60-lifecycle-stats">
+          <article><Icon name="package" /><div><strong>{lifecycle.summary?.activeOrders || 0}</strong><span>Order in progress</span></div></article>
+          <article><Icon name="bell" /><div><strong>{lifecycle.summary?.unreadNotifications || 0}</strong><span>Unread updates</span></div></article>
+          <article><Icon name="refresh" /><div><strong>{(lifecycle.summary?.refillDue || 0) + (lifecycle.summary?.refillSoon || 0)}</strong><span>Refill moments</span></div></article>
+          <article><Icon name="sparkles" /><div><strong>{lifecycle.summary?.rewardBalance || 0}</strong><span>Reward points</span></div></article>
+        </div>
+        <div className="phase60-next-actions">{(lifecycle.actions || []).map((action) => <article className={`phase60-action-card tone-${action.tone || "default"}`} key={action.key}><span className="phase60-action-icon"><Icon name={action.icon || "sparkles"} /></span><div><small>{action.eyebrow}</small><h3>{action.title}</h3><p>{action.description}</p><Link to={action.ctaUrl}>{action.ctaLabel} →</Link></div></article>)}</div>
+      </section>}
+
       <div className="account-shortcuts">
         <Link to="/orders"><Icon name="orders" /><span><strong>My orders</strong><small>Track and review purchases</small></span><b>›</b></Link>
         <Link to="/wishlist"><Icon name="heart" /><span><strong>Wishlist</strong><small>Your saved products</small></span><b>›</b></Link>
@@ -152,7 +165,7 @@ export default function Account() {
       </section>
 
       <div className="account-grid">
-        <form className="account-card" onSubmit={saveProfile}>
+        <form id="profile" className="account-card" onSubmit={saveProfile}>
           <div className="account-card-head"><div><p className="eyebrow">PROFILE</p><h2>Personal details</h2></div></div>
           <div className="form-grid two"><label>First name<input required value={profile.firstName} onChange={(e) => setProfile((v) => ({ ...v, firstName: e.target.value }))} /></label><label>Last name<input value={profile.lastName} onChange={(e) => setProfile((v) => ({ ...v, lastName: e.target.value }))} /></label></div>
           <label>Phone<input value={profile.phone} onChange={(e) => setProfile((v) => ({ ...v, phone: e.target.value }))} inputMode="tel" /></label>
@@ -160,7 +173,7 @@ export default function Account() {
           <button className="button" disabled={saving}>Save profile</button>
         </form>
 
-        <section className="account-card address-card-section">
+        <section id="delivery" className="account-card address-card-section">
           <div className="account-card-head"><div><p className="eyebrow">DELIVERY</p><h2>Saved addresses</h2></div><button className="button button-secondary account-add-address" onClick={() => setShowAddressForm((v) => !v)}>{showAddressForm ? "Close" : "+ Add"}</button></div>
           {addresses.length === 0 && !showAddressForm && <div className="account-empty">No saved address yet.</div>}
           <div className="saved-address-list">{addresses.map((item) => <article className={item.isDefault ? "saved-address default" : "saved-address"} key={item.id}><div className="saved-address-top"><span>{item.type}</span>{item.isDefault && <b>DEFAULT</b>}</div><strong>{item.name}</strong><p>{item.line1}{item.line2 ? `, ${item.line2}` : ""}<br />{item.city}, {item.state} {item.postalCode}<br />{item.phone}</p><div><button onClick={() => setDefault(item.id)} disabled={item.isDefault}>Set default</button><button className="danger-text" onClick={() => removeAddress(item.id)}>Remove</button></div></article>)}</div>

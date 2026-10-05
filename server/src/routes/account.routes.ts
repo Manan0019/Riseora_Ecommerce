@@ -6,6 +6,7 @@ import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
 import { buildReorderPreview, getOrderCare } from "../services/post-purchase.service";
+import { getAccountLifecycleHub } from "../services/account-lifecycle.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -15,6 +16,13 @@ const profileSchema = z.object({
   lastName: z.string().trim().max(80).optional().or(z.literal("")),
   phone: z.string().trim().min(8).max(20).optional().or(z.literal("")),
 });
+
+router.get(
+  "/lifecycle",
+  asyncHandler(async (req, res) => {
+    res.json({ success: true, data: await getAccountLifecycleHub(req.user!.id) });
+  }),
+);
 
 router.get(
   "/profile",

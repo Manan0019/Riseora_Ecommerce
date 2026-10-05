@@ -10,6 +10,7 @@ export default function AdminRetention() {
   const [preview, setPreview] = useState([]);
   const [previewTotal, setPreviewTotal] = useState(0);
   const [routine, setRoutine] = useState(null);
+  const [lifecyclePulse, setLifecyclePulse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
@@ -23,11 +24,15 @@ export default function AdminRetention() {
     const response = await apiFetch("/admin/retention/routine-intelligence");
     setRoutine(response.data || null);
   }
+  async function loadLifecyclePulse() {
+    const response = await apiFetch("/admin/retention/customer-lifecycle-pulse");
+    setLifecyclePulse(response.data || null);
+  }
   async function loadPreview(segment) {
     const response = await apiFetch(`/admin/retention/segments/${segment}`);
     setPreview(response.data || []); setPreviewTotal(Number(response.total || 0));
   }
-  useEffect(() => { Promise.all([loadSegments(), loadPreview(form.segment), loadRoutine()]).catch((e) => setError(e.message)).finally(() => setLoading(false)); }, []);
+  useEffect(() => { Promise.all([loadSegments(), loadPreview(form.segment), loadRoutine(), loadLifecyclePulse()]).catch((e) => setError(e.message)).finally(() => setLoading(false)); }, []);
   useEffect(() => { if (!loading) loadPreview(form.segment).catch((e) => setError(e.message)); }, [form.segment]);
 
   const selected = useMemo(() => segments.find((item) => item.key === form.segment), [segments, form.segment]);
@@ -49,6 +54,8 @@ export default function AdminRetention() {
     <section className="phase27-segment-grid">{segments.map((item) => <button type="button" className={form.segment === item.key ? "active" : ""} key={item.key} onClick={() => setForm((v) => ({ ...v, segment: item.key }))}><small>{item.label}</small><strong>{item.count}</strong><span>{item.description}</span></button>)}</section>
 
     {routine && <section className="admin-panel phase59-retention-routine"><div className="admin-panel-head"><div><p className="eyebrow">PHASE 59 · ROUTINE INTELLIGENCE</p><h2>Retention opportunities</h2><p>Live refill timing and loyalty momentum from existing customer activity. No automatic campaign is sent from this panel.</p></div><Icon name="sparkles" /></div><div className="phase59-retention-metrics"><article><small>ACTIVE REMINDERS</small><strong>{routine.activeReminders}</strong><span>{routine.customersWithActiveReminders} customers</span></article><article><small>DUE NOW</small><strong>{routine.dueReminders}</strong><span>refills ready for attention</span></article><article><small>NEXT 7 DAYS</small><strong>{routine.next7Reminders}</strong><span>upcoming refill moments</span></article><article><small>NEXT 30 DAYS</small><strong>{routine.next30Reminders}</strong><span>future refill moments</span></article><article><small>PAUSED</small><strong>{routine.pausedReminders}</strong><span>customer-controlled pauses</span></article><article><small>NEAR REWARD</small><strong>{routine.nearRewardCustomers}</strong><span>{routine.rewardThresholdPoints ? `75%+ of ${routine.rewardThresholdPoints} pts` : "reward target not configured"}</span></article></div></section>}
+
+    {lifecyclePulse && <section className="admin-panel phase60-retention-lifecycle"><div className="admin-panel-head"><div><p className="eyebrow">PHASE 60 · CUSTOMER LIFECYCLE HUB</p><h2>Customer attention pulse</h2><p>Current customers with an active service, order or retention moment. These are operational counts, not automatic campaigns.</p></div><Icon name="user" /></div><div className="phase60-retention-metrics"><article><small>ACTIVE ORDERS</small><strong>{lifecyclePulse.customersWithActiveOrders}</strong><span>customers tracking fulfilment</span></article><article><small>OPEN RETURNS</small><strong>{lifecyclePulse.customersWithOpenReturns}</strong><span>customers in aftercare</span></article><article><small>OPEN SUPPORT</small><strong>{lifecyclePulse.customersWithOpenSupport}</strong><span>customers with active help requests</span></article><article><small>REFILLS DUE</small><strong>{lifecyclePulse.customersWithDueRefills}</strong><span>customers with a due reminder</span></article><article><small>UNREAD UPDATES</small><strong>{lifecyclePulse.customersWithUnreadUpdates}</strong><span>customers with account updates</span></article><article><small>WISHLIST</small><strong>{lifecyclePulse.customersWithWishlist}</strong><span>customers with saved intent</span></article></div></section>}
 
     <div className="phase27-retention-layout">
       <form className="admin-panel phase27-campaign-composer" onSubmit={sendCampaign}>
