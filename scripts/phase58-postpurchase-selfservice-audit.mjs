@@ -39,9 +39,11 @@ requireText("client/src/pages/OrderDetail.jsx", [
 ]);
 requireText("client/src/pages/Support.jsx", ["useSearchParams", 'searchParams.get("order")', 'searchParams.get("category")', "Help with order"]);
 requireText("client/src/pages/admin/AdminSystem.jsx", [
-  "PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL", "Post-purchase self-service", "Reorder previews", "Preview → add", "Adjusted previews",
+  "Post-purchase self-service", "Reorder previews", "Preview → add", "Adjusted previews",
 ]);
 requireText("client/src/styles.css", ["phase58-order-care", "phase58-reorder-preview", "phase58-postpurchase-health-grid"]);
+const adminSystem = read("client/src/pages/admin/AdminSystem.jsx");
+(adminSystem.includes("PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL") || adminSystem.includes("PHASE 61 · CUSTOMER COMMUNICATION CONTROL")) ? pass("Admin System Phase 58+ control heading") : fail("Admin System Phase 58+ control heading");
 
 const service = read("server/src/services/post-purchase.service.ts");
 service.includes("stockQuantity") || service.includes("availableToSell") ? pass("reorder preview uses live public stock") : fail("reorder live-stock contract");
@@ -63,9 +65,9 @@ const scripts = pkg.scripts || {};
 String(scripts["postpurchase:doctor"] || "").includes("phase58-postpurchase-selfservice-audit.mjs") ? pass("postpurchase:doctor command") : fail("postpurchase:doctor command");
 String(scripts["client:doctor"] || "").includes("postpurchase:doctor") ? pass("client:doctor includes Phase 58 post-purchase gate") : fail("client:doctor Phase 58 gate");
 String(scripts["verify:phase58"] || "").includes("performance:budget") && String(scripts["verify:phase58"] || "").includes("npm run build") ? pass("verify:phase58 command") : fail("verify:phase58 command");
-(["verify:phase58", "verify:phase59", "verify:phase60"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 58+ verification") : fail("prelaunch Phase 58+ verification");
+(["verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 58+ verification") : fail("prelaunch Phase 58+ verification");
 const prepare = read("scripts/phase49-release-prepare.mjs");
-(prepare.includes('verify:phase58') || prepare.includes('verify:phase59') || prepare.includes('verify:phase60')) ? pass("production release advances to Phase 58+") : fail("production release Phase 58+ verification");
+(prepare.includes('verify:phase58') || prepare.includes('verify:phase59') || prepare.includes('verify:phase60') || prepare.includes('verify:phase61')) ? pass("production release advances to Phase 58+") : fail("production release Phase 58+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

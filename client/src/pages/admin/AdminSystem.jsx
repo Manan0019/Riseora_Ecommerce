@@ -77,7 +77,7 @@ export default function AdminSystem() {
 
   const backupReady = Boolean(health?.backup?.pgDumpAvailable && health?.backup?.pgRestoreAvailable);
   return <>
-    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, search discovery, recommendation engagement, checkout conversion confidence, post-purchase self-service, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
+    <div className="admin-page-heading phase24-system-heading"><div><p className="eyebrow">PHASE 61 · CUSTOMER COMMUNICATION CONTROL</p><h1>System health, release & recovery</h1><p>Deployment identity, API readiness, browser experience, customer communications, search discovery, recommendation engagement, checkout confidence, PostgreSQL recovery, schema integrity and durable background jobs.</p></div><button className="button button-secondary" onClick={load}>Refresh status</button></div>
     {error && <div className="form-message error">{error}</div>}
     {message && <div className="form-message success">{message}</div>}
 
@@ -216,6 +216,22 @@ export default function AdminSystem() {
             <article><small>Preview → add</small><strong>{health.postPurchase?.reorderAddRatePercent ?? 0}%</strong><span>How often a reviewed reorder proceeds</span></article>
             <article><small>Adjusted previews</small><strong>{health.postPurchase?.adjustedPreviews ?? 0}</strong><span>Stock or purchase-limit notes shown before adding</span></article>
             <article><small>Price changes</small><strong>{health.postPurchase?.priceChangePreviews ?? 0}</strong><span>Previews where today's price differs</span></article>
+          </div>
+        </div>
+        <div className="phase61-communication-health">
+          <div className="phase41-route-head"><span>Customer communications health</span><small>Notification-center delivery and unread backlog · live database snapshot</small></div>
+          <div className="phase61-communication-grid">
+            <article><small>Created · 7 days</small><strong>{health.communications?.created7d ?? 0}</strong><span>In-app customer updates</span></article>
+            <article><small>Unread</small><strong>{health.communications?.unread ?? 0}</strong><span>Current notification backlog</span></article>
+            <article><small>Customers unread</small><strong>{health.communications?.customersWithUnread ?? 0}</strong><span>Accounts with at least one unread update</span></article>
+            <article><small>Oldest unread</small><strong>{health.communications?.oldestUnreadHours ? `${health.communications.oldestUnreadHours} h` : "—"}</strong><span>{(health.communications?.oldestUnreadHours || 0) > 72 ? "Review stale communications" : "Within normal window"}</span></article>
+          </div>
+          <div className="phase61-channel-breakdown">
+            <span>Orders <b>{health.communications?.categories?.ORDERS ?? 0}</b></span>
+            <span>Support <b>{health.communications?.categories?.SUPPORT ?? 0}</b></span>
+            <span>Refills <b>{health.communications?.categories?.REFILLS ?? 0}</b></span>
+            <span>Shopping <b>{health.communications?.categories?.SHOPPING ?? 0}</b></span>
+            <span>Riseora <b>{health.communications?.categories?.RISEORA ?? 0}</b></span>
           </div>
         </div>
         {(health.runtime?.routes || []).length > 0 && <div className="phase41-route-table">

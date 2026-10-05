@@ -36,7 +36,7 @@ const scripts = packageJson.scripts || {};
 String(scripts["client:doctor"] || "").includes("phase53-storefront-performance-audit.mjs") ? pass("client:doctor includes Phase 53 performance contract") : fail("client:doctor Phase 53 contract");
 String(scripts["performance:budget"] || "").includes("phase53-bundle-budget.mjs") ? pass("performance:budget command") : fail("performance:budget command");
 String(scripts["verify:phase53"] || "").includes("performance:budget") && String(scripts["verify:phase53"] || "").includes("npm run build") ? pass("verify:phase53 command") : fail("verify:phase53 command");
-(["verify:phase53", "verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 53+ verification") : fail("prelaunch uses Phase 53+ verification");
+(["verify:phase53", "verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 53+ verification") : fail("prelaunch uses Phase 53+ verification");
 
 const routeModuleText = read("client/src/lib/route-modules.js");
 const routeNames = [...app.matchAll(/lazyRoute\("([A-Za-z0-9]+)"\)/g)].map((match) => match[1]);

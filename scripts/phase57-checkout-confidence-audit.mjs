@@ -37,7 +37,7 @@ requireText("client/src/pages/admin/AdminSystem.jsx", [
   "Checkout conversion confidence", "Preflight ready", "Completion rate", "failureReasons",
 ]);
 const adminSystem = read("client/src/pages/admin/AdminSystem.jsx");
-(adminSystem.includes("PHASE 57 · CHECKOUT CONFIDENCE CONTROL") || adminSystem.includes("PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL")) ? pass("Admin System Phase 57+ control heading") : fail("Admin System Phase 57+ control heading");
+(adminSystem.includes("PHASE 57 · CHECKOUT CONFIDENCE CONTROL") || adminSystem.includes("PHASE 58 · POST-PURCHASE SELF-SERVICE CONTROL") || adminSystem.includes("PHASE 61 · CUSTOMER COMMUNICATION CONTROL")) ? pass("Admin System Phase 57+ control heading") : fail("Admin System Phase 57+ control heading");
 requireText("client/src/styles.css", [
   "phase57-checkout-progress", "phase57-checkout-confidence", "phase57-confidence-checks", "phase57-confidence-promise", "phase57-checkout-funnel-grid",
 ]);
@@ -69,10 +69,10 @@ const scripts = pkg.scripts || {};
 String(scripts["checkout:doctor"] || "").includes("phase57-checkout-confidence-audit.mjs") ? pass("checkout:doctor command") : fail("checkout:doctor command");
 String(scripts["client:doctor"] || "").includes("checkout:doctor") ? pass("client:doctor includes Phase 57 checkout gate") : fail("client:doctor Phase 57 gate");
 String(scripts["verify:phase57"] || "").includes("performance:budget") && String(scripts["verify:phase57"] || "").includes("npm run build") ? pass("verify:phase57 command") : fail("verify:phase57 command");
-(["verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 57+ verification") : fail("prelaunch Phase 57+ verification");
+(["verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 57+ verification") : fail("prelaunch Phase 57+ verification");
 
 const prepare = read("scripts/phase49-release-prepare.mjs");
-(prepare.includes('verify:phase57') || prepare.includes('verify:phase58') || prepare.includes('verify:phase59') || prepare.includes('verify:phase60')) ? pass("production release advances to Phase 57+") : fail("production release Phase 57+ verification");
+(prepare.includes('verify:phase57') || prepare.includes('verify:phase58') || prepare.includes('verify:phase59') || prepare.includes('verify:phase60') || prepare.includes('verify:phase61')) ? pass("production release advances to Phase 57+") : fail("production release Phase 57+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();
