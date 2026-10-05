@@ -12,7 +12,12 @@ export default function Rewards() {
   async function load() { const response = await apiFetch("/rewards/me"); setData(response.data); }
   useEffect(() => { load().catch((e) => setError(e.message)); }, []);
   const available = Math.max(0, Number(data?.account?.balance || 0));
-  const canRedeem = Boolean(data?.settings?.enabled) && available >= Number(data?.settings?.voucherPoints || Infinity);
+  const voucherTarget = Math.max(0, Number(data?.settings?.voucherPoints || 0));
+  const pointsRemaining = Math.max(0, voucherTarget - available);
+  const rewardProgress = voucherTarget > 0 ? Math.min(100, Math.round((available / voucherTarget) * 100)) : 0;
+  const pointsPerHundred = Math.max(0, Number(data?.settings?.pointsPerHundred || 0));
+  const estimatedSpendToVoucher = pointsPerHundred > 0 ? Math.ceil(pointsRemaining / pointsPerHundred) * 100 : 0;
+  const canRedeem = Boolean(data?.settings?.enabled) && voucherTarget > 0 && available >= voucherTarget;
   const activeVouchers = useMemo(() => (data?.vouchers || []).filter((item) => item.isActive && Number(item.usageCount || 0) === 0 && (!item.endsAt || new Date(item.endsAt) > new Date())), [data]);
   async function copyReferral() { const url = `${window.location.origin}/register?ref=${encodeURIComponent(data.referralCode)}`; try { await navigator.clipboard.writeText(url); setMessage("Referral link copied."); } catch { setMessage(`Share this link: ${url}`); } }
   async function redeem() { if (!canRedeem || busy) return; if (!window.confirm(`Use ${data.settings.voucherPoints} points for a ${money(data.settings.voucherAmount)} voucher?`)) return; setBusy(true); setError(""); setMessage(""); try { const response = await apiFetch("/rewards/vouchers", { method: "POST" }); setMessage(`${response.data.code} is ready. Copy it into checkout.`); await load(); } catch (e) { setError(e.message); } finally { setBusy(false); } }
@@ -21,6 +26,7 @@ export default function Rewards() {
     <div className="phase36-rewards-hero"><div><p className="eyebrow">RISEORA REWARDS</p><h1>Rewards that grow with your routine.</h1><p>Earn on delivered orders, verified reviews and successful referrals. Turn points into private checkout vouchers when you are ready.</p></div><div className="phase36-balance-orb"><small>AVAILABLE POINTS</small><strong>{available.toLocaleString("en-IN")}</strong><span>{data.account.balance < 0 ? "Future earnings will first clear your adjusted balance." : `${data.account.lifetimeEarned.toLocaleString("en-IN")} lifetime earned`}</span></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
     {!data.settings.enabled && <p className="alert">Riseora Rewards is currently paused. Your existing point history remains safe.</p>}
+    <section className="phase59-loyalty-momentum"><div><p className="eyebrow">LOYALTY MOMENTUM</p><h2>{canRedeem ? "Your next voucher is ready" : `${pointsRemaining.toLocaleString("en-IN")} points to your next voucher`}</h2><p>{canRedeem ? `You have enough points to unlock ${money(data.settings.voucherAmount)} off.` : pointsPerHundred > 0 ? `At the current earn rate, about ${money(estimatedSpendToVoucher)} of eligible delivered purchases would earn the remaining points.` : "Keep earning through eligible Riseora activity."}</p></div><div className="phase59-loyalty-meter"><div className="phase59-loyalty-track"><span style={{ width: `${rewardProgress}%` }} /></div><div><strong>{rewardProgress}%</strong><span>{available.toLocaleString("en-IN")} / {voucherTarget.toLocaleString("en-IN")} pts</span></div></div></section>
     <div className="phase36-reward-grid">
       <article className="phase36-reward-card"><span><Icon name="sparkles" /></span><small>EARN ON DELIVERY</small><strong>{data.settings.pointsPerHundred} pts / ₹100</strong><p>Points are credited only after an order is marked delivered, helping keep balances accurate.</p></article>
       <article className="phase36-reward-card"><span><Icon name="star" /></span><small>VERIFIED REVIEW</small><strong>+{data.settings.reviewBonusPoints} pts</strong><p>A verified-purchase review earns points once it is approved by Riseora.</p></article>

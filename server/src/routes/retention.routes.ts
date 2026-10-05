@@ -4,10 +4,15 @@ import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { getSegmentCustomers, getSegmentSummaries, RETENTION_SEGMENTS } from "../services/retention.service";
+import { getRoutineRetentionSummary } from "../services/routine-intelligence.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
 const segmentEnum = z.enum(RETENTION_SEGMENTS);
+
+router.get("/routine-intelligence", asyncHandler(async (_req, res) => {
+  res.json({ success: true, data: await getRoutineRetentionSummary() });
+}));
 
 router.get("/segments", asyncHandler(async (_req, res) => {
   res.json({ success: true, data: await getSegmentSummaries() });

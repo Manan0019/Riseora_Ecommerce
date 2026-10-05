@@ -9,6 +9,7 @@ export default function AdminRetention() {
   const [form, setForm] = useState(blank);
   const [preview, setPreview] = useState([]);
   const [previewTotal, setPreviewTotal] = useState(0);
+  const [routine, setRoutine] = useState(null);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
   const [message, setMessage] = useState("");
@@ -18,11 +19,15 @@ export default function AdminRetention() {
     const response = await apiFetch("/admin/retention/segments");
     setSegments(response.data || []);
   }
+  async function loadRoutine() {
+    const response = await apiFetch("/admin/retention/routine-intelligence");
+    setRoutine(response.data || null);
+  }
   async function loadPreview(segment) {
     const response = await apiFetch(`/admin/retention/segments/${segment}`);
     setPreview(response.data || []); setPreviewTotal(Number(response.total || 0));
   }
-  useEffect(() => { Promise.all([loadSegments(), loadPreview(form.segment)]).catch((e) => setError(e.message)).finally(() => setLoading(false)); }, []);
+  useEffect(() => { Promise.all([loadSegments(), loadPreview(form.segment), loadRoutine()]).catch((e) => setError(e.message)).finally(() => setLoading(false)); }, []);
   useEffect(() => { if (!loading) loadPreview(form.segment).catch((e) => setError(e.message)); }, [form.segment]);
 
   const selected = useMemo(() => segments.find((item) => item.key === form.segment), [segments, form.segment]);
@@ -42,6 +47,8 @@ export default function AdminRetention() {
     <div className="admin-page-heading phase27-retention-heading"><div><p className="eyebrow">RETENTION</p><h1>Customer intelligence</h1><p>Use real order behaviour to understand audiences and send targeted in-app campaigns.</p></div><span className="phase27-live-badge"><i /> LIVE DATA</span></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
     <section className="phase27-segment-grid">{segments.map((item) => <button type="button" className={form.segment === item.key ? "active" : ""} key={item.key} onClick={() => setForm((v) => ({ ...v, segment: item.key }))}><small>{item.label}</small><strong>{item.count}</strong><span>{item.description}</span></button>)}</section>
+
+    {routine && <section className="admin-panel phase59-retention-routine"><div className="admin-panel-head"><div><p className="eyebrow">PHASE 59 · ROUTINE INTELLIGENCE</p><h2>Retention opportunities</h2><p>Live refill timing and loyalty momentum from existing customer activity. No automatic campaign is sent from this panel.</p></div><Icon name="sparkles" /></div><div className="phase59-retention-metrics"><article><small>ACTIVE REMINDERS</small><strong>{routine.activeReminders}</strong><span>{routine.customersWithActiveReminders} customers</span></article><article><small>DUE NOW</small><strong>{routine.dueReminders}</strong><span>refills ready for attention</span></article><article><small>NEXT 7 DAYS</small><strong>{routine.next7Reminders}</strong><span>upcoming refill moments</span></article><article><small>NEXT 30 DAYS</small><strong>{routine.next30Reminders}</strong><span>future refill moments</span></article><article><small>PAUSED</small><strong>{routine.pausedReminders}</strong><span>customer-controlled pauses</span></article><article><small>NEAR REWARD</small><strong>{routine.nearRewardCustomers}</strong><span>{routine.rewardThresholdPoints ? `75%+ of ${routine.rewardThresholdPoints} pts` : "reward target not configured"}</span></article></div></section>}
 
     <div className="phase27-retention-layout">
       <form className="admin-panel phase27-campaign-composer" onSubmit={sendCampaign}>

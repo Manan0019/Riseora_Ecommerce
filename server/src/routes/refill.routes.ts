@@ -4,6 +4,7 @@ import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { refillReorderPreview } from "../services/refill-reminder.service";
+import { getRoutineForecast } from "../services/routine-intelligence.service";
 import { availableToSell } from "../services/inventory.service";
 
 const router = Router();
@@ -14,6 +15,10 @@ const createSchema = z.object({
   intervalDays: z.number().int().min(7).max(180).optional(),
   quantity: z.number().int().min(1).max(50).default(1),
 });
+
+router.get("/intelligence", asyncHandler(async (req, res) => {
+  res.json({ success: true, data: await getRoutineForecast(req.user!.id) });
+}));
 
 router.get("/", asyncHandler(async (req, res) => {
   const rows = await prisma.refillReminder.findMany({

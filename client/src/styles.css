@@ -3008,3 +3008,51 @@ textarea { min-height: 105px; resize: vertical; }
 .phase58-postpurchase-health{margin-top:24px}.phase58-postpurchase-health-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
 @media (max-width:900px){.phase58-order-care-head{flex-direction:column}.phase58-order-care-grid,.phase58-postpurchase-health-grid{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.phase58-order-care{padding:18px}.phase58-order-care-grid,.phase58-postpurchase-health-grid{grid-template-columns:1fr}.phase58-reorder-lines>div{gap:10px}.phase58-reorder-preview-head{flex-direction:column}.phase58-reorder-lines span:last-child{text-align:left;align-items:flex-start}}
+
+/* Phase 59 · Personalized Routine Forecast & Loyalty Momentum */
+.phase59-routine-forecast { margin: 28px 0 34px; padding: 26px; border: 1px solid var(--line, #e7ded5); border-radius: 26px; background: linear-gradient(145deg, #fffdf9, #f9f4ec); }
+.phase59-routine-forecast .section-heading { display:flex; justify-content:space-between; gap:24px; align-items:flex-start; margin-bottom:20px; }
+.phase59-routine-forecast .section-heading p { max-width:720px; }
+.phase59-routine-summary { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; }
+.phase59-routine-summary span { min-width:90px; padding:10px 12px; border-radius:14px; background:#fff; border:1px solid rgba(50,35,20,.08); text-align:center; font-size:12px; }
+.phase59-routine-summary b { display:block; font-size:20px; color:var(--ink, #1f1b17); }
+.phase59-routine-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.phase59-routine-card { display:flex; flex-direction:column; gap:14px; min-width:0; padding:16px; border:1px solid rgba(60,44,25,.10); border-radius:20px; background:#fff; box-shadow:0 10px 28px rgba(52,35,20,.05); }
+.phase59-routine-card.due { border-color:rgba(176,83,60,.35); box-shadow:0 10px 30px rgba(176,83,60,.08); }
+.phase59-routine-card.soon { border-color:rgba(179,132,48,.35); }
+.phase59-routine-card-top { display:grid; grid-template-columns:72px 1fr; gap:12px; align-items:center; }
+.phase59-routine-card-top small { display:block; font-size:10px; letter-spacing:.12em; color:#8a7762; }
+.phase59-routine-card-top h3 { margin:3px 0 4px; font-size:17px; line-height:1.25; }
+.phase59-routine-card-top p { margin:0; font-size:13px; color:#766b61; }
+.phase59-routine-image { width:72px; height:72px; overflow:hidden; border-radius:16px; background:#f4eee7; display:grid; place-items:center; }
+.phase59-routine-image img { width:100%; height:100%; object-fit:cover; }
+.phase59-routine-image span { font-weight:700; }
+.phase59-routine-timing { display:grid; gap:4px; padding:12px; border-radius:15px; background:#faf7f2; }
+.phase59-routine-timing strong { font-size:15px; }
+.phase59-routine-timing span, .phase59-routine-timing small { color:#766b61; font-size:12px; }
+.phase59-routine-facts { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.phase59-routine-facts span { padding:10px; border:1px solid rgba(60,44,25,.09); border-radius:13px; display:grid; gap:2px; }
+.phase59-routine-facts small { color:#85796d; font-size:11px; }
+.phase59-routine-facts b { font-size:15px; }
+.phase59-routine-facts em { color:#8a6b52; font-size:10px; font-style:normal; }
+.phase59-routine-actions { display:grid; grid-template-columns:1fr; gap:8px; margin-top:auto; }
+.phase59-routine-empty { grid-column:1/-1; padding:30px; text-align:center; border:1px dashed rgba(60,44,25,.2); border-radius:18px; background:#fff; }
+.phase59-routine-empty h3 { margin:10px 0 6px; }
+.phase59-routine-empty p { margin-bottom:14px; }
+.phase59-loyalty-momentum { margin:22px 0; display:grid; grid-template-columns:minmax(0,1.2fr) minmax(260px,.8fr); gap:28px; align-items:center; padding:24px; border-radius:24px; background:linear-gradient(135deg,#211b19,#3a2b24); color:#fff; }
+.phase59-loyalty-momentum h2, .phase59-loyalty-momentum p { color:#fff; }
+.phase59-loyalty-momentum p { opacity:.78; }
+.phase59-loyalty-meter { display:grid; gap:10px; }
+.phase59-loyalty-track { height:11px; overflow:hidden; border-radius:999px; background:rgba(255,255,255,.16); }
+.phase59-loyalty-track span { display:block; height:100%; border-radius:inherit; background:linear-gradient(90deg,#d5a86e,#f4d6a6); transition:width .3s ease; }
+.phase59-loyalty-meter > div:last-child { display:flex; justify-content:space-between; align-items:center; gap:12px; }
+.phase59-loyalty-meter strong { font-size:22px; }
+.phase59-loyalty-meter span { font-size:12px; opacity:.78; }
+.phase59-retention-routine { margin-bottom:22px; }
+.phase59-retention-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.phase59-retention-metrics article { display:grid; gap:4px; padding:15px; border-radius:16px; border:1px solid rgba(60,44,25,.10); background:#fbf8f3; }
+.phase59-retention-metrics small { font-size:10px; letter-spacing:.1em; color:#8a7762; }
+.phase59-retention-metrics strong { font-size:26px; line-height:1; }
+.phase59-retention-metrics span { color:#776c62; font-size:12px; }
+@media (max-width: 980px) { .phase59-routine-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .phase59-routine-forecast .section-heading { flex-direction:column; } .phase59-routine-summary { justify-content:flex-start; } .phase59-retention-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+@media (max-width: 640px) { .phase59-routine-forecast { padding:18px; } .phase59-routine-grid, .phase59-loyalty-momentum, .phase59-retention-metrics { grid-template-columns:1fr; } .phase59-loyalty-momentum { gap:18px; } }
