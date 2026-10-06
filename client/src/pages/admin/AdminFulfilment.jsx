@@ -49,6 +49,20 @@ export default function AdminFulfilment() {
       <div className={(counts.exceptions || 0) > 0 ? "danger" : ""}><small>SHIPMENT EXCEPTIONS</small><strong>{counts.exceptions || 0}</strong><span>Last 14 days</span></div>
     </section>
 
+    {data?.deliveryPromiseHealth && <section className="admin-panel phase73-delivery-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 73 · DELIVERY PROMISE</p><h2>Pre-checkout delivery health</h2><p>Live configuration coverage plus rolling Cart delivery-preview signals. Customer PIN codes and cart contents are not retained in these counters.</p></div><span className={`phase73-strict-chip ${data.deliveryPromiseHealth.strictServiceability ? "strict" : "fallback"}`}>{data.deliveryPromiseHealth.strictServiceability ? "STRICT ZONES" : "FALLBACK ENABLED"}</span></div>
+      <div className="phase73-delivery-health-grid">
+        <article><small>ACTIVE ZONES</small><strong>{data.deliveryPromiseHealth.activeZones ?? 0}</strong><span>{data.deliveryPromiseHealth.configuredPostalPrefixes ?? 0} PIN prefixes</span></article>
+        <article><small>ACTIVE COURIERS</small><strong>{data.deliveryPromiseHealth.activePartners ?? 0}</strong><span>{data.deliveryPromiseHealth.zonesWithPreferredPartner ?? 0} zones with preferred courier</span></article>
+        <article><small>PREVIEWS · 60M</small><strong>{data.deliveryPromiseHealth.engagement?.previewChecks ?? 0}</strong><span>Cart delivery checks</span></article>
+        <article><small>SERVICEABLE · 60M</small><strong>{data.deliveryPromiseHealth.engagement?.serviceableRatePercent ?? 0}%</strong><span>{data.deliveryPromiseHealth.engagement?.serviceablePreviews ?? 0} previews ready</span></article>
+        <article><small>COD BLOCKED · 60M</small><strong>{data.deliveryPromiseHealth.engagement?.codBlockedPreviews ?? 0}</strong><span>Online checkout may still be available</span></article>
+        <article><small>FALLBACK QUOTES · 60M</small><strong>{data.deliveryPromiseHealth.engagement?.fallbackPreviews ?? 0}</strong><span>{data.deliveryPromiseHealth.strictServiceability ? "Unmatched PINs are blocked" : "Store-wide rules used"}</span></article>
+        <article><small>WEIGHT BLOCKS · 60M</small><strong>{data.deliveryPromiseHealth.engagement?.weightBlockedPreviews ?? 0}</strong><span>{data.deliveryPromiseHealth.zonesWithWeightLimit ?? 0} zones have parcel caps</span></article>
+        <article><small>PREPAID-ONLY ZONES</small><strong>{data.deliveryPromiseHealth.prepaidOnlyZones ?? 0}</strong><span>COD intentionally disabled</span></article>
+      </div>
+    </section>}
+
     <section className="admin-panel phase44-fulfilment-queue">
       <div className="admin-panel-head"><div><h2>Dispatch queue</h2><p>Orders are sorted by promised dispatch time. Open an order to pack, ship and add tracking.</p></div><div className="phase44-filter-row">{[["attention","Attention"],["overdue","Overdue"],["due","Due soon"],["confirmed","Confirmed"],["processing","Processing"],["all","All"]].map(([value,label]) => <button type="button" key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
       {orders.length === 0 ? <div className="admin-empty"><strong>Nothing in this queue</strong><p>There are no orders matching the selected fulfilment view.</p></div> : <div className="phase44-fulfilment-list">{orders.map((order) => <article key={order.id} className={`${order.overdue ? "overdue" : order.dueSoon ? "due" : ""}`}>

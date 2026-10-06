@@ -2,12 +2,28 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { apiFetch, mediaUrl } from "../api/http";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useAuth } from "../context/AuthContext";
 import { Icon } from "../components/Icons";
 import OfferProgress from "../components/OfferProgress";
 import ProductCard from "../components/ProductCard";
 import { trackCommerce, trackEvent } from "../analytics";
 
 const CART_RECOMMENDATION_SHELF = "cart-routine";
+const DELIVERY_PIN_KEY = "riseora_delivery_pin";
+
+function readDeliveryPin() {
+  try {
+    const value = String(window.localStorage.getItem(DELIVERY_PIN_KEY) || "").replace(/\D/g, "").slice(0, 6);
+    return /^\d{6}$/.test(value) ? value : "";
+  } catch { return ""; }
+}
+
+function formatPromiseDate(value) {
+  if (!value) return "";
+  const date = new Date(`${value}T12:00:00`);
+  return Number.isNaN(date.getTime()) ? "" : date.toLocaleDateString("en-IN", { day: "numeric", month: "short" });
+}
+
 
 export default function Cart() {
   const {
@@ -30,6 +46,7 @@ export default function Cart() {
     useAccountSavedBag,
     keepBrowserSavedBag,
   } = useCart();
+  const { user } = useAuth();
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionMeta, setSuggestionMeta] = useState({ strategy: "", explanation: "" });
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -37,6 +54,11 @@ export default function Cart() {
   const [quantityReadinessLoading, setQuantityReadinessLoading] = useState(false);
   const [quantityReadinessError, setQuantityReadinessError] = useState("");
   const [quantityRefreshTick, setQuantityRefreshTick] = useState(0);
+  const [deliveryPin, setDeliveryPin] = useState(readDeliveryPin);
+  const [deliveryPreview, setDeliveryPreview] = useState(null);
+  const [deliveryLoading, setDeliveryLoading] = useState(false);
+  const [deliveryError, setDeliveryError] = useState("");
+  const [deliveryRefreshTick, setDeliveryRefreshTick] = useState(0);
   const lastTrackedCart = useRef("");
   const lastRecommendationImpression = useRef("");
 
@@ -46,6 +68,10 @@ export default function Cart() {
   const quantitySignature = useMemo(() => items.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|"), [items]);
   const quantityByVariant = useMemo(() => new Map((quantityReadiness?.lines || []).map((line) => [line.variantId, line])), [quantityReadiness]);
   const quantityAdjustmentRequired = Number(quantityReadiness?.summary?.adjustmentLines || 0) > 0;
+  const deliveryPinValid = /^\d{6}$/.test(deliveryPin);
+  const deliveryBlocked = deliveryPinValid && deliveryPreview?.serviceable === false;
+  const cartCheckoutBlocked = quantityAdjustmentRequired || deliveryBlocked;
+  const deliverySignature = useMemo(() => items.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|"), [items]);
 
   useEffect(() => {
     if (!items.length) return;
@@ -81,6 +107,53 @@ export default function Cart() {
     }, 180);
     return () => { active = false; window.clearTimeout(timer); };
   }, [quantitySignature, quantityRefreshTick]);
+
+  useEffect(() => {
+    try {
+      if (deliveryPinValid) window.localStorage.setItem(DELIVERY_PIN_KEY, deliveryPin);
+      else window.localStorage.removeItem(DELIVERY_PIN_KEY);
+    } catch { /* delivery PIN persistence is best effort */ }
+  }, [deliveryPin, deliveryPinValid]);
+
+  useEffect(() => {
+    if (!user || deliveryPinValid) return undefined;
+    let active = true;
+    apiFetch("/account/addresses").then((response) => {
+      if (!active) return;
+      const rows = Array.isArray(response?.data) ? response.data : [];
+      const preferred = rows.find((item) => item.isDefault) || rows[0];
+      const pin = String(preferred?.postalCode || "").replace(/\D/g, "").slice(0, 6);
+      if (/^\d{6}$/.test(pin)) setDeliveryPin(pin);
+    }).catch(() => {});
+    return () => { active = false; };
+  }, [user, deliveryPinValid]);
+
+  useEffect(() => {
+    if (!items.length || !deliveryPinValid || quantityAdjustmentRequired) {
+      setDeliveryPreview(null);
+      setDeliveryError("");
+      setDeliveryLoading(false);
+      return undefined;
+    }
+    let active = true;
+    setDeliveryLoading(true);
+    setDeliveryPreview(null);
+    setDeliveryError("");
+    const timer = window.setTimeout(() => {
+      apiFetch("/orders/delivery-promise", {
+        method: "POST",
+        body: JSON.stringify({ postalCode: deliveryPin, items: items.map((item) => ({ variantId: item.variantId, quantity: Number(item.quantity || 1) })) }),
+      }).then((response) => {
+        if (!active) return;
+        setDeliveryPreview(response?.data || null);
+      }).catch((error) => {
+        if (!active) return;
+        setDeliveryPreview(null);
+        setDeliveryError(error.message || "Delivery promise could not be checked right now.");
+      }).finally(() => active && setDeliveryLoading(false));
+    }, 220);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [deliveryPin, deliveryPinValid, deliverySignature, deliveryRefreshTick, quantityAdjustmentRequired]);
 
   useEffect(() => {
     if (!cartProductIds.length) {
@@ -173,6 +246,24 @@ export default function Cart() {
         {quantityAdjustmentRequired && <div className="phase72-adjust-action"><div><strong>Some quantities exceed today's safe ceiling.</strong><span>Apply the server-checked quantities before checkout. Items that are no longer sellable will leave the active bag.</span></div><button className="button" type="button" onClick={() => applySafeCartQuantities(quantityReadiness?.lines || [])}>APPLY SAFE QUANTITIES</button></div>}
       </section>}
 
+      {items.length > 0 && <section className={`phase73-delivery-planner ${deliveryBlocked ? "is-blocked" : deliveryPreview?.serviceable ? "is-ready" : "is-pending"}`} aria-live="polite" aria-labelledby="phase73-delivery-title">
+        <div className="phase73-delivery-head"><div><p className="phase3-eyebrow">PHASE 73 · DELIVERY PROMISE</p><h2 id="phase73-delivery-title">Check delivery before checkout</h2><p>Enter a PIN code to preview the live delivery zone, ETA, parcel limits and COD availability for this bag.</p></div><div className="phase73-pin-control"><label htmlFor="phase73-delivery-pin">Delivery PIN</label><div><input id="phase73-delivery-pin" inputMode="numeric" pattern="[0-9]{6}" maxLength="6" value={deliveryPin} onChange={(event) => { setDeliveryPreview(null); setDeliveryError(""); setDeliveryPin(event.target.value.replace(/\D/g, "").slice(0, 6)); }} placeholder="6-digit PIN" /><button className="button button-secondary" type="button" disabled={!deliveryPinValid || deliveryLoading || quantityAdjustmentRequired} onClick={() => setDeliveryRefreshTick((value) => value + 1)}>{deliveryLoading ? "CHECKING…" : "CHECK"}</button></div></div></div>
+        {quantityAdjustmentRequired && <p className="phase73-delivery-note attention">Apply the Phase 72 safe quantities first so parcel weight and delivery rules are checked against the bag you can actually purchase.</p>}
+        {!quantityAdjustmentRequired && !deliveryPinValid && <p className="phase73-delivery-note">Your PIN is saved only on this browser for Checkout convenience. Signed-in customers can also reuse their default saved-address PIN.</p>}
+        {!quantityAdjustmentRequired && deliveryError && <p className="phase73-delivery-note attention">{deliveryError} Checkout will still perform its independent delivery preflight.</p>}
+        {!quantityAdjustmentRequired && deliveryPreview && <div className="phase73-delivery-body">
+          <div className="phase73-delivery-status"><span><Icon name={deliveryPreview.serviceable ? "location" : "alert"} /></span><div><strong>{deliveryPreview.serviceable ? (deliveryPreview.matched ? `Delivery available · ${deliveryPreview.zone?.name || "configured zone"}` : "Delivery available · store-wide rules") : "Delivery unavailable for this bag"}</strong><p>{deliveryPreview.reason}</p>{deliveryPreview.zone?.preferredShippingPartnerName && <small>Usually via {deliveryPreview.zone.preferredShippingPartnerName}</small>}</div></div>
+          <div className="phase73-delivery-metrics">
+            <article><small>DELIVERY WINDOW</small><strong>{deliveryPreview.serviceable ? `${formatPromiseDate(deliveryPreview.promise?.estimatedFrom)} – ${formatPromiseDate(deliveryPreview.promise?.estimatedTo)}` : "Not available"}</strong><span>{deliveryPreview.serviceable ? `Dispatch within ${deliveryPreview.promise?.dispatchWithinDays ?? 0} day${Number(deliveryPreview.promise?.dispatchWithinDays || 0) === 1 ? "" : "s"}` : "Change the PIN or bag"}</span></article>
+            <article><small>ONLINE SHIPPING</small><strong>{deliveryPreview.serviceable ? (Number(deliveryPreview.pricing?.onlineShippingEstimate || 0) > 0 ? `₹${Number(deliveryPreview.pricing.onlineShippingEstimate).toFixed(0)} est.` : "Free est.") : "—"}</strong><span>{deliveryPreview.pricing?.freeShippingGap > 0 ? `₹${Number(deliveryPreview.pricing.freeShippingGap).toFixed(0)} below current free-shipping threshold` : deliveryPreview.serviceable ? "At current automatic-deal value" : "No quote"}</span></article>
+            <article><small>COD</small><strong>{deliveryPreview.cod?.eligible ? "Available" : "Unavailable"}</strong><span>{deliveryPreview.cod?.eligible ? (Number(deliveryPreview.pricing?.codShippingEstimate || 0) > Number(deliveryPreview.pricing?.onlineShippingEstimate || 0) ? `COD shipping est. ₹${Number(deliveryPreview.pricing.codShippingEstimate).toFixed(0)}` : "No extra COD restriction found") : (deliveryPreview.cod?.reasons?.[0] || "Use online payment")}</span></article>
+            <article><small>PARCEL</small><strong>{Number(deliveryPreview.parcel?.totalWeightGrams || 0) >= 1000 ? `${(Number(deliveryPreview.parcel.totalWeightGrams) / 1000).toFixed(2)} kg` : `${Number(deliveryPreview.parcel?.totalWeightGrams || 0).toFixed(0)} g`}</strong><span>{deliveryPreview.parcel?.maxWeightGrams ? `Zone limit ${(Number(deliveryPreview.parcel.maxWeightGrams) / 1000).toFixed(2)} kg` : "No zone parcel cap configured"}</span></article>
+          </div>
+          {deliveryPreview.pricing?.automaticPromotionName && <p className="phase73-auto-promo">Automatic offer included in this preview: <strong>{deliveryPreview.pricing.automaticPromotionName}</strong></p>}
+          <p className="phase73-delivery-policy">{deliveryPreview.policy}</p>
+        </div>}
+      </section>}
+
       {items.length > 0 ? <div className="cart-layout">
         <div className="cart-list">
           {items.map((item) => {
@@ -191,7 +282,7 @@ export default function Cart() {
             </div>;
           })}
         </div>
-        <aside className="summary-card"><h2>Order summary</h2><OfferProgress actionable /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div>{quantityAdjustmentRequired ? <button className="button wide" type="button" disabled>Resolve quantities first</button> : <Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link>}<Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
+        <aside className="summary-card"><h2>Order summary</h2><OfferProgress actionable /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div>{cartCheckoutBlocked ? <button className="button wide" type="button" disabled>{quantityAdjustmentRequired ? "Resolve quantities first" : "Change delivery PIN"}</button> : <Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link>}<Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
       </div> : <section className="phase71-active-empty"><span><Icon name="cart" /></span><div><p className="phase3-eyebrow">BUYING NOW</p><h2>Your active bag is empty</h2><p>Everything is safely saved for later. Move an item back whenever you are ready to purchase it.</p></div><Link className="button button-secondary" to="/shop">CONTINUE SHOPPING</Link></section>}
 
       {savedForLater.length > 0 && <section className="phase71-saved-later" aria-labelledby="phase71-later-title">
@@ -218,7 +309,7 @@ export default function Cart() {
         {!suggestionsLoading && !suggestions.length && <div className="phase56-cart-empty"><strong>Your bag already looks focused.</strong><span>Explore the full shop if you want to add another step to your routine.</span></div>}
       </section>}
 
-      {items.length > 0 && <div className="phase15-cart-checkout-dock" aria-label="Cart checkout summary"><div><small>SUBTOTAL</small><strong>₹{subtotal.toFixed(0)}</strong></div>{quantityAdjustmentRequired ? <button className="button" type="button" disabled>ADJUST QTY</button> : <Link className="button" to="/checkout">CHECKOUT <Icon name="arrow" size={17} /></Link>}</div>}
+      {items.length > 0 && <div className="phase15-cart-checkout-dock" aria-label="Cart checkout summary"><div><small>SUBTOTAL</small><strong>₹{subtotal.toFixed(0)}</strong></div>{cartCheckoutBlocked ? <button className="button" type="button" disabled>{quantityAdjustmentRequired ? "ADJUST QTY" : "CHANGE PIN"}</button> : <Link className="button" to="/checkout">CHECKOUT <Icon name="arrow" size={17} /></Link>}</div>}
     </div>
   );
 }

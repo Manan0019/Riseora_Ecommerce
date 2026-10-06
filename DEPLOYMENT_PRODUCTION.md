@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase72` PASS
+- `verify:phase73` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -160,3 +160,8 @@ Phase 71 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 72 cart quantity readiness acceptance
 
 Phase 72 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run quantity:doctor` and `npm run verify:phase72` both pass. Cart quantity guidance must re-read current selling price, MRP, public availability after safety stock, configured low-stock threshold and `maxPurchaseQuantity` from the live catalogue. Product-level purchase limits must be enforced across variants of the same product. When the current cart exceeds a live ceiling, the Cart must require an explicit **Apply safe quantities** action before Cart-level Checkout navigation can continue. This is an early shopping guard only; Phase 57 Checkout readiness remains the final server authority before order or payment mutation. Rolling Admin readiness counters must remain aggregate/in-memory and must not retain customer identity or cart contents.
+
+
+## Phase 73 delivery promise intelligence acceptance
+
+Phase 73 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run delivery:doctor` and `npm run verify:phase73` both pass. Cart delivery previews must reuse the canonical Checkout preparation and Phase 44 shipping-zone/courier rules, including automatic promotions and parcel weight, while clearly remaining a pre-checkout estimate. Known unserviceable PIN codes may block Cart-level checkout navigation, but Phase 57 Checkout readiness remains the final server authority for shipping, COD/payment eligibility, coupons, stock and order/payment mutation. Signed-in customers may reuse only the default saved-address PIN in Cart; the delivery-preview telemetry must remain aggregate/in-memory and must not retain customer identity, PIN codes or cart contents. No new migration is permitted for Phase 73.

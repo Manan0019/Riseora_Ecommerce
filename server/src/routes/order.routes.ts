@@ -6,6 +6,7 @@ import { optionalAuth, requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { createCodOrder, getCodEligibility } from "../services/checkout.service";
 import { getCheckoutReadiness, recordCheckoutFunnelEvent } from "../services/checkout-confidence.service";
+import { getDeliveryPromisePreview } from "../services/delivery-promise.service";
 import { createUserNotification } from "../services/notification-center.service";
 import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
@@ -49,6 +50,32 @@ const checkoutEventSchema = z.object({
   reasonCode: z.string().trim().regex(/^[A-Za-z0-9_-]{1,60}$/).optional(),
 });
 
+const deliveryPromiseSchema = z.object({
+  postalCode: z.string().trim().regex(/^\d{6}$/),
+  items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).min(1).max(50),
+});
+
+
+router.post(
+  "/delivery-promise",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = deliveryPromiseSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Enter a valid delivery PIN and cart items", errors: parsed.error.flatten() });
+    try {
+      const result = await getDeliveryPromisePreview(parsed.data, req.user?.id ?? null);
+      return res.json({ success: true, data: result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "DELIVERY_PREVIEW_FAILED";
+      if (message === "INVALID_POSTAL_CODE") return res.status(400).json({ success: false, message: "Enter a valid 6-digit PIN code" });
+      if (message === "EMPTY_CART") return res.status(400).json({ success: false, message: "Add an item before checking delivery" });
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(409).json({ success: false, message: "One or more products changed. Refresh your cart before checking delivery." });
+      if (message.startsWith("PURCHASE_LIMIT:")) return res.status(409).json({ success: false, message: "Resolve the current cart quantity limits before checking delivery." });
+      throw error;
+    }
+  }),
+);
 
 router.post(
   "/checkout-readiness",

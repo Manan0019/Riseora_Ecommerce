@@ -13,6 +13,7 @@ import { createOrderStatusInAppNotification, createReturnStatusInAppNotification
 import { approveOrderCancellationRequest } from "../services/order-cancellation.service";
 import { reverseRefundedOrderRewards } from "../services/rewards.service";
 import { adjustInventory } from "../services/inventory.service";
+import { deliveryPromiseHealth } from "../services/delivery-promise.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -317,7 +318,10 @@ router.get(
         id: order.id, orderNumber: order.orderNumber, status: order.status, customerName: order.customerName, customerPhone: order.customerPhone, paymentMethod: order.paymentMethod, paymentStatus: order.payment?.status || "PENDING", totalAmount: Number(order.totalAmount), shippingZoneName: order.shippingZoneName, createdAt: order.createdAt, dispatchDueAt, totalWeightGrams, preferredShippingPartnerName: typeof estimate?.preferredShippingPartnerName === "string" ? estimate.preferredShippingPartnerName : null, cancellationPending: Boolean(order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status)), overdue, dueSoon,
       };
     });
-    const inTransit = await prisma.order.count({ where: { status: "SHIPPED" } });
+    const [inTransit, promiseHealth] = await Promise.all([
+      prisma.order.count({ where: { status: "SHIPPED" } }),
+      deliveryPromiseHealth(),
+    ]);
     const exceptionEvents = await prisma.shipmentEvent.findMany({
       where: { type: { in: ["EXCEPTION", "RTO_INITIATED"] }, eventAt: { gte: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000) } },
       include: { shipment: { include: { order: { select: { id: true, orderNumber: true, status: true, customerName: true } } } } },
@@ -327,7 +331,7 @@ router.get(
     const activeExceptions = exceptionEvents.filter((event) => event.shipment.order.status === "SHIPPED").map((event) => ({ id: event.id, orderId: event.shipment.order.id, orderNumber: event.shipment.order.orderNumber, customerName: event.shipment.order.customerName, type: event.type, title: event.title, note: event.note, location: event.location, eventAt: event.eventAt }));
     res.json({ success: true, data: {
       counts: { awaiting: enriched.filter((row) => row.status === "CONFIRMED").length, processing: enriched.filter((row) => row.status === "PROCESSING").length, overdue: enriched.filter((row) => row.overdue).length, dueSoon: enriched.filter((row) => row.dueSoon).length, inTransit, exceptions: activeExceptions.length },
-      orders: enriched, exceptions: activeExceptions,
+      orders: enriched, exceptions: activeExceptions, deliveryPromiseHealth: promiseHealth,
     } });
   }),
 );

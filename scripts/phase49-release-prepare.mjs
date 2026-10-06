@@ -27,14 +27,14 @@ function run(command, args, env = productionEnv) {
   if (result.status !== 0) process.exit(result.status || 1);
 }
 
-console.log("Phase 72 safe production release preparation");
+console.log("Phase 73 safe production release preparation");
 console.log("Order: doctor -> verified backup -> committed migrations -> Prisma -> schema check -> verification/build\n");
 run("node", ["scripts/phase49-release-doctor.mjs"]);
 run("npm", ["run", "db:backup", "--", "--env=server/.env.production"]);
 run("npm", ["run", "db:deploy"]);
 run("npm", ["run", "db:generate"]);
 run("node", ["scripts/db-schema-status.mjs", "--production"]);
-console.log("Forward audit compatibility: verify:phase69, verify:phase70 and verify:phase71 baselines are superseded by verify:phase72");
-run("npm", ["run", "verify:phase72"]);
-console.log("\nPhase 72 production release preparation: PASS");
+console.log("Forward audit compatibility: verify:phase69, verify:phase70, verify:phase71 and verify:phase72 baselines are superseded by verify:phase73");
+run("npm", ["run", "verify:phase73"]);
+console.log("\nPhase 73 production release preparation: PASS");
 console.log("Database rollback is intentionally not automated. Recover from a verified backup or ship an explicit forward-fix migration.");
