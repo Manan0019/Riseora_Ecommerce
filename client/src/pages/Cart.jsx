@@ -10,7 +10,7 @@ import { trackCommerce, trackEvent } from "../analytics";
 const CART_RECOMMENDATION_SHELF = "cart-routine";
 
 export default function Cart() {
-  const { items, subtotal, updateQuantity, removeItem, crossDeviceEnabled, syncStatus, syncNotice, lastSyncedAt, retrySavedBagSync } = useCart();
+  const { items, subtotal, updateQuantity, removeItem, crossDeviceEnabled, syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag } = useCart();
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionMeta, setSuggestionMeta] = useState({ strategy: "", explanation: "" });
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -95,15 +95,18 @@ export default function Cart() {
         <div className="phase69-saved-bag-icon"><Icon name={crossDeviceEnabled ? "refresh" : "shield"} /></div>
         <div className="phase69-saved-bag-copy">
           <p className="phase3-eyebrow">PHASE 69 · SAVED BAG</p>
-          <h2>{!crossDeviceEnabled ? "Saved on this browser" : syncStatus === "syncing" ? "Saving your bag…" : syncStatus === "error" ? "Account sync needs a retry" : "Saved to your Riseora account"}</h2>
-          <p>{!crossDeviceEnabled ? "Sign in to carry this bag across your devices. Nothing is emailed and this is separate from abandoned-cart recovery consent." : syncStatus === "error" ? (syncNotice || "Your browser copy is safe while account sync is unavailable.") : (syncNotice || "Your bag is revalidated against current price, public stock and purchase limits whenever it is restored.")}</p>
+          <h2>{!crossDeviceEnabled ? "Saved on this browser" : syncStatus === "conflict" ? "Bag changed on another device" : syncStatus === "syncing" ? "Saving your bag…" : syncStatus === "error" ? "Account sync needs a retry" : "Saved to your Riseora account"}</h2>
+          <p>{!crossDeviceEnabled ? "Sign in to carry this bag across your devices. Nothing is emailed and this is separate from abandoned-cart recovery consent." : syncStatus === "conflict" ? (syncNotice || "Choose which bag should continue before checkout.") : syncStatus === "error" ? (syncNotice || "Your browser copy is safe while account sync is unavailable.") : (syncNotice || "Your bag is revalidated against current price, public stock and purchase limits whenever it is restored.")}</p>
           {crossDeviceEnabled && lastSyncedAt && syncStatus === "synced" && <small>Last account sync {new Date(lastSyncedAt).toLocaleString("en-IN")}</small>}
+          {syncStatus === "conflict" && savedBagConflict?.savedAt && <small>Account version saved {new Date(savedBagConflict.savedAt).toLocaleString("en-IN")}</small>}
         </div>
         <div className="phase69-saved-bag-actions">
           {!crossDeviceEnabled && <Link className="button button-secondary" to="/login">SIGN IN</Link>}
+          {crossDeviceEnabled && syncStatus === "conflict" && <><button className="button button-secondary" type="button" onClick={useAccountSavedBag}>USE ACCOUNT BAG</button><button className="button" type="button" onClick={keepBrowserSavedBag}>KEEP THIS BAG</button></>}
           {crossDeviceEnabled && syncStatus === "error" && <button className="button button-secondary" type="button" onClick={retrySavedBagSync}>RETRY ACCOUNT SYNC</button>}
         </div>
       </section>
+      {syncStatus === "conflict" && <section className="phase70-conflict-explainer" aria-label="Saved Bag conflict resolution"><span><Icon name="alert" /></span><div><p className="phase3-eyebrow">PHASE 70 · MULTI-DEVICE SAFETY</p><strong>Nothing has been overwritten.</strong><p><b>Use account bag</b> loads the newest version saved by another device. <b>Keep this bag</b> revalidates this browser's quantities against live stock and makes it the account version.</p></div></section>}
       <div className="cart-layout">
         <div className="cart-list">
           {items.map((item) => (

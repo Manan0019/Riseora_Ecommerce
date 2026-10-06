@@ -9,6 +9,7 @@ const STORAGE_KEY = "riseora_cart";
 const BUY_NOW_KEY = "riseora_buy_now";
 const CART_OWNER_KEY = "riseora_cart_owner";
 const CART_DIRTY_KEY = "riseora_cart_dirty";
+const CART_REVISION_KEY = "riseora_cart_revision";
 
 function normalizeStoredLine(item) {
   if (!item || typeof item !== "object" || !item.variantId || !item.productId) return null;
@@ -115,6 +116,21 @@ function markStoredCartDirty(dirty) {
   } catch { /* dirty metadata is best effort */ }
 }
 
+function readStoredCartRevision() {
+  try {
+    const value = Number(window.localStorage.getItem(CART_REVISION_KEY) || 0);
+    return Number.isInteger(value) && value >= 0 ? value : 0;
+  } catch { return 0; }
+}
+
+function markStoredCartRevision(revision) {
+  try {
+    const value = Number(revision || 0);
+    if (Number.isInteger(value) && value >= 0) window.localStorage.setItem(CART_REVISION_KEY, String(value));
+    else window.localStorage.removeItem(CART_REVISION_KEY);
+  } catch { /* revision metadata is best effort */ }
+}
+
 function toAccountCartRequest(lines) {
   return (Array.isArray(lines) ? lines : [])
     .filter((item) => item?.variantId && Number(item?.quantity || 0) > 0)
@@ -139,10 +155,12 @@ export function CartProvider({ children }) {
   const [syncNotice, setSyncNotice] = useState("");
   const [lastSyncedAt, setLastSyncedAt] = useState(null);
   const [syncAttempt, setSyncAttempt] = useState(0);
+  const [savedBagConflict, setSavedBagConflict] = useState(null);
   const itemsRef = useRef(items);
   const syncUserRef = useRef("");
   const syncReadyRef = useRef(false);
   const lastServerSignatureRef = useRef("");
+  const serverRevisionRef = useRef(readStoredCartRevision());
 
   useEffect(() => {
     writePersistedArray(window.localStorage, STORAGE_KEY, items, { maxItems: 250 });
@@ -150,6 +168,37 @@ export function CartProvider({ children }) {
 
 
   useEffect(() => { itemsRef.current = items; }, [items]);
+
+  function applyServerBag(data, notice = "") {
+    const canonical = Array.isArray(data?.items) ? data.items : [];
+    const revision = Math.max(0, Number(data?.revision || 0));
+    lastServerSignatureRef.current = cartRequestSignature(canonical);
+    serverRevisionRef.current = revision;
+    syncReadyRef.current = true;
+    markStoredCartOwner(user?.id || syncUserRef.current);
+    markStoredCartDirty(false);
+    markStoredCartRevision(revision);
+    setSavedBagConflict(null);
+    setItems(canonical);
+    setSyncStatus("synced");
+    setLastSyncedAt(data?.savedAt || new Date().toISOString());
+    setSyncNotice(notice);
+  }
+
+  function handleSavedBagConflict(error) {
+    if (error?.code !== "ACCOUNT_CART_REVISION_CONFLICT") return false;
+    const current = error?.payload?.data || null;
+    if (!current) return false;
+    const revision = Math.max(0, Number(current.revision || 0));
+    serverRevisionRef.current = revision;
+    markStoredCartRevision(revision);
+    markStoredCartDirty(true);
+    syncReadyRef.current = false;
+    setSavedBagConflict({ items: Array.isArray(current.items) ? current.items : [], revision, savedAt: current.savedAt || null });
+    setSyncStatus("conflict");
+    setSyncNotice("Your Saved Bag changed on another device. Choose the account version or keep this browser bag before checkout.");
+    return true;
+  }
 
   useEffect(() => {
     if (authLoading) return undefined;
@@ -159,8 +208,11 @@ export function CartProvider({ children }) {
         syncUserRef.current = "";
         syncReadyRef.current = false;
         lastServerSignatureRef.current = "";
+        serverRevisionRef.current = 0;
         markStoredCartOwner("");
         markStoredCartDirty(false);
+        markStoredCartRevision(0);
+        setSavedBagConflict(null);
         setSyncStatus("local");
         setSyncNotice("");
         setLastSyncedAt(null);
@@ -184,12 +236,14 @@ export function CartProvider({ children }) {
       body = JSON.stringify({ items: browserItems });
     } else if (storedOwner === userId && localDirty) {
       method = "PUT";
-      body = JSON.stringify({ items: browserItems });
+      body = JSON.stringify({ items: browserItems, expectedRevision: readStoredCartRevision() });
     } else if (storedOwner !== userId) {
       browserItems = [];
       itemsRef.current = [];
       setItems([]);
       markStoredCartDirty(false);
+      markStoredCartRevision(0);
+      serverRevisionRef.current = 0;
     }
 
     const browserSignature = cartRequestSignature(browserItems);
@@ -207,22 +261,16 @@ export function CartProvider({ children }) {
           return;
         }
         const data = response?.data || {};
-        const canonical = Array.isArray(data.items) ? data.items : [];
-        lastServerSignatureRef.current = cartRequestSignature(canonical);
-        syncReadyRef.current = true;
-        markStoredCartOwner(userId);
-        markStoredCartDirty(false);
-        setItems(canonical);
-        setSyncStatus("synced");
-        setLastSyncedAt(data.savedAt || new Date().toISOString());
         const adjustmentCount = Array.isArray(data.adjustments) ? data.adjustments.length : 0;
         const mergedBoth = Number(data.merge?.accountLineCount || 0) > 0 && Number(data.merge?.browserLineCount || 0) > 0;
-        if (adjustmentCount) setSyncNotice(`${adjustmentCount} saved-bag ${adjustmentCount === 1 ? "item was" : "items were"} refreshed for current stock or purchase limits.`);
-        else if (mergedBoth) setSyncNotice("This browser bag and your Riseora account bag were merged safely.");
-        else setSyncNotice("");
+        const notice = adjustmentCount
+          ? `${adjustmentCount} saved-bag ${adjustmentCount === 1 ? "item was" : "items were"} refreshed for current stock or purchase limits.`
+          : mergedBoth ? "This browser bag and your Riseora account bag were merged safely." : "";
+        applyServerBag(data, notice);
       })
-      .catch(() => {
+      .catch((error) => {
         if (!active || syncUserRef.current !== userId) return;
+        if (handleSavedBagConflict(error)) return;
         syncReadyRef.current = false;
         if (method === "PUT") markStoredCartDirty(true);
         setSyncStatus("error");
@@ -242,23 +290,19 @@ export function CartProvider({ children }) {
     const timer = window.setTimeout(() => {
       const sentItems = toAccountCartRequest(itemsRef.current);
       const sentSignature = cartRequestSignature(sentItems);
-      apiFetch("/account/cart", { method: "PUT", body: JSON.stringify({ items: sentItems }) })
+      apiFetch("/account/cart", { method: "PUT", body: JSON.stringify({ items: sentItems, expectedRevision: serverRevisionRef.current }) })
         .then((response) => {
           if (syncUserRef.current !== userId) return;
           if (cartRequestSignature(itemsRef.current) !== sentSignature) return;
           const data = response?.data || {};
           const canonical = Array.isArray(data.items) ? data.items : [];
-          lastServerSignatureRef.current = cartRequestSignature(canonical);
-          markStoredCartOwner(userId);
-          markStoredCartDirty(false);
-          setSyncStatus("synced");
-          setLastSyncedAt(data.savedAt || new Date().toISOString());
           const adjustmentCount = Array.isArray(data.adjustments) ? data.adjustments.length : 0;
-          setSyncNotice(adjustmentCount ? `${adjustmentCount} bag ${adjustmentCount === 1 ? "item was" : "items were"} adjusted to current stock or purchase limits.` : "");
+          applyServerBag(data, adjustmentCount ? `${adjustmentCount} bag ${adjustmentCount === 1 ? "item was" : "items were"} adjusted to current stock or purchase limits.` : "");
           if (fullCartSignature(itemsRef.current) !== fullCartSignature(canonical)) setItems(canonical);
         })
-        .catch(() => {
+        .catch((error) => {
           if (syncUserRef.current !== userId) return;
+          if (handleSavedBagConflict(error)) return;
           markStoredCartDirty(true);
           setSyncStatus("error");
           setSyncNotice("Your bag remains saved on this browser. Use Retry account sync when you are ready.");
@@ -266,6 +310,29 @@ export function CartProvider({ children }) {
     }, 650);
     return () => window.clearTimeout(timer);
   }, [items, user?.id]);
+
+  useEffect(() => {
+    if (!user?.id) return undefined;
+    let checking = false;
+    const userId = user.id;
+    const refreshFromAccount = () => {
+      if (checking || document.visibilityState === "hidden" || syncUserRef.current !== userId || syncStatus === "syncing" || syncStatus === "conflict" || readCartDirty()) return;
+      checking = true;
+      apiFetch("/account/cart", { dedupe: false })
+        .then((response) => {
+          if (syncUserRef.current !== userId) return;
+          const data = response?.data || {};
+          const revision = Math.max(0, Number(data.revision || 0));
+          if (revision > serverRevisionRef.current) applyServerBag(data, "Your Saved Bag was updated on another device and refreshed here.");
+        })
+        .catch(() => {})
+        .finally(() => { checking = false; });
+    };
+    const onVisibility = () => { if (document.visibilityState === "visible") refreshFromAccount(); };
+    window.addEventListener("focus", refreshFromAccount);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { window.removeEventListener("focus", refreshFromAccount); document.removeEventListener("visibilitychange", onVisibility); };
+  }, [user?.id, syncStatus]);
 
   useEffect(() => {
     try {
@@ -398,6 +465,30 @@ export function CartProvider({ children }) {
     setItems(safe);
   }
 
+  async function resolveSavedBagConflict(strategy) {
+    if (!user?.id || !savedBagConflict) return false;
+    const browserItems = toAccountCartRequest(itemsRef.current);
+    setSyncStatus("syncing");
+    try {
+      const response = await apiFetch("/account/cart/resolve", {
+        method: "POST",
+        body: JSON.stringify({ strategy, items: browserItems, expectedRevision: savedBagConflict.revision }),
+      });
+      const data = response?.data || {};
+      applyServerBag(data, strategy === "ACCOUNT" ? "Account Saved Bag loaded. This browser now matches your latest account version." : "This browser bag is now the account Saved Bag on every device.");
+      return true;
+    } catch (error) {
+      if (handleSavedBagConflict(error)) return false;
+      markStoredCartDirty(true);
+      setSyncStatus("error");
+      setSyncNotice("Riseora could not resolve the Saved Bag yet. Your browser copy is still safe.");
+      return false;
+    }
+  }
+
+  function useAccountSavedBag() { return resolveSavedBagConflict("ACCOUNT"); }
+  function keepBrowserSavedBag() { return resolveSavedBagConflict("BROWSER"); }
+
   function retrySavedBagSync() {
     if (!user?.id) return;
     syncReadyRef.current = false;
@@ -410,8 +501,8 @@ export function CartProvider({ children }) {
   const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, retrySavedBagSync }),
-    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt],
+    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag }),
+    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt, savedBagConflict],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

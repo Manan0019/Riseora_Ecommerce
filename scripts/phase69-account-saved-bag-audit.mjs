@@ -45,7 +45,7 @@ requireText("client/src/pages/Cart.jsx", [
   "separate from abandoned-cart recovery consent",
 ]);
 requireText("client/src/pages/admin/AdminLifecycle.jsx", [
-  "PHASE 69 · CROSS-DEVICE BAG", "Saved Bag continuity", "/admin/lifecycle/saved-bag-health", "STALE · 30D+",
+  "PHASE 70 · MULTI-DEVICE BAG SAFETY", "Saved Bag continuity", "/admin/lifecycle/saved-bag-health", "STALE · 30D+",
   "separate from cart-recovery marketing consent",
 ]);
 requireText("client/src/styles.css", ["phase69-saved-bag", "phase69-admin-saved-bag-grid"]);

@@ -11,6 +11,27 @@ type CartAdjustment = {
   acceptedQuantity: number;
 };
 
+type ConflictEventType = "CONFLICT" | "ACCOUNT_ACCEPTED" | "BROWSER_KEPT";
+type ConflictEvent = { type: ConflictEventType; at: number };
+const conflictEvents: ConflictEvent[] = [];
+const CONFLICT_WINDOW_MS = 60 * 60 * 1000;
+
+function recordConflictEvent(type: ConflictEventType) {
+  conflictEvents.push({ type, at: Date.now() });
+  const cutoff = Date.now() - CONFLICT_WINDOW_MS;
+  while (conflictEvents.length && conflictEvents[0].at < cutoff) conflictEvents.shift();
+}
+
+function conflictSnapshot() {
+  const cutoff = Date.now() - CONFLICT_WINDOW_MS;
+  const recent = conflictEvents.filter((event) => event.at >= cutoff);
+  return {
+    conflicts60m: recent.filter((event) => event.type === "CONFLICT").length,
+    accountAccepted60m: recent.filter((event) => event.type === "ACCOUNT_ACCEPTED").length,
+    browserKept60m: recent.filter((event) => event.type === "BROWSER_KEPT").length,
+  };
+}
+
 function normalizeLines(value: unknown): StoredLine[] {
   const source = Array.isArray(value) ? value : [];
   const merged = new Map<string, number>();
@@ -96,6 +117,16 @@ function persistentLines(items: Array<{ variantId: string; quantity: number }>) 
   return items.map((item) => ({ variantId: item.variantId, quantity: item.quantity }));
 }
 
+export class AccountCartRevisionConflictError extends Error {
+  code = "ACCOUNT_CART_REVISION_CONFLICT";
+  current: any;
+  constructor(current: any) {
+    super("Your Saved Bag changed on another device. Choose which version you want to keep.");
+    this.name = "AccountCartRevisionConflictError";
+    this.current = current;
+  }
+}
+
 export async function getAccountCart(userId: string) {
   const cart = await prisma.accountCart.findUnique({ where: { userId } });
   const hydrated = await hydrateLines(cart?.items || []);
@@ -105,6 +136,12 @@ export async function getAccountCart(userId: string) {
     savedAt: cart?.updatedAt?.toISOString() || null,
     sourceLineCount: normalizeLines(cart?.items || []).length,
   };
+}
+
+async function throwRevisionConflict(userId: string): Promise<never> {
+  const current = await getAccountCart(userId);
+  recordConflictEvent("CONFLICT");
+  throw new AccountCartRevisionConflictError(current);
 }
 
 export async function mergeAccountCart(userId: string, browserItems: AccountCartRequestLine[]) {
@@ -128,15 +165,51 @@ export async function mergeAccountCart(userId: string, browserItems: AccountCart
   };
 }
 
-export async function saveAccountCart(userId: string, requestedItems: AccountCartRequestLine[]) {
+export async function saveAccountCart(userId: string, requestedItems: AccountCartRequestLine[], expectedRevision?: number | null) {
   const hydrated = await hydrateLines(requestedItems);
   const stored = persistentLines(hydrated.items);
-  const cart = await prisma.accountCart.upsert({
-    where: { userId },
-    create: { userId, items: stored as any, revision: 1 },
-    update: { items: stored as any, revision: { increment: 1 } },
-  });
+  const existing = await prisma.accountCart.findUnique({ where: { userId }, select: { revision: true } });
+  const currentRevision = existing?.revision || 0;
+
+  if (expectedRevision != null && currentRevision !== expectedRevision) await throwRevisionConflict(userId);
+
+  if (!existing) {
+    try {
+      const cart = await prisma.accountCart.create({ data: { userId, items: stored as any, revision: 1 } });
+      return { ...hydrated, revision: cart.revision, savedAt: cart.updatedAt.toISOString() };
+    } catch {
+      await throwRevisionConflict(userId);
+    }
+  }
+
+  if (expectedRevision != null) {
+    const updated = await prisma.accountCart.updateMany({
+      where: { userId, revision: expectedRevision },
+      data: { items: stored as any, revision: { increment: 1 } },
+    });
+    if (updated.count !== 1) await throwRevisionConflict(userId);
+  } else {
+    await prisma.accountCart.update({ where: { userId }, data: { items: stored as any, revision: { increment: 1 } } });
+  }
+
+  const cart = await prisma.accountCart.findUniqueOrThrow({ where: { userId }, select: { revision: true, updatedAt: true } });
   return { ...hydrated, revision: cart.revision, savedAt: cart.updatedAt.toISOString() };
+}
+
+export async function resolveAccountCart(
+  userId: string,
+  strategy: "ACCOUNT" | "BROWSER",
+  browserItems: AccountCartRequestLine[],
+  expectedRevision: number,
+) {
+  if (strategy === "ACCOUNT") {
+    const current = await getAccountCart(userId);
+    recordConflictEvent("ACCOUNT_ACCEPTED");
+    return { ...current, resolution: "ACCOUNT" as const };
+  }
+  const saved = await saveAccountCart(userId, browserItems, expectedRevision);
+  recordConflictEvent("BROWSER_KEPT");
+  return { ...saved, resolution: "BROWSER" as const };
 }
 
 export async function accountCartHealth() {
@@ -150,5 +223,5 @@ export async function accountCartHealth() {
     prisma.accountCart.count({ where: { updatedAt: { gte: week } } }),
     prisma.accountCart.count({ where: { updatedAt: { lt: month } } }),
   ]);
-  return { savedBags, updated24h, active7d, stale30d, checkedAt: new Date().toISOString() };
+  return { savedBags, updated24h, active7d, stale30d, ...conflictSnapshot(), checkedAt: new Date().toISOString() };
 }

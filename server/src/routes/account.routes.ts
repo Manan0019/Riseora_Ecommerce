@@ -7,7 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
 import { buildReorderPreview, getOrderCare } from "../services/post-purchase.service";
 import { getAccountLifecycleHub } from "../services/account-lifecycle.service";
-import { getAccountCart, mergeAccountCart, saveAccountCart } from "../services/account-cart.service";
+import { AccountCartRevisionConflictError, getAccountCart, mergeAccountCart, resolveAccountCart, saveAccountCart } from "../services/account-cart.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -25,11 +25,20 @@ router.get(
   }),
 );
 
+const accountCartItemsSchema = z.array(z.object({
+  variantId: z.string().uuid(),
+  quantity: z.number().int().min(1).max(99),
+})).max(50);
+
 const accountCartSchema = z.object({
-  items: z.array(z.object({
-    variantId: z.string().uuid(),
-    quantity: z.number().int().min(1).max(99),
-  })).max(50),
+  items: accountCartItemsSchema,
+  expectedRevision: z.number().int().min(0).optional(),
+});
+
+const accountCartResolveSchema = z.object({
+  strategy: z.enum(["ACCOUNT", "BROWSER"]),
+  items: accountCartItemsSchema.default([]),
+  expectedRevision: z.number().int().min(0),
 });
 
 router.get(
@@ -53,7 +62,31 @@ router.put(
   asyncHandler(async (req, res) => {
     const parsed = accountCartSchema.safeParse(req.body || {});
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved bag contents" });
-    res.json({ success: true, data: await saveAccountCart(req.user!.id, parsed.data.items) });
+    try {
+      res.json({ success: true, data: await saveAccountCart(req.user!.id, parsed.data.items, parsed.data.expectedRevision) });
+    } catch (error) {
+      if (error instanceof AccountCartRevisionConflictError) {
+        return res.status(409).json({ success: false, code: error.code, message: error.message, data: error.current });
+      }
+      throw error;
+    }
+  }),
+);
+
+router.post(
+  "/cart/resolve",
+  asyncHandler(async (req, res) => {
+    const parsed = accountCartResolveSchema.safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid Saved Bag resolution" });
+    try {
+      const data = await resolveAccountCart(req.user!.id, parsed.data.strategy, parsed.data.items, parsed.data.expectedRevision);
+      res.json({ success: true, data });
+    } catch (error) {
+      if (error instanceof AccountCartRevisionConflictError) {
+        return res.status(409).json({ success: false, code: error.code, message: error.message, data: error.current });
+      }
+      throw error;
+    }
   }),
 );
 

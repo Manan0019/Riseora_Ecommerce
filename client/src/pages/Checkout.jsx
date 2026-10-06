@@ -27,7 +27,7 @@ function loadRazorpayScript() {
 }
 
 export default function Checkout() {
-  const { items, subtotal, clearCart, buyNowItems, buyNowSubtotal, clearBuyNow } = useCart();
+  const { items, subtotal, clearCart, buyNowItems, buyNowSubtotal, clearBuyNow, crossDeviceEnabled, syncStatus, syncNotice, savedBagConflict, useAccountSavedBag, keepBrowserSavedBag } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -71,7 +71,8 @@ export default function Checkout() {
   const contactReady = form.customerName.trim().length >= 2 && form.customerPhone.trim().length >= 8 && emailReady;
   const addressReady = form.line1.trim().length >= 3 && form.city.trim().length >= 2 && form.state.trim().length >= 2 && /^\d{6}$/.test(form.postalCode);
   const paymentReady = paymentMethod === "COD" ? codEligibility.eligible : onlinePaymentsEnabled;
-  const canCheckReadiness = checkoutItems.length > 0 && contactReady && addressReady && paymentReady && deliveryQuote?.serviceable !== false;
+  const savedBagConflictBlocked = !buyNowMode && crossDeviceEnabled && syncStatus === "conflict";
+  const canCheckReadiness = checkoutItems.length > 0 && !savedBagConflictBlocked && contactReady && addressReady && paymentReady && deliveryQuote?.serviceable !== false;
 
   function requestKey() {
     const current = readJson(REQUEST_KEY);
@@ -259,7 +260,9 @@ export default function Checkout() {
   }
 
   async function submit(event) {
-    event.preventDefault(); setSubmitting(true); setError("");
+    event.preventDefault();
+    if (savedBagConflictBlocked) { setError("Your Saved Bag changed on another device. Resolve the bag version before placing this order."); return; }
+    setSubmitting(true); setError("");
     try {
       const readiness = await verifyCheckoutReadiness();
       if (!readiness?.ready) { setError(readiness?.message || "Please review the checkout details before continuing."); return; }
@@ -274,11 +277,12 @@ export default function Checkout() {
     finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
 
   return <div className="container page-space checkout-page">
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
     <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={checkoutReadiness?.ready ? "done" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
+    {savedBagConflictBlocked && <section className="phase70-checkout-conflict" role="alert"><span><Icon name="alert" size={22} /></span><div><small>PHASE 70 · CHECKOUT CONTINUITY</small><strong>Your Saved Bag changed on another device</strong><p>{syncNotice || "Resolve which bag should continue before Riseora verifies payment and stock."}</p>{savedBagConflict?.savedAt && <em>Account version saved {new Date(savedBagConflict.savedAt).toLocaleString("en-IN")}</em>}</div><div><button type="button" className="button button-secondary" onClick={useAccountSavedBag}>USE ACCOUNT BAG</button><button type="button" className="button" onClick={keepBrowserSavedBag}>KEEP THIS BAG</button></div></section>}
     {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small></div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
     <div className="checkout-layout">
       <form id="riseora-checkout-form" className="form-card checkout-form" onSubmit={submit}>

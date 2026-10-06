@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase69` PASS
+- `verify:phase70` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -145,3 +145,8 @@ Before public traffic, confirm `npm run saved-shopping:doctor` and `npm run veri
 ## Phase 69 cross-device Saved Bag acceptance
 
 Phase 69 adds migration `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, create a verified database backup, run committed migrations, regenerate Prisma Client, and confirm `npm run db:status` reports `AccountCart` with the Phase 69 migration as the applied head. Then confirm `npm run saved-bag:doctor` and `npm run verify:phase69` both pass. Signed-in bags must merge browser/account quantities without doubling duplicate variants, saved rows must persist only variant identity + quantity, and every restore must re-read current price, safety-stock-aware availability, and purchase limits. Saved Bag persistence is operational account functionality and must remain separate from cart-recovery marketing consent.
+
+
+## Phase 70 multi-device Saved Bag conflict acceptance
+
+Phase 70 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run saved-bag-conflict:doctor` and `npm run verify:phase70` both pass. Stale Saved Bag writes must return an explicit revision conflict instead of overwriting a newer account bag; Cart and normal Checkout must require the customer to choose either the current account bag or the browser bag. Choosing the browser bag must revalidate current sellable stock and purchase limits before saving it. Buy Now stays session-scoped and outside this conflict flow. Clean signed-in tabs may refresh from a newer account revision when they regain focus, but unsynced local edits must never be overwritten automatically.
