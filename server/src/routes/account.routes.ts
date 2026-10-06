@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { createAuthSession, recordSecurityEvent, revokeAllAuthSessions } from "../services/auth-security.service";
 import { buildReorderPreview, getOrderCare } from "../services/post-purchase.service";
 import { getAccountLifecycleHub } from "../services/account-lifecycle.service";
+import { getAccountCart, mergeAccountCart, saveAccountCart } from "../services/account-cart.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -21,6 +22,38 @@ router.get(
   "/lifecycle",
   asyncHandler(async (req, res) => {
     res.json({ success: true, data: await getAccountLifecycleHub(req.user!.id) });
+  }),
+);
+
+const accountCartSchema = z.object({
+  items: z.array(z.object({
+    variantId: z.string().uuid(),
+    quantity: z.number().int().min(1).max(99),
+  })).max(50),
+});
+
+router.get(
+  "/cart",
+  asyncHandler(async (req, res) => {
+    res.json({ success: true, data: await getAccountCart(req.user!.id) });
+  }),
+);
+
+router.post(
+  "/cart/merge",
+  asyncHandler(async (req, res) => {
+    const parsed = accountCartSchema.safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved bag contents" });
+    res.json({ success: true, data: await mergeAccountCart(req.user!.id, parsed.data.items) });
+  }),
+);
+
+router.put(
+  "/cart",
+  asyncHandler(async (req, res) => {
+    const parsed = accountCartSchema.safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved bag contents" });
+    res.json({ success: true, data: await saveAccountCart(req.user!.id, parsed.data.items) });
   }),
 );
 

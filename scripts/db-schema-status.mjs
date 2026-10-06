@@ -42,7 +42,8 @@ export async function inspectSchemaContract() {
         to_regclass('public."Campaign"') IS NOT NULL AS "campaign",
         to_regclass('public."CreditNote"') IS NOT NULL AS "creditNote",
         to_regclass('public."ConsentEvent"') IS NOT NULL AS "consentEvent",
-        to_regclass('public."SystemJobState"') IS NOT NULL AS "systemJobState"
+        to_regclass('public."SystemJobState"') IS NOT NULL AS "systemJobState",
+        to_regclass('public."AccountCart"') IS NOT NULL AS "accountCart"
     `);
     const row = checks.rows[0] || {};
     const requirements = [
@@ -56,6 +57,7 @@ export async function inspectSchemaContract() {
       ["CreditNote table", row.creditNote],
       ["ConsentEvent table", row.consentEvent],
       ["SystemJobState table", row.systemJobState],
+      ["AccountCart table", row.accountCart],
     ];
 
     const migrationResult = await client.query(`
@@ -67,6 +69,7 @@ export async function inspectSchemaContract() {
     const requiredMigrations = [
       "20261003024500_phase38_refill_replenishment_v2",
       "20261004160000_phase48_schema_integrity_job_orchestration",
+      "20261006121500_phase69_account_saved_bag_v2",
     ];
     const errors = requirements.filter(([, ok]) => !ok).map(([label]) => `${label} missing`);
     for (const migration of requiredMigrations) if (!applied.includes(migration)) errors.push(`Migration ${migration} not applied`);

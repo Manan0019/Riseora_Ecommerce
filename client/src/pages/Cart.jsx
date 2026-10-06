@@ -10,7 +10,7 @@ import { trackCommerce, trackEvent } from "../analytics";
 const CART_RECOMMENDATION_SHELF = "cart-routine";
 
 export default function Cart() {
-  const { items, subtotal, updateQuantity, removeItem } = useCart();
+  const { items, subtotal, updateQuantity, removeItem, crossDeviceEnabled, syncStatus, syncNotice, lastSyncedAt, retrySavedBagSync } = useCart();
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionMeta, setSuggestionMeta] = useState({ strategy: "", explanation: "" });
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
@@ -80,13 +80,30 @@ export default function Cart() {
     });
   }
 
+  if (items.length === 0 && syncStatus === "syncing") {
+    return <div className="container page-space empty-state premium-empty cart-empty"><span className="empty-icon"><Icon name="refresh" /></span><h1>Restoring your saved bag…</h1><p>Riseora is checking your account bag against current price, stock and purchase limits.</p></div>;
+  }
+
   if (items.length === 0) {
-    return <div className="container page-space empty-state premium-empty cart-empty"><span className="empty-icon"><Icon name="cart" /></span><h1>Your cart is empty</h1><p>Discover Riseora products and add something to your routine.</p><Link className="button" to="/shop">Continue shopping</Link></div>;
+    return <div className="container page-space empty-state premium-empty cart-empty"><span className="empty-icon"><Icon name="cart" /></span><h1>Your cart is empty</h1><p>Discover Riseora products and add something to your routine.</p>{crossDeviceEnabled && <p className="phase69-empty-sync">Your signed-in Saved Bag is up to date on this account.</p>}<Link className="button" to="/shop">Continue shopping</Link></div>;
   }
 
   return (
     <div className="container page-space cart-page phase15-cart-page phase56-cart-page">
       <div className="cart-heading"><div><p className="eyebrow">YOUR BAG</p><h1>Shopping cart</h1></div><span>{items.length} {items.length === 1 ? "item" : "items"}</span></div>
+      <section className={`phase69-saved-bag ${crossDeviceEnabled ? `is-${syncStatus}` : "is-local"}`} aria-live="polite">
+        <div className="phase69-saved-bag-icon"><Icon name={crossDeviceEnabled ? "refresh" : "shield"} /></div>
+        <div className="phase69-saved-bag-copy">
+          <p className="phase3-eyebrow">PHASE 69 · SAVED BAG</p>
+          <h2>{!crossDeviceEnabled ? "Saved on this browser" : syncStatus === "syncing" ? "Saving your bag…" : syncStatus === "error" ? "Account sync needs a retry" : "Saved to your Riseora account"}</h2>
+          <p>{!crossDeviceEnabled ? "Sign in to carry this bag across your devices. Nothing is emailed and this is separate from abandoned-cart recovery consent." : syncStatus === "error" ? (syncNotice || "Your browser copy is safe while account sync is unavailable.") : (syncNotice || "Your bag is revalidated against current price, public stock and purchase limits whenever it is restored.")}</p>
+          {crossDeviceEnabled && lastSyncedAt && syncStatus === "synced" && <small>Last account sync {new Date(lastSyncedAt).toLocaleString("en-IN")}</small>}
+        </div>
+        <div className="phase69-saved-bag-actions">
+          {!crossDeviceEnabled && <Link className="button button-secondary" to="/login">SIGN IN</Link>}
+          {crossDeviceEnabled && syncStatus === "error" && <button className="button button-secondary" type="button" onClick={retrySavedBagSync}>RETRY ACCOUNT SYNC</button>}
+        </div>
+      </section>
       <div className="cart-layout">
         <div className="cart-list">
           {items.map((item) => (

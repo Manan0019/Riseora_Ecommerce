@@ -59,8 +59,8 @@ const scripts = pkg.scripts || {};
 String(scripts["saved-shopping:doctor"] || "").includes("phase68-saved-shopping-audit.mjs") ? pass("saved-shopping:doctor command") : fail("saved-shopping:doctor command");
 String(scripts["client:doctor"] || "").includes("saved-shopping:doctor") ? pass("client:doctor includes Phase 68 gate") : fail("client:doctor Phase 68 gate");
 String(scripts["verify:phase68"] || "").includes("performance:budget") && String(scripts["verify:phase68"] || "").includes("npm run build") ? pass("verify:phase68 command") : fail("verify:phase68 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase68") ? pass("prelaunch uses Phase 68 verification") : fail("prelaunch Phase 68 verification");
-read("scripts/phase49-release-prepare.mjs").includes("verify:phase68") ? pass("production release advances to Phase 68") : fail("production release Phase 68 verification");
+(String(scripts["prelaunch:check"] || "").includes("verify:phase68") || String(scripts["prelaunch:check"] || "").includes("verify:phase69")) ? pass("prelaunch uses Phase 68 verification") : fail("prelaunch Phase 68 verification");
+(read("scripts/phase49-release-prepare.mjs").includes("verify:phase68") || read("scripts/phase49-release-prepare.mjs").includes("verify:phase69")) ? pass("production release advances to Phase 68") : fail("production release Phase 68 verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

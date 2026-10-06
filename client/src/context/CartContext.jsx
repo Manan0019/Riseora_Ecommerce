@@ -1,10 +1,14 @@
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { trackCommerce, trackEvent } from "../analytics";
+import { apiFetch } from "../api/http";
+import { useAuth } from "./AuthContext";
 import { readPersistedArray, writePersistedArray } from "../lib/persisted-state";
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";
 const BUY_NOW_KEY = "riseora_buy_now";
+const CART_OWNER_KEY = "riseora_cart_owner";
+const CART_DIRTY_KEY = "riseora_cart_dirty";
 
 function normalizeStoredLine(item) {
   if (!item || typeof item !== "object" || !item.variantId || !item.productId) return null;
@@ -88,14 +92,180 @@ function addLine(lines, product, variant, quantity = 1) {
   return line ? [...lines, line] : lines;
 }
 
+
+function readCartOwner() {
+  try { return window.localStorage.getItem(CART_OWNER_KEY) || ""; } catch { return ""; }
+}
+
+function readCartDirty() {
+  try { return window.localStorage.getItem(CART_DIRTY_KEY) === "1"; } catch { return false; }
+}
+
+function markStoredCartOwner(userId) {
+  try {
+    if (userId) window.localStorage.setItem(CART_OWNER_KEY, userId);
+    else window.localStorage.removeItem(CART_OWNER_KEY);
+  } catch { /* ownership metadata is best effort */ }
+}
+
+function markStoredCartDirty(dirty) {
+  try {
+    if (dirty) window.localStorage.setItem(CART_DIRTY_KEY, "1");
+    else window.localStorage.removeItem(CART_DIRTY_KEY);
+  } catch { /* dirty metadata is best effort */ }
+}
+
+function toAccountCartRequest(lines) {
+  return (Array.isArray(lines) ? lines : [])
+    .filter((item) => item?.variantId && Number(item?.quantity || 0) > 0)
+    .slice(0, 50)
+    .map((item) => ({ variantId: item.variantId, quantity: Math.max(1, Math.min(99, Math.trunc(Number(item.quantity || 1)))) }));
+}
+
+function cartRequestSignature(lines) {
+  return toAccountCartRequest(lines).map((item) => `${item.variantId}:${item.quantity}`).sort().join("|");
+}
+
+function fullCartSignature(lines) {
+  return (Array.isArray(lines) ? lines : []).map((item) => [item.variantId, item.quantity, item.price, item.mrp, item.stockQuantity, item.maxPurchaseQuantity ?? ""].join(":" )).sort().join("|");
+}
+
 export function CartProvider({ children }) {
+  const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState(readInitialCart);
   const [buyNowItems, setBuyNowItems] = useState(readInitialBuyNow);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [syncStatus, setSyncStatus] = useState("local");
+  const [syncNotice, setSyncNotice] = useState("");
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const [syncAttempt, setSyncAttempt] = useState(0);
+  const itemsRef = useRef(items);
+  const syncUserRef = useRef("");
+  const syncReadyRef = useRef(false);
+  const lastServerSignatureRef = useRef("");
 
   useEffect(() => {
     writePersistedArray(window.localStorage, STORAGE_KEY, items, { maxItems: 250 });
   }, [items]);
+
+
+  useEffect(() => { itemsRef.current = items; }, [items]);
+
+  useEffect(() => {
+    if (authLoading) return undefined;
+    if (!user?.id) {
+      const storedOwner = readCartOwner();
+      if (syncUserRef.current || storedOwner) {
+        syncUserRef.current = "";
+        syncReadyRef.current = false;
+        lastServerSignatureRef.current = "";
+        markStoredCartOwner("");
+        markStoredCartDirty(false);
+        setSyncStatus("local");
+        setSyncNotice("");
+        setLastSyncedAt(null);
+        setItems([]);
+      }
+      return undefined;
+    }
+
+    let active = true;
+    const userId = user.id;
+    const storedOwner = readCartOwner();
+    const localDirty = readCartDirty();
+    let browserItems = toAccountCartRequest(itemsRef.current);
+    let method = "GET";
+    let endpoint = "/account/cart";
+    let body;
+
+    if (!storedOwner) {
+      method = "POST";
+      endpoint = "/account/cart/merge";
+      body = JSON.stringify({ items: browserItems });
+    } else if (storedOwner === userId && localDirty) {
+      method = "PUT";
+      body = JSON.stringify({ items: browserItems });
+    } else if (storedOwner !== userId) {
+      browserItems = [];
+      itemsRef.current = [];
+      setItems([]);
+      markStoredCartDirty(false);
+    }
+
+    const browserSignature = cartRequestSignature(browserItems);
+    syncUserRef.current = userId;
+    syncReadyRef.current = false;
+    setSyncStatus("syncing");
+    setSyncNotice("");
+
+    apiFetch(endpoint, { method, ...(body ? { body } : {}) })
+      .then((response) => {
+        if (!active || syncUserRef.current !== userId) return;
+        if (method !== "GET" && cartRequestSignature(itemsRef.current) !== browserSignature) {
+          markStoredCartDirty(true);
+          setSyncAttempt((value) => value + 1);
+          return;
+        }
+        const data = response?.data || {};
+        const canonical = Array.isArray(data.items) ? data.items : [];
+        lastServerSignatureRef.current = cartRequestSignature(canonical);
+        syncReadyRef.current = true;
+        markStoredCartOwner(userId);
+        markStoredCartDirty(false);
+        setItems(canonical);
+        setSyncStatus("synced");
+        setLastSyncedAt(data.savedAt || new Date().toISOString());
+        const adjustmentCount = Array.isArray(data.adjustments) ? data.adjustments.length : 0;
+        const mergedBoth = Number(data.merge?.accountLineCount || 0) > 0 && Number(data.merge?.browserLineCount || 0) > 0;
+        if (adjustmentCount) setSyncNotice(`${adjustmentCount} saved-bag ${adjustmentCount === 1 ? "item was" : "items were"} refreshed for current stock or purchase limits.`);
+        else if (mergedBoth) setSyncNotice("This browser bag and your Riseora account bag were merged safely.");
+        else setSyncNotice("");
+      })
+      .catch(() => {
+        if (!active || syncUserRef.current !== userId) return;
+        syncReadyRef.current = false;
+        if (method === "PUT") markStoredCartDirty(true);
+        setSyncStatus("error");
+        setSyncNotice("Your bag is still safe on this browser. Account sync can be retried.");
+      });
+
+    return () => { active = false; };
+  }, [authLoading, user?.id, syncAttempt]);
+
+  useEffect(() => {
+    if (!user?.id || !syncReadyRef.current || syncUserRef.current !== user.id) return undefined;
+    const requestSignature = cartRequestSignature(items);
+    if (requestSignature === lastServerSignatureRef.current) return undefined;
+
+    setSyncStatus("syncing");
+    const userId = user.id;
+    const timer = window.setTimeout(() => {
+      const sentItems = toAccountCartRequest(itemsRef.current);
+      const sentSignature = cartRequestSignature(sentItems);
+      apiFetch("/account/cart", { method: "PUT", body: JSON.stringify({ items: sentItems }) })
+        .then((response) => {
+          if (syncUserRef.current !== userId) return;
+          if (cartRequestSignature(itemsRef.current) !== sentSignature) return;
+          const data = response?.data || {};
+          const canonical = Array.isArray(data.items) ? data.items : [];
+          lastServerSignatureRef.current = cartRequestSignature(canonical);
+          markStoredCartOwner(userId);
+          markStoredCartDirty(false);
+          setSyncStatus("synced");
+          setLastSyncedAt(data.savedAt || new Date().toISOString());
+          const adjustmentCount = Array.isArray(data.adjustments) ? data.adjustments.length : 0;
+          setSyncNotice(adjustmentCount ? `${adjustmentCount} bag ${adjustmentCount === 1 ? "item was" : "items were"} adjusted to current stock or purchase limits.` : "");
+          if (fullCartSignature(itemsRef.current) !== fullCartSignature(canonical)) setItems(canonical);
+        })
+        .catch(() => {
+          if (syncUserRef.current !== userId) return;
+          markStoredCartDirty(true);
+          setSyncStatus("error");
+          setSyncNotice("Your bag remains saved on this browser. Use Retry account sync when you are ready.");
+        });
+    }, 650);
+    return () => window.clearTimeout(timer);
+  }, [items, user?.id]);
 
   useEffect(() => {
     try {
@@ -104,13 +274,22 @@ export function CartProvider({ children }) {
     } catch { /* buy-now persistence is best effort */ }
   }, [buyNowItems]);
 
+  function markCartDirty() {
+    if (user?.id) {
+      markStoredCartOwner(user.id);
+      markStoredCartDirty(true);
+    }
+  }
+
   function addItem(product, variant, quantity = 1) {
+    markCartDirty();
     setItems((current) => addLine(current, product, variant, quantity));
     trackCommerce("add_to_cart", { items: [{ sku: variant?.sku, variantId: variant?.id, productName: product?.name, variantName: variant?.name, price: Number(variant?.sellingPrice || 0), quantity }], value: Number(variant?.sellingPrice || 0) * Number(quantity || 1), source: "cart_add" });
     setDrawerOpen(true);
   }
 
   function addItems(entries = []) {
+    markCartDirty();
     const source = Array.isArray(entries) ? entries : [];
     if (!source.length) return false;
     setItems((current) => {
@@ -145,6 +324,7 @@ export function CartProvider({ children }) {
   function closeCart() { setDrawerOpen(false); }
 
   function addDeal(deal) {
+    markCartDirty();
     const additions = [];
     if (deal?.type === "BUNDLE_DISCOUNT") {
       for (const row of deal.resolvedItems || []) {
@@ -168,6 +348,7 @@ export function CartProvider({ children }) {
   }
 
   function updateQuantity(variantId, quantity) {
+    markCartDirty();
     setItems((current) => {
       const target = current.find((item) => item.variantId === variantId);
       if (!target) return current;
@@ -186,16 +367,19 @@ export function CartProvider({ children }) {
   }
 
   function removeItem(variantId) {
+    markCartDirty();
     const line = items.find((item) => item.variantId === variantId);
     if (line) trackCommerce("remove_from_cart", { items: [line], value: Number(line.price || 0) * Number(line.quantity || 1) });
     setItems((current) => current.filter((item) => item.variantId !== variantId));
   }
 
   function clearCart() {
+    markCartDirty();
     setItems([]);
   }
 
   function replaceCart(nextItems) {
+    markCartDirty();
     const source = Array.isArray(nextItems) ? nextItems : [];
     const safe = [];
     for (const item of source) {
@@ -214,13 +398,20 @@ export function CartProvider({ children }) {
     setItems(safe);
   }
 
+  function retrySavedBagSync() {
+    if (!user?.id) return;
+    syncReadyRef.current = false;
+    lastServerSignatureRef.current = "";
+    setSyncAttempt((value) => value + 1);
+  }
+
   const count = items.reduce((sum, item) => sum + Math.max(0, Number(item?.quantity || 0)), 0);
   const subtotal = items.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
   const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart }),
-    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen],
+    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, retrySavedBagSync }),
+    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

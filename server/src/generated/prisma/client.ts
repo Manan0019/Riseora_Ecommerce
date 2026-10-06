@@ -47,6 +47,11 @@ export { Prisma }
  */
 export type User = Prisma.UserModel
 /**
+ * Model AccountCart
+ * 
+ */
+export type AccountCart = Prisma.AccountCartModel
+/**
  * Model AuthSession
  * 
  */

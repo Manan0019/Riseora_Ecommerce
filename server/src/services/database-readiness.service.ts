@@ -1,6 +1,6 @@
 import { prisma } from "../config/prisma";
 
-export const EXPECTED_MIGRATION_HEAD = "20261004160000_phase48_schema_integrity_job_orchestration";
+export const EXPECTED_MIGRATION_HEAD = "20261006121500_phase69_account_saved_bag_v2";
 
 type CheckRow = {
   refill_table: boolean;
@@ -13,6 +13,7 @@ type CheckRow = {
   credit_note_table: boolean;
   consent_event_table: boolean;
   system_job_table: boolean;
+  account_cart_table: boolean;
 };
 
 export async function databaseSchemaStatus() {
@@ -28,7 +29,8 @@ export async function databaseSchemaStatus() {
         to_regclass('public."Campaign"') IS NOT NULL AS campaign_table,
         to_regclass('public."CreditNote"') IS NOT NULL AS credit_note_table,
         to_regclass('public."ConsentEvent"') IS NOT NULL AS consent_event_table,
-        to_regclass('public."SystemJobState"') IS NOT NULL AS system_job_table
+        to_regclass('public."SystemJobState"') IS NOT NULL AS system_job_table,
+        to_regclass('public."AccountCart"') IS NOT NULL AS account_cart_table
     `);
     const row = rows[0];
     const requirements = [
@@ -42,6 +44,7 @@ export async function databaseSchemaStatus() {
       ["CreditNote table", row?.credit_note_table],
       ["ConsentEvent table", row?.consent_event_table],
       ["SystemJobState table", row?.system_job_table],
+      ["AccountCart table", row?.account_cart_table],
     ] as const;
 
     const migrationRows = await prisma.$queryRawUnsafe<Array<{ migration_name: string; finished_at: Date | null; rolled_back_at: Date | null }>>(`

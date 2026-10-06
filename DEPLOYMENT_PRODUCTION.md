@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase68` PASS
+- `verify:phase69` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -140,3 +140,8 @@ Before public traffic, confirm `npm run discovery:doctor` and `npm run verify:ph
 ## Phase 68 saved shopping acceptance
 
 Before public traffic, confirm `npm run saved-shopping:doctor` and `npm run verify:phase68` both pass. Saving a product must never auto-subscribe a customer to price or stock alerts. Wishlist intelligence must use sellable stock after safety stock, alert creation must remain an explicit customer action, and Admin health must remain aggregate-only.
+
+
+## Phase 69 cross-device Saved Bag acceptance
+
+Phase 69 adds migration `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, create a verified database backup, run committed migrations, regenerate Prisma Client, and confirm `npm run db:status` reports `AccountCart` with the Phase 69 migration as the applied head. Then confirm `npm run saved-bag:doctor` and `npm run verify:phase69` both pass. Signed-in bags must merge browser/account quantities without doubling duplicate variants, saved rows must persist only variant identity + quantity, and every restore must re-read current price, safety-stock-aware availability, and purchase limits. Saved Bag persistence is operational account functionality and must remain separate from cart-recovery marketing consent.

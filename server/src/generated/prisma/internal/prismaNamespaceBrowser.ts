@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  AccountCart: 'AccountCart',
   AuthSession: 'AuthSession',
   AuthSecurityEvent: 'AuthSecurityEvent',
   RewardAccount: 'RewardAccount',
@@ -152,6 +153,19 @@ export const UserScalarFieldEnum = {
 } as const
 
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
+
+
+export const AccountCartScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  items: 'items',
+  revision: 'revision',
+  lastMergedAt: 'lastMergedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type AccountCartScalarFieldEnum = (typeof AccountCartScalarFieldEnum)[keyof typeof AccountCartScalarFieldEnum]
 
 
 export const AuthSessionScalarFieldEnum = {
@@ -1302,19 +1316,19 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
+
+
 export const NullableJsonNullValueInput = {
   DbNull: DbNull,
   JsonNull: JsonNull
 } as const
 
 export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const QueryMode = {

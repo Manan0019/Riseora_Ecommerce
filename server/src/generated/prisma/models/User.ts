@@ -349,6 +349,7 @@ export type UserWhereInput = {
   marketingPreference?: Prisma.XOR<Prisma.MarketingPreferenceNullableScalarRelationFilter, Prisma.MarketingPreferenceWhereInput> | null
   consentEvents?: Prisma.ConsentEventListRelationFilter
   privacyRequests?: Prisma.PrivacyRequestListRelationFilter
+  accountCart?: Prisma.XOR<Prisma.AccountCartNullableScalarRelationFilter, Prisma.AccountCartWhereInput> | null
 }
 
 export type UserOrderByWithRelationInput = {
@@ -395,6 +396,7 @@ export type UserOrderByWithRelationInput = {
   marketingPreference?: Prisma.MarketingPreferenceOrderByWithRelationInput
   consentEvents?: Prisma.ConsentEventOrderByRelationAggregateInput
   privacyRequests?: Prisma.PrivacyRequestOrderByRelationAggregateInput
+  accountCart?: Prisma.AccountCartOrderByWithRelationInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -444,6 +446,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   marketingPreference?: Prisma.XOR<Prisma.MarketingPreferenceNullableScalarRelationFilter, Prisma.MarketingPreferenceWhereInput> | null
   consentEvents?: Prisma.ConsentEventListRelationFilter
   privacyRequests?: Prisma.PrivacyRequestListRelationFilter
+  accountCart?: Prisma.XOR<Prisma.AccountCartNullableScalarRelationFilter, Prisma.AccountCartWhereInput> | null
 }, "id" | "email" | "phone" | "referralCode">
 
 export type UserOrderByWithAggregationInput = {
@@ -539,6 +542,7 @@ export type UserCreateInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -584,6 +588,7 @@ export type UserUncheckedCreateInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -629,6 +634,7 @@ export type UserUpdateInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -674,6 +680,7 @@ export type UserUncheckedUpdateInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -923,6 +930,20 @@ export type UserUncheckedUpdateManyWithoutReferredByNestedInput = {
   update?: Prisma.UserUpdateWithWhereUniqueWithoutReferredByInput | Prisma.UserUpdateWithWhereUniqueWithoutReferredByInput[]
   updateMany?: Prisma.UserUpdateManyWithWhereWithoutReferredByInput | Prisma.UserUpdateManyWithWhereWithoutReferredByInput[]
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
+}
+
+export type UserCreateNestedOneWithoutAccountCartInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountCartInput, Prisma.UserUncheckedCreateWithoutAccountCartInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountCartInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutAccountCartNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutAccountCartInput, Prisma.UserUncheckedCreateWithoutAccountCartInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAccountCartInput
+  upsert?: Prisma.UserUpsertWithoutAccountCartInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAccountCartInput, Prisma.UserUpdateWithoutAccountCartInput>, Prisma.UserUncheckedUpdateWithoutAccountCartInput>
 }
 
 export type UserCreateNestedOneWithoutAuthSessionsInput = {
@@ -1309,6 +1330,7 @@ export type UserCreateWithoutReferralsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsInput = {
@@ -1353,6 +1375,7 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralsInput = {
@@ -1402,6 +1425,7 @@ export type UserCreateWithoutReferredByInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferredByInput = {
@@ -1446,6 +1470,7 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferredByInput = {
@@ -1511,6 +1536,7 @@ export type UserUpdateWithoutReferralsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsInput = {
@@ -1555,6 +1581,7 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutReferredByInput = {
@@ -1595,6 +1622,202 @@ export type UserScalarWhereInput = {
   referredByUserId?: Prisma.UuidNullableFilter<"User"> | string | null
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
+}
+
+export type UserCreateWithoutAccountCartInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutAccountCartInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutAccountCartInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountCartInput, Prisma.UserUncheckedCreateWithoutAccountCartInput>
+}
+
+export type UserUpsertWithoutAccountCartInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutAccountCartInput, Prisma.UserUncheckedUpdateWithoutAccountCartInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutAccountCartInput, Prisma.UserUncheckedCreateWithoutAccountCartInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutAccountCartInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutAccountCartInput, Prisma.UserUncheckedUpdateWithoutAccountCartInput>
+}
+
+export type UserUpdateWithoutAccountCartInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutAccountCartInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuthSessionsInput = {
@@ -1639,6 +1862,7 @@ export type UserCreateWithoutAuthSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuthSessionsInput = {
@@ -1683,6 +1907,7 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuthSessionsInput = {
@@ -1743,6 +1968,7 @@ export type UserUpdateWithoutAuthSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthSessionsInput = {
@@ -1787,6 +2013,7 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuthSecurityEventsInput = {
@@ -1831,6 +2058,7 @@ export type UserCreateWithoutAuthSecurityEventsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
@@ -1875,6 +2103,7 @@ export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuthSecurityEventsInput = {
@@ -1935,6 +2164,7 @@ export type UserUpdateWithoutAuthSecurityEventsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
@@ -1979,6 +2209,7 @@ export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardAccountInput = {
@@ -2023,6 +2254,7 @@ export type UserCreateWithoutRewardAccountInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardAccountInput = {
@@ -2067,6 +2299,7 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardAccountInput = {
@@ -2127,6 +2360,7 @@ export type UserUpdateWithoutRewardAccountInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardAccountInput = {
@@ -2171,6 +2405,7 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardTransactionsInput = {
@@ -2215,6 +2450,7 @@ export type UserCreateWithoutRewardTransactionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardTransactionsInput = {
@@ -2259,6 +2495,7 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardTransactionsInput = {
@@ -2319,6 +2556,7 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
@@ -2363,6 +2601,7 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdminAuditLogsInput = {
@@ -2407,6 +2646,7 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
@@ -2451,6 +2691,7 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdminAuditLogsInput = {
@@ -2511,6 +2752,7 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
@@ -2555,6 +2797,7 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPasswordResetTokensInput = {
@@ -2599,6 +2842,7 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
@@ -2643,6 +2887,7 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPasswordResetTokensInput = {
@@ -2703,6 +2948,7 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
@@ -2747,6 +2993,7 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -2791,6 +3038,7 @@ export type UserCreateWithoutAddressesInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -2835,6 +3083,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -2895,6 +3144,7 @@ export type UserUpdateWithoutAddressesInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -2939,6 +3189,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutInventoryMovementsInput = {
@@ -2983,6 +3234,7 @@ export type UserCreateWithoutInventoryMovementsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInventoryMovementsInput = {
@@ -3027,6 +3279,7 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInventoryMovementsInput = {
@@ -3087,6 +3340,7 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
@@ -3131,6 +3385,7 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -3175,6 +3430,7 @@ export type UserCreateWithoutOrdersInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -3219,6 +3475,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -3279,6 +3536,7 @@ export type UserUpdateWithoutOrdersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -3323,6 +3581,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCancellationRequestsInput = {
@@ -3367,6 +3626,7 @@ export type UserCreateWithoutCancellationRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCancellationRequestsInput = {
@@ -3411,6 +3671,7 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCancellationRequestsInput = {
@@ -3471,6 +3732,7 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
@@ -3515,6 +3777,7 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCheckoutSessionsInput = {
@@ -3559,6 +3822,7 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
@@ -3603,6 +3867,7 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCheckoutSessionsInput = {
@@ -3663,6 +3928,7 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
@@ -3707,6 +3973,7 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationsInput = {
@@ -3751,6 +4018,7 @@ export type UserCreateWithoutNotificationsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationsInput = {
@@ -3795,6 +4063,7 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationsInput = {
@@ -3855,6 +4124,7 @@ export type UserUpdateWithoutNotificationsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationsInput = {
@@ -3899,6 +4169,7 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -3943,6 +4214,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -3987,6 +4259,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -4047,6 +4320,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -4091,6 +4365,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReturnRequestsInput = {
@@ -4135,6 +4410,7 @@ export type UserCreateWithoutReturnRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReturnRequestsInput = {
@@ -4179,6 +4455,7 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReturnRequestsInput = {
@@ -4239,6 +4516,7 @@ export type UserUpdateWithoutReturnRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReturnRequestsInput = {
@@ -4283,6 +4561,7 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRewardCouponsInput = {
@@ -4327,6 +4606,7 @@ export type UserCreateWithoutRewardCouponsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRewardCouponsInput = {
@@ -4371,6 +4651,7 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRewardCouponsInput = {
@@ -4431,6 +4712,7 @@ export type UserUpdateWithoutRewardCouponsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRewardCouponsInput = {
@@ -4475,6 +4757,7 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutCouponRedemptionsInput = {
@@ -4519,6 +4802,7 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
@@ -4563,6 +4847,7 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutCouponRedemptionsInput = {
@@ -4623,6 +4908,7 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
@@ -4667,6 +4953,7 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -4711,6 +4998,7 @@ export type UserCreateWithoutReviewsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -4755,6 +5043,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -4815,6 +5104,7 @@ export type UserUpdateWithoutReviewsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -4859,6 +5149,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutProductQuestionsInput = {
@@ -4903,6 +5194,7 @@ export type UserCreateWithoutProductQuestionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutProductQuestionsInput = {
@@ -4947,6 +5239,7 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutProductQuestionsInput = {
@@ -5007,6 +5300,7 @@ export type UserUpdateWithoutProductQuestionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutProductQuestionsInput = {
@@ -5051,6 +5345,7 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSupportTicketsInput = {
@@ -5095,6 +5390,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSupportTicketsInput = {
@@ -5139,6 +5435,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSupportTicketsInput = {
@@ -5199,6 +5496,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupportTicketsInput = {
@@ -5243,6 +5541,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMarketingPreferenceInput = {
@@ -5287,6 +5586,7 @@ export type UserCreateWithoutMarketingPreferenceInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMarketingPreferenceInput = {
@@ -5331,6 +5631,7 @@ export type UserUncheckedCreateWithoutMarketingPreferenceInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMarketingPreferenceInput = {
@@ -5391,6 +5692,7 @@ export type UserUpdateWithoutMarketingPreferenceInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMarketingPreferenceInput = {
@@ -5435,6 +5737,7 @@ export type UserUncheckedUpdateWithoutMarketingPreferenceInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutConsentEventsInput = {
@@ -5479,6 +5782,7 @@ export type UserCreateWithoutConsentEventsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConsentEventsInput = {
@@ -5523,6 +5827,7 @@ export type UserUncheckedCreateWithoutConsentEventsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConsentEventsInput = {
@@ -5583,6 +5888,7 @@ export type UserUpdateWithoutConsentEventsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConsentEventsInput = {
@@ -5627,6 +5933,7 @@ export type UserUncheckedUpdateWithoutConsentEventsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPrivacyRequestsInput = {
@@ -5671,6 +5978,7 @@ export type UserCreateWithoutPrivacyRequestsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPrivacyRequestsInput = {
@@ -5715,6 +6023,7 @@ export type UserUncheckedCreateWithoutPrivacyRequestsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPrivacyRequestsInput = {
@@ -5775,6 +6084,7 @@ export type UserUpdateWithoutPrivacyRequestsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPrivacyRequestsInput = {
@@ -5819,6 +6129,7 @@ export type UserUncheckedUpdateWithoutPrivacyRequestsInput = {
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateWithoutRefillRemindersInput = {
@@ -5863,6 +6174,7 @@ export type UserCreateWithoutRefillRemindersInput = {
   marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutRefillRemindersInput = {
@@ -5907,6 +6219,7 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
   consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutRefillRemindersInput = {
@@ -5967,6 +6280,7 @@ export type UserUpdateWithoutRefillRemindersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutRefillRemindersInput = {
@@ -6011,6 +6325,7 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserCreateManyReferredByInput = {
@@ -6075,6 +6390,7 @@ export type UserUpdateWithoutReferredByInput = {
   marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferredByInput = {
@@ -6119,6 +6435,7 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
   consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
   privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutReferredByInput = {
@@ -6405,6 +6722,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   marketingPreference?: boolean | Prisma.User$marketingPreferenceArgs<ExtArgs>
   consentEvents?: boolean | Prisma.User$consentEventsArgs<ExtArgs>
   privacyRequests?: boolean | Prisma.User$privacyRequestsArgs<ExtArgs>
+  accountCart?: boolean | Prisma.User$accountCartArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -6500,6 +6818,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   marketingPreference?: boolean | Prisma.User$marketingPreferenceArgs<ExtArgs>
   consentEvents?: boolean | Prisma.User$consentEventsArgs<ExtArgs>
   privacyRequests?: boolean | Prisma.User$privacyRequestsArgs<ExtArgs>
+  accountCart?: boolean | Prisma.User$accountCartArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6537,6 +6856,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     marketingPreference: Prisma.$MarketingPreferencePayload<ExtArgs> | null
     consentEvents: Prisma.$ConsentEventPayload<ExtArgs>[]
     privacyRequests: Prisma.$PrivacyRequestPayload<ExtArgs>[]
+    accountCart: Prisma.$AccountCartPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6976,6 +7296,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   marketingPreference<T extends Prisma.User$marketingPreferenceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$marketingPreferenceArgs<ExtArgs>>): Prisma.Prisma__MarketingPreferenceClient<runtime.Types.Result.GetResult<Prisma.$MarketingPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   consentEvents<T extends Prisma.User$consentEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$consentEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConsentEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   privacyRequests<T extends Prisma.User$privacyRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$privacyRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PrivacyRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  accountCart<T extends Prisma.User$accountCartArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountCartArgs<ExtArgs>>): Prisma.Prisma__AccountCartClient<runtime.Types.Result.GetResult<Prisma.$AccountCartPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8006,6 +8327,25 @@ export type User$privacyRequestsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.PrivacyRequestScalarFieldEnum | Prisma.PrivacyRequestScalarFieldEnum[]
+}
+
+/**
+ * User.accountCart
+ */
+export type User$accountCartArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the AccountCart
+   */
+  select?: Prisma.AccountCartSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the AccountCart
+   */
+  omit?: Prisma.AccountCartOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.AccountCartInclude<ExtArgs> | null
+  where?: Prisma.AccountCartWhereInput
 }
 
 /**
