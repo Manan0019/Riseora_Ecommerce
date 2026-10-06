@@ -10,6 +10,7 @@ import { getRoutineGuidance, previewRoutineSelections, recordRoutineBuilderEvent
 import { enrichReviewsForTrust, reviewTrustSummary } from "../services/product-trust.service";
 import { buildProductComparison, recordProductComparisonEvent } from "../services/product-comparison.service";
 import { ingredientDetail, ingredientGuideFromText, ingredientLibrary } from "../services/ingredient-library.service";
+import { recordShopDiscoveryEvent, shopDiscoveryFacets } from "../services/shop-discovery.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -133,6 +134,9 @@ router.get(
     const badge = typeof req.query.badge === "string" ? req.query.badge.trim() : "";
     const suitableFor = typeof req.query.suitableFor === "string" ? req.query.suitableFor.trim() : "";
     const ingredient = typeof req.query.ingredient === "string" ? req.query.ingredient.trim() : "";
+    const benefit = typeof req.query.benefit === "string" ? req.query.benefit.trim() : "";
+    const minRatingRaw = typeof req.query.minRating === "string" ? Number(req.query.minRating) : 0;
+    const minRating = Number.isFinite(minRatingRaw) ? Math.max(0, Math.min(5, minRatingRaw)) : 0;
     const featured = req.query.featured === "true";
     const inStock = req.query.inStock === "true";
     const sort = typeof req.query.sort === "string" ? req.query.sort : "featured";
@@ -156,6 +160,7 @@ router.get(
         ...(badge ? { badge: { equals: badge, mode: "insensitive" } } : {}),
         ...(suitableFor ? { suitableFor: { contains: suitableFor, mode: "insensitive" } } : {}),
         ...(ingredient ? { ingredients: { contains: ingredient, mode: "insensitive" } } : {}),
+        ...(benefit ? { benefits: { contains: benefit, mode: "insensitive" } } : {}),
         ...(inStock || minPrice !== null || maxPrice !== null ? { variants: { some: variantFilter } } : {}),
         ...(search
           ? {
@@ -170,11 +175,12 @@ router.get(
         reviews: { where: { isApproved: true }, select: { rating: true } },
       },
       orderBy: sort === "name" ? { name: "asc" } : [{ isFeatured: "desc" }, { createdAt: "desc" }],
-      take: limit,
+      take: minRating > 0 ? Math.min(240, Math.max(limit * 4, 120)) : limit,
     });
 
     let enriched = products.map(withRating);
-    if (inStock) enriched = enriched.filter((product: any) => product.variants?.some((variant: any) => Number(variant.stockQuantity || 0) > 0));
+    if (inStock) enriched = enriched.map((product: any) => ({ ...product, variants: (product.variants || []).filter((variant: any) => Number(variant.stockQuantity || 0) > 0) })).filter((product: any) => product.variants?.length > 0);
+    if (minRating > 0) enriched = enriched.filter((product: any) => Number(product.ratingAverage || 0) >= minRating);
     enriched.sort((a: any, b: any) => {
       if (search && sort === "featured") {
         const relevance = relevanceScore(b, search) - relevanceScore(a, search);
@@ -188,6 +194,7 @@ router.get(
       if (sort === "newest") return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       return 0;
     });
+    enriched = enriched.slice(0, limit);
 
     res.json({ success: true, data: enriched });
   }),
@@ -197,26 +204,25 @@ router.get(
 router.get(
   "/discovery/facets",
   asyncHandler(async (_req, res) => {
-    const [categories, suitabilityOptions, products, priceRows] = await Promise.all([
-      prisma.category.findMany({ where: { isActive: true }, select: { id: true, name: true, slug: true, imageUrl: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
-      prisma.suitabilityOption.findMany({ where: { isActive: true }, select: { id: true, name: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] }),
-      prisma.product.findMany({ where: { isActive: true, ingredients: { not: null } }, select: { ingredients: true } }),
-      prisma.productVariant.findMany({ where: { isActive: true, product: { isActive: true } }, select: { sellingPrice: true } }),
-    ]);
-    const ingredientCounts = new Map<string, { name: string; count: number }>();
-    for (const product of products) {
-      for (const name of listTokens(product.ingredients)) {
-        const key = name.toLowerCase();
-        const row = ingredientCounts.get(key) || { name, count: 0 };
-        row.count += 1; ingredientCounts.set(key, row);
-      }
-    }
-    const ingredients = [...ingredientCounts.values()].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name)).slice(0, 24);
-    const prices = priceRows.map((row) => Number(row.sellingPrice)).filter(Number.isFinite);
-    return res.json({ success: true, data: {
-      categories, suitability: suitabilityOptions, ingredients,
-      price: { min: prices.length ? Math.floor(Math.min(...prices)) : 0, max: prices.length ? Math.ceil(Math.max(...prices)) : 0 },
-    } });
+    const data = await shopDiscoveryFacets();
+    return res.json({ success: true, data });
+  }),
+);
+
+const discoveryEventSchema = z.object({
+  type: z.enum(["view", "filter", "collection"]),
+  facets: z.array(z.string().trim().min(1).max(32)).max(10).optional().default([]),
+  resultCount: z.number().int().min(0).max(500).optional(),
+});
+
+router.post(
+  "/discovery/event",
+  recommendationEventLimiter,
+  asyncHandler(async (req, res) => {
+    const parsed = discoveryEventSchema.safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid discovery event" });
+    recordShopDiscoveryEvent(parsed.data);
+    return res.json({ success: true });
   }),
 );
 

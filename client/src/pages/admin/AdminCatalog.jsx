@@ -21,18 +21,20 @@ export default function AdminCatalog() {
   const [uploadingImages, setUploadingImages] = useState(false);
   const [compareHealth, setCompareHealth] = useState(null);
   const [ingredientHealth, setIngredientHealth] = useState(null);
+  const [discoveryHealth, setDiscoveryHealth] = useState(null);
   const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse] = await Promise.all([
+    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse, discoveryResponse] = await Promise.all([
       apiFetch("/admin/categories"),
       apiFetch("/admin/products"),
       apiFetch("/admin/suitability-options"),
       apiFetch("/admin/catalog/comparison-health").catch(() => ({ data: null })),
       apiFetch("/admin/catalog/ingredient-health").catch(() => ({ data: null })),
+      apiFetch("/admin/catalog/discovery-health").catch(() => ({ data: null })),
     ]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data); setDiscoveryHealth(discoveryResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -266,6 +268,19 @@ export default function AdminCatalog() {
       </div>
       {ingredientHealth?.topIngredients?.length > 0 && <div className="phase66-admin-top-ingredients"><b>Most-used catalogue ingredients</b>{ingredientHealth.topIngredients.map((item) => <a key={item.slug} href={`/ingredients/${item.slug}`} target="_blank" rel="noreferrer">{item.name}<em>{item.products}</em></a>)}</div>}
       {ingredientHealth?.missingIngredientProducts?.length > 0 && <p className="phase66-admin-missing"><strong>Needs ingredient content:</strong> {ingredientHealth.missingIngredientProducts.map((item) => item.name).join(", ")}</p>}
+    </section>
+
+    <section className="admin-panel phase67-admin-discovery-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 67 · SHOP DISCOVERY</p><h2>Discovery coverage & guided navigation</h2><p>Catalogue completeness and rolling 60-minute storefront discovery signals. Counts are aggregate only; no customer identity or browsing history is persisted.</p></div><button type="button" className="state-toggle" onClick={() => refresh().catch((e) => setError(e.message))}>Refresh</button></div>
+      <div className="phase67-admin-metrics">
+        <article><small>DISCOVERY COVERAGE</small><strong>{discoveryHealth?.discoveryCoverage ?? 0}%</strong><span>{discoveryHealth?.discoverableProducts ?? 0}/{discoveryHealth?.activeProducts ?? 0} active products</span></article>
+        <article><small>LIVE AVAILABILITY</small><strong>{discoveryHealth?.inStockCoverage ?? 0}%</strong><span>{discoveryHealth?.inStockProducts ?? 0} products sellable after safety stock</span></article>
+        <article><small>GUIDED COLLECTIONS</small><strong>{discoveryHealth?.guidedCollections ?? 0}</strong><span>{discoveryHealth?.uniqueIngredients ?? 0} ingredient · {discoveryHealth?.uniqueBenefits ?? 0} benefit facets</span></article>
+        <article><small>SHOP VIEWS · 60M</small><strong>{discoveryHealth?.engagement?.shopViews ?? 0}</strong><span>{discoveryHealth?.engagement?.filterActions ?? 0} filter actions</span></article>
+        <article><small>COLLECTION OPENS · 60M</small><strong>{discoveryHealth?.engagement?.collectionOpens ?? 0}</strong><span>guided discovery interactions</span></article>
+      </div>
+      {discoveryHealth?.engagement?.topFacets?.length > 0 && <div className="phase67-admin-top-facets"><b>Most-used discovery facets</b>{discoveryHealth.engagement.topFacets.map((item) => <span key={item.facet}>{item.facet}<em>{item.count}</em></span>)}</div>}
+      {discoveryHealth?.missingDiscoveryContent?.length > 0 && <p className="phase67-admin-missing"><strong>Needs discovery content:</strong> {discoveryHealth.missingDiscoveryContent.map((item) => item.name).join(", ")}</p>}
     </section>
 
     <div className="admin-catalog-top-grid">

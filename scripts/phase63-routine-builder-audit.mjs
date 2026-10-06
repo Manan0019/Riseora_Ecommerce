@@ -69,10 +69,10 @@ const pkg = JSON.parse(read("package.json"));
 const scripts = pkg.scripts || {};
 String(scripts["routine-builder:doctor"] || "").includes("phase63-routine-builder-audit.mjs") ? pass("routine-builder:doctor command") : fail("routine-builder:doctor command");
 String(scripts["client:doctor"] || "").includes("routine-builder:doctor") ? pass("client:doctor includes Phase 63 routine gate") : fail("client:doctor Phase 63 gate");
-(["verify:phase63", "verify:phase65", "verify:phase66"].some((key) => String(scripts[key] || "").includes("performance:budget") && String(scripts[key] || "").includes("npm run build"))) ? pass("verify:phase63 command") : fail("verify:phase63 command");
-(["verify:phase63", "verify:phase65", "verify:phase66"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 63 verification") : fail("prelaunch Phase 63 verification");
+(["verify:phase63", "verify:phase65", "verify:phase67"].some((key) => String(scripts[key] || "").includes("performance:budget") && String(scripts[key] || "").includes("npm run build"))) ? pass("verify:phase63 command") : fail("verify:phase63 command");
+(["verify:phase63", "verify:phase65", "verify:phase67"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 63 verification") : fail("prelaunch Phase 63 verification");
 const prepare = read("scripts/phase49-release-prepare.mjs");
-(prepare.includes("verify:phase63") || prepare.includes("verify:phase65") || prepare.includes("verify:phase66")) ? pass("production release advances to Phase 63") : fail("production release Phase 63 verification");
+(prepare.includes("verify:phase63") || prepare.includes("verify:phase65") || prepare.includes("verify:phase67")) ? pass("production release advances to Phase 63") : fail("production release Phase 63 verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();
