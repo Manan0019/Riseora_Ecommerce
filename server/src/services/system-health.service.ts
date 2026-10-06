@@ -11,6 +11,7 @@ import { productionConfigurationStatus, releaseMetadata } from "./production-rea
 import { searchDiscoverySnapshot } from "./search-intelligence.service";
 import { recommendationEngagementSnapshot } from "./product-recommendation.service";
 import { checkoutConfidenceSnapshot } from "./checkout-confidence.service";
+import { checkoutFinalReviewHealth } from "./checkout-final-review.service";
 import { postPurchaseSnapshot } from "./post-purchase.service";
 import { adminNotificationHealth } from "./notification-inbox.service";
 
@@ -76,6 +77,7 @@ export async function adminSystemHealth() {
   const discovery = searchDiscoverySnapshot();
   const recommendations = recommendationEngagementSnapshot();
   const checkout = checkoutConfidenceSnapshot();
+  const checkoutFinalReview = checkoutFinalReviewHealth();
   const postPurchase = postPurchaseSnapshot();
   const communications = await adminNotificationHealth().catch(() => ({ created7d: 0, unread: 0, customersWithUnread: 0, oldestUnreadHours: 0, categories: { ORDERS: 0, SUPPORT: 0, REFILLS: 0, SHOPPING: 0, RISEORA: 0 } }));
 
@@ -112,6 +114,7 @@ export async function adminSystemHealth() {
     discovery,
     recommendations,
     checkout,
+    checkoutFinalReview,
     postPurchase,
     communications,
     timestamp: new Date().toISOString(),

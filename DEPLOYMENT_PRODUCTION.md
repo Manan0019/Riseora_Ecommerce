@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase75` PASS
+- `verify:phase76` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -175,3 +175,8 @@ Phase 74 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 75 address readiness acceptance
 
 Phase 75 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run address:doctor` and `npm run verify:phase75` both pass. Address readiness must keep canonical required fields separate from non-blocking quality guidance, reuse configured shipping-zone city/state only as an explicit customer-approved correction, and never silently rewrite the delivery address. Phase 73 remains the shipping/serviceability authority and Phase 57 remains the final Checkout authority before order/payment mutation. New or updated saved addresses must use a 6-digit PIN. Rolling address-readiness counters must remain aggregate/in-memory and must not retain customer identity, phone numbers, PIN codes or address text. No new migration is permitted for Phase 75.
+
+
+## Phase 76 final order review acceptance
+
+Phase 76 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run final-review:doctor` and `npm run verify:phase76` both pass. Checkout must generate a canonical server-side final-review digest only after the existing address, delivery, payment and Phase 57 readiness checks are satisfied. The customer must explicitly confirm that review before COD order creation or online-payment reservation can begin. Both mutation paths must recompute the digest and reject stale confirmation with `CHECKOUT_REVIEW_CHANGED` rather than silently accepting changed stock, pricing, promotions, delivery, payment method or delivery details. Final-review telemetry must remain aggregate/in-memory and must not retain customer identity, address, cart contents or review digests. Phase 57 remains the final stock/serviceability/pricing authority and no new migration is permitted for Phase 76.

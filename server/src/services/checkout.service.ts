@@ -10,6 +10,7 @@ import { getShippingQuote, normalizePostalCode, resolveShippingZone } from "./sh
 import { evaluateBestMerchandisingDeal } from "./merchandising.service";
 import { findCapturedRazorpayPaymentForOrder } from "./payment.service";
 import { adjustInventory } from "./inventory.service";
+import { buildCheckoutReviewDigest } from "./checkout-review-signature";
 
 export type CheckoutInput = {
   customerName: string;
@@ -17,6 +18,7 @@ export type CheckoutInput = {
   customerPhone: string;
   couponCode?: string;
   checkoutRequestKey?: string;
+  expectedReviewDigest?: string;
   shippingAddress: { line1: string; line2?: string; landmark?: string; city: string; state: string; postalCode: string; country: string };
   items: { variantId: string; quantity: number }[];
 };
@@ -376,6 +378,7 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
   }
 
   const prepared = await prepareCheckout(input, "COD", userId);
+  if (input.expectedReviewDigest && buildCheckoutReviewDigest(input, "COD", prepared) !== input.expectedReviewDigest) throw new Error("CHECKOUT_REVIEW_CHANGED");
   const result = await prisma.$transaction(async (tx) => {
     if (requestKey) {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${requestKey}))`;
@@ -423,6 +426,7 @@ export async function createOnlineCheckoutReservation(input: CheckoutInput, user
   }
 
   const prepared = await prepareCheckout(input, "ONLINE", userId);
+  if (input.expectedReviewDigest && buildCheckoutReviewDigest(input, "ONLINE", prepared) !== input.expectedReviewDigest) throw new Error("CHECKOUT_REVIEW_CHANGED");
   const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
   return prisma.$transaction(async (tx) => {
     if (requestKey) {

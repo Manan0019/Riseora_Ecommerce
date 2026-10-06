@@ -206,6 +206,16 @@ export default function AdminSystem() {
             <div><small>PREFLIGHT FAILURES</small><strong>{health.checkout?.preflightFail ?? 0}</strong><span>Readiness blocks before any order/payment mutation</span></div>
           </div>
           {(health.checkout?.failureReasons || []).length > 0 && <div className="phase57-checkout-funnel-reasons">{health.checkout.failureReasons.map((row) => <div key={row.reasonCode}><code>{row.reasonCode}</code><b>{row.count} block{row.count === 1 ? "" : "s"}</b></div>)}</div>}
+          <div className="phase76-review-health">
+            <div className="phase41-route-head"><span>Phase 76 · Final order review integrity</span><small>Server-snapshot confirmations · rolling {health.checkoutFinalReview?.windowMinutes ?? 60} minutes</small></div>
+            <div className="phase76-review-health-grid">
+              <article><small>REVIEW SNAPSHOTS</small><strong>{health.checkoutFinalReview?.previews ?? 0}</strong><span>Canonical final-review refreshes</span></article>
+              <article><small>CONFIRMATIONS</small><strong>{health.checkoutFinalReview?.confirmations ?? 0}</strong><span>{health.checkoutFinalReview?.confirmationRatePercent ?? 0}% of review snapshots</span></article>
+              <article><small>CHANGED AFTER REVIEW</small><strong>{health.checkoutFinalReview?.changes ?? 0}</strong><span>{health.checkoutFinalReview?.changedAfterReviewRatePercent ?? 0}% of confirmations</span></article>
+              <article><small>CONFIRMED MIX</small><strong>{health.checkoutFinalReview?.paymentMix?.codConfirmations ?? 0} / {health.checkoutFinalReview?.paymentMix?.onlineConfirmations ?? 0}</strong><span>COD / Online confirmations</span></article>
+            </div>
+            <p className="phase76-admin-note">{health.checkoutFinalReview?.privacy || "Aggregate final-review telemetry only; customer identity and cart contents are not retained."}</p>
+          </div>
         </div>
         <div className="phase58-postpurchase-health">
           <div className="phase41-route-head"><span>Post-purchase self-service</span><small>Privacy-safe in-memory order-care and reorder signals · rolling {health.postPurchase?.windowMinutes ?? 60} minutes</small></div>

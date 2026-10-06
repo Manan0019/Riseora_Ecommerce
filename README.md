@@ -502,3 +502,7 @@ npm run security:audit
 ```
 
 After deployment, existing JWTs without a managed session ID remain valid until their normal expiry. New sign-ins are represented in **My Account → Security & privacy** and can be individually revoked.
+
+## Phase 76 — Final Order Review & Pre-Payment Change Detection V2
+
+Phase 76 adds a server-generated final checkout snapshot and explicit customer confirmation before COD order creation or Razorpay reservation. A SHA-256 review digest is recomputed again at mutation time, so changed stock, pricing, promotion, delivery, payment or address details cannot silently pass under an older confirmation. Use `npm run final-review:doctor` and `npm run verify:phase76`. No new database migration is required.

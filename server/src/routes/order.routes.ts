@@ -9,6 +9,7 @@ import { getCheckoutReadiness, recordCheckoutFunnelEvent } from "../services/che
 import { getDeliveryPromisePreview } from "../services/delivery-promise.service";
 import { getPaymentMethodReadiness } from "../services/payment-readiness.service";
 import { getAddressReadiness } from "../services/address-readiness.service";
+import { getCheckoutFinalReview, recordCheckoutFinalReviewEvent } from "../services/checkout-final-review.service";
 import { createUserNotification } from "../services/notification-center.service";
 import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
@@ -20,6 +21,7 @@ const createOrderSchema = z.object({
   customerPhone: z.string().trim().min(8).max(20),
   couponCode: z.string().trim().max(40).optional().or(z.literal("")),
   checkoutRequestKey: z.string().uuid().optional(),
+  expectedReviewDigest: z.string().regex(/^[a-f0-9]{64}$/).optional(),
   shippingAddress: z.object({
     line1: z.string().trim().min(3),
     line2: z.string().trim().optional().or(z.literal("")),
@@ -40,7 +42,7 @@ const codEligibilitySchema = z.object({
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
 
-const checkoutReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, paymentMethod: true }).extend({
+const checkoutReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, expectedReviewDigest: true, paymentMethod: true }).extend({
   paymentMethod: z.enum(["COD", "ONLINE"]),
 });
 
@@ -57,7 +59,13 @@ const deliveryPromiseSchema = z.object({
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).min(1).max(50),
 });
 
-const paymentReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, paymentMethod: true });
+const paymentReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, expectedReviewDigest: true, paymentMethod: true });
+
+const finalReviewSchema = checkoutReadinessSchema;
+const finalReviewEventSchema = z.object({
+  type: z.enum(["CONFIRMED", "CHANGED"]),
+  paymentMethod: z.enum(["COD", "ONLINE"]),
+});
 
 const addressReadinessSchema = z.object({
   customerName: z.string().max(120).default(""),
@@ -136,6 +144,43 @@ router.post(
 );
 
 router.post(
+  "/final-review",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
+  blockCommerceDuringMaintenance,
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = finalReviewSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Complete the checkout details before final review", errors: parsed.error.flatten() });
+    const { paymentMethod, ...input } = parsed.data;
+    try {
+      const result = await getCheckoutFinalReview(input, paymentMethod, req.user?.id ?? null);
+      return res.json({ success: true, data: result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "FINAL_REVIEW_FAILED";
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(409).json({ success: false, code: "PRODUCT_UNAVAILABLE", message: "One or more products changed. Refresh the final review before continuing." });
+      if (message.startsWith("PURCHASE_LIMIT:")) return res.status(409).json({ success: false, code: "PURCHASE_LIMIT", message: "A product quantity is no longer within the current purchase limit." });
+      if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(409).json({ success: false, code: "PIN_UNSERVICEABLE", message: message.slice("PIN_UNSERVICEABLE:".length) });
+      if (message.startsWith("COD_UNAVAILABLE:")) return res.status(409).json({ success: false, code: "COD_UNAVAILABLE", message: message.slice("COD_UNAVAILABLE:".length) });
+      if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, code: "COUPON_NOT_FOUND", message: "Coupon code not found" });
+      if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, code: "COUPON_INVALID", message: message.slice("COUPON_INVALID:".length) });
+      if (message === "COUPON_LIMIT_REACHED") return res.status(409).json({ success: false, code: "COUPON_LIMIT_REACHED", message: "This coupon has reached its usage limit" });
+      throw error;
+    }
+  }),
+);
+
+router.post(
+  "/final-review/event",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 160, standardHeaders: "draft-8", legacyHeaders: false }),
+  (req, res) => {
+    const parsed = finalReviewEventSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid final review event" });
+    recordCheckoutFinalReviewEvent(parsed.data.type, parsed.data.paymentMethod);
+    return res.status(202).json({ success: true });
+  },
+);
+
+router.post(
   "/checkout-readiness",
   rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
   blockCommerceDuringMaintenance,
@@ -204,6 +249,7 @@ router.post(
       if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(400).json({ success: false, message: message.slice("PIN_UNSERVICEABLE:".length) });
       if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
       if (message === "ONLINE_CHECKOUT_PENDING") return res.status(409).json({ success: false, message: "An online payment reservation is still active for this checkout. Retry, check or cancel that payment before switching to COD." });
+      if (message === "CHECKOUT_REVIEW_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REVIEW_CHANGED", message: "Checkout details changed after your final review. Review the latest total, delivery and payment details before confirming again." });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
       if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });

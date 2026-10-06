@@ -12,7 +12,7 @@ const router = Router();
 
 const checkoutSchema = z.object({
   customerName: z.string().trim().min(2).max(120), customerEmail: z.string().trim().email().optional().or(z.literal("")), customerPhone: z.string().trim().min(8).max(20),
-  couponCode: z.string().trim().max(40).optional().or(z.literal("")), checkoutRequestKey: z.string().uuid().optional(),
+  couponCode: z.string().trim().max(40).optional().or(z.literal("")), checkoutRequestKey: z.string().uuid().optional(), expectedReviewDigest: z.string().regex(/^[a-f0-9]{64}$/).optional(),
   shippingAddress: z.object({ line1: z.string().trim().min(3), line2: z.string().trim().optional().or(z.literal("")), landmark: z.string().trim().optional().or(z.literal("")), city: z.string().trim().min(2), state: z.string().trim().min(2), postalCode: z.string().trim().regex(/^\d{6}$/), country: z.string().trim().default("India") }),
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1) })).min(1),
 });
@@ -86,6 +86,7 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
     if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
     if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });
     if (message.startsWith("OUT_OF_STOCK:")) return res.status(400).json({ success: false, message: `Not enough stock for ${message.split(":")[1]}` });
+    if (message === "CHECKOUT_REVIEW_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REVIEW_CHANGED", message: "Checkout details changed after your final review. Review the latest total, delivery and payment details before confirming again." });
     if (message === "CHECKOUT_REQUEST_CLOSED") return res.status(409).json({ success: false, message: "This payment attempt is closed. Start payment again." });
     if (message.startsWith("ORDER_ALREADY_CREATED:")) return res.status(409).json({ success: false, message: `This checkout was already placed as ${message.slice("ORDER_ALREADY_CREATED:".length)}. Open My Orders or Track Order instead of paying again.` });
     if (message === "PAYMENT_PROVIDER_ORDER_FAILED") return res.status(502).json({ success: false, message: "Payment provider is temporarily unavailable. Please try again or use COD." });

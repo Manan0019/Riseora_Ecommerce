@@ -69,6 +69,10 @@ export default function Checkout() {
   const [addressReadiness, setAddressReadiness] = useState(null);
   const [addressReadinessChecking, setAddressReadinessChecking] = useState(false);
   const [addressReadinessError, setAddressReadinessError] = useState("");
+  const [finalReview, setFinalReview] = useState(null);
+  const [finalReviewChecking, setFinalReviewChecking] = useState(false);
+  const [finalReviewError, setFinalReviewError] = useState("");
+  const [confirmedReviewDigest, setConfirmedReviewDigest] = useState("");
   const beginCheckoutSignature = useRef("");
   const checkoutSessionIdRef = useRef(makeUuid());
   const checkoutEventKeysRef = useRef(new Set());
@@ -217,6 +221,33 @@ export default function Checkout() {
     return () => { cancelled = true; clearTimeout(timer); };
   }, [canCheckReadiness, signature, paymentMethod, appliedCoupon, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode]);
 
+  useEffect(() => {
+    setConfirmedReviewDigest("");
+  }, [signature, paymentMethod, appliedCoupon, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode]);
+
+  useEffect(() => {
+    if (!checkoutReadiness?.ready) { setFinalReview(null); setFinalReviewChecking(false); setFinalReviewError(""); return; }
+    let cancelled = false;
+    setFinalReviewChecking(true);
+    setFinalReviewError("");
+    const timer = setTimeout(() => apiFetch("/orders/final-review", { method: "POST", body: JSON.stringify(readinessPayload()) })
+      .then((response) => {
+        if (cancelled) return;
+        const result = response.data;
+        setFinalReview(result);
+        setConfirmedReviewDigest((current) => {
+          if (current && current !== result?.digest) {
+            apiFetch("/orders/final-review/event", { method: "POST", body: JSON.stringify({ type: "CHANGED", paymentMethod }) }).catch(() => {});
+            return "";
+          }
+          return current;
+        });
+      })
+      .catch((err) => { if (!cancelled) { setFinalReview(null); setFinalReviewError(err.message || "Final order review could not be refreshed right now."); } })
+      .finally(() => { if (!cancelled) setFinalReviewChecking(false); }), 360);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [checkoutReadiness?.ready, signature, paymentMethod, appliedCoupon, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode]);
+
   function selectSavedAddress(item) { setSelectedAddressId(item.id); setSaveAddress(false); setForm((current) => ({ ...current, customerName: item.name || current.customerName, customerPhone: item.phone || current.customerPhone, line1: item.line1 || "", line2: item.line2 || "", landmark: item.landmark || "", city: item.city || "", state: item.state || "", postalCode: String(item.postalCode || "").replace(/\D/g, "").slice(0, 6) })); }
   function update(event) { setSelectedAddressId(""); setForm((current) => ({ ...current, [event.target.name]: event.target.value })); }
   if (checkoutItems.length === 0) return <Navigate to={buyNowMode ? "/shop" : "/cart"} replace />;
@@ -254,8 +285,32 @@ export default function Checkout() {
       return null;
     } finally { setAddressReadinessChecking(false); }
   }
-  function checkoutPayload() { return { checkoutRequestKey: requestKey(), ...paymentReadinessPayload() }; }
+  function checkoutPayload() { return { checkoutRequestKey: requestKey(), ...(confirmedReviewDigest ? { expectedReviewDigest: confirmedReviewDigest } : {}), ...paymentReadinessPayload() }; }
   function readinessPayload() { return { ...paymentReadinessPayload(), paymentMethod }; }
+  function confirmFinalReview() {
+    if (!finalReview?.digest || finalReviewChecking) return;
+    setConfirmedReviewDigest(finalReview.digest);
+    setFinalReviewError("");
+    apiFetch("/orders/final-review/event", { method: "POST", body: JSON.stringify({ type: "CONFIRMED", paymentMethod }) }).catch(() => {});
+  }
+  async function verifyFinalOrderReview() {
+    setFinalReviewChecking(true);
+    try {
+      const response = await apiFetch("/orders/final-review", { method: "POST", body: JSON.stringify(readinessPayload()) });
+      const latest = response.data;
+      setFinalReview(latest);
+      setFinalReviewError("");
+      if (!confirmedReviewDigest || confirmedReviewDigest !== latest?.digest) {
+        if (confirmedReviewDigest) apiFetch("/orders/final-review/event", { method: "POST", body: JSON.stringify({ type: "CHANGED", paymentMethod }) }).catch(() => {});
+        setConfirmedReviewDigest("");
+        return { ...latest, confirmationRequired: true };
+      }
+      return latest;
+    } catch (err) {
+      setFinalReviewError(err.message || "Final order review could not be refreshed right now.");
+      return null;
+    } finally { setFinalReviewChecking(false); }
+  }
   async function verifyCheckoutReadiness() {
     setReadinessChecking(true);
     try {
@@ -339,6 +394,9 @@ export default function Checkout() {
       if (addressCheck && !addressCheck.ready) { setError(addressCheck.message || "Review your delivery details before continuing."); return; }
       const readiness = await verifyCheckoutReadiness();
       if (!readiness?.ready) { setError(readiness?.message || "Please review the checkout details before continuing."); return; }
+      const review = await verifyFinalOrderReview();
+      if (!review) { setError("Final order review could not be verified. Please try again."); return; }
+      if (review.confirmationRequired) { setError("Your checkout changed or still needs final confirmation. Review the latest summary below and confirm it before continuing."); return; }
       reportCheckoutEvent("submit", { onceKey: "submit" });
       await persistAddress();
       let order;
@@ -346,15 +404,19 @@ export default function Checkout() {
       else { const response = await apiFetch("/orders", { method: "POST", body: JSON.stringify({ ...checkoutPayload(), paymentMethod: "COD" }) }); order = response.data; }
       await completeOrder(order);
     }
-    catch (err) { if (err?.recoverablePayment) { const stored = readJson(ONLINE_SESSION_KEY); if (stored?.sessionId) checkPaymentStatus({ silent: true }); } setError(err.message); }
+    catch (err) {
+      if (err?.recoverablePayment) { const stored = readJson(ONLINE_SESSION_KEY); if (stored?.sessionId) checkPaymentStatus({ silent: true }); }
+      if (String(err?.message || "").includes("changed after your final review")) { setConfirmedReviewDigest(""); verifyFinalOrderReview().catch(() => {}); }
+      setError(err.message);
+    }
     finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || addressReadinessChecking || !contactReady || !addressReady || addressReadinessBlocking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false;
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const finalReviewConfirmed = Boolean(finalReview?.digest && confirmedReviewDigest === finalReview.digest); const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || addressReadinessChecking || finalReviewChecking || !contactReady || !addressReady || addressReadinessBlocking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false || !checkoutReadiness?.ready || !finalReview?.digest || !finalReviewConfirmed;
 
   return <div className="container page-space checkout-page">
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
-    <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && addressReadiness?.ready !== false && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={checkoutReadiness?.ready ? "done" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
+    <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && addressReadiness?.ready !== false && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={finalReviewConfirmed ? "done" : checkoutReadiness?.ready ? "active" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
     {savedBagConflictBlocked && <section className="phase70-checkout-conflict" role="alert"><span><Icon name="alert" size={22} /></span><div><small>PHASE 70 · CHECKOUT CONTINUITY</small><strong>Your Saved Bag changed on another device</strong><p>{syncNotice || "Resolve which bag should continue before Riseora verifies payment and stock."}</p>{savedBagConflict?.savedAt && <em>Account version saved {new Date(savedBagConflict.savedAt).toLocaleString("en-IN")}</em>}</div><div><button type="button" className="button button-secondary" onClick={useAccountSavedBag}>USE ACCOUNT BAG</button><button type="button" className="button" onClick={keepBrowserSavedBag}>KEEP THIS BAG</button></div></section>}
     {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small></div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
     <div className="checkout-layout">
@@ -401,11 +463,25 @@ export default function Checkout() {
           {checkoutReadiness?.ready && <div className="phase57-confidence-promise"><div><small>DELIVERY PROMISE</small><strong>{formatPromiseDate(checkoutReadiness.delivery?.estimatedFrom)}–{formatPromiseDate(checkoutReadiness.delivery?.estimatedTo)}</strong><span>{checkoutReadiness.delivery?.shippingPartnerName ? `Usually via ${checkoutReadiness.delivery.shippingPartnerName}` : checkoutReadiness.delivery?.zoneName || "Verified for your PIN code"}</span></div><div><small>VERIFIED TOTAL</small><strong>₹{Number(checkoutReadiness.pricing?.totalAmount ?? total).toFixed(0)}</strong><span>{Number(checkoutReadiness.pricing?.shippingFee || 0) > 0 ? `Includes ₹${Number(checkoutReadiness.pricing.shippingFee).toFixed(0)} shipping` : "Shipping included / free"}</span></div></div>}
           {checkoutReadiness?.stockIssues?.length > 0 && <div className="phase57-stock-warning">{checkoutReadiness.stockIssues.slice(0, 2).map((item) => <small key={item.variantId}>{item.productName}: {item.availableQuantity} available for {item.requestedQuantity} requested</small>)}</div>}
         </div>
-        <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : readinessChecking ? "VERIFYING CHECKOUT…" : checkoutReadiness && !checkoutReadiness.ready ? "RECHECK & CONTINUE" : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
+        <section className={`phase76-final-review ${finalReviewConfirmed ? "confirmed" : finalReview?.digest ? "ready" : "pending"}`} aria-label="Final order review">
+          <div className="phase76-review-head"><div><small>PHASE 76 · FINAL ORDER REVIEW</small><strong>Confirm exactly what Riseora will submit</strong></div><b>{finalReviewConfirmed ? "CONFIRMED" : finalReviewChecking ? "REFRESHING" : finalReview?.digest ? "REVIEW REQUIRED" : "WAITING"}</b></div>
+          {finalReviewError && <p className="phase76-review-error">{finalReviewError}</p>}
+          {!finalReview && !finalReviewError && <p className="phase76-review-note">Complete the live checkout checks above and Riseora will prepare one final server snapshot before order/payment creation.</p>}
+          {finalReview && <><div className="phase76-review-grid">
+            <article><small>PRODUCTS</small><strong>{finalReview.itemSummary?.paidUnits ?? 0} item{Number(finalReview.itemSummary?.paidUnits || 0) === 1 ? "" : "s"}</strong><span>{finalReview.itemSummary?.freeUnits ? `+ ${finalReview.itemSummary.freeUnits} complimentary` : "Live catalogue rechecked"}</span></article>
+            <article><small>DELIVERY</small><strong>{formatPromiseDate(finalReview.delivery?.estimatedFrom)}–{formatPromiseDate(finalReview.delivery?.estimatedTo)}</strong><span>{finalReview.delivery?.zoneName || `${finalReview.delivery?.city || ""}, ${finalReview.delivery?.state || ""}`}</span></article>
+            <article><small>PAYMENT</small><strong>{finalReview.payment?.label || paymentMethod}</strong><span>{finalReview.delivery?.shippingPartnerName ? `Usually via ${finalReview.delivery.shippingPartnerName}` : `PIN ${finalReview.delivery?.postalCode || form.postalCode}`}</span></article>
+            <article><small>FINAL TOTAL</small><strong>₹{Number(finalReview.pricing?.totalAmount || 0).toFixed(0)}</strong><span>{Number(finalReview.pricing?.shippingFee || 0) > 0 ? `₹${Number(finalReview.pricing.shippingFee).toFixed(0)} shipping included` : "Shipping included / free"}</span></article>
+          </div>
+          <div className="phase76-review-details"><div><small>DELIVER TO</small><strong>{finalReview.delivery?.recipient}</strong><span>{finalReview.delivery?.city}, {finalReview.delivery?.state} {finalReview.delivery?.postalCode} · phone ending {finalReview.delivery?.phoneMasked}</span></div><div><small>SAVINGS</small><strong>{finalReview.pricing?.couponCode ? `Coupon ${finalReview.pricing.couponCode}` : finalReview.pricing?.automaticPromotionName || "Current Riseora pricing"}</strong><span>{Number(finalReview.pricing?.discountAmount || 0) > 0 ? `₹${Number(finalReview.pricing.discountAmount).toFixed(0)} total saving applied` : "No checkout discount currently applied"}</span></div></div>
+          {!finalReviewConfirmed ? <button type="button" className="button phase76-confirm-review" onClick={confirmFinalReview} disabled={finalReviewChecking}>CONFIRM FINAL REVIEW</button> : <div className="phase76-confirmed-note"><Icon name="shield" size={17} /><span><strong>Final review confirmed.</strong> Riseora will reject the order/payment start if this server snapshot changes before mutation.</span></div>}
+          <small className="phase76-review-policy">{finalReview.policy}</small></>}
+        </section>
+        <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : readinessChecking || finalReviewChecking ? "VERIFYING FINAL REVIEW…" : checkoutReadiness && !checkoutReadiness.ready ? "RECHECK & CONTINUE" : !finalReviewConfirmed ? "CONFIRM FINAL REVIEW ABOVE" : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
       </form>
 
       <aside className="summary-card checkout-summary"><h2>Order summary</h2><div className="checkout-items">{checkoutItems.map((item) => <div className="checkout-item" key={item.variantId}><div className="checkout-item-image">{item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt="" /> : "R"}<b>{item.quantity}</b></div><div><strong>{item.productName}</strong><span>{item.variantName}</span></div><strong>₹{(item.price * item.quantity).toFixed(0)}</strong></div>)}</div><div className="coupon-box"><label>Coupon code</label><div><input value={couponCode} onChange={(e) => setCouponCode(e.target.value.toUpperCase())} placeholder="Enter code" /><button type="button" onClick={applyCoupon}>Apply</button></div>{appliedCoupon && <button type="button" className="phase62-remove-coupon" onClick={removeCoupon}>Remove applied coupon</button>}{couponMessage && <small className="coupon-success">{couponMessage}</small>}{couponError && <small className="coupon-error">{couponError}</small>}</div><section className="phase62-offer-wallet" aria-label="Savings advisor"><div className="phase62-offer-wallet-head"><div><small>PHASE 62 · SAVINGS ADVISOR</small><strong>Best savings for this order</strong></div>{Number(savingsAdvisor?.bestPotentialSaving || 0) > 0 && <b>Save up to ₹{Number(savingsAdvisor.bestPotentialSaving).toFixed(0)}</b>}</div>{savingsLoading && <p className="phase62-savings-loading">Checking automatic deals and your available vouchers…</p>}{!savingsLoading && savingsAdvisor?.automatic && (Number(savingsAdvisor.automatic.saving || 0) > 0 || savingsAdvisor.automatic.freeItems?.length > 0) && <div className="phase62-saving-line automatic"><div><span>AUTOMATIC</span><strong>{savingsAdvisor.automatic.name || "Riseora deal"}</strong><small>{Number(savingsAdvisor.automatic.saving || 0) > 0 ? `Already saving ₹${Number(savingsAdvisor.automatic.saving).toFixed(0)}` : `${savingsAdvisor.automatic.freeItems.length} free item${savingsAdvisor.automatic.freeItems.length === 1 ? "" : "s"} unlocked`}</small></div><em>Applied</em></div>}{!savingsLoading && savingsAdvisor?.bestCoupon && <div className={`phase62-saving-line best ${appliedCoupon === savingsAdvisor.bestCoupon.code ? "active" : ""}`}><div><span>BEST SAVING CODE</span><strong>{savingsAdvisor.bestCoupon.code}</strong><small>Save ₹{Number(savingsAdvisor.bestCoupon.saving || 0).toFixed(0)}{savingsAdvisor.bestCoupon.endsAt ? ` · valid until ${new Date(savingsAdvisor.bestCoupon.endsAt).toLocaleDateString("en-IN", { day: "numeric", month: "short" })}` : ""}</small></div>{appliedCoupon === savingsAdvisor.bestCoupon.code ? <em>Active</em> : <button type="button" onClick={() => applyCouponCode(savingsAdvisor.bestCoupon.code, "advisor")}>Apply best</button>}</div>}{!savingsLoading && savingsAdvisor?.vouchers?.filter((item) => item.code !== savingsAdvisor?.bestCoupon?.code).slice(0, 2).map((voucher) => <div className="phase62-saving-line" key={voucher.code}><div><span>YOUR REWARD VOUCHER</span><strong>{voucher.code}</strong><small>{voucher.eligible ? `Save ₹${Number(voucher.saving || 0).toFixed(0)}` : voucher.reason || "Not eligible for this cart yet"}</small></div>{voucher.eligible && appliedCoupon !== voucher.code ? <button type="button" onClick={() => applyCouponCode(voucher.code, "advisor")}>Apply</button> : <em>{appliedCoupon === voucher.code ? "Active" : "Not eligible"}</em>}</div>)}{!savingsLoading && savingsAdvisor && !savingsAdvisor.signedIn && <div className="phase62-signin-savings"><strong>Have Riseora reward vouchers?</strong><span>Sign in to compare your private vouchers against this cart.</span><button type="button" onClick={() => navigate("/login")}>Sign in</button></div>}{!savingsLoading && savingsAdvisor?.storeOffers?.length > 0 && <div className="phase62-store-offers"><div><strong>Store offers</strong><span>Explore current Riseora promotions without exposing private coupon codes.</span></div>{savingsAdvisor.storeOffers.slice(0, 2).map((offer) => <button key={offer.id} type="button" onClick={() => navigate(offer.ctaLink || "/offers")}><b>{offer.badge || "OFFER"}</b><span>{offer.title}</span></button>)}</div>}{!savingsLoading && savingsAdvisor?.policy && <small className="phase62-savings-policy">{savingsAdvisor.policy}</small>}</section>{pricing?.automaticPromotionName && <div className="phase13-auto-offer"><span>✨</span><div><strong>{pricing.automaticPromotionName}</strong><small>{automaticDiscountAmount > 0 ? `Automatic saving ₹${automaticDiscountAmount.toFixed(0)}` : freeItems.length ? "Free gift unlocked automatically" : "Automatic offer applied"}</small></div></div>}{freeItems.length > 0 && <div className="phase13-free-items">{freeItems.map((item) => <div key={`${item.variantId}-${item.promotionLabel}`}><span>FREE</span><strong>{item.productName}</strong><small>{item.variantName} × {item.quantity}</small></div>)}</div>}<div className="summary-row"><span>Subtotal</span><strong>₹{displaySubtotal.toFixed(0)}</strong></div>{automaticDiscountAmount > 0 && <div className="summary-row discount-row"><span>Automatic deal</span><strong>−₹{automaticDiscountAmount.toFixed(0)}</strong></div>}{couponDiscountAmount > 0 && <div className="summary-row discount-row"><span>Coupon {appliedCoupon}</span><strong>−₹{couponDiscountAmount.toFixed(0)}</strong></div>}<div className="summary-row"><span>Shipping{paymentMethod === "COD" && Number(storeConfig.codFee || 0) > 0 ? " + COD fee" : ""}</span><span>{shippingFee > 0 ? `₹${shippingFee.toFixed(0)}` : "FREE"}</span></div><div className="summary-row total"><span>Total</span><strong>₹{total.toFixed(0)}</strong></div></aside>
     </div>
-    <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={checkoutDisabled}>{submitting ? "PLEASE WAIT…" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
+    <div className="phase17-checkout-sticky"><div><small>{buyNowMode ? "BUY NOW TOTAL" : "ORDER TOTAL"}</small><strong>₹{total.toFixed(0)}</strong></div><button form="riseora-checkout-form" type="submit" className="button" disabled={checkoutDisabled}>{submitting ? "PLEASE WAIT…" : !finalReviewConfirmed ? "CONFIRM REVIEW" : paymentMethod === "ONLINE" ? "PAY SECURELY" : "PLACE ORDER"}</button></div>
   </div>;
 }
