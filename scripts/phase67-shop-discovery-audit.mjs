@@ -58,8 +58,8 @@ const scripts = pkg.scripts || {};
 String(scripts["discovery:doctor"] || "").includes("phase67-shop-discovery-audit.mjs") ? pass("discovery:doctor command") : fail("discovery:doctor command");
 String(scripts["client:doctor"] || "").includes("discovery:doctor") ? pass("client:doctor includes Phase 67 gate") : fail("client:doctor Phase 67 gate");
 String(scripts["verify:phase67"] || "").includes("performance:budget") && String(scripts["verify:phase67"] || "").includes("npm run build") ? pass("verify:phase67 command") : fail("verify:phase67 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase67") ? pass("prelaunch uses Phase 67 verification") : fail("prelaunch Phase 67 verification");
-read("scripts/phase49-release-prepare.mjs").includes("verify:phase67") ? pass("production release advances to Phase 67") : fail("production release Phase 67 verification");
+String(scripts["prelaunch:check"] || "").includes("verify:phase68") ? pass("prelaunch uses Phase 67 verification") : fail("prelaunch Phase 67 verification");
+read("scripts/phase49-release-prepare.mjs").includes("verify:phase68") ? pass("production release advances to Phase 67") : fail("production release Phase 67 verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

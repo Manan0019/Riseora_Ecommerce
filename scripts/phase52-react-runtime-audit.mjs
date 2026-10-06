@@ -35,7 +35,7 @@ String(scripts["deps:repair"] || "").includes("npm dedupe") && String(scripts["d
 String(scripts["client:doctor"] || "").includes("phase52-react-runtime-doctor.mjs") ? pass("client:doctor includes React runtime doctor") : fail("client:doctor React runtime gate");
 String(scripts.predev || "").includes("client:doctor") ? pass("npm run dev blocks on React runtime contract") : fail("predev React runtime gate");
 String(scripts["verify:phase52"] || "").includes("phase52-react-runtime-audit.mjs") && String(scripts["verify:phase52"] || "").includes("npm run build") ? pass("verify:phase52 command") : fail("verify:phase52 command");
-(["verify:phase52", "verify:phase53", "verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61", "verify:phase62", "verify:phase63", "verify:phase65", "verify:phase67"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 52+ verification") : fail("prelaunch uses Phase 52+ verification");
+(["verify:phase52", "verify:phase53", "verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60", "verify:phase61", "verify:phase62", "verify:phase63", "verify:phase65", "verify:phase68"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 52+ verification") : fail("prelaunch uses Phase 52+ verification");
 
 const doctor = spawnSync(process.execPath, [path.join(root, "scripts/phase52-react-runtime-doctor.mjs"), "--source-only"], { cwd: root, encoding: "utf8" });
 if (doctor.stdout) process.stdout.write(doctor.stdout);

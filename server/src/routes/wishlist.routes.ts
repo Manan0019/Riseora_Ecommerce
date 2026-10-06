@@ -5,6 +5,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
+import { getSavedShoppingIntelligence, recordSavedShoppingEvent } from "../services/saved-shopping.service";
 
 const router = Router();
 
@@ -56,6 +57,37 @@ async function accountWishlist(userId: string) {
   });
   return rows.map((row) => withRating(row.product));
 }
+
+
+const savedShoppingEventSchema = z.object({
+  type: z.enum(["view", "product_open", "alert_create", "add"]),
+  alertType: z.enum(["PRICE", "STOCK"]).optional(),
+});
+
+router.get(
+  "/intelligence",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    try {
+      const data = await getSavedShoppingIntelligence(req.user!.id);
+      res.json({ success: true, data });
+    } catch (error) {
+      if (error instanceof Error && error.message === "ACCOUNT_NOT_FOUND") return res.status(404).json({ success: false, message: "Account not found" });
+      throw error;
+    }
+  }),
+);
+
+router.post(
+  "/event",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = savedShoppingEventSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved-shopping event" });
+    recordSavedShoppingEvent(parsed.data.type, parsed.data.alertType);
+    res.status(204).send();
+  }),
+);
 
 router.get(
   "/",

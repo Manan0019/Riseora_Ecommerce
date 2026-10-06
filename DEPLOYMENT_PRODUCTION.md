@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase67` PASS
+- `verify:phase68` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -135,3 +135,8 @@ Before public traffic:
 ## Phase 67 shop discovery acceptance
 
 Before public traffic, confirm `npm run discovery:doctor` and `npm run verify:phase67` both pass. Guided collections and filters must remain derived from active catalogue data, approved customer ratings only, and live availability after safety stock. Catalogue discovery is shopping guidance, not medical diagnosis or a treatment promise.
+
+
+## Phase 68 saved shopping acceptance
+
+Before public traffic, confirm `npm run saved-shopping:doctor` and `npm run verify:phase68` both pass. Saving a product must never auto-subscribe a customer to price or stock alerts. Wishlist intelligence must use sellable stock after safety stock, alert creation must remain an explicit customer action, and Admin health must remain aggregate-only.

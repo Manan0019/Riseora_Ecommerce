@@ -22,19 +22,21 @@ export default function AdminCatalog() {
   const [compareHealth, setCompareHealth] = useState(null);
   const [ingredientHealth, setIngredientHealth] = useState(null);
   const [discoveryHealth, setDiscoveryHealth] = useState(null);
+  const [savedShoppingHealth, setSavedShoppingHealth] = useState(null);
   const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse, discoveryResponse] = await Promise.all([
+    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse, discoveryResponse, savedShoppingResponse] = await Promise.all([
       apiFetch("/admin/categories"),
       apiFetch("/admin/products"),
       apiFetch("/admin/suitability-options"),
       apiFetch("/admin/catalog/comparison-health").catch(() => ({ data: null })),
       apiFetch("/admin/catalog/ingredient-health").catch(() => ({ data: null })),
       apiFetch("/admin/catalog/discovery-health").catch(() => ({ data: null })),
+      apiFetch("/admin/catalog/saved-shopping-health").catch(() => ({ data: null })),
     ]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data); setDiscoveryHealth(discoveryResponse.data);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data); setDiscoveryHealth(discoveryResponse.data); setSavedShoppingHealth(savedShoppingResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -281,6 +283,19 @@ export default function AdminCatalog() {
       </div>
       {discoveryHealth?.engagement?.topFacets?.length > 0 && <div className="phase67-admin-top-facets"><b>Most-used discovery facets</b>{discoveryHealth.engagement.topFacets.map((item) => <span key={item.facet}>{item.facet}<em>{item.count}</em></span>)}</div>}
       {discoveryHealth?.missingDiscoveryContent?.length > 0 && <p className="phase67-admin-missing"><strong>Needs discovery content:</strong> {discoveryHealth.missingDiscoveryContent.map((item) => item.name).join(", ")}</p>}
+    </section>
+
+    <section className="admin-panel phase68-admin-saved-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 68 · SAVED SHOPPING</p><h2>Wishlist & watchlist health</h2><p>Aggregate saved-shopping and explicit price/stock-watch signals. No customer identity or individual browsing history is returned here.</p></div><button type="button" className="state-toggle" onClick={() => refresh().catch((e) => setError(e.message))}>Refresh</button></div>
+      <div className="phase68-admin-metrics">
+        <article><small>WISHLIST ITEMS</small><strong>{savedShoppingHealth?.wishlistItems ?? 0}</strong><span>{savedShoppingHealth?.customersWithWishlist ?? 0} customers saving products</span></article>
+        <article><small>PRICE WATCHES</small><strong>{savedShoppingHealth?.activePriceWatches ?? 0}</strong><span>explicit active watches</span></article>
+        <article><small>STOCK WATCHES</small><strong>{savedShoppingHealth?.activeStockWatches ?? 0}</strong><span>waiting for availability</span></article>
+        <article><small>WATCH CREATES · 60M</small><strong>{savedShoppingHealth?.engagement?.alertCreates ?? 0}</strong><span>{savedShoppingHealth?.engagement?.watchRatePercent ?? 0}% of wishlist views</span></article>
+        <article><small>ASSISTED ADDS · 60M</small><strong>{savedShoppingHealth?.engagement?.assistedAdds ?? 0}</strong><span>{savedShoppingHealth?.engagement?.addRatePercent ?? 0}% of wishlist views</span></article>
+      </div>
+      {savedShoppingHealth?.topSaved?.length > 0 ? <div className="phase68-admin-top-saved"><b>Most-saved products</b>{savedShoppingHealth.topSaved.map((item) => <a key={item.id} href={`/product/${item.slug}`} target="_blank" rel="noreferrer">{item.name}<em>{item.saves}</em></a>)}</div> : <p className="muted">Saved-shopping activity will appear after signed-in customers use their wishlist.</p>}
+      <p className="phase68-admin-note">{savedShoppingHealth?.activeSharedLists ?? 0} private wishlist share link{savedShoppingHealth?.activeSharedLists === 1 ? "" : "s"} currently active. Alerts remain customer-initiated; saving a product alone never subscribes anyone.</p>
     </section>
 
     <div className="admin-catalog-top-grid">
