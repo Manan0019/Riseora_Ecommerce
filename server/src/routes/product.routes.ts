@@ -11,6 +11,7 @@ import { enrichReviewsForTrust, reviewTrustSummary } from "../services/product-t
 import { buildProductComparison, recordProductComparisonEvent } from "../services/product-comparison.service";
 import { ingredientDetail, ingredientGuideFromText, ingredientLibrary } from "../services/ingredient-library.service";
 import { recordShopDiscoveryEvent, shopDiscoveryFacets } from "../services/shop-discovery.service";
+import { getCartQuantityReadiness } from "../services/cart-quantity-intelligence.service";
 
 const router = Router();
 const recommendationEventLimiter = rateLimit({ windowMs: 60 * 1000, limit: 90, standardHeaders: "draft-8", legacyHeaders: false });
@@ -424,6 +425,18 @@ router.get(
         categories,
       },
     });
+  }),
+);
+
+router.post(
+  "/cart/quantity-readiness",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({
+      items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).max(50),
+    }).safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid cart quantity request", errors: parsed.error.flatten() });
+    const data = await getCartQuantityReadiness(parsed.data.items);
+    return res.json({ success: true, data });
   }),
 );
 

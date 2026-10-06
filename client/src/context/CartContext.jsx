@@ -511,6 +511,58 @@ export function CartProvider({ children }) {
     setSavedForLater((current) => current.filter((item) => item.variantId !== variantId));
   }
 
+  function refreshCartFacts(readinessLines) {
+    const rows = Array.isArray(readinessLines) ? readinessLines : [];
+    if (!rows.length) return;
+    const byVariant = new Map(rows.filter((row) => row?.variantId).map((row) => [row.variantId, row]));
+    setItems((current) => current.map((item) => {
+      const row = byVariant.get(item.variantId);
+      if (!row || !row.productId) return item;
+      return {
+        ...item,
+        productId: row.productId,
+        productSlug: row.productSlug || item.productSlug,
+        productName: row.productName || item.productName,
+        variantName: row.variantName || item.variantName,
+        sku: row.sku || item.sku,
+        imageUrl: row.imageUrl || item.imageUrl,
+        price: Number(row.price || 0),
+        mrp: Number(row.mrp || 0),
+        stockQuantity: Math.max(0, Number(row.stockQuantity || 0)),
+        weightGrams: Math.max(0, Number(row.weightGrams || 0)),
+        maxPurchaseQuantity: normalizePurchaseLimit(row.maxPurchaseQuantity),
+      };
+    }));
+  }
+
+  function applySafeCartQuantities(readinessLines) {
+    const rows = Array.isArray(readinessLines) ? readinessLines : [];
+    if (!rows.length) return false;
+    const byVariant = new Map(rows.filter((row) => row?.variantId).map((row) => [row.variantId, row]));
+    markCartDirty();
+    setItems((current) => current.map((item) => {
+      const row = byVariant.get(item.variantId);
+      if (!row) return item;
+      const safeQuantity = Math.max(0, Number(row.safeQuantity || 0));
+      return {
+        ...item,
+        productId: row.productId || item.productId,
+        productSlug: row.productSlug || item.productSlug,
+        productName: row.productName || item.productName,
+        variantName: row.variantName || item.variantName,
+        sku: row.sku || item.sku,
+        imageUrl: row.imageUrl || item.imageUrl,
+        price: Number(row.price || item.price || 0),
+        mrp: Number(row.mrp || item.mrp || 0),
+        stockQuantity: Math.max(0, Number(row.stockQuantity || 0)),
+        weightGrams: Math.max(0, Number(row.weightGrams || 0)),
+        maxPurchaseQuantity: normalizePurchaseLimit(row.maxPurchaseQuantity),
+        quantity: safeQuantity,
+      };
+    }).filter((item) => Number(item.quantity || 0) > 0));
+    return true;
+  }
+
   function clearCart() {
     markCartDirty();
     setItems([]);
@@ -573,7 +625,7 @@ export function CartProvider({ children }) {
   const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
 
   const value = useMemo(
-    () => ({ items, savedForLater, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, saveForLaterItem, moveSavedToCart, removeSavedForLater, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag }),
+    () => ({ items, savedForLater, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, saveForLaterItem, moveSavedToCart, removeSavedForLater, refreshCartFacts, applySafeCartQuantities, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag }),
     [items, savedForLater, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt, savedBagConflict],
   );
 

@@ -86,8 +86,8 @@ const scripts = pkg.scripts || {};
 String(scripts["cart-intent:doctor"] || "").includes("phase71-cart-intent-audit.mjs") ? pass("cart-intent:doctor command") : fail("cart-intent:doctor command");
 String(scripts["client:doctor"] || "").includes("cart-intent:doctor") ? pass("client:doctor includes Phase 71 gate") : fail("client:doctor Phase 71 gate");
 String(scripts["verify:phase71"] || "").includes("performance:budget") && String(scripts["verify:phase71"] || "").includes("npm run build") ? pass("verify:phase71 command") : fail("verify:phase71 command");
-String(scripts["prelaunch:check"] || "").includes("verify:phase71") ? pass("prelaunch uses Phase 71 verification") : fail("prelaunch Phase 71 verification");
-read("scripts/phase49-release-prepare.mjs").includes("verify:phase71") ? pass("production release advances to Phase 71") : fail("production release Phase 71 verification");
+(["verify:phase72", "verify:phase71"].some((token) => String(scripts["prelaunch:check"] || "").includes(token))) ? pass("prelaunch uses Phase 71+ verification") : fail("prelaunch Phase 71+ verification");
+(["verify:phase72", "verify:phase71"].some((token) => read("scripts/phase49-release-prepare.mjs").includes(token))) ? pass("production release advances to Phase 71+") : fail("production release Phase 71+ verification");
 
 const destructive = ["migrate reset", "db push --force-reset", "dropdb"];
 const packageText = JSON.stringify(pkg).toLowerCase();

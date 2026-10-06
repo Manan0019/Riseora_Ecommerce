@@ -19,6 +19,7 @@ import { productComparisonHealth } from "../services/product-comparison.service"
 import { ingredientCatalogHealth } from "../services/ingredient-library.service";
 import { shopDiscoveryHealth } from "../services/shop-discovery.service";
 import { savedShoppingHealth } from "../services/saved-shopping.service";
+import { cartQuantityHealth } from "../services/cart-quantity-intelligence.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1398,6 +1399,13 @@ router.get(
   "/catalog/saved-shopping-health",
   asyncHandler(async (_req, res) => {
     res.json({ success: true, data: await savedShoppingHealth() });
+  }),
+);
+
+router.get(
+  "/catalog/cart-quantity-health",
+  asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: await cartQuantityHealth() });
   }),
 );
 

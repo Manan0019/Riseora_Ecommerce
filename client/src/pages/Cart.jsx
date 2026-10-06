@@ -19,6 +19,8 @@ export default function Cart() {
     saveForLaterItem,
     moveSavedToCart,
     removeSavedForLater,
+    refreshCartFacts,
+    applySafeCartQuantities,
     crossDeviceEnabled,
     syncStatus,
     syncNotice,
@@ -31,12 +33,19 @@ export default function Cart() {
   const [suggestions, setSuggestions] = useState([]);
   const [suggestionMeta, setSuggestionMeta] = useState({ strategy: "", explanation: "" });
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [quantityReadiness, setQuantityReadiness] = useState(null);
+  const [quantityReadinessLoading, setQuantityReadinessLoading] = useState(false);
+  const [quantityReadinessError, setQuantityReadinessError] = useState("");
+  const [quantityRefreshTick, setQuantityRefreshTick] = useState(0);
   const lastTrackedCart = useRef("");
   const lastRecommendationImpression = useRef("");
 
   const cartProductIds = useMemo(() => [...new Set(items.map((item) => item.productId).filter(Boolean))], [items]);
   const cartSignature = useMemo(() => cartProductIds.slice().sort().join("|"), [cartProductIds]);
   const recommendationSourceId = cartProductIds[0] || "";
+  const quantitySignature = useMemo(() => items.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|"), [items]);
+  const quantityByVariant = useMemo(() => new Map((quantityReadiness?.lines || []).map((line) => [line.variantId, line])), [quantityReadiness]);
+  const quantityAdjustmentRequired = Number(quantityReadiness?.summary?.adjustmentLines || 0) > 0;
 
   useEffect(() => {
     if (!items.length) return;
@@ -45,6 +54,33 @@ export default function Cart() {
     lastTrackedCart.current = signature;
     trackCommerce("view_cart", { items, value: subtotal });
   }, [items, subtotal]);
+
+  useEffect(() => {
+    if (!items.length) {
+      setQuantityReadiness(null);
+      setQuantityReadinessError("");
+      setQuantityReadinessLoading(false);
+      return undefined;
+    }
+    let active = true;
+    setQuantityReadinessLoading(true);
+    setQuantityReadinessError("");
+    const timer = window.setTimeout(() => {
+      apiFetch("/products/cart/quantity-readiness", {
+        method: "POST",
+        body: JSON.stringify({ items: items.map((item) => ({ variantId: item.variantId, quantity: Number(item.quantity || 1) })) }),
+      }).then((response) => {
+        if (!active) return;
+        const data = response?.data || null;
+        setQuantityReadiness(data);
+        if (Array.isArray(data?.lines)) refreshCartFacts(data.lines);
+      }).catch((error) => {
+        if (!active) return;
+        setQuantityReadinessError(error.message || "Could not refresh live quantity guidance.");
+      }).finally(() => active && setQuantityReadinessLoading(false));
+    }, 180);
+    return () => { active = false; window.clearTimeout(timer); };
+  }, [quantitySignature, quantityRefreshTick]);
 
   useEffect(() => {
     if (!cartProductIds.length) {
@@ -125,21 +161,37 @@ export default function Cart() {
       </section>
       {syncStatus === "conflict" && <section className="phase70-conflict-explainer" aria-label="Saved Bag conflict resolution"><span><Icon name="alert" /></span><div><p className="phase3-eyebrow">PHASE 70 · MULTI-DEVICE SAFETY</p><strong>Nothing has been overwritten.</strong><p><b>Use account bag</b> loads the newest active + later choices saved by another device. <b>Keep this bag</b> revalidates this browser's choices and makes them the account version.</p></div></section>}
 
+      {items.length > 0 && <section className={`phase72-cart-readiness ${quantityAdjustmentRequired ? "needs-adjustment" : "is-ready"}`} aria-live="polite" aria-labelledby="phase72-readiness-title">
+        <div className="phase72-readiness-head"><div><p className="phase3-eyebrow">PHASE 72 · CART READINESS</p><h2 id="phase72-readiness-title">Quantity check before checkout</h2><p>{quantityReadiness?.policy || "Riseora checks current public stock and product purchase limits before you continue."}</p></div><button className="button button-secondary" type="button" disabled={quantityReadinessLoading} onClick={() => setQuantityRefreshTick((value) => value + 1)}>{quantityReadinessLoading ? "CHECKING…" : "REFRESH AVAILABILITY"}</button></div>
+        {quantityReadinessError && <p className="phase72-readiness-error">{quantityReadinessError} Checkout will still perform its independent server preflight.</p>}
+        {quantityReadiness && <div className="phase72-readiness-metrics">
+          <article><small>ACTIVE LINES</small><strong>{quantityReadiness.summary?.lineCount ?? items.length}</strong><span>checked live</span></article>
+          <article><small>LOW STOCK</small><strong>{quantityReadiness.summary?.lowStockLines ?? 0}</strong><span>after safety stock</span></article>
+          <article><small>AT LIMIT</small><strong>{quantityReadiness.summary?.atLimitLines ?? 0}</strong><span>stock or purchase cap</span></article>
+          <article className={quantityAdjustmentRequired ? "attention" : ""}><small>NEEDS ADJUSTMENT</small><strong>{quantityReadiness.summary?.adjustmentLines ?? 0}</strong><span>{quantityAdjustmentRequired ? "resolve before checkout" : "ready"}</span></article>
+        </div>}
+        {quantityAdjustmentRequired && <div className="phase72-adjust-action"><div><strong>Some quantities exceed today's safe ceiling.</strong><span>Apply the server-checked quantities before checkout. Items that are no longer sellable will leave the active bag.</span></div><button className="button" type="button" onClick={() => applySafeCartQuantities(quantityReadiness?.lines || [])}>APPLY SAFE QUANTITIES</button></div>}
+      </section>}
+
       {items.length > 0 ? <div className="cart-layout">
         <div className="cart-list">
-          {items.map((item) => (
-            <div className="cart-item" key={item.variantId}>
+          {items.map((item) => {
+            const readiness = quantityByVariant.get(item.variantId);
+            const quantityCeiling = Number(readiness?.quantityCeiling ?? item.stockQuantity ?? 0);
+            const canIncrease = !readiness || (!readiness.adjustmentRequired && !readiness.atLimit && item.quantity < quantityCeiling);
+            return <div className={`cart-item ${readiness?.adjustmentRequired ? "phase72-line-adjust" : ""}`} key={item.variantId}>
               {item.imageUrl ? <img src={mediaUrl(item.imageUrl)} alt={item.productName} /> : <div className="mini-placeholder">R</div>}
               <div className="cart-item-main">
                 <Link to={`/product/${item.productSlug}`}><strong>{item.productName}</strong></Link>
                 <p>{item.variantName}</p>
-                <div className="cart-controls"><div className="quantity-stepper mini"><button onClick={() => updateQuantity(item.variantId, item.quantity - 1)} aria-label={`Decrease ${item.productName} quantity`}>−</button><span>{item.quantity}</span><button onClick={() => updateQuantity(item.variantId, item.quantity + 1)} aria-label={`Increase ${item.productName} quantity`}>+</button></div><button className="link-button" onClick={() => saveForLaterItem(item.variantId)}>Save for later</button><button className="link-button danger" onClick={() => removeItem(item.variantId)}>Remove</button></div>
+                {readiness && <div className={`phase72-line-guidance is-${String(readiness.status || "ready").toLowerCase()}`}><strong>{readiness.adjustmentRequired ? `Safe quantity today: ${readiness.safeQuantity}` : readiness.lowStock ? `Low stock · ${readiness.stockQuantity} available` : readiness.atLimit ? "Current quantity is at a limit" : "Quantity ready"}</strong><span>{readiness.messages?.[0]}</span></div>}
+                <div className="cart-controls"><div className="quantity-stepper mini"><button onClick={() => updateQuantity(item.variantId, item.quantity - 1)} aria-label={`Decrease ${item.productName} quantity`}>−</button><span>{item.quantity}</span><button disabled={!canIncrease} onClick={() => updateQuantity(item.variantId, item.quantity + 1)} aria-label={`Increase ${item.productName} quantity`}>+</button></div><button className="link-button" onClick={() => saveForLaterItem(item.variantId)}>Save for later</button><button className="link-button danger" onClick={() => removeItem(item.variantId)}>Remove</button></div>
               </div>
               <strong className="cart-line-price">₹{(item.price * item.quantity).toFixed(0)}</strong>
-            </div>
-          ))}
+            </div>;
+          })}
         </div>
-        <aside className="summary-card"><h2>Order summary</h2><OfferProgress actionable /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link><Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
+        <aside className="summary-card"><h2>Order summary</h2><OfferProgress actionable /><div className="summary-row"><span>Subtotal</span><strong>₹{subtotal.toFixed(0)}</strong></div><div className="summary-row"><span>Shipping</span><span>Calculated at checkout</span></div><div className="summary-row total"><span>Estimated total</span><strong>₹{subtotal.toFixed(0)}</strong></div>{quantityAdjustmentRequired ? <button className="button wide" type="button" disabled>Resolve quantities first</button> : <Link className="button wide" to="/checkout">Proceed to checkout <Icon name="arrow" size={18} /></Link>}<Link className="continue-link" to="/shop">Continue shopping</Link><Link className="continue-link" to="/routine-builder">Build a routine</Link></aside>
       </div> : <section className="phase71-active-empty"><span><Icon name="cart" /></span><div><p className="phase3-eyebrow">BUYING NOW</p><h2>Your active bag is empty</h2><p>Everything is safely saved for later. Move an item back whenever you are ready to purchase it.</p></div><Link className="button button-secondary" to="/shop">CONTINUE SHOPPING</Link></section>}
 
       {savedForLater.length > 0 && <section className="phase71-saved-later" aria-labelledby="phase71-later-title">
@@ -166,7 +218,7 @@ export default function Cart() {
         {!suggestionsLoading && !suggestions.length && <div className="phase56-cart-empty"><strong>Your bag already looks focused.</strong><span>Explore the full shop if you want to add another step to your routine.</span></div>}
       </section>}
 
-      {items.length > 0 && <div className="phase15-cart-checkout-dock" aria-label="Cart checkout summary"><div><small>SUBTOTAL</small><strong>₹{subtotal.toFixed(0)}</strong></div><Link className="button" to="/checkout">CHECKOUT <Icon name="arrow" size={17} /></Link></div>}
+      {items.length > 0 && <div className="phase15-cart-checkout-dock" aria-label="Cart checkout summary"><div><small>SUBTOTAL</small><strong>₹{subtotal.toFixed(0)}</strong></div>{quantityAdjustmentRequired ? <button className="button" type="button" disabled>ADJUST QTY</button> : <Link className="button" to="/checkout">CHECKOUT <Icon name="arrow" size={17} /></Link>}</div>}
     </div>
   );
 }

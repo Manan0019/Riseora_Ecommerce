@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase71` PASS
+- `verify:phase72` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -155,3 +155,8 @@ Phase 70 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 71 cart organization and save-for-later acceptance
 
 Phase 71 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run cart-intent:doctor` and `npm run verify:phase71` both pass. Active bag and Save for Later intent must share the Phase 70 optimistic revision/conflict contract; a stale device must never overwrite either bucket silently. Persistent `AccountCart.items` rows may store only variant identity, requested quantity and the `LATER` intent marker—current price, MRP, product copy, images, safety-stock-aware availability and purchase limits must continue to be re-read from the live catalogue. Out-of-stock active lines must not enter Checkout, while an active product/variant may remain in Save for Later with current availability shown as zero. Checkout and order payloads must include only the active bag. Save for Later is operational shopping intent only: it must not create Wishlist membership, price/stock alerts, abandoned-cart consent, email, SMS or WhatsApp marketing subscriptions.
+
+
+## Phase 72 cart quantity readiness acceptance
+
+Phase 72 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run quantity:doctor` and `npm run verify:phase72` both pass. Cart quantity guidance must re-read current selling price, MRP, public availability after safety stock, configured low-stock threshold and `maxPurchaseQuantity` from the live catalogue. Product-level purchase limits must be enforced across variants of the same product. When the current cart exceeds a live ceiling, the Cart must require an explicit **Apply safe quantities** action before Cart-level Checkout navigation can continue. This is an early shopping guard only; Phase 57 Checkout readiness remains the final server authority before order or payment mutation. Rolling Admin readiness counters must remain aggregate/in-memory and must not retain customer identity or cart contents.

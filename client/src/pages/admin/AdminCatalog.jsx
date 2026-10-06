@@ -23,11 +23,12 @@ export default function AdminCatalog() {
   const [ingredientHealth, setIngredientHealth] = useState(null);
   const [discoveryHealth, setDiscoveryHealth] = useState(null);
   const [savedShoppingHealth, setSavedShoppingHealth] = useState(null);
+  const [cartQuantityHealth, setCartQuantityHealth] = useState(null);
   const [dragImageIndex, setDragImageIndex] = useState(null);
   const editing = Boolean(product.id);
 
   async function refresh() {
-    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse, discoveryResponse, savedShoppingResponse] = await Promise.all([
+    const [categoryResponse, productResponse, suitabilityResponse, compareResponse, ingredientResponse, discoveryResponse, savedShoppingResponse, cartQuantityResponse] = await Promise.all([
       apiFetch("/admin/categories"),
       apiFetch("/admin/products"),
       apiFetch("/admin/suitability-options"),
@@ -35,8 +36,9 @@ export default function AdminCatalog() {
       apiFetch("/admin/catalog/ingredient-health").catch(() => ({ data: null })),
       apiFetch("/admin/catalog/discovery-health").catch(() => ({ data: null })),
       apiFetch("/admin/catalog/saved-shopping-health").catch(() => ({ data: null })),
+      apiFetch("/admin/catalog/cart-quantity-health").catch(() => ({ data: null })),
     ]);
-    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data); setDiscoveryHealth(discoveryResponse.data); setSavedShoppingHealth(savedShoppingResponse.data);
+    setCategories(categoryResponse.data); setProducts(productResponse.data); setSuitabilityOptions(suitabilityResponse.data); setCompareHealth(compareResponse.data); setIngredientHealth(ingredientResponse.data); setDiscoveryHealth(discoveryResponse.data); setSavedShoppingHealth(savedShoppingResponse.data); setCartQuantityHealth(cartQuantityResponse.data);
   }
   useEffect(() => { refresh().catch((e) => setError(e.message)); }, []);
 
@@ -296,6 +298,18 @@ export default function AdminCatalog() {
       </div>
       {savedShoppingHealth?.topSaved?.length > 0 ? <div className="phase68-admin-top-saved"><b>Most-saved products</b>{savedShoppingHealth.topSaved.map((item) => <a key={item.id} href={`/product/${item.slug}`} target="_blank" rel="noreferrer">{item.name}<em>{item.saves}</em></a>)}</div> : <p className="muted">Saved-shopping activity will appear after signed-in customers use their wishlist.</p>}
       <p className="phase68-admin-note">{savedShoppingHealth?.activeSharedLists ?? 0} private wishlist share link{savedShoppingHealth?.activeSharedLists === 1 ? "" : "s"} currently active. Alerts remain customer-initiated; saving a product alone never subscribes anyone.</p>
+    </section>
+
+    <section className="admin-panel phase72-admin-quantity-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 72 · CART READINESS</p><h2>Quantity & purchase-limit health</h2><p>Catalogue limits plus rolling 60-minute cart-readiness signals. Safety stock stays excluded and no customer identity or cart contents are retained.</p></div><button type="button" className="state-toggle" onClick={() => refresh().catch((e) => setError(e.message))}>Refresh</button></div>
+      <div className="phase72-admin-metrics">
+        <article><small>LIMIT COVERAGE</small><strong>{cartQuantityHealth?.purchaseLimitCoverage ?? 0}%</strong><span>{cartQuantityHealth?.productsWithLimit ?? 0}/{cartQuantityHealth?.activeProducts ?? 0} active products</span></article>
+        <article><small>LOW-STOCK VARIANTS</small><strong>{cartQuantityHealth?.lowStockSellableVariants ?? 0}</strong><span>sellable after safety stock</span></article>
+        <article><small>READINESS CHECKS · 60M</small><strong>{cartQuantityHealth?.engagement?.readinessChecks ?? 0}</strong><span>live cart quantity checks</span></article>
+        <article><small>ADJUSTMENT CARTS · 60M</small><strong>{cartQuantityHealth?.engagement?.adjustmentCarts ?? 0}</strong><span>needed safer quantities</span></article>
+        <article><small>AT-LIMIT CARTS · 60M</small><strong>{cartQuantityHealth?.engagement?.atLimitCarts ?? 0}</strong><span>stock or purchase-cap pressure</span></article>
+      </div>
+      <p className="phase72-admin-note">{cartQuantityHealth?.note || "Readiness activity is aggregate only and does not store customer identity or cart contents."}</p>
     </section>
 
     <div className="admin-catalog-top-grid">
