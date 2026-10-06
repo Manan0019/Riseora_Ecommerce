@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { createCodOrder, getCodEligibility } from "../services/checkout.service";
 import { getCheckoutReadiness, recordCheckoutFunnelEvent } from "../services/checkout-confidence.service";
 import { getDeliveryPromisePreview } from "../services/delivery-promise.service";
+import { getPaymentMethodReadiness } from "../services/payment-readiness.service";
 import { createUserNotification } from "../services/notification-center.service";
 import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
@@ -55,6 +56,8 @@ const deliveryPromiseSchema = z.object({
   items: z.array(z.object({ variantId: z.string().uuid(), quantity: z.number().int().min(1).max(99) })).min(1).max(50),
 });
 
+const paymentReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, paymentMethod: true });
+
 
 router.post(
   "/delivery-promise",
@@ -72,6 +75,31 @@ router.post(
       if (message === "EMPTY_CART") return res.status(400).json({ success: false, message: "Add an item before checking delivery" });
       if (message === "PRODUCT_UNAVAILABLE") return res.status(409).json({ success: false, message: "One or more products changed. Refresh your cart before checking delivery." });
       if (message.startsWith("PURCHASE_LIMIT:")) return res.status(409).json({ success: false, message: "Resolve the current cart quantity limits before checking delivery." });
+      throw error;
+    }
+  }),
+);
+
+
+router.post(
+  "/payment-readiness",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 120, standardHeaders: "draft-8", legacyHeaders: false }),
+  blockCommerceDuringMaintenance,
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = paymentReadinessSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Complete contact and delivery details before payment readiness can be checked", errors: parsed.error.flatten() });
+    try {
+      const result = await getPaymentMethodReadiness(parsed.data, req.user?.id ?? null);
+      return res.json({ success: true, data: result });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "PAYMENT_READINESS_FAILED";
+      if (message === "PRODUCT_UNAVAILABLE") return res.status(409).json({ success: false, message: "One or more products changed. Refresh your checkout before choosing payment." });
+      if (message.startsWith("PURCHASE_LIMIT:")) return res.status(409).json({ success: false, message: "Resolve the current product purchase limit before choosing payment." });
+      if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(409).json({ success: false, message: message.slice("PIN_UNSERVICEABLE:".length) });
+      if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
+      if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });
+      if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });
       throw error;
     }
   }),

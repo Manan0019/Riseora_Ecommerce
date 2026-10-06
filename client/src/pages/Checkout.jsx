@@ -63,6 +63,9 @@ export default function Checkout() {
   const [deliveryChecking, setDeliveryChecking] = useState(false);
   const [checkoutReadiness, setCheckoutReadiness] = useState(null);
   const [readinessChecking, setReadinessChecking] = useState(false);
+  const [paymentReadiness, setPaymentReadiness] = useState(null);
+  const [paymentReadinessChecking, setPaymentReadinessChecking] = useState(false);
+  const [paymentReadinessError, setPaymentReadinessError] = useState("");
   const beginCheckoutSignature = useRef("");
   const checkoutSessionIdRef = useRef(makeUuid());
   const checkoutEventKeysRef = useRef(new Set());
@@ -70,7 +73,9 @@ export default function Checkout() {
   const emailReady = !form.customerEmail.trim() || /^\S+@\S+\.\S+$/.test(form.customerEmail.trim());
   const contactReady = form.customerName.trim().length >= 2 && form.customerPhone.trim().length >= 8 && emailReady;
   const addressReady = form.line1.trim().length >= 3 && form.city.trim().length >= 2 && form.state.trim().length >= 2 && /^\d{6}$/.test(form.postalCode);
-  const paymentReady = paymentMethod === "COD" ? codEligibility.eligible : onlinePaymentsEnabled;
+  const onlineMethodAvailable = paymentReadiness?.methods?.online?.available ?? onlinePaymentsEnabled;
+  const codMethodAvailable = paymentReadiness?.methods?.cod?.available ?? codEligibility.eligible;
+  const paymentReady = paymentMethod === "COD" ? codMethodAvailable : onlineMethodAvailable;
   const savedBagConflictBlocked = !buyNowMode && crossDeviceEnabled && syncStatus === "conflict";
   const canCheckReadiness = checkoutItems.length > 0 && !savedBagConflictBlocked && contactReady && addressReady && paymentReady && deliveryQuote?.serviceable !== false;
 
@@ -155,6 +160,35 @@ export default function Checkout() {
   }, [signature, checkoutItems, paymentMethod, appliedCoupon, form.customerEmail, form.customerPhone, form.postalCode]);
 
   useEffect(() => {
+    if (!checkoutItems.length || !contactReady || !addressReady || deliveryQuote?.serviceable === false) {
+      setPaymentReadiness(null);
+      setPaymentReadinessChecking(false);
+      setPaymentReadinessError("");
+      return;
+    }
+    let cancelled = false;
+    setPaymentReadinessChecking(true);
+    setPaymentReadinessError("");
+    const timer = setTimeout(() => {
+      apiFetch("/orders/payment-readiness", { method: "POST", body: JSON.stringify(paymentReadinessPayload()) })
+        .then((response) => {
+          if (cancelled) return;
+          const result = response.data;
+          setPaymentReadiness(result);
+          const cod = result?.methods?.cod;
+          if (cod) setCodEligibility((current) => ({ ...current, eligible: Boolean(cod.available), reasons: cod.reasons || [], openCodOrders: cod.openCodOrders || 0, openCodOrderLimit: cod.openCodOrderLimit ?? null, prepaidOnlyProducts: cod.prepaidOnlyProducts || [] }));
+          if (!paymentRecovery?.status) {
+            if (paymentMethod === "COD" && !result?.methods?.cod?.available && result?.methods?.online?.available) setPaymentMethod("ONLINE");
+            else if (paymentMethod === "ONLINE" && !result?.methods?.online?.available && result?.methods?.cod?.available) setPaymentMethod("COD");
+          }
+        })
+        .catch((err) => { if (!cancelled) { setPaymentReadiness(null); setPaymentReadinessError(err.message || "Payment readiness could not be checked right now."); } })
+        .finally(() => { if (!cancelled) setPaymentReadinessChecking(false); });
+    }, 280);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [signature, contactReady, addressReady, deliveryQuote?.serviceable, appliedCoupon, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode, paymentRecovery?.status]);
+
+  useEffect(() => {
     if (!canCheckReadiness) { setCheckoutReadiness(null); setReadinessChecking(false); return; }
     let cancelled = false;
     setReadinessChecking(true);
@@ -183,8 +217,9 @@ export default function Checkout() {
   async function applyCoupon() { return applyCouponCode(couponCode, "manual"); }
   function removeCoupon() { setAppliedCoupon(""); setCouponCode(""); setDiscountAmount(0); setCouponMessage("Coupon removed."); setCouponError(""); }
 
-  function checkoutPayload() { return { checkoutRequestKey: requestKey(), customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }; }
-  function readinessPayload() { return { customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })), paymentMethod }; }
+  function paymentReadinessPayload() { return { customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }; }
+  function checkoutPayload() { return { checkoutRequestKey: requestKey(), ...paymentReadinessPayload() }; }
+  function readinessPayload() { return { ...paymentReadinessPayload(), paymentMethod }; }
   async function verifyCheckoutReadiness() {
     setReadinessChecking(true);
     try {
@@ -277,7 +312,7 @@ export default function Checkout() {
     finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || (paymentMethod === "COD" && !codEligibility.eligible) || (!codEligibility.eligible && !onlinePaymentsEnabled);
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false;
 
   return <div className="container page-space checkout-page">
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
@@ -299,8 +334,16 @@ export default function Checkout() {
         <div className={`phase21-checkout-zone ${deliveryBlocked ? "unavailable" : postalCodeValid && deliveryQuote?.serviceable ? "available" : "pending"}`}><Icon name={deliveryBlocked ? "alert" : "location"} size={18} /><div><strong>{deliveryChecking ? "Checking delivery area…" : !postalCodeValid ? "Enter a 6-digit PIN code" : deliveryBlocked ? "Delivery unavailable" : deliveryQuote?.matched ? `Delivering via ${deliveryQuote.zoneName}` : "Delivery PIN verified"}</strong><small>{deliveryChecking ? "Riseora is checking shipping, ETA and COD availability." : !postalCodeValid ? "Shipping fee, delivery time and COD availability are calculated from your PIN." : deliveryQuote?.reason || "Store-wide delivery rules apply to this PIN code."}</small>{postalCodeValid && deliveryQuote?.serviceable && <span>{Number(pricing?.shippingFee ?? deliveryQuote.shippingFee ?? 0) > 0 ? `Current shipping ₹${Number(pricing?.shippingFee ?? deliveryQuote.shippingFee).toFixed(0)}` : "Free shipping"} • {deliveryQuote.codAllowed ? "COD supported in this area" : "Prepaid-only area"}{deliveryQuote.preferredShippingPartnerName ? ` • Usually via ${deliveryQuote.preferredShippingPartnerName}` : ""}</span>}</div></div>
 
         <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
-        <div className="payment-choice-grid">{onlinePaymentsEnabled && <button type="button" className={paymentMethod === "ONLINE" ? "payment-box selected" : "payment-box"} onClick={() => setPaymentMethod("ONLINE")}><span><Icon name="shield" size={20} /></span><div><strong>Pay online</strong><p>UPI, cards, netbanking & supported wallets.</p></div><b>{paymentMethod === "ONLINE" ? "✓" : ""}</b></button>}<button type="button" disabled={!codEligibility.eligible || paymentRecovery?.status === "PENDING"} className={`${paymentMethod === "COD" ? "payment-box selected" : "payment-box"}${!codEligibility.eligible || paymentRecovery?.status === "PENDING" ? " disabled" : ""}`} onClick={() => codEligibility.eligible && !paymentRecovery?.status && setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>{codEligibility.eligible ? "Pay when your order arrives." : "Not available for this order."}</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button></div>
-        {!codEligibility.eligible && <div className="phase20-cod-unavailable"><Icon name="shield" size={18} /><div><strong>COD unavailable for this order</strong>{codEligibility.reasons.map((reason) => <small key={reason}>{reason}</small>)}{onlinePaymentsEnabled && <small>Your cart and coupon stay unchanged when you switch to secure online payment.</small>}</div></div>}
+        <section className={`phase74-payment-readiness ${paymentReadiness?.ready === false ? "blocked" : ""}`} aria-label="Payment method readiness">
+          <div className="phase74-payment-readiness-head"><div><small>PHASE 74 · PAYMENT READINESS</small><strong>Know your payment options before submitting</strong></div>{paymentReadinessChecking && <em>Checking…</em>}</div>
+          {paymentReadinessError && !paymentReadinessChecking && <p className="phase74-payment-note">{paymentReadinessError} Final Checkout verification will still run before order or payment creation.</p>}
+          {!paymentReadinessChecking && paymentReadiness && <><p className="phase74-payment-summary">{paymentReadiness.summary}</p><div className="phase74-payment-method-grid">
+            <article className={paymentReadiness.methods?.online?.available ? "available" : "unavailable"}><div><span>SECURE ONLINE</span><b>{paymentReadiness.methods?.online?.available ? "AVAILABLE" : "UNAVAILABLE"}</b></div><strong>{paymentReadiness.methods?.online?.totalAmount != null ? `₹${Number(paymentReadiness.methods.online.totalAmount).toFixed(0)}` : "—"}</strong><small>{paymentReadiness.methods?.online?.shippingFee != null ? `Shipping ₹${Number(paymentReadiness.methods.online.shippingFee).toFixed(0)}` : paymentReadiness.methods?.online?.reasons?.[0] || "Provider not configured"}</small><em>{paymentReadiness.methods?.online?.note}</em></article>
+            <article className={paymentReadiness.methods?.cod?.available ? "available" : "unavailable"}><div><span>CASH ON DELIVERY</span><b>{paymentReadiness.methods?.cod?.available ? "AVAILABLE" : "UNAVAILABLE"}</b></div><strong>{paymentReadiness.methods?.cod?.totalAmount != null ? `₹${Number(paymentReadiness.methods.cod.totalAmount).toFixed(0)}` : "—"}</strong><small>{paymentReadiness.methods?.cod?.shippingFee != null ? `Shipping + COD ₹${Number(paymentReadiness.methods.cod.shippingFee).toFixed(0)}` : paymentReadiness.methods?.cod?.reasons?.[0] || "COD rules are being checked"}</small>{paymentReadiness.methods?.cod?.reasons?.slice(1, 3).map((reason) => <em key={reason}>{reason}</em>)}</article>
+          </div>{paymentReadiness.recommendationReason && <div className="phase74-payment-guidance"><Icon name="check" size={17} /><span><strong>{paymentReadiness.recommendedMethod ? "Lower current total" : "Payment guidance"}</strong>{paymentReadiness.recommendationReason}</span></div>}<small className="phase74-payment-policy">{paymentReadiness.policy}</small></>}
+        </section>
+        <div className="payment-choice-grid"><button type="button" disabled={!onlineMethodAvailable} className={`${paymentMethod === "ONLINE" ? "payment-box selected" : "payment-box"}${!onlineMethodAvailable ? " disabled" : ""}`} onClick={() => onlineMethodAvailable && setPaymentMethod("ONLINE")}><span><Icon name="shield" size={20} /></span><div><strong>Pay online</strong><p>{onlineMethodAvailable ? "UPI, cards, netbanking & supported wallets." : "Secure online payment is unavailable here."}</p></div><b>{paymentMethod === "ONLINE" ? "✓" : ""}</b></button><button type="button" disabled={!codMethodAvailable || paymentRecovery?.status === "PENDING"} className={`${paymentMethod === "COD" ? "payment-box selected" : "payment-box"}${!codMethodAvailable || paymentRecovery?.status === "PENDING" ? " disabled" : ""}`} onClick={() => codMethodAvailable && !paymentRecovery?.status && setPaymentMethod("COD")}><span><Icon name="package" size={20} /></span><div><strong>Cash on Delivery</strong><p>{codMethodAvailable ? "Pay when your order arrives." : "Not available for this order."}</p></div><b>{paymentMethod === "COD" ? "✓" : ""}</b></button></div>
+        {!codMethodAvailable && <div className="phase20-cod-unavailable"><Icon name="shield" size={18} /><div><strong>COD unavailable for this order</strong>{(paymentReadiness?.methods?.cod?.reasons || codEligibility.reasons).map((reason) => <small key={reason}>{reason}</small>)}{onlineMethodAvailable && <small>Your cart and coupon stay unchanged when you switch to secure online payment.</small>}</div></div>}
         <div className="phase20-checkout-trust"><span><Icon name="shield" size={16} /> Duplicate-order protected</span><span><Icon name="truck" size={16} /> Tracked fulfilment</span><span><Icon name="refresh" size={16} /> {storeConfig.returnsEnabled === false ? "Return policy" : `${storeConfig.returnWindowDays ?? 7}-day return window`}</span></div>
         <div className={`phase57-checkout-confidence ${checkoutReadiness?.ready ? "ready" : checkoutReadiness ? "attention" : "pending"}`}>
           <div className="phase57-confidence-head"><span><Icon name={checkoutReadiness?.ready ? "shield" : checkoutReadiness ? "alert" : "check"} size={20} /></span><div><strong>{readinessChecking ? "Reviewing your checkout…" : checkoutReadiness?.ready ? "Ready to place your order" : checkoutReadiness ? "One detail needs attention" : "Final checkout review"}</strong><small>{readinessChecking ? "Confirming live stock, delivery, payment and final pricing." : checkoutReadiness?.message || "Complete contact, delivery and payment details and Riseora will verify everything before order placement."}</small></div></div>

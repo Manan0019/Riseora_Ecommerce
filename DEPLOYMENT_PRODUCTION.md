@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase73` PASS
+- `verify:phase74` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -165,3 +165,8 @@ Phase 72 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 73 delivery promise intelligence acceptance
 
 Phase 73 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run delivery:doctor` and `npm run verify:phase73` both pass. Cart delivery previews must reuse the canonical Checkout preparation and Phase 44 shipping-zone/courier rules, including automatic promotions and parcel weight, while clearly remaining a pre-checkout estimate. Known unserviceable PIN codes may block Cart-level checkout navigation, but Phase 57 Checkout readiness remains the final server authority for shipping, COD/payment eligibility, coupons, stock and order/payment mutation. Signed-in customers may reuse only the default saved-address PIN in Cart; the delivery-preview telemetry must remain aggregate/in-memory and must not retain customer identity, PIN codes or cart contents. No new migration is permitted for Phase 73.
+
+## Phase 74 payment readiness acceptance
+
+Phase 74 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run payment-readiness:doctor` and `npm run verify:phase74` both pass. The payment-readiness preview must reuse canonical Checkout preparation for both secure online payment and COD, must expose COD restriction reasons without creating payment-provider sessions, and must never claim Razorpay provider health before an actual payment session is created. Phase 57 Checkout readiness remains the final server authority before order/payment mutation. Rolling payment-readiness counters must remain aggregate/in-memory and must not retain customer identity, PIN codes, cart contents or payment credentials. No new migration is permitted for Phase 74.
+

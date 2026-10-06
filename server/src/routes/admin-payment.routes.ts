@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { asyncHandler } from "../utils/async-handler";
 import { releaseCheckoutSession } from "../services/checkout.service";
+import { paymentReadinessHealth } from "../services/payment-readiness.service";
 
 const router = Router();
 
@@ -21,7 +22,7 @@ router.get("/payments/operations", asyncHandler(async (_req, res) => {
       select: { id: true, customerName: true, customerEmail: true, customerPhone: true, totalAmount: true, providerOrderId: true, paymentAttemptCount: true, lastPaymentStatus: true, lastPaymentError: true, lastPaymentActivityAt: true, expiresAt: true, createdAt: true },
     }),
   ]);
-  res.json({ success: true, data: { summary: { pending, expiredPending, paid24h, webhook24h, failedWebhook24h }, sessions } });
+  res.json({ success: true, data: { summary: { pending, expiredPending, paid24h, webhook24h, failedWebhook24h }, paymentReadiness: paymentReadinessHealth(), sessions } });
 }));
 
 router.post("/payments/checkout-sessions/:id/release", asyncHandler(async (req, res) => {
