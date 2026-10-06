@@ -8,6 +8,7 @@ import { createCodOrder, getCodEligibility } from "../services/checkout.service"
 import { getCheckoutReadiness, recordCheckoutFunnelEvent } from "../services/checkout-confidence.service";
 import { getDeliveryPromisePreview } from "../services/delivery-promise.service";
 import { getPaymentMethodReadiness } from "../services/payment-readiness.service";
+import { getAddressReadiness } from "../services/address-readiness.service";
 import { createUserNotification } from "../services/notification-center.service";
 import { blockCommerceDuringMaintenance } from "../middleware/maintenance";
 
@@ -58,6 +59,22 @@ const deliveryPromiseSchema = z.object({
 
 const paymentReadinessSchema = createOrderSchema.omit({ checkoutRequestKey: true, paymentMethod: true });
 
+const addressReadinessSchema = z.object({
+  customerName: z.string().max(120).default(""),
+  customerEmail: z.string().max(200).optional().or(z.literal("")),
+  customerPhone: z.string().max(30).default(""),
+  source: z.enum(["MANUAL", "SAVED"]).default("MANUAL"),
+  shippingAddress: z.object({
+    line1: z.string().max(180).default(""),
+    line2: z.string().max(180).optional().or(z.literal("")),
+    landmark: z.string().max(180).optional().or(z.literal("")),
+    city: z.string().max(100).default(""),
+    state: z.string().max(100).default(""),
+    postalCode: z.string().max(20).default(""),
+    country: z.string().max(80).default("India"),
+  }),
+});
+
 
 router.post(
   "/delivery-promise",
@@ -77,6 +94,19 @@ router.post(
       if (message.startsWith("PURCHASE_LIMIT:")) return res.status(409).json({ success: false, message: "Resolve the current cart quantity limits before checking delivery." });
       throw error;
     }
+  }),
+);
+
+
+router.post(
+  "/address-readiness",
+  rateLimit({ windowMs: 15 * 60 * 1000, limit: 160, standardHeaders: "draft-8", legacyHeaders: false }),
+  optionalAuth,
+  asyncHandler(async (req, res) => {
+    const parsed = addressReadinessSchema.safeParse(req.body);
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Address readiness input is too large or invalid", errors: parsed.error.flatten() });
+    const result = await getAddressReadiness(parsed.data);
+    res.json({ success: true, data: result });
   }),
 );
 

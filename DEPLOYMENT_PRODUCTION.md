@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase74` PASS
+- `verify:phase75` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -170,3 +170,8 @@ Phase 73 adds no Prisma schema change. The database migration head remains `2026
 
 Phase 74 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run payment-readiness:doctor` and `npm run verify:phase74` both pass. The payment-readiness preview must reuse canonical Checkout preparation for both secure online payment and COD, must expose COD restriction reasons without creating payment-provider sessions, and must never claim Razorpay provider health before an actual payment session is created. Phase 57 Checkout readiness remains the final server authority before order/payment mutation. Rolling payment-readiness counters must remain aggregate/in-memory and must not retain customer identity, PIN codes, cart contents or payment credentials. No new migration is permitted for Phase 74.
 
+
+
+## Phase 75 address readiness acceptance
+
+Phase 75 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run address:doctor` and `npm run verify:phase75` both pass. Address readiness must keep canonical required fields separate from non-blocking quality guidance, reuse configured shipping-zone city/state only as an explicit customer-approved correction, and never silently rewrite the delivery address. Phase 73 remains the shipping/serviceability authority and Phase 57 remains the final Checkout authority before order/payment mutation. New or updated saved addresses must use a 6-digit PIN. Rolling address-readiness counters must remain aggregate/in-memory and must not retain customer identity, phone numbers, PIN codes or address text. No new migration is permitted for Phase 75.

@@ -63,6 +63,21 @@ export default function AdminFulfilment() {
       </div>
     </section>}
 
+    {data?.addressReadinessHealth && <section className="admin-panel phase75-address-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 75 · ADDRESS QUALITY</p><h2>Saved-address & checkout readiness</h2><p>Saved-address hygiene plus rolling checkout address checks. The telemetry is aggregate only and does not retain customer names, phone numbers, PIN codes or address text.</p></div></div>
+      <div className="phase75-address-health-grid">
+        <article><small>SAVED ADDRESSES</small><strong>{data.addressReadinessHealth.savedAddresses ?? 0}</strong><span>{data.addressReadinessHealth.defaultAddresses ?? 0} marked default</span></article>
+        <article><small>6-DIGIT PIN READY</small><strong>{data.addressReadinessHealth.sixDigitPinPercent ?? 0}%</strong><span>Saved-address records</span></article>
+        <article><small>CONTACT READY</small><strong>{data.addressReadinessHealth.contactReadyPercent ?? 0}%</strong><span>Saved delivery numbers</span></article>
+        <article><small>UPDATED · 30D</small><strong>{data.addressReadinessHealth.updated30d ?? 0}</strong><span>Saved-address records</span></article>
+        <article><small>CHECKS · 60M</small><strong>{data.addressReadinessHealth.engagement?.checks ?? 0}</strong><span>Checkout address checks</span></article>
+        <article><small>READY · 60M</small><strong>{data.addressReadinessHealth.engagement?.readyRatePercent ?? 0}%</strong><span>{data.addressReadinessHealth.engagement?.readyChecks ?? 0} structurally ready</span></article>
+        <article><small>REVIEW · 60M</small><strong>{data.addressReadinessHealth.engagement?.reviewChecks ?? 0}</strong><span>Non-blocking quality review</span></article>
+        <article><small>AREA MISMATCH · 60M</small><strong>{data.addressReadinessHealth.engagement?.zoneMismatchChecks ?? 0}</strong><span>City/state differed from configured zone</span></article>
+      </div>
+      <p className="phase75-admin-note">{data.addressReadinessHealth.privacy}</p>
+    </section>}
+
     <section className="admin-panel phase44-fulfilment-queue">
       <div className="admin-panel-head"><div><h2>Dispatch queue</h2><p>Orders are sorted by promised dispatch time. Open an order to pack, ship and add tracking.</p></div><div className="phase44-filter-row">{[["attention","Attention"],["overdue","Overdue"],["due","Due soon"],["confirmed","Confirmed"],["processing","Processing"],["all","All"]].map(([value,label]) => <button type="button" key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
       {orders.length === 0 ? <div className="admin-empty"><strong>Nothing in this queue</strong><p>There are no orders matching the selected fulfilment view.</p></div> : <div className="phase44-fulfilment-list">{orders.map((order) => <article key={order.id} className={`${order.overdue ? "overdue" : order.dueSoon ? "due" : ""}`}>

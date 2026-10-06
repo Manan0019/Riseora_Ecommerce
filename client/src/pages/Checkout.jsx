@@ -66,6 +66,9 @@ export default function Checkout() {
   const [paymentReadiness, setPaymentReadiness] = useState(null);
   const [paymentReadinessChecking, setPaymentReadinessChecking] = useState(false);
   const [paymentReadinessError, setPaymentReadinessError] = useState("");
+  const [addressReadiness, setAddressReadiness] = useState(null);
+  const [addressReadinessChecking, setAddressReadinessChecking] = useState(false);
+  const [addressReadinessError, setAddressReadinessError] = useState("");
   const beginCheckoutSignature = useRef("");
   const checkoutSessionIdRef = useRef(makeUuid());
   const checkoutEventKeysRef = useRef(new Set());
@@ -73,11 +76,13 @@ export default function Checkout() {
   const emailReady = !form.customerEmail.trim() || /^\S+@\S+\.\S+$/.test(form.customerEmail.trim());
   const contactReady = form.customerName.trim().length >= 2 && form.customerPhone.trim().length >= 8 && emailReady;
   const addressReady = form.line1.trim().length >= 3 && form.city.trim().length >= 2 && form.state.trim().length >= 2 && /^\d{6}$/.test(form.postalCode);
+  const addressProbeReady = contactReady && addressReady;
+  const addressReadinessBlocking = addressReadiness?.ready === false;
   const onlineMethodAvailable = paymentReadiness?.methods?.online?.available ?? onlinePaymentsEnabled;
   const codMethodAvailable = paymentReadiness?.methods?.cod?.available ?? codEligibility.eligible;
   const paymentReady = paymentMethod === "COD" ? codMethodAvailable : onlineMethodAvailable;
   const savedBagConflictBlocked = !buyNowMode && crossDeviceEnabled && syncStatus === "conflict";
-  const canCheckReadiness = checkoutItems.length > 0 && !savedBagConflictBlocked && contactReady && addressReady && paymentReady && deliveryQuote?.serviceable !== false;
+  const canCheckReadiness = checkoutItems.length > 0 && !savedBagConflictBlocked && contactReady && addressReady && !addressReadinessBlocking && paymentReady && deliveryQuote?.serviceable !== false;
 
   function requestKey() {
     const current = readJson(REQUEST_KEY);
@@ -129,6 +134,17 @@ export default function Checkout() {
   useEffect(() => { if (deliveryQuote?.serviceable) reportCheckoutEvent("delivery_ready", { onceKey: `delivery_ready:${form.postalCode}` }); }, [deliveryQuote?.serviceable, form.postalCode, signature]);
 
   useEffect(() => { if (!user) return; apiFetch("/account/addresses").then((response) => { setSavedAddresses(response.data); const preferred = response.data.find((item) => item.isDefault) || response.data[0]; if (preferred) selectSavedAddress(preferred); }).catch(() => {}); }, [user]);
+  useEffect(() => {
+    if (!addressProbeReady) { setAddressReadiness(null); setAddressReadinessChecking(false); setAddressReadinessError(""); return; }
+    let cancelled = false;
+    setAddressReadinessChecking(true);
+    setAddressReadinessError("");
+    const timer = setTimeout(() => apiFetch("/orders/address-readiness", { method: "POST", body: JSON.stringify(addressReadinessPayload()) })
+      .then((response) => { if (!cancelled) setAddressReadiness(response.data); })
+      .catch((err) => { if (!cancelled) { setAddressReadiness(null); setAddressReadinessError(err.message || "Address readiness could not be checked right now."); } })
+      .finally(() => { if (!cancelled) setAddressReadinessChecking(false); }), 260);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [addressProbeReady, selectedAddressId, form.customerName, form.customerEmail, form.customerPhone, form.line1, form.line2, form.landmark, form.city, form.state, form.postalCode]);
   useEffect(() => {
     const email = form.customerEmail.trim(); if (!checkoutItems.length || !/^\S+@\S+\.\S+$/.test(email)) return;
     const timer = setTimeout(() => { let cartToken; try { cartToken = localStorage.getItem(activeRecoveryKey) || undefined; } catch { cartToken = undefined; } apiFetch("/cart-recovery", { method: "POST", body: JSON.stringify({ ...(cartToken ? { cartToken } : {}), email, name: form.customerName, phone: form.customerPhone, subtotal: checkoutSubtotal, recoveryOptIn, items: checkoutItems.map((item) => ({ variantId: item.variantId, productName: item.productName, variantName: item.variantName || "", sku: item.sku, quantity: item.quantity, price: Number(item.price), imageUrl: item.imageUrl || "" })) }) }).then((response) => { try { localStorage.setItem(activeRecoveryKey, response.data.cartToken); } catch {} }).catch(() => {}); }, 1200);
@@ -217,7 +233,27 @@ export default function Checkout() {
   async function applyCoupon() { return applyCouponCode(couponCode, "manual"); }
   function removeCoupon() { setAppliedCoupon(""); setCouponCode(""); setDiscountAmount(0); setCouponMessage("Coupon removed."); setCouponError(""); }
 
+  function addressReadinessPayload() { return { customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, source: selectedAddressId ? "SAVED" : "MANUAL", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" } }; }
   function paymentReadinessPayload() { return { customerName: form.customerName, customerEmail: form.customerEmail, customerPhone: form.customerPhone, couponCode: appliedCoupon || "", shippingAddress: { line1: form.line1, line2: form.line2, landmark: form.landmark, city: form.city, state: form.state, postalCode: form.postalCode, country: "India" }, items: checkoutItems.map((item) => ({ variantId: item.variantId, quantity: item.quantity })) }; }
+  function useVerifiedArea() {
+    const suggestion = addressReadiness?.suggestion;
+    if (!suggestion) return;
+    setSelectedAddressId("");
+    setForm((current) => ({ ...current, city: suggestion.city || current.city, state: suggestion.state || current.state }));
+  }
+  async function verifyAddressReadiness() {
+    if (!addressProbeReady) return { ready: false, message: "Complete your contact and delivery address before continuing." };
+    setAddressReadinessChecking(true);
+    try {
+      const response = await apiFetch("/orders/address-readiness", { method: "POST", body: JSON.stringify(addressReadinessPayload()) });
+      setAddressReadiness(response.data);
+      setAddressReadinessError("");
+      return response.data;
+    } catch (err) {
+      setAddressReadinessError(err.message || "Address readiness could not be checked right now.");
+      return null;
+    } finally { setAddressReadinessChecking(false); }
+  }
   function checkoutPayload() { return { checkoutRequestKey: requestKey(), ...paymentReadinessPayload() }; }
   function readinessPayload() { return { ...paymentReadinessPayload(), paymentMethod }; }
   async function verifyCheckoutReadiness() {
@@ -299,6 +335,8 @@ export default function Checkout() {
     if (savedBagConflictBlocked) { setError("Your Saved Bag changed on another device. Resolve the bag version before placing this order."); return; }
     setSubmitting(true); setError("");
     try {
+      const addressCheck = await verifyAddressReadiness();
+      if (addressCheck && !addressCheck.ready) { setError(addressCheck.message || "Review your delivery details before continuing."); return; }
       const readiness = await verifyCheckoutReadiness();
       if (!readiness?.ready) { setError(readiness?.message || "Please review the checkout details before continuing."); return; }
       reportCheckoutEvent("submit", { onceKey: "submit" });
@@ -312,11 +350,11 @@ export default function Checkout() {
     finally { setSubmitting(false); }
   }
 
-  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false;
+  const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || addressReadinessChecking || !contactReady || !addressReady || addressReadinessBlocking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false;
 
   return <div className="container page-space checkout-page">
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
-    <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={checkoutReadiness?.ready ? "done" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
+    <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && addressReadiness?.ready !== false && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={checkoutReadiness?.ready ? "done" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
     {savedBagConflictBlocked && <section className="phase70-checkout-conflict" role="alert"><span><Icon name="alert" size={22} /></span><div><small>PHASE 70 · CHECKOUT CONTINUITY</small><strong>Your Saved Bag changed on another device</strong><p>{syncNotice || "Resolve which bag should continue before Riseora verifies payment and stock."}</p>{savedBagConflict?.savedAt && <em>Account version saved {new Date(savedBagConflict.savedAt).toLocaleString("en-IN")}</em>}</div><div><button type="button" className="button button-secondary" onClick={useAccountSavedBag}>USE ACCOUNT BAG</button><button type="button" className="button" onClick={keepBrowserSavedBag}>KEEP THIS BAG</button></div></section>}
     {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small></div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
     <div className="checkout-layout">
@@ -332,6 +370,12 @@ export default function Checkout() {
         {user && !selectedAddressId && <div className="phase33-save-address"><label className="checkbox-row"><input type="checkbox" checked={saveAddress} onChange={(e) => setSaveAddress(e.target.checked)} /><span><strong>Save this delivery address</strong><small>Use it faster on your next Riseora order.</small></span></label>{saveAddress && <div className="phase33-address-options"><label>Save as<select value={addressType} onChange={(e) => setAddressType(e.target.value)}><option value="HOME">Home</option><option value="WORK">Work</option><option value="OTHER">Other</option></select></label><label className="checkbox-row compact"><input type="checkbox" checked={saveAsDefault} onChange={(e) => setSaveAsDefault(e.target.checked)} /><span>Make default</span></label></div>}</div>}
         <div className="phase17-checkout-delivery"><Icon name="truck" size={19} /><div><strong>Typical delivery {estimatedFrom}–{estimatedTo}</strong><small>Usually dispatched within {dispatchDays} day{dispatchDays === 1 ? "" : "s"}. Delivery rules are verified against the PIN code before order placement.</small></div></div>
         <div className={`phase21-checkout-zone ${deliveryBlocked ? "unavailable" : postalCodeValid && deliveryQuote?.serviceable ? "available" : "pending"}`}><Icon name={deliveryBlocked ? "alert" : "location"} size={18} /><div><strong>{deliveryChecking ? "Checking delivery area…" : !postalCodeValid ? "Enter a 6-digit PIN code" : deliveryBlocked ? "Delivery unavailable" : deliveryQuote?.matched ? `Delivering via ${deliveryQuote.zoneName}` : "Delivery PIN verified"}</strong><small>{deliveryChecking ? "Riseora is checking shipping, ETA and COD availability." : !postalCodeValid ? "Shipping fee, delivery time and COD availability are calculated from your PIN." : deliveryQuote?.reason || "Store-wide delivery rules apply to this PIN code."}</small>{postalCodeValid && deliveryQuote?.serviceable && <span>{Number(pricing?.shippingFee ?? deliveryQuote.shippingFee ?? 0) > 0 ? `Current shipping ₹${Number(pricing?.shippingFee ?? deliveryQuote.shippingFee).toFixed(0)}` : "Free shipping"} • {deliveryQuote.codAllowed ? "COD supported in this area" : "Prepaid-only area"}{deliveryQuote.preferredShippingPartnerName ? ` • Usually via ${deliveryQuote.preferredShippingPartnerName}` : ""}</span>}</div></div>
+        <section className={`phase75-address-readiness ${addressReadiness?.quality?.toLowerCase?.() || "pending"}`} aria-label="Address readiness">
+          <div className="phase75-address-head"><div><small>PHASE 75 · ADDRESS READINESS</small><strong>Delivery details quality check</strong></div>{addressReadinessChecking && <em>Checking…</em>}{!addressReadinessChecking && addressReadiness && <b>{addressReadiness.quality}</b>}</div>
+          {!addressProbeReady && <p className="phase75-address-note">Complete the required contact and delivery fields to check address quality before payment.</p>}
+          {addressReadinessError && !addressReadinessChecking && <p className="phase75-address-note attention">{addressReadinessError} Final Checkout validation will still run before order or payment creation.</p>}
+          {!addressReadinessChecking && addressReadiness && <><p className="phase75-address-summary">{addressReadiness.message}</p><div className="phase75-address-checks"><span className={addressReadiness.checks?.contact?.ready ? "ok" : ""}>Contact</span><span className={addressReadiness.checks?.address?.ready ? "ok" : ""}>Address</span><span className={addressReadiness.checks?.pin?.ready ? "ok" : ""}>6-digit PIN</span><span className={addressReadiness.checks?.deliveryArea?.matched ? "ok" : ""}>{addressReadiness.checks?.deliveryArea?.zoneName || "Delivery area"}</span></div>{addressReadiness.issues?.length > 0 && <div className="phase75-address-issues">{addressReadiness.issues.slice(0, 4).map((issue) => <span key={`${issue.code}-${issue.field}`} className={issue.severity === "BLOCK" ? "block" : "review"}><Icon name={issue.severity === "BLOCK" ? "alert" : "check"} size={15} />{issue.message}</span>)}</div>}{addressReadiness.suggestion && <div className="phase75-area-suggestion"><div><strong>Configured delivery area differs</strong><span>{[addressReadiness.suggestion.city, addressReadiness.suggestion.state].filter(Boolean).join(", ")}</span></div><button type="button" onClick={useVerifiedArea}>USE VERIFIED CITY/STATE</button></div>}<small className="phase75-address-policy">{addressReadiness.policy}</small></>}
+        </section>
 
         <div className="form-section-title form-section-gap"><span>3</span><div><h2>Payment</h2><p>Choose how you want to pay.</p></div></div>
         <section className={`phase74-payment-readiness ${paymentReadiness?.ready === false ? "blocked" : ""}`} aria-label="Payment method readiness">
@@ -349,7 +393,7 @@ export default function Checkout() {
           <div className="phase57-confidence-head"><span><Icon name={checkoutReadiness?.ready ? "shield" : checkoutReadiness ? "alert" : "check"} size={20} /></span><div><strong>{readinessChecking ? "Reviewing your checkout…" : checkoutReadiness?.ready ? "Ready to place your order" : checkoutReadiness ? "One detail needs attention" : "Final checkout review"}</strong><small>{readinessChecking ? "Confirming live stock, delivery, payment and final pricing." : checkoutReadiness?.message || "Complete contact, delivery and payment details and Riseora will verify everything before order placement."}</small></div></div>
           <div className="phase57-confidence-checks">
             <span className={contactReady ? "ok" : ""}>✓ Contact</span>
-            <span className={addressReady && deliveryQuote?.serviceable ? "ok" : ""}>✓ Delivery</span>
+            <span className={addressReady && addressReadiness?.ready !== false && deliveryQuote?.serviceable ? "ok" : ""}>✓ Delivery</span>
             <span className={paymentReady ? "ok" : ""}>✓ Payment</span>
             <span className={checkoutReadiness?.checks?.stock ? "ok" : ""}>✓ Live stock</span>
             <span className={checkoutReadiness?.checks?.pricing ? "ok" : ""}>✓ Final total</span>

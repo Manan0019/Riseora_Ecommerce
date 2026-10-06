@@ -168,7 +168,7 @@ const addressSchema = z.object({
   landmark: z.string().trim().max(180).optional().or(z.literal("")),
   city: z.string().trim().min(2).max(100),
   state: z.string().trim().min(2).max(100),
-  postalCode: z.string().trim().min(4).max(12),
+  postalCode: z.string().trim().regex(/^\d{6}$/, "Enter a valid 6-digit PIN code"),
   country: z.string().trim().min(2).max(80).default("India"),
   type: z.enum(["HOME", "WORK", "OTHER"]).default("HOME"),
   isDefault: z.boolean().default(false),
