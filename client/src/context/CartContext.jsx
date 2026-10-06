@@ -6,6 +6,7 @@ import { readPersistedArray, writePersistedArray } from "../lib/persisted-state"
 
 const CartContext = createContext(null);
 const STORAGE_KEY = "riseora_cart";
+const LATER_STORAGE_KEY = "riseora_cart_saved_for_later";
 const BUY_NOW_KEY = "riseora_buy_now";
 const CART_OWNER_KEY = "riseora_cart_owner";
 const CART_DIRTY_KEY = "riseora_cart_dirty";
@@ -29,6 +30,13 @@ function normalizeStoredLine(item) {
 function readInitialCart() {
   if (typeof window === "undefined") return [];
   return readPersistedArray(window.localStorage, STORAGE_KEY, { maxItems: 250 })
+    .map(normalizeStoredLine)
+    .filter(Boolean);
+}
+
+function readInitialSavedForLater() {
+  if (typeof window === "undefined") return [];
+  return readPersistedArray(window.localStorage, LATER_STORAGE_KEY, { maxItems: 250 })
     .map(normalizeStoredLine)
     .filter(Boolean);
 }
@@ -142,6 +150,10 @@ function cartRequestSignature(lines) {
   return toAccountCartRequest(lines).map((item) => `${item.variantId}:${item.quantity}`).sort().join("|");
 }
 
+function bagRequestSignature(items, savedForLater) {
+  return `A:${cartRequestSignature(items)}|L:${cartRequestSignature(savedForLater)}`;
+}
+
 function fullCartSignature(lines) {
   return (Array.isArray(lines) ? lines : []).map((item) => [item.variantId, item.quantity, item.price, item.mrp, item.stockQuantity, item.maxPurchaseQuantity ?? ""].join(":" )).sort().join("|");
 }
@@ -149,6 +161,7 @@ function fullCartSignature(lines) {
 export function CartProvider({ children }) {
   const { user, loading: authLoading } = useAuth();
   const [items, setItems] = useState(readInitialCart);
+  const [savedForLater, setSavedForLater] = useState(readInitialSavedForLater);
   const [buyNowItems, setBuyNowItems] = useState(readInitialBuyNow);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [syncStatus, setSyncStatus] = useState("local");
@@ -157,6 +170,7 @@ export function CartProvider({ children }) {
   const [syncAttempt, setSyncAttempt] = useState(0);
   const [savedBagConflict, setSavedBagConflict] = useState(null);
   const itemsRef = useRef(items);
+  const savedForLaterRef = useRef(savedForLater);
   const syncUserRef = useRef("");
   const syncReadyRef = useRef(false);
   const lastServerSignatureRef = useRef("");
@@ -166,13 +180,18 @@ export function CartProvider({ children }) {
     writePersistedArray(window.localStorage, STORAGE_KEY, items, { maxItems: 250 });
   }, [items]);
 
+  useEffect(() => {
+    writePersistedArray(window.localStorage, LATER_STORAGE_KEY, savedForLater, { maxItems: 250 });
+  }, [savedForLater]);
 
   useEffect(() => { itemsRef.current = items; }, [items]);
+  useEffect(() => { savedForLaterRef.current = savedForLater; }, [savedForLater]);
 
   function applyServerBag(data, notice = "") {
     const canonical = Array.isArray(data?.items) ? data.items : [];
+    const later = Array.isArray(data?.savedForLater) ? data.savedForLater : [];
     const revision = Math.max(0, Number(data?.revision || 0));
-    lastServerSignatureRef.current = cartRequestSignature(canonical);
+    lastServerSignatureRef.current = bagRequestSignature(canonical, later);
     serverRevisionRef.current = revision;
     syncReadyRef.current = true;
     markStoredCartOwner(user?.id || syncUserRef.current);
@@ -180,6 +199,7 @@ export function CartProvider({ children }) {
     markStoredCartRevision(revision);
     setSavedBagConflict(null);
     setItems(canonical);
+    setSavedForLater(later);
     setSyncStatus("synced");
     setLastSyncedAt(data?.savedAt || new Date().toISOString());
     setSyncNotice(notice);
@@ -194,7 +214,7 @@ export function CartProvider({ children }) {
     markStoredCartRevision(revision);
     markStoredCartDirty(true);
     syncReadyRef.current = false;
-    setSavedBagConflict({ items: Array.isArray(current.items) ? current.items : [], revision, savedAt: current.savedAt || null });
+    setSavedBagConflict({ items: Array.isArray(current.items) ? current.items : [], savedForLater: Array.isArray(current.savedForLater) ? current.savedForLater : [], revision, savedAt: current.savedAt || null });
     setSyncStatus("conflict");
     setSyncNotice("Your Saved Bag changed on another device. Choose the account version or keep this browser bag before checkout.");
     return true;
@@ -217,6 +237,7 @@ export function CartProvider({ children }) {
         setSyncNotice("");
         setLastSyncedAt(null);
         setItems([]);
+        setSavedForLater([]);
       }
       return undefined;
     }
@@ -226,6 +247,7 @@ export function CartProvider({ children }) {
     const storedOwner = readCartOwner();
     const localDirty = readCartDirty();
     let browserItems = toAccountCartRequest(itemsRef.current);
+    let browserSavedForLater = toAccountCartRequest(savedForLaterRef.current);
     let method = "GET";
     let endpoint = "/account/cart";
     let body;
@@ -233,20 +255,23 @@ export function CartProvider({ children }) {
     if (!storedOwner) {
       method = "POST";
       endpoint = "/account/cart/merge";
-      body = JSON.stringify({ items: browserItems });
+      body = JSON.stringify({ items: browserItems, savedForLater: browserSavedForLater });
     } else if (storedOwner === userId && localDirty) {
       method = "PUT";
-      body = JSON.stringify({ items: browserItems, expectedRevision: readStoredCartRevision() });
+      body = JSON.stringify({ items: browserItems, savedForLater: browserSavedForLater, expectedRevision: readStoredCartRevision() });
     } else if (storedOwner !== userId) {
       browserItems = [];
+      browserSavedForLater = [];
       itemsRef.current = [];
+      savedForLaterRef.current = [];
       setItems([]);
+      setSavedForLater([]);
       markStoredCartDirty(false);
       markStoredCartRevision(0);
       serverRevisionRef.current = 0;
     }
 
-    const browserSignature = cartRequestSignature(browserItems);
+    const browserSignature = bagRequestSignature(browserItems, browserSavedForLater);
     syncUserRef.current = userId;
     syncReadyRef.current = false;
     setSyncStatus("syncing");
@@ -255,7 +280,7 @@ export function CartProvider({ children }) {
     apiFetch(endpoint, { method, ...(body ? { body } : {}) })
       .then((response) => {
         if (!active || syncUserRef.current !== userId) return;
-        if (method !== "GET" && cartRequestSignature(itemsRef.current) !== browserSignature) {
+        if (method !== "GET" && bagRequestSignature(itemsRef.current, savedForLaterRef.current) !== browserSignature) {
           markStoredCartDirty(true);
           setSyncAttempt((value) => value + 1);
           return;
@@ -282,23 +307,26 @@ export function CartProvider({ children }) {
 
   useEffect(() => {
     if (!user?.id || !syncReadyRef.current || syncUserRef.current !== user.id) return undefined;
-    const requestSignature = cartRequestSignature(items);
+    const requestSignature = bagRequestSignature(items, savedForLater);
     if (requestSignature === lastServerSignatureRef.current) return undefined;
 
     setSyncStatus("syncing");
     const userId = user.id;
     const timer = window.setTimeout(() => {
       const sentItems = toAccountCartRequest(itemsRef.current);
-      const sentSignature = cartRequestSignature(sentItems);
-      apiFetch("/account/cart", { method: "PUT", body: JSON.stringify({ items: sentItems, expectedRevision: serverRevisionRef.current }) })
+      const sentSavedForLater = toAccountCartRequest(savedForLaterRef.current);
+      const sentSignature = bagRequestSignature(sentItems, sentSavedForLater);
+      apiFetch("/account/cart", { method: "PUT", body: JSON.stringify({ items: sentItems, savedForLater: sentSavedForLater, expectedRevision: serverRevisionRef.current }) })
         .then((response) => {
           if (syncUserRef.current !== userId) return;
-          if (cartRequestSignature(itemsRef.current) !== sentSignature) return;
+          if (bagRequestSignature(itemsRef.current, savedForLaterRef.current) !== sentSignature) return;
           const data = response?.data || {};
           const canonical = Array.isArray(data.items) ? data.items : [];
+          const canonicalLater = Array.isArray(data.savedForLater) ? data.savedForLater : [];
           const adjustmentCount = Array.isArray(data.adjustments) ? data.adjustments.length : 0;
           applyServerBag(data, adjustmentCount ? `${adjustmentCount} bag ${adjustmentCount === 1 ? "item was" : "items were"} adjusted to current stock or purchase limits.` : "");
           if (fullCartSignature(itemsRef.current) !== fullCartSignature(canonical)) setItems(canonical);
+          if (fullCartSignature(savedForLaterRef.current) !== fullCartSignature(canonicalLater)) setSavedForLater(canonicalLater);
         })
         .catch((error) => {
           if (syncUserRef.current !== userId) return;
@@ -309,7 +337,7 @@ export function CartProvider({ children }) {
         });
     }, 650);
     return () => window.clearTimeout(timer);
-  }, [items, user?.id]);
+  }, [items, savedForLater, user?.id]);
 
   useEffect(() => {
     if (!user?.id) return undefined;
@@ -440,6 +468,49 @@ export function CartProvider({ children }) {
     setItems((current) => current.filter((item) => item.variantId !== variantId));
   }
 
+  function saveForLaterItem(variantId) {
+    const line = itemsRef.current.find((item) => item.variantId === variantId);
+    if (!line) return false;
+    markCartDirty();
+    setItems((current) => current.filter((item) => item.variantId !== variantId));
+    setSavedForLater((current) => {
+      const existing = current.find((item) => item.variantId === variantId);
+      if (existing) return current.map((item) => item.variantId === variantId ? { ...line, quantity: Math.max(Number(existing.quantity || 1), Number(line.quantity || 1)) } : item);
+      return [...current, line].slice(0, 50);
+    });
+    trackCommerce("remove_from_cart", { items: [line], value: Number(line.price || 0) * Number(line.quantity || 1), source: "save_for_later" });
+    trackEvent("save_for_later", { item_id: line.sku || line.variantId, quantity: Number(line.quantity || 1) });
+    return true;
+  }
+
+  function moveSavedToCart(variantId) {
+    const line = savedForLaterRef.current.find((item) => item.variantId === variantId);
+    if (!line || Number(line.stockQuantity || 0) <= 0) return false;
+    const currentItems = itemsRef.current;
+    const existing = currentItems.find((item) => item.variantId === variantId);
+    const otherProductQty = productQuantity(currentItems, line.productId, variantId);
+    const limit = normalizePurchaseLimit(line.maxPurchaseQuantity);
+    const stock = Math.max(0, Number(line.stockQuantity || 0));
+    const maxForVariant = Math.max(0, Math.min(stock, limit == null ? stock : limit - otherProductQty));
+    if (maxForVariant <= 0) return false;
+    const desired = Math.min(maxForVariant, Math.max(Number(existing?.quantity || 0), Number(line.quantity || 1)));
+    markCartDirty();
+    setSavedForLater((current) => current.filter((item) => item.variantId !== variantId));
+    setItems((current) => {
+      const currentExisting = current.find((item) => item.variantId === variantId);
+      if (currentExisting) return current.map((item) => item.variantId === variantId ? { ...line, quantity: desired } : item);
+      return [...current, { ...line, quantity: desired }];
+    });
+    trackCommerce("add_to_cart", { items: [{ ...line, quantity: desired }], value: Number(line.price || 0) * desired, source: "restore_from_later" });
+    trackEvent("restore_from_later", { item_id: line.sku || line.variantId, quantity: desired });
+    return true;
+  }
+
+  function removeSavedForLater(variantId) {
+    markCartDirty();
+    setSavedForLater((current) => current.filter((item) => item.variantId !== variantId));
+  }
+
   function clearCart() {
     markCartDirty();
     setItems([]);
@@ -468,11 +539,12 @@ export function CartProvider({ children }) {
   async function resolveSavedBagConflict(strategy) {
     if (!user?.id || !savedBagConflict) return false;
     const browserItems = toAccountCartRequest(itemsRef.current);
+    const browserSavedForLater = toAccountCartRequest(savedForLaterRef.current);
     setSyncStatus("syncing");
     try {
       const response = await apiFetch("/account/cart/resolve", {
         method: "POST",
-        body: JSON.stringify({ strategy, items: browserItems, expectedRevision: savedBagConflict.revision }),
+        body: JSON.stringify({ strategy, items: browserItems, savedForLater: browserSavedForLater, expectedRevision: savedBagConflict.revision }),
       });
       const data = response?.data || {};
       applyServerBag(data, strategy === "ACCOUNT" ? "Account Saved Bag loaded. This browser now matches your latest account version." : "This browser bag is now the account Saved Bag on every device.");
@@ -501,8 +573,8 @@ export function CartProvider({ children }) {
   const buyNowSubtotal = buyNowItems.reduce((sum, item) => sum + Math.max(0, Number(item?.price || 0)) * Math.max(0, Number(item?.quantity || 0)), 0);
 
   const value = useMemo(
-    () => ({ items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag }),
-    [items, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt, savedBagConflict],
+    () => ({ items, savedForLater, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, openCart, closeCart, addItem, addItems, startBuyNow, clearBuyNow, addDeal, updateQuantity, removeItem, saveForLaterItem, moveSavedToCart, removeSavedForLater, clearCart, replaceCart, crossDeviceEnabled: Boolean(user?.id), syncStatus, syncNotice, lastSyncedAt, savedBagConflict, retrySavedBagSync, useAccountSavedBag, keepBrowserSavedBag }),
+    [items, savedForLater, count, subtotal, buyNowItems, buyNowSubtotal, drawerOpen, user?.id, syncStatus, syncNotice, lastSyncedAt, savedBagConflict],
   );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;

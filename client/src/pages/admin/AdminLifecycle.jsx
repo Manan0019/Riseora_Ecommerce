@@ -51,17 +51,20 @@ export default function AdminLifecycle() {
     </section>
 
     <section className="admin-panel phase69-admin-saved-bag">
-      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 70 · MULTI-DEVICE BAG SAFETY</p><h2>Saved Bag continuity & conflict health</h2><p>Signed-in bags persist across devices with revision-aware conflict protection. This operational persistence is separate from cart-recovery marketing consent.</p></div></div>
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 71 · CART INTENT CONTINUITY</p><h2>Saved Bag continuity, later intent & conflict health</h2><p>Signed-in bags preserve both buying-now and save-for-later intent across devices with the same revision-aware conflict protection. This remains separate from cart-recovery marketing consent.</p></div></div>
       <div className="phase69-admin-saved-bag-grid phase70-admin-saved-bag-grid">
         <article><small>SAVED BAGS</small><strong>{savedBagHealth?.savedBags ?? 0}</strong><span>customer account bags</span></article>
         <article><small>UPDATED · 24H</small><strong>{savedBagHealth?.updated24h ?? 0}</strong><span>recent bag changes</span></article>
         <article><small>CONFLICTS · 60M</small><strong>{savedBagHealth?.conflicts60m ?? 0}</strong><span>stale revision prevented</span></article>
         <article><small>ACCOUNT KEPT · 60M</small><strong>{savedBagHealth?.accountAccepted60m ?? 0}</strong><span>latest account version chosen</span></article>
         <article><small>BROWSER KEPT · 60M</small><strong>{savedBagHealth?.browserKept60m ?? 0}</strong><span>browser bag revalidated & saved</span></article>
+        <article><small>SAVED FOR LATER</small><strong>{savedBagHealth?.savedForLaterItems ?? 0}</strong><span>current later-intent lines</span></article>
+        <article><small>SAVE LATER · 60M</small><strong>{savedBagHealth?.saveForLater60m ?? 0}</strong><span>active → later moves</span></article>
+        <article><small>RESTORED · 60M</small><strong>{savedBagHealth?.restoredToBag60m ?? 0}</strong><span>later → active moves</span></article>
         <article><small>ACTIVE · 7D</small><strong>{savedBagHealth?.active7d ?? 0}</strong><span>recently used bags</span></article>
         <article><small>STALE · 30D+</small><strong>{savedBagHealth?.stale30d ?? 0}</strong><span>older saved bags</span></article>
       </div>
-      <p className="phase69-admin-saved-bag-note">Optimistic revisions stop one device from silently overwriting another. Saved Bag still stores only variant identity and quantity; current price, availability, safety stock and purchase limits are re-read on restore or resolution.</p>
+      <p className="phase69-admin-saved-bag-note">Optimistic revisions stop one device from silently overwriting another. Phase 71 adds only an ACTIVE/LATER intent marker beside variant identity and quantity; current price, availability, safety stock and purchase limits are still re-read live. Save for later is not Wishlist and does not create marketing consent.</p>
     </section>
 
     <div className="phase29-lifecycle-grid">

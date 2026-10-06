@@ -32,12 +32,14 @@ const accountCartItemsSchema = z.array(z.object({
 
 const accountCartSchema = z.object({
   items: accountCartItemsSchema,
+  savedForLater: accountCartItemsSchema.optional(),
   expectedRevision: z.number().int().min(0).optional(),
 });
 
 const accountCartResolveSchema = z.object({
   strategy: z.enum(["ACCOUNT", "BROWSER"]),
   items: accountCartItemsSchema.default([]),
+  savedForLater: accountCartItemsSchema.default([]),
   expectedRevision: z.number().int().min(0),
 });
 
@@ -53,7 +55,7 @@ router.post(
   asyncHandler(async (req, res) => {
     const parsed = accountCartSchema.safeParse(req.body || {});
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved bag contents" });
-    res.json({ success: true, data: await mergeAccountCart(req.user!.id, parsed.data.items) });
+    res.json({ success: true, data: await mergeAccountCart(req.user!.id, parsed.data.items, parsed.data.savedForLater || []) });
   }),
 );
 
@@ -63,7 +65,7 @@ router.put(
     const parsed = accountCartSchema.safeParse(req.body || {});
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid saved bag contents" });
     try {
-      res.json({ success: true, data: await saveAccountCart(req.user!.id, parsed.data.items, parsed.data.expectedRevision) });
+      res.json({ success: true, data: await saveAccountCart(req.user!.id, parsed.data.items, parsed.data.expectedRevision, parsed.data.savedForLater) });
     } catch (error) {
       if (error instanceof AccountCartRevisionConflictError) {
         return res.status(409).json({ success: false, code: error.code, message: error.message, data: error.current });
@@ -79,7 +81,7 @@ router.post(
     const parsed = accountCartResolveSchema.safeParse(req.body || {});
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid Saved Bag resolution" });
     try {
-      const data = await resolveAccountCart(req.user!.id, parsed.data.strategy, parsed.data.items, parsed.data.expectedRevision);
+      const data = await resolveAccountCart(req.user!.id, parsed.data.strategy, parsed.data.items, parsed.data.savedForLater, parsed.data.expectedRevision);
       res.json({ success: true, data });
     } catch (error) {
       if (error instanceof AccountCartRevisionConflictError) {

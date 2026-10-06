@@ -42,7 +42,7 @@ requireText("client/src/pages/Checkout.jsx", [
   "USE ACCOUNT BAG", "KEEP THIS BAG",
 ]);
 requireText("client/src/pages/admin/AdminLifecycle.jsx", [
-  "PHASE 70 · MULTI-DEVICE BAG SAFETY", "Saved Bag continuity & conflict health", "CONFLICTS · 60M", "ACCOUNT KEPT · 60M", "BROWSER KEPT · 60M",
+  "PHASE 71 · CART INTENT CONTINUITY", "Saved Bag continuity, later intent & conflict health", "CONFLICTS · 60M", "ACCOUNT KEPT · 60M", "BROWSER KEPT · 60M",
 ]);
 requireText("client/src/styles.css", ["phase70-conflict-explainer", "phase70-checkout-conflict", "phase70-admin-saved-bag-grid"]);
 

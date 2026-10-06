@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase70` PASS
+- `verify:phase71` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -150,3 +150,8 @@ Phase 69 adds migration `20261006121500_phase69_account_saved_bag_v2`. Before pu
 ## Phase 70 multi-device Saved Bag conflict acceptance
 
 Phase 70 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run saved-bag-conflict:doctor` and `npm run verify:phase70` both pass. Stale Saved Bag writes must return an explicit revision conflict instead of overwriting a newer account bag; Cart and normal Checkout must require the customer to choose either the current account bag or the browser bag. Choosing the browser bag must revalidate current sellable stock and purchase limits before saving it. Buy Now stays session-scoped and outside this conflict flow. Clean signed-in tabs may refresh from a newer account revision when they regain focus, but unsynced local edits must never be overwritten automatically.
+
+
+## Phase 71 cart organization and save-for-later acceptance
+
+Phase 71 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run cart-intent:doctor` and `npm run verify:phase71` both pass. Active bag and Save for Later intent must share the Phase 70 optimistic revision/conflict contract; a stale device must never overwrite either bucket silently. Persistent `AccountCart.items` rows may store only variant identity, requested quantity and the `LATER` intent marker—current price, MRP, product copy, images, safety-stock-aware availability and purchase limits must continue to be re-read from the live catalogue. Out-of-stock active lines must not enter Checkout, while an active product/variant may remain in Save for Later with current availability shown as zero. Checkout and order payloads must include only the active bag. Save for Later is operational shopping intent only: it must not create Wishlist membership, price/stock alerts, abandoned-cart consent, email, SMS or WhatsApp marketing subscriptions.

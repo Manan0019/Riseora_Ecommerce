@@ -41,11 +41,11 @@ requireText("client/src/context/CartContext.jsx", [
   "CART_OWNER_KEY", "CART_DIRTY_KEY", "storedOwner === userId && localDirty", 'method = "GET"',
 ]);
 requireText("client/src/pages/Cart.jsx", [
-  "PHASE 69 · SAVED BAG", "Saved to your Riseora account", "Saved on this browser", "RETRY ACCOUNT SYNC",
-  "separate from abandoned-cart recovery consent",
+  "PHASE 71 · BAG INTENT", "Save for later", "RETRY ACCOUNT SYNC",
+  "Sign in to carry both your active bag and later list across devices",
 ]);
 requireText("client/src/pages/admin/AdminLifecycle.jsx", [
-  "PHASE 70 · MULTI-DEVICE BAG SAFETY", "Saved Bag continuity", "/admin/lifecycle/saved-bag-health", "STALE · 30D+",
+  "PHASE 71 · CART INTENT CONTINUITY", "Saved Bag continuity", "/admin/lifecycle/saved-bag-health", "STALE · 30D+",
   "separate from cart-recovery marketing consent",
 ]);
 requireText("client/src/styles.css", ["phase69-saved-bag", "phase69-admin-saved-bag-grid"]);
@@ -56,7 +56,7 @@ const service = read("server/src/services/account-cart.service.ts");
 /service\.accountCart/.test(service) ? fail("invalid accountCart service reference") : pass("account cart service uses Prisma model directly");
 service.includes("sellingPrice") && service.includes("stockQuantity") && service.includes("availableToSell")
   ? pass("saved bag rehydrates live price and public availability") : fail("saved bag must rehydrate current catalogue data");
-service.includes("Math.max(merged.get(row.variantId) || 0, row.quantity)")
+(service.includes("Math.max(merged.get(row.variantId) || 0, row.quantity)") || service.includes("Math.max(active.get(row.variantId) || 0, row.quantity)"))
   ? pass("browser/account merge avoids duplicate-quantity inflation") : fail("saved bag merge quantity rule");
 const persistentBlock = service.slice(service.indexOf("function persistentLines"), service.indexOf("export async function getAccountCart"));
 !/(price|mrp|stockQuantity|productName|imageUrl)\s*:/.test(persistentBlock)
