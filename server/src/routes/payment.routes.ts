@@ -6,7 +6,8 @@ import { optionalAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { currentMaintenance } from "../services/maintenance.service";
 import { createOnlineCheckoutReservation, finalizeOnlineCheckout, finalizeOnlineCheckoutByProviderOrder, releaseCheckoutSession, releaseExpiredCheckoutSessions } from "../services/checkout.service";
-import { createRazorpayOrder, onlinePaymentsEnabled, verifyRazorpayPaymentSignature, verifyRazorpayWebhookSignature } from "../services/payment.service";
+import { onlinePaymentsEnabled, verifyRazorpayPaymentSignature, verifyRazorpayWebhookSignature } from "../services/payment.service";
+import { ensureRazorpayProviderOrder } from "../services/checkout-submission-safety.service";
 
 const router = Router();
 
@@ -58,15 +59,9 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
       const completed = await prisma.checkoutSession.findUnique({ where: { id: session.id }, include: { order: true } });
       return res.json({ success: true, data: publicSession(completed) });
     }
-    let providerOrderId = session.providerOrderId;
-    const hadProviderOrder = Boolean(providerOrderId);
-    if (!providerOrderId) {
-      const providerOrder = await createRazorpayOrder({ amountPaise: session.amountPaise, receipt: session.id, notes: { checkoutSessionId: session.id } });
-      const attached = await prisma.checkoutSession.updateMany({ where: { id: session.id, status: "PENDING", providerOrderId: null }, data: { providerOrderId: providerOrder.id } });
-      if (attached.count === 1) providerOrderId = providerOrder.id;
-      else providerOrderId = (await prisma.checkoutSession.findUnique({ where: { id: session.id }, select: { providerOrderId: true } }))?.providerOrderId || null;
-      if (!providerOrderId) throw new Error("PAYMENT_PROVIDER_ORDER_FAILED");
-    }
+    const provider = await ensureRazorpayProviderOrder(session.id);
+    const providerOrderId = provider.providerOrderId;
+    const hadProviderOrder = !provider.created;
     session = await prisma.checkoutSession.update({
       where: { id: session.id },
       data: { paymentAttemptCount: { increment: 1 }, lastPaymentStatus: hadProviderOrder ? "RETRY_READY" : "CREATED", lastPaymentError: null, lastPaymentActivityAt: new Date() },
@@ -87,6 +82,8 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
     if (message === "COUPON_LIMIT_REACHED") return res.status(400).json({ success: false, message: "This coupon has reached its usage limit" });
     if (message.startsWith("OUT_OF_STOCK:")) return res.status(400).json({ success: false, message: `Not enough stock for ${message.split(":")[1]}` });
     if (message === "CHECKOUT_REVIEW_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REVIEW_CHANGED", message: "Checkout details changed after your final review. Review the latest total, delivery and payment details before confirming again." });
+    if (message === "CHECKOUT_REQUEST_KEY_REQUIRED") return res.status(400).json({ success: false, code: "CHECKOUT_REQUEST_KEY_REQUIRED", message: "A protected checkout key is required. Refresh Checkout and try again." });
+    if (message === "CHECKOUT_REQUEST_PAYLOAD_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REQUEST_PAYLOAD_CHANGED", message: "This protected checkout key is already tied to different checkout details. Use the existing payment recovery controls or cancel that reservation before starting a new attempt." });
     if (message === "CHECKOUT_REQUEST_CLOSED") return res.status(409).json({ success: false, message: "This payment attempt is closed. Start payment again." });
     if (message.startsWith("ORDER_ALREADY_CREATED:")) return res.status(409).json({ success: false, message: `This checkout was already placed as ${message.slice("ORDER_ALREADY_CREATED:".length)}. Open My Orders or Track Order instead of paying again.` });
     if (message === "PAYMENT_PROVIDER_ORDER_FAILED") return res.status(502).json({ success: false, message: "Payment provider is temporarily unavailable. Please try again or use COD." });

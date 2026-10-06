@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase76` PASS
+- `verify:phase77` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -180,3 +180,8 @@ Phase 75 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 76 final order review acceptance
 
 Phase 76 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run final-review:doctor` and `npm run verify:phase76` both pass. Checkout must generate a canonical server-side final-review digest only after the existing address, delivery, payment and Phase 57 readiness checks are satisfied. The customer must explicitly confirm that review before COD order creation or online-payment reservation can begin. Both mutation paths must recompute the digest and reject stale confirmation with `CHECKOUT_REVIEW_CHANGED` rather than silently accepting changed stock, pricing, promotions, delivery, payment method or delivery details. Final-review telemetry must remain aggregate/in-memory and must not retain customer identity, address, cart contents or review digests. Phase 57 remains the final stock/serviceability/pricing authority and no new migration is permitted for Phase 76.
+
+
+## Phase 77 protected checkout submission acceptance
+
+Phase 77 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run submission-safety:doctor` and `npm run verify:phase77` both pass. COD and Online mutation requests must carry the existing protected checkout key, exact retries must remain idempotent, and the same key must never silently reuse an Order or CheckoutSession when account/contact/address/coupon/item intent differs. Razorpay provider-order creation for one CheckoutSession must be serialized so parallel requests reuse the attached provider order. Duplicate payment finalization must return the already-created order. Submission-safety telemetry must remain aggregate/in-memory and must not retain customer identity, address, cart contents or checkout request keys. Phase 57 and Phase 76 remain the pricing/stock/final-review authorities, and no new migration is permitted for Phase 77.

@@ -249,6 +249,8 @@ router.post(
       if (message.startsWith("PIN_UNSERVICEABLE:")) return res.status(400).json({ success: false, message: message.slice("PIN_UNSERVICEABLE:".length) });
       if (message.startsWith("COD_UNAVAILABLE:")) return res.status(400).json({ success: false, message: message.slice("COD_UNAVAILABLE:".length) });
       if (message === "ONLINE_CHECKOUT_PENDING") return res.status(409).json({ success: false, message: "An online payment reservation is still active for this checkout. Retry, check or cancel that payment before switching to COD." });
+      if (message === "CHECKOUT_REQUEST_KEY_REQUIRED") return res.status(400).json({ success: false, code: "CHECKOUT_REQUEST_KEY_REQUIRED", message: "A protected checkout key is required. Refresh Checkout and try again." });
+      if (message === "CHECKOUT_REQUEST_PAYLOAD_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REQUEST_PAYLOAD_CHANGED", message: "This protected checkout key is already tied to different checkout details. Refresh Checkout; if an online payment reservation is active, use the recovery controls before starting a new attempt." });
       if (message === "CHECKOUT_REVIEW_CHANGED") return res.status(409).json({ success: false, code: "CHECKOUT_REVIEW_CHANGED", message: "Checkout details changed after your final review. Review the latest total, delivery and payment details before confirming again." });
       if (message === "COUPON_NOT_FOUND") return res.status(400).json({ success: false, message: "Coupon code not found" });
       if (message.startsWith("COUPON_INVALID:")) return res.status(400).json({ success: false, message: message.slice("COUPON_INVALID:".length) });

@@ -11,6 +11,7 @@ import { evaluateBestMerchandisingDeal } from "./merchandising.service";
 import { findCapturedRazorpayPaymentForOrder } from "./payment.service";
 import { adjustInventory } from "./inventory.service";
 import { buildCheckoutReviewDigest } from "./checkout-review-signature";
+import { checkoutIntentMatchesSnapshot, recordCheckoutSubmissionSafety } from "./checkout-submission-safety.service";
 
 export type CheckoutInput = {
   customerName: string;
@@ -370,9 +371,14 @@ function orderItemCreate(item: SnapshotItem) {
 
 export async function createCodOrder(input: CheckoutInput, userId: string | null) {
   const requestKey = input.checkoutRequestKey?.trim() || null;
-  if (requestKey) {
+  if (!requestKey) { recordCheckoutSubmissionSafety("REQUEST_KEY_MISSING"); throw new Error("CHECKOUT_REQUEST_KEY_REQUIRED"); }
+  {
     const existing = await prisma.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
-    if (existing) return existing;
+    if (existing) {
+      if (!checkoutIntentMatchesSnapshot(input, userId, existing)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+      recordCheckoutSubmissionSafety("COD_REPLAY");
+      return existing;
+    }
     const pendingOnline = await prisma.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
     if (pendingOnline?.status === "PENDING") throw new Error("ONLINE_CHECKOUT_PENDING");
   }
@@ -383,7 +389,11 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
     if (requestKey) {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${requestKey}))`;
       const existing = await tx.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true, payment: true, shipment: true, statusHistory: { orderBy: { createdAt: "asc" } } } });
-      if (existing) return { order: existing, created: false };
+      if (existing) {
+        if (!checkoutIntentMatchesSnapshot(input, userId, existing)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+        recordCheckoutSubmissionSafety("COD_REPLAY");
+        return { order: existing, created: false };
+      }
       const pendingOnline = await tx.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
       if (pendingOnline?.status === "PENDING") throw new Error("ONLINE_CHECKOUT_PENDING");
     }
@@ -414,12 +424,17 @@ export async function createCodOrder(input: CheckoutInput, userId: string | null
 
 export async function createOnlineCheckoutReservation(input: CheckoutInput, userId: string | null) {
   const requestKey = input.checkoutRequestKey?.trim() || null;
-  if (requestKey) {
-    const existingOrder = await prisma.order.findUnique({ where: { checkoutRequestKey: requestKey } });
-    if (existingOrder) throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+  if (!requestKey) { recordCheckoutSubmissionSafety("REQUEST_KEY_MISSING"); throw new Error("CHECKOUT_REQUEST_KEY_REQUIRED"); }
+  {
+    const existingOrder = await prisma.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true } });
+    if (existingOrder) {
+      if (!checkoutIntentMatchesSnapshot(input, userId, existingOrder)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+      throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+    }
     const existing = await prisma.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
     if (existing) {
-      if (existing.status === "PENDING" && existing.expiresAt > new Date()) return existing;
+      if (!checkoutIntentMatchesSnapshot(input, userId, existing)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+      if (existing.status === "PENDING" && existing.expiresAt > new Date()) { recordCheckoutSubmissionSafety("ONLINE_RESUME"); return existing; }
       if (existing.status === "PAID") return existing;
       throw new Error("CHECKOUT_REQUEST_CLOSED");
     }
@@ -431,11 +446,15 @@ export async function createOnlineCheckoutReservation(input: CheckoutInput, user
   return prisma.$transaction(async (tx) => {
     if (requestKey) {
       await tx.$queryRaw`SELECT pg_advisory_xact_lock(hashtext(${requestKey}))`;
-      const existingOrder = await tx.order.findUnique({ where: { checkoutRequestKey: requestKey } });
-      if (existingOrder) throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+      const existingOrder = await tx.order.findUnique({ where: { checkoutRequestKey: requestKey }, include: { items: true } });
+      if (existingOrder) {
+        if (!checkoutIntentMatchesSnapshot(input, userId, existingOrder)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+        throw new Error(`ORDER_ALREADY_CREATED:${existingOrder.orderNumber}`);
+      }
       const existing = await tx.checkoutSession.findUnique({ where: { checkoutRequestKey: requestKey } });
       if (existing) {
-        if (existing.status === "PENDING" && existing.expiresAt > new Date()) return existing;
+        if (!checkoutIntentMatchesSnapshot(input, userId, existing)) { recordCheckoutSubmissionSafety("PAYLOAD_MISMATCH"); throw new Error("CHECKOUT_REQUEST_PAYLOAD_CHANGED"); }
+        if (existing.status === "PENDING" && existing.expiresAt > new Date()) { recordCheckoutSubmissionSafety("ONLINE_RESUME"); return existing; }
         if (existing.status === "PAID") return existing;
         throw new Error("CHECKOUT_REQUEST_CLOSED");
       }
@@ -502,7 +521,7 @@ export async function releaseExpiredCheckoutSessions() {
 export async function finalizeOnlineCheckout(input: { sessionId: string; providerOrderId: string; providerPaymentId: string }) {
   const existing = await prisma.checkoutSession.findUnique({ where: { id: input.sessionId }, include: { order: true } });
   if (!existing) throw new Error("CHECKOUT_NOT_FOUND");
-  if (existing.status === "PAID" && existing.order) return existing.order;
+  if (existing.status === "PAID" && existing.order) { recordCheckoutSubmissionSafety("FINALIZATION_REPLAY"); return existing.order; }
   if (existing.status !== "PENDING") throw new Error("CHECKOUT_NOT_PENDING");
   if (existing.providerOrderId !== input.providerOrderId) throw new Error("PAYMENT_ORDER_MISMATCH");
 

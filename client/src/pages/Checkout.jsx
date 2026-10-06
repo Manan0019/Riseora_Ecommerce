@@ -36,7 +36,7 @@ export default function Checkout() {
   const checkoutSubtotal = buyNowMode ? buyNowSubtotal : subtotal;
   const checkoutWeightGrams = checkoutItems.reduce((sum, item) => sum + Math.max(0, Number(item.weightGrams || 0)) * Math.max(1, Number(item.quantity || 1)), 0);
   const activeRecoveryKey = buyNowMode ? BUY_NOW_RECOVERY_KEY : RECOVERY_KEY;
-  const signature = useMemo(() => `${buyNowMode ? "buy" : "cart"}:${checkoutItems.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|")}`, [buyNowMode, checkoutItems]);
+  const signature = useMemo(() => `${buyNowMode ? "buy" : "cart"}:${user?.id || "guest"}:${checkoutItems.map((item) => `${item.variantId}:${item.quantity}`).sort().join("|")}`, [buyNowMode, checkoutItems, user?.id]);
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [couponCode, setCouponCode] = useState(() => String(searchParams.get("coupon") || "").slice(0, 40).toUpperCase());
@@ -76,6 +76,7 @@ export default function Checkout() {
   const beginCheckoutSignature = useRef("");
   const checkoutSessionIdRef = useRef(makeUuid());
   const checkoutEventKeysRef = useRef(new Set());
+  const submissionLockRef = useRef(false);
   const [form, setForm] = useState({ customerName: user ? `${user.firstName} ${user.lastName || ""}`.trim() : "", customerEmail: user?.email || "", customerPhone: user?.phone || "", line1: "", line2: "", landmark: "", city: "", state: "Gujarat", postalCode: readSavedPin() });
   const emailReady = !form.customerEmail.trim() || /^\S+@\S+\.\S+$/.test(form.customerEmail.trim());
   const contactReady = form.customerName.trim().length >= 2 && form.customerPhone.trim().length >= 8 && emailReady;
@@ -387,7 +388,9 @@ export default function Checkout() {
 
   async function submit(event) {
     event.preventDefault();
+    if (submissionLockRef.current) { setError("This checkout is already being submitted. Please wait for the current attempt to finish."); return; }
     if (savedBagConflictBlocked) { setError("Your Saved Bag changed on another device. Resolve the bag version before placing this order."); return; }
+    submissionLockRef.current = true;
     setSubmitting(true); setError("");
     try {
       const addressCheck = await verifyAddressReadiness();
@@ -409,7 +412,7 @@ export default function Checkout() {
       if (String(err?.message || "").includes("changed after your final review")) { setConfirmedReviewDigest(""); verifyFinalOrderReview().catch(() => {}); }
       setError(err.message);
     }
-    finally { setSubmitting(false); }
+    finally { submissionLockRef.current = false; setSubmitting(false); }
   }
 
   const displaySubtotal = Number(pricing?.subtotal ?? checkoutSubtotal); const automaticDiscountAmount = Number(pricing?.automaticDiscountAmount || 0); const couponDiscountAmount = Number(pricing?.couponDiscountAmount ?? discountAmount); const merchandiseAfterDiscount = Math.max(0, displaySubtotal - automaticDiscountAmount - couponDiscountAmount); const threshold = storeConfig.freeShippingThreshold == null ? null : Number(storeConfig.freeShippingThreshold); const baseShipping = threshold !== null && merchandiseAfterDiscount >= threshold ? 0 : Number(storeConfig.flatShippingFee || 0); const codFee = paymentMethod === "COD" ? Number(storeConfig.codFee || 0) : 0; const shippingFee = pricing ? Number(pricing.shippingFee || 0) : baseShipping + codFee; const total = pricing ? Number(pricing.totalAmount || 0) : Math.max(0, merchandiseAfterDiscount + shippingFee); const freeItems = pricing?.freeItems || []; const effectiveDelivery = pricing?.delivery || deliveryQuote; const dispatchDays = Math.max(0, Number(effectiveDelivery?.dispatchWithinDays ?? storeConfig.dispatchWithinDays ?? 2)); const deliveryMinDays = Math.max(1, Number(effectiveDelivery?.deliveryMinDays ?? storeConfig.deliveryMinDays ?? 3)); const deliveryMaxDays = Math.max(deliveryMinDays, Number(effectiveDelivery?.deliveryMaxDays ?? storeConfig.deliveryMaxDays ?? 7)); const estimatedFrom = formatEta(dispatchDays + deliveryMinDays); const estimatedTo = formatEta(dispatchDays + deliveryMaxDays); const postalCodeValid = /^\d{6}$/.test(form.postalCode); const deliveryBlocked = postalCodeValid && deliveryQuote?.serviceable === false; const finalReviewConfirmed = Boolean(finalReview?.digest && confirmedReviewDigest === finalReview.digest); const checkoutDisabled = savedBagConflictBlocked || submitting || paymentChecking || readinessChecking || addressReadinessChecking || finalReviewChecking || !contactReady || !addressReady || addressReadinessBlocking || !postalCodeValid || deliveryBlocked || !paymentReady || paymentReadiness?.ready === false || !checkoutReadiness?.ready || !finalReview?.digest || !finalReviewConfirmed;
@@ -474,7 +477,7 @@ export default function Checkout() {
             <article><small>FINAL TOTAL</small><strong>₹{Number(finalReview.pricing?.totalAmount || 0).toFixed(0)}</strong><span>{Number(finalReview.pricing?.shippingFee || 0) > 0 ? `₹${Number(finalReview.pricing.shippingFee).toFixed(0)} shipping included` : "Shipping included / free"}</span></article>
           </div>
           <div className="phase76-review-details"><div><small>DELIVER TO</small><strong>{finalReview.delivery?.recipient}</strong><span>{finalReview.delivery?.city}, {finalReview.delivery?.state} {finalReview.delivery?.postalCode} · phone ending {finalReview.delivery?.phoneMasked}</span></div><div><small>SAVINGS</small><strong>{finalReview.pricing?.couponCode ? `Coupon ${finalReview.pricing.couponCode}` : finalReview.pricing?.automaticPromotionName || "Current Riseora pricing"}</strong><span>{Number(finalReview.pricing?.discountAmount || 0) > 0 ? `₹${Number(finalReview.pricing.discountAmount).toFixed(0)} total saving applied` : "No checkout discount currently applied"}</span></div></div>
-          {!finalReviewConfirmed ? <button type="button" className="button phase76-confirm-review" onClick={confirmFinalReview} disabled={finalReviewChecking}>CONFIRM FINAL REVIEW</button> : <div className="phase76-confirmed-note"><Icon name="shield" size={17} /><span><strong>Final review confirmed.</strong> Riseora will reject the order/payment start if this server snapshot changes before mutation.</span></div>}
+          {!finalReviewConfirmed ? <button type="button" className="button phase76-confirm-review" onClick={confirmFinalReview} disabled={finalReviewChecking}>CONFIRM FINAL REVIEW</button> : <><div className="phase76-confirmed-note"><Icon name="shield" size={17} /><span><strong>Final review confirmed.</strong> Riseora will reject the order/payment start if this server snapshot changes before mutation.</span></div><div className="phase77-submit-safety"><Icon name="shield" size={16} /><span><strong>PHASE 77 · PROTECTED SUBMISSION</strong> Duplicate taps reuse the same protected checkout key; a changed payload cannot silently reuse another reservation.</span></div></>}
           <small className="phase76-review-policy">{finalReview.policy}</small></>}
         </section>
         <button className="button wide checkout-submit" disabled={checkoutDisabled}>{submitting ? (paymentMethod === "ONLINE" ? "Opening secure payment…" : "Placing order…") : readinessChecking || finalReviewChecking ? "VERIFYING FINAL REVIEW…" : checkoutReadiness && !checkoutReadiness.ready ? "RECHECK & CONTINUE" : !finalReviewConfirmed ? "CONFIRM FINAL REVIEW ABOVE" : `${paymentMethod === "ONLINE" ? "Pay securely" : "Place COD order"} • ₹${total.toFixed(0)}`}</button>
