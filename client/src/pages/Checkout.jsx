@@ -53,6 +53,7 @@ export default function Checkout() {
   const [onlinePaymentsEnabled, setOnlinePaymentsEnabled] = useState(false);
   const [paymentRecovery, setPaymentRecovery] = useState(null);
   const [paymentChecking, setPaymentChecking] = useState(false);
+  const [paymentRecoveryNotice, setPaymentRecoveryNotice] = useState("");
   const [codEligibility, setCodEligibility] = useState({ eligible: true, reasons: [], openCodOrders: 0, openCodOrderLimit: null, prepaidOnlyProducts: [] });
   const [recoveryOptIn, setRecoveryOptIn] = useState(false);
   const [storeConfig, setStoreConfig] = useState({ freeShippingThreshold: null, flatShippingFee: 0, codFee: 0, codEnabled: true, codMinOrderAmount: null, codMaxOrderAmount: null, maxOpenCodOrdersPerCustomer: null, dispatchWithinDays: 2, deliveryMinDays: 3, deliveryMaxDays: 7, returnsEnabled: true, returnWindowDays: 7 });
@@ -95,7 +96,7 @@ export default function Checkout() {
     const key = makeUuid(); writeJson(REQUEST_KEY, { signature, key }); return key;
   }
   function rotateRequestKey() { const key = makeUuid(); writeJson(REQUEST_KEY, { signature, key }); return key; }
-  function clearPaymentLocal() { removeLocal(ONLINE_SESSION_KEY); setPaymentRecovery(null); }
+  function clearPaymentLocal() { removeLocal(ONLINE_SESSION_KEY); setPaymentRecovery(null); setPaymentRecoveryNotice(""); }
   function reportCheckoutEvent(stage, { reasonCode = "", payment = paymentMethod, onceKey = stage } = {}) {
     const key = `${signature}:${onceKey}`;
     if (checkoutEventKeysRef.current.has(key)) return;
@@ -358,14 +359,31 @@ export default function Checkout() {
   async function checkPaymentStatus({ silent = false } = {}) {
     const active = paymentRecovery || (() => { const local = readJson(ONLINE_SESSION_KEY); return local?.sessionId && local.signature === signature ? { sessionId: local.sessionId } : null; })();
     if (!active?.sessionId) return;
-    setPaymentChecking(true); if (!silent) setError("");
-    try { const response = await apiFetch(`/payments/razorpay/session/${active.sessionId}/status`); const status = response.data; if (status.status === "PAID" && status.orderNumber) return finishRecoveredOrder(status); if (status.status === "PENDING") setPaymentRecovery(status); else { clearPaymentLocal(); rotateRequestKey(); if (!silent) setError("The previous payment reservation is closed. You can start a new payment now."); } } catch (err) { if (!silent) setError(err.message); } finally { setPaymentChecking(false); }
+    setPaymentChecking(true); if (!silent) { setError(""); setPaymentRecoveryNotice(""); }
+    try {
+      const response = await apiFetch(`/payments/razorpay/session/${active.sessionId}/status?reconcile=true`);
+      const status = response.data;
+      if (status.status === "PAID" && status.orderNumber) return finishRecoveredOrder(status);
+      if (status.status === "PENDING") {
+        setPaymentRecovery(status);
+        if (!silent && status.reconciliation?.message) {
+          if (status.reconciliation.state === "AMOUNT_MISMATCH") setError(status.reconciliation.message);
+          else setPaymentRecoveryNotice(status.reconciliation.message);
+        }
+      } else { clearPaymentLocal(); rotateRequestKey(); if (!silent) setError("The previous payment reservation is closed. You can start a new payment now."); }
+    } catch (err) { if (!silent) setError(err.message); } finally { setPaymentChecking(false); }
   }
 
   async function retryPayment() {
     if (!paymentRecovery?.sessionId) return payOnline();
-    setSubmitting(true); setError("");
-    try { const response = await apiFetch(`/payments/razorpay/session/${paymentRecovery.sessionId}/status`); if (response.data.status === "PAID" && response.data.orderNumber) return finishRecoveredOrder(response.data); if (response.data.status !== "PENDING") { clearPaymentLocal(); rotateRequestKey(); throw new Error("This payment reservation is no longer active. Start payment again."); } const order = await openRazorpay(response.data); await completeOrder(order); } catch (err) { setError(err.message); } finally { setSubmitting(false); }
+    setSubmitting(true); setError(""); setPaymentRecoveryNotice("");
+    try {
+      const response = await apiFetch(`/payments/razorpay/session/${paymentRecovery.sessionId}/status?reconcile=true`);
+      if (response.data.status === "PAID" && response.data.orderNumber) return finishRecoveredOrder(response.data);
+      if (response.data.status !== "PENDING") { clearPaymentLocal(); rotateRequestKey(); throw new Error("This payment reservation is no longer active. Start payment again."); }
+      if (response.data.reconciliation?.state === "AMOUNT_MISMATCH") throw new Error(response.data.reconciliation.message);
+      const order = await openRazorpay(response.data); await completeOrder(order);
+    } catch (err) { setError(err.message); } finally { setSubmitting(false); }
   }
 
   async function cancelPaymentReservation() {
@@ -421,7 +439,7 @@ export default function Checkout() {
     <div className="checkout-heading"><p className="eyebrow">{buyNowMode ? "BUY NOW" : "SECURE CHECKOUT"}</p><h1>{buyNowMode ? "Fast checkout" : "Complete your order"}</h1>{buyNowMode && <p className="phase17-buy-now-note">This checkout contains only the product you selected with Buy Now. Your regular cart is unchanged.</p>}</div>
     <div className="phase57-checkout-progress" aria-label="Checkout readiness"><div className={contactReady ? "done" : "active"}><span>1</span><b>Contact</b></div><i></i><div className={addressReady && addressReadiness?.ready !== false && deliveryQuote?.serviceable ? "done" : contactReady ? "active" : ""}><span>2</span><b>Delivery</b></div><i></i><div className={paymentReady ? "done" : addressReady ? "active" : ""}><span>3</span><b>Payment</b></div><i></i><div className={finalReviewConfirmed ? "done" : checkoutReadiness?.ready ? "active" : paymentReady ? "active" : ""}><span>4</span><b>Review</b></div></div>
     {savedBagConflictBlocked && <section className="phase70-checkout-conflict" role="alert"><span><Icon name="alert" size={22} /></span><div><small>PHASE 70 · CHECKOUT CONTINUITY</small><strong>Your Saved Bag changed on another device</strong><p>{syncNotice || "Resolve which bag should continue before Riseora verifies payment and stock."}</p>{savedBagConflict?.savedAt && <em>Account version saved {new Date(savedBagConflict.savedAt).toLocaleString("en-IN")}</em>}</div><div><button type="button" className="button button-secondary" onClick={useAccountSavedBag}>USE ACCOUNT BAG</button><button type="button" className="button" onClick={keepBrowserSavedBag}>KEEP THIS BAG</button></div></section>}
-    {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small></div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
+    {paymentRecovery?.status === "PENDING" && <div className="phase33-payment-recovery"><div><span className="phase33-recovery-icon"><Icon name="shield" size={21} /></span><div><strong>Online payment still available</strong><p>{paymentRecovery.lastPaymentStatus === "FAILED" ? (paymentRecovery.lastPaymentError || "The previous attempt failed.") : paymentRecovery.lastPaymentStatus === "CAPTURE_AMOUNT_MISMATCH" ? "A captured provider payment needs manual review. Do not start another payment for this reservation." : "Your stock is reserved temporarily. Retry the same secure payment or check whether a delayed confirmation arrived."}</p><small>Reservation expires {new Date(paymentRecovery.expiresAt).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit" })}.</small>{paymentRecoveryNotice && <span className="phase78-reconcile-note"><b>PHASE 78 · PROVIDER RECHECK</b>{paymentRecoveryNotice}</span>}</div></div><div className="phase33-recovery-actions"><button type="button" className="button" onClick={retryPayment} disabled={submitting || paymentChecking || paymentRecovery.lastPaymentStatus === "CAPTURE_AMOUNT_MISMATCH"}>Retry payment</button><button type="button" className="button button-secondary" onClick={() => checkPaymentStatus()} disabled={paymentChecking}>{paymentChecking ? "Checking provider…" : "Check status"}</button><button type="button" className="phase33-link-button" onClick={cancelPaymentReservation} disabled={paymentChecking}>Cancel reservation</button></div></div>}
     <div className="checkout-layout">
       <form id="riseora-checkout-form" className="form-card checkout-form" onSubmit={submit}>
         <div className="form-section-title"><span>1</span><div><h2>Contact details</h2><p>We'll use these details for your order.</p></div></div>{error && <p className="alert error">{error}</p>}

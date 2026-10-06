@@ -120,7 +120,7 @@ Automatic migration rollback is intentionally not implemented. Restore from a ve
 Before public traffic:
 
 - `release:doctor` PASS
-- `verify:phase77` PASS
+- `verify:phase78` PASS
 - `security:audit` reviewed
 - `db:status:production` PASS
 - verified recent backup exists
@@ -185,3 +185,8 @@ Phase 76 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 77 protected checkout submission acceptance
 
 Phase 77 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run submission-safety:doctor` and `npm run verify:phase77` both pass. COD and Online mutation requests must carry the existing protected checkout key, exact retries must remain idempotent, and the same key must never silently reuse an Order or CheckoutSession when account/contact/address/coupon/item intent differs. Razorpay provider-order creation for one CheckoutSession must be serialized so parallel requests reuse the attached provider order. Duplicate payment finalization must return the already-created order. Submission-safety telemetry must remain aggregate/in-memory and must not retain customer identity, address, cart contents or checkout request keys. Phase 57 and Phase 76 remain the pricing/stock/final-review authorities, and no new migration is permitted for Phase 77.
+
+## Phase 78 payment confirmation reconciliation acceptance
+
+Phase 78 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2`. Before public traffic, confirm `npm run payment-confirmation:doctor` and `npm run verify:phase78` both pass. Customer **Check status** and Retry Payment must query Razorpay for a captured payment before encouraging another attempt. A recovered capture must match the CheckoutSession amount before finalization. Webhook event IDs must be reserved before processing, duplicate deliveries must remain idempotently re-processable for crash recovery, and a failed newly-reserved webhook must release its event marker so Razorpay can retry. Admin → Payments must support manual reconciliation of provider-backed pending sessions before operational release. Phase 78 rolling counters must remain aggregate/in-memory and must not retain customer identity, addresses, cart contents, provider payment IDs or webhook bodies. No new migration is permitted for Phase 78.
+

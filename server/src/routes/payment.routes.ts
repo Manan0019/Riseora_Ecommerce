@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { currentMaintenance } from "../services/maintenance.service";
 import { createOnlineCheckoutReservation, finalizeOnlineCheckout, finalizeOnlineCheckoutByProviderOrder, releaseCheckoutSession, releaseExpiredCheckoutSessions } from "../services/checkout.service";
 import { onlinePaymentsEnabled, verifyRazorpayPaymentSignature, verifyRazorpayWebhookSignature } from "../services/payment.service";
+import { processRazorpayWebhook, reconcilePendingCheckoutPayment } from "../services/payment-confirmation.service";
 import { ensureRazorpayProviderOrder } from "../services/checkout-submission-safety.service";
 
 const router = Router();
@@ -94,14 +95,18 @@ router.post("/razorpay/session", optionalAuth, asyncHandler(async (req, res) => 
 router.get("/razorpay/session/:sessionId/status", asyncHandler(async (req, res) => {
   const parsed = z.string().uuid().safeParse(String(req.params.sessionId));
   if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid checkout session" });
-  const session = await prisma.checkoutSession.findUnique({ where: { id: parsed.data }, include: { order: true } });
+  const shouldReconcile = ["1", "true", "yes"].includes(String(req.query.reconcile || "").toLowerCase());
+  let reconciliation = null;
+  if (shouldReconcile) {
+    reconciliation = await reconcilePendingCheckoutPayment(parsed.data);
+  }
+  let session = await prisma.checkoutSession.findUnique({ where: { id: parsed.data }, include: { order: true } });
   if (!session) return res.status(404).json({ success: false, message: "Checkout session not found" });
   if (session.status === "PENDING" && session.expiresAt < new Date()) {
     await releaseCheckoutSession(session.id);
-    const expired = await prisma.checkoutSession.findUnique({ where: { id: session.id }, include: { order: true } });
-    return res.json({ success: true, data: publicSession(expired) });
+    session = await prisma.checkoutSession.findUnique({ where: { id: session.id }, include: { order: true } });
   }
-  res.json({ success: true, data: publicSession(session) });
+  res.json({ success: true, data: { ...publicSession(session), reconciliation } });
 }));
 
 router.post("/razorpay/session/:sessionId/event", asyncHandler(async (req, res) => {
@@ -141,26 +146,9 @@ export async function razorpayWebhook(req: express.Request, res: express.Respons
   if (!verifyRazorpayWebhookSignature(rawBody, signature)) return res.status(400).json({ success: false, message: "Invalid webhook signature" });
   const eventId = req.header("x-razorpay-event-id") || null;
   const payload = JSON.parse(rawBody.toString("utf8")) as any;
-  const eventType = String(payload.event || "unknown");
-  if (eventId) {
-    const exists = await prisma.paymentWebhookEvent.findUnique({ where: { eventId } });
-    if (exists) return res.json({ success: true, duplicate: true });
-  }
-  const paymentEntity = payload?.payload?.payment?.entity;
-  const orderEntity = payload?.payload?.order?.entity;
-  const providerOrderId = String(paymentEntity?.order_id || orderEntity?.id || "");
-  const providerPaymentId = String(paymentEntity?.id || "");
   try {
-    if (["payment.captured", "order.paid"].includes(eventType) && providerOrderId && providerPaymentId) {
-      await finalizeOnlineCheckoutByProviderOrder({ providerOrderId, providerPaymentId });
-    } else if (eventType === "payment.failed" && providerOrderId) {
-      await prisma.checkoutSession.updateMany({
-        where: { providerOrderId, status: "PENDING" },
-        data: { lastPaymentStatus: "FAILED", lastPaymentError: String(paymentEntity?.error_description || paymentEntity?.error_reason || "Payment attempt failed"), lastPaymentActivityAt: new Date() },
-      });
-    }
-    if (eventId) await prisma.paymentWebhookEvent.create({ data: { provider: "RAZORPAY", eventId, eventType, providerOrderId: providerOrderId || null, providerPaymentId: providerPaymentId || null } });
-    res.json({ success: true });
+    const result = await processRazorpayWebhook({ eventId, payload });
+    res.json({ success: true, duplicate: result.duplicate });
   } catch (error) {
     console.error("Razorpay webhook processing failed", error);
     res.status(500).json({ success: false, message: "Webhook processing failed" });
