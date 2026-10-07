@@ -4,34 +4,56 @@ import { apiFetch } from "../api/http";
 const resolutionCodes = ["INFORMATION_PROVIDED", "ORDER_CORRECTED", "PAYMENT_RESOLVED", "DELIVERY_RESOLVED", "RETURN_RESOLVED", "REPLACEMENT_RESOLVED", "ACCOUNT_RESOLVED", "GOODWILL_RESOLUTION", "NO_ACTION_REQUIRED", "DUPLICATE", "OTHER"];
 const priorities = ["LOW", "NORMAL", "HIGH", "URGENT"];
 
+function money(value) {
+  return `₹${Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+}
+
 export default function AdminSupportOperations() {
   const [rows, setRows] = useState([]);
   const [summary, setSummary] = useState({});
+  const [recoverySummary, setRecoverySummary] = useState({});
   const [selectedId, setSelectedId] = useState("");
   const [selected, setSelected] = useState(null);
+  const [customer360, setCustomer360] = useState(null);
   const [filter, setFilter] = useState("ATTENTION");
   const [reply, setReply] = useState({ message: "", internal: false, waitForCustomer: true });
   const [resolution, setResolution] = useState({ resolutionCode: "INFORMATION_PROVIDED", resolutionSummary: "", customerVisibleMessage: "" });
+  const [recovery, setRecovery] = useState({ kind: "COUPON", amount: 200, points: 200, reason: "" });
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
 
   async function load() {
-    const [list, metrics] = await Promise.all([apiFetch("/admin/support-cases"), apiFetch("/admin/support-cases/phase84-summary")]);
-    setRows(list.data || []); setSummary(metrics.data || {});
+    const [list, metrics, recoveryMetrics] = await Promise.all([
+      apiFetch("/admin/support-cases"),
+      apiFetch("/admin/support-cases/phase84-summary"),
+      apiFetch("/admin/support-cases/phase85-recovery-summary"),
+    ]);
+    setRows(list.data || []);
+    setSummary(metrics.data || {});
+    setRecoverySummary(recoveryMetrics.data || {});
     if (!selectedId && list.data?.[0]) setSelectedId(list.data[0].id);
   }
+
+  async function loadSelected(id = selectedId) {
+    if (!id) { setSelected(null); setCustomer360(null); return; }
+    const [detail, profile] = await Promise.all([
+      apiFetch(`/admin/support-cases/${id}`),
+      apiFetch(`/admin/support-cases/${id}/phase85-customer360`),
+    ]);
+    setSelected(detail.data);
+    setCustomer360(profile.data);
+  }
+
   useEffect(() => { load().catch((e) => setError(e.message)); }, []);
-  useEffect(() => {
-    if (!selectedId) return setSelected(null);
-    apiFetch(`/admin/support-cases/${selectedId}`).then((r) => setSelected(r.data)).catch((e) => setError(e.message));
-  }, [selectedId, rows]);
+  useEffect(() => { loadSelected(selectedId).catch((e) => setError(e.message)); }, [selectedId, rows]);
 
   const visible = useMemo(() => rows.filter((item) => {
     if (filter === "ALL") return true;
     if (filter === "ATTENTION") return item.supportHealth?.needsAttention;
     if (filter === "UNASSIGNED") return !item.assignedAdminUserId && item.supportHealth?.open;
     if (filter === "ESCALATED") return item.escalationLevel !== "NONE" && item.supportHealth?.open;
+    if (filter === "RECOVERY") return Boolean(item.recoveryGrant);
     if (filter === "OPEN") return item.supportHealth?.open;
     return item.status === filter;
   }), [rows, filter]);
@@ -39,25 +61,45 @@ export default function AdminSupportOperations() {
   async function mutate(path, options, success) {
     setBusy(true); setError(""); setNotice("");
     try {
-      await apiFetch(path, options); setNotice(success); await load();
-      if (selectedId) { const r = await apiFetch(`/admin/support-cases/${selectedId}`); setSelected(r.data); }
+      await apiFetch(path, options);
+      setNotice(success);
+      await load();
+      if (selectedId) await loadSelected(selectedId);
     } catch (e) { setError(e.message); } finally { setBusy(false); }
   }
 
-  return <section className="phase84-admin-support">
-    <div className="admin-page-heading phase84-support-admin-head"><div><p className="eyebrow">PHASE 84 · SERVICE OPERATIONS</p><h2>Customer Care Command Center</h2><p>Own customer issues from intake to auditable resolution with SLA, escalation, internal notes, linked commerce context and CSAT.</p></div></div>
+  async function grantRecovery() {
+    if (!selected) return;
+    const payload = recovery.kind === "COUPON"
+      ? { kind: "COUPON", amount: Number(recovery.amount), reason: recovery.reason }
+      : { kind: "REWARD_POINTS", points: Number(recovery.points), reason: recovery.reason };
+    await mutate(`/admin/support-cases/${selected.id}/phase85-recovery`, { method: "POST", body: JSON.stringify(payload) }, "Service-recovery benefit issued and recorded on the customer case.");
+    setRecovery((current) => ({ ...current, reason: "" }));
+  }
+
+  const profile = customer360?.profile;
+  const eligibility = customer360?.eligibility;
+
+  return <section className="phase84-admin-support phase85-admin-support">
+    <div className="admin-page-heading phase84-support-admin-head"><div><p className="eyebrow">PHASE 85 · CUSTOMER RECOVERY + RELIABILITY</p><h2>Customer Care Command Center</h2><p>Resolve cases with customer context, controlled recovery benefits, anti-abuse limits and an auditable service trail. Phase 84 SLA, ownership, escalation and CSAT remain intact.</p></div></div>
     {notice && <p className="alert success">{notice}</p>}{error && <p className="alert error">{error}</p>}
-    <div className="phase84-admin-support-kpis">
+
+    <div className="phase84-admin-support-kpis phase85-support-kpis">
       <article><span>OPEN</span><strong>{summary.open || 0}</strong></article>
       <article className={(summary.attention || 0) ? "warn" : ""}><span>ATTENTION</span><strong>{summary.attention || 0}</strong></article>
       <article className={(summary.overdue || 0) ? "danger" : ""}><span>SLA BREACH</span><strong>{summary.overdue || 0}</strong></article>
       <article><span>UNASSIGNED</span><strong>{summary.unassigned || 0}</strong></article>
       <article><span>ESCALATED</span><strong>{summary.escalated || 0}</strong></article>
       <article><span>CSAT</span><strong>{summary.csatResponses ? `${summary.csatAverage}/5` : "—"}</strong></article>
+      <article className="phase85-kpi-accent"><span>CARE GRANTS · 30D</span><strong>{recoverySummary.grants || 0}</strong></article>
+      <article className="phase85-kpi-accent"><span>COUPON VALUE · 30D</span><strong>{money(recoverySummary.couponTotal)}</strong></article>
     </div>
-    <div className="admin-return-filters phase84-support-filters">{["ATTENTION","OPEN","UNASSIGNED","ESCALATED","WAITING_CUSTOMER","RESOLVED","ALL"].map((value) => <button key={value} className={filter === value ? "state-toggle active" : "state-toggle"} onClick={() => setFilter(value)}>{value.replaceAll("_", " ")}</button>)}</div>
+
+    <div className="admin-return-filters phase84-support-filters">{["ATTENTION","OPEN","UNASSIGNED","ESCALATED","RECOVERY","WAITING_CUSTOMER","RESOLVED","ALL"].map((value) => <button key={value} className={filter === value ? "state-toggle active" : "state-toggle"} onClick={() => setFilter(value)}>{value.replaceAll("_", " ")}</button>)}</div>
+
     <div className="phase84-admin-support-layout">
-      <div className="admin-panel phase84-ticket-list">{visible.length === 0 ? <div className="admin-empty">No support cases in this view.</div> : visible.map((item) => <button key={item.id} className={selectedId === item.id ? "active" : ""} onClick={() => setSelectedId(item.id)}><span><strong>{item.ticketNumber}</strong><small>{item.subject || item.category}</small><small>{item.orderNumber || "No order"} · {item.priority}</small>{item.supportHealth?.overdue && <small className="danger-text">SLA BREACH</small>}</span><b>{item.status.replaceAll("_", " ")}</b></button>)}</div>
+      <div className="admin-panel phase84-ticket-list">{visible.length === 0 ? <div className="admin-empty">No support cases in this view.</div> : visible.map((item) => <button key={item.id} className={selectedId === item.id ? "active" : ""} onClick={() => setSelectedId(item.id)}><span><strong>{item.ticketNumber}</strong><small>{item.subject || item.category}</small><small>{item.orderNumber || "No order"} · {item.priority}</small>{item.recoveryGrant && <small className="phase85-recovery-list-tag">CARE BENEFIT ISSUED</small>}{item.supportHealth?.overdue && <small className="danger-text">SLA BREACH</small>}</span><b>{item.status.replaceAll("_", " ")}</b></button>)}</div>
+
       {selected && <div className="phase84-ticket-workbench">
         <section className="admin-panel">
           <div className="admin-panel-head"><div><small>{selected.ticketNumber}</small><h2>{selected.subject}</h2><p>{selected.name} · {selected.email}{selected.orderNumber ? ` · ${selected.orderNumber}` : ""}</p></div><span className={`phase84-case-state ${selected.supportHealth?.state?.toLowerCase()}`}>{selected.supportHealth?.state?.replaceAll("_", " ")}</span></div>
@@ -72,21 +114,61 @@ export default function AdminSupportOperations() {
           <div className="phase84-support-actions">
             <button className="button button-secondary" disabled={busy} onClick={() => mutate(`/admin/support-cases/${selected.id}/assign-to-me`, { method: "POST" }, "Case assigned to you.")}>Assign to me</button>
             <select value={selected.priority} disabled={busy} onChange={(e) => mutate(`/admin/support-cases/${selected.id}/priority`, { method: "PATCH", body: JSON.stringify({ priority: e.target.value }) }, "Priority and SLA updated.")}>{priorities.map((v) => <option key={v}>{v}</option>)}</select>
-            {!["RESOLVED","CLOSED","SPAM"].includes(selected.status) && <button className="button button-secondary" disabled={busy || selected.escalationLevel === "MANAGEMENT"} onClick={() => mutate(`/admin/support-cases/${selected.id}/escalate`, { method: "POST" }, "Case escalated.")}>Escalate</button>}
+            {!['RESOLVED','CLOSED','SPAM'].includes(selected.status) && <button className="button button-secondary" disabled={busy || selected.escalationLevel === "MANAGEMENT"} onClick={() => mutate(`/admin/support-cases/${selected.id}/escalate`, { method: "POST" }, "Case escalated.")}>Escalate</button>}
           </div>
+        </section>
+
+        <section className="admin-panel phase85-customer360-panel">
+          <div className="admin-panel-head"><div><p className="eyebrow">PHASE 85 · CUSTOMER 360</p><h3>Relationship & friction context</h3><p>Use history to choose the right service action without guessing from one ticket.</p></div>{profile && <span className={`phase85-risk ${String(profile.careRisk).toLowerCase()}`}>{profile.careRisk}</span>}</div>
+          {!customer360?.linkedCustomer ? <p className="alert warning">This case is not linked to a signed-in customer, so recovery benefits are blocked.</p> : profile ? <>
+            <div className="phase85-profile-grid">
+              <span><small>RELATIONSHIP</small><strong>{profile.relationshipTier}</strong></span>
+              <span><small>FRICTION SCORE</small><strong>{profile.frictionScore}/100</strong></span>
+              <span><small>LIFETIME SPEND</small><strong>{money(profile.lifetimeSpend)}</strong></span>
+              <span><small>DELIVERED ORDERS</small><strong>{profile.deliveredOrders}</strong></span>
+              <span><small>ACTIVE RETURNS</small><strong>{profile.activeReturns}</strong></span>
+              <span><small>ACTIVE CASES</small><strong>{profile.activeCases}</strong></span>
+              <span><small>REWARD BALANCE</small><strong>{profile.rewardBalance}</strong></span>
+              <span><small>CSAT</small><strong>{profile.csatAverage ? `${profile.csatAverage}/5` : "—"}</strong></span>
+            </div>
+            {profile.careRisk === "HIGH" && <p className="alert warning">High-friction customer journey detected. Review the full order/return/support history before closing the case.</p>}
+          </> : <p className="muted">Loading customer history…</p>}
+        </section>
+
+        <section className="admin-panel phase85-recovery-panel">
+          <div className="admin-panel-head"><div><p className="eyebrow">CONTROLLED SERVICE RECOVERY</p><h3>Issue one auditable care benefit</h3><p>One benefit per support case, with 30-day per-customer caps and assignment enforcement.</p></div></div>
+          {selected.recoveryGrant ? <div className="phase85-issued-benefit">
+            <span>ISSUED</span>
+            <strong>{selected.recoveryGrant.kind === "COUPON" ? `${money(selected.recoveryGrant.couponAmount)} coupon` : `${selected.recoveryGrant.points} reward points`}</strong>
+            {selected.recoveryGrant.couponCodeSnapshot && <code>{selected.recoveryGrant.couponCodeSnapshot}</code>}
+            <p>{selected.recoveryGrant.reason}</p>
+          </div> : <>
+            {eligibility && <div className="phase85-recovery-policy">
+              <span><small>30D GRANTS</small><strong>{eligibility.recentGrantCount}/{eligibility.policy?.maxGrantsPerCustomer}</strong></span>
+              <span><small>COUPON REMAINING</small><strong>{money(eligibility.couponRemaining)}</strong></span>
+              <span><small>POINTS REMAINING</small><strong>{eligibility.pointsRemaining}</strong></span>
+            </div>}
+            {eligibility && !eligibility.eligible && <div className="alert warning"><strong>Recovery blocked.</strong>{(eligibility.blockers || []).map((item) => <div key={item}>{item}</div>)}</div>}
+            <div className="phase85-recovery-form">
+              <label>Benefit type<select value={recovery.kind} onChange={(e) => setRecovery({ ...recovery, kind: e.target.value })}><option value="COUPON">Fixed-value care coupon</option><option value="REWARD_POINTS">Reward points</option></select></label>
+              {recovery.kind === "COUPON" ? <label>Coupon value<input type="number" min="50" max="500" step="50" value={recovery.amount} onChange={(e) => setRecovery({ ...recovery, amount: e.target.value })} /></label> : <label>Reward points<input type="number" min="50" max="500" step="50" value={recovery.points} onChange={(e) => setRecovery({ ...recovery, points: e.target.value })} /></label>}
+              <label className="wide">Reason / service recovery evidence<textarea value={recovery.reason} onChange={(e) => setRecovery({ ...recovery, reason: e.target.value })} placeholder="Why is a goodwill benefit appropriate? Record the service failure and recovery rationale." /></label>
+              <button className="button wide" disabled={busy || !eligibility?.eligible || recovery.reason.trim().length < 10} onClick={grantRecovery}>Issue care benefit</button>
+            </div>
+          </>}
         </section>
 
         <section className="admin-panel phase84-admin-thread">
           <div className="admin-panel-head"><div><p className="eyebrow">CASE CONVERSATION</p><h3>Customer + internal operations trail</h3></div></div>
           <div className="phase84-conversation admin">{(selected.messages || []).map((row) => <div key={row.id} className={`phase84-message ${row.sender.toLowerCase()} ${row.isInternal ? "internal" : ""}`}><small>{row.isInternal ? "INTERNAL NOTE" : row.sender} · {new Date(row.createdAt).toLocaleString()}</small><p>{row.message}</p></div>)}</div>
-          {!["CLOSED","SPAM"].includes(selected.status) && <div className="phase84-admin-reply">
+          {!['CLOSED','SPAM'].includes(selected.status) && <div className="phase84-admin-reply">
             <label>Reply / note<textarea value={reply.message} onChange={(e) => setReply({ ...reply, message: e.target.value })} placeholder="Write the next action, customer reply or internal handoff note…" /></label>
             <div className="phase84-reply-options"><label><input type="checkbox" checked={reply.internal} onChange={(e) => setReply({ ...reply, internal: e.target.checked })} /> Internal note only</label>{!reply.internal && <label><input type="checkbox" checked={reply.waitForCustomer} onChange={(e) => setReply({ ...reply, waitForCustomer: e.target.checked })} /> Waiting for customer after reply</label>}</div>
             <button className="button" disabled={busy || !reply.message.trim()} onClick={() => mutate(`/admin/support-cases/${selected.id}/reply`, { method: "POST", body: JSON.stringify(reply) }, reply.internal ? "Internal note added." : "Reply sent to customer.")}>Save {reply.internal ? "internal note" : "reply"}</button>
           </div>}
         </section>
 
-        {!["RESOLVED","CLOSED","SPAM"].includes(selected.status) ? <section className="admin-panel phase84-resolution-panel">
+        {!['RESOLVED','CLOSED','SPAM'].includes(selected.status) ? <section className="admin-panel phase84-resolution-panel">
           <p className="eyebrow">RESOLUTION EVIDENCE</p><h3>Close with a reason, not just a status</h3>
           <label>Resolution code<select value={resolution.resolutionCode} onChange={(e) => setResolution({ ...resolution, resolutionCode: e.target.value })}>{resolutionCodes.map((v) => <option key={v} value={v}>{v.replaceAll("_", " ")}</option>)}</select></label>
           <label>Internal resolution summary<textarea value={resolution.resolutionSummary} onChange={(e) => setResolution({ ...resolution, resolutionSummary: e.target.value })} placeholder="What was verified, changed, refunded, replaced or explained?" /></label>

@@ -49,7 +49,7 @@
     "verify:phase45": "node scripts/phase45-finance-gst-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase46": "node scripts/phase46-privacy-consent-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
     "verify:phase47": "node scripts/phase47-launch-audit.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build",
-    "prelaunch:check": "npm run db:doctor && npm run db:status && npm run verify:phase84 && npm run security:audit:prod",
+    "prelaunch:check": "node scripts/phase85-prelaunch-compat.mjs verify:phase51 verify:phase52 verify:phase53 verify:phase54 verify:phase55 verify:phase56 verify:phase57 verify:phase58 verify:phase59 verify:phase60 verify:phase61 verify:phase62 verify:phase63 verify:phase64 verify:phase65 verify:phase66 verify:phase67 verify:phase68 verify:phase69 verify:phase70 verify:phase71 verify:phase72 verify:phase73 verify:phase74 verify:phase75 verify:phase76 verify:phase77 verify:phase78 verify:phase79 verify:phase80 verify:phase81 verify:phase82 verify:phase83 verify:phase84 && npm run db:doctor && npm run db:status && npm run verify:phase85 && npm run security:audit:prod",
     "smoke:local": "npm run release:smoke",
     "predev": "npm run client:doctor && node scripts/phase48-dev-prepare.mjs",
     "db:status": "node scripts/db-schema-status.mjs",
@@ -133,10 +133,14 @@
     "returns-resolution:doctor": "node scripts/phase83-return-resolution-audit.mjs",
     "verify:phase83": "npm run returns-resolution:doctor && npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget",
     "support-operations:doctor": "node scripts/phase84-support-operations-audit.mjs",
-    "verify:phase84": "npm run support-operations:doctor && npm run returns-resolution:doctor && npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget"
+    "verify:phase84": "npm run support-operations:doctor && npm run returns-resolution:doctor && npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget",
+    "release-chain:doctor": "node scripts/phase85-release-chain-audit.mjs",
+    "dependency-security:doctor": "node scripts/phase85-dependency-security-audit.mjs",
+    "service-recovery:doctor": "node scripts/phase85-service-recovery-audit.mjs",
+    "verify:phase85": "npm run release-chain:doctor && npm run dependency-security:doctor && npm run service-recovery:doctor && npm run support-operations:doctor && npm run returns-resolution:doctor && npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1",
+    "concurrently": "10.0.5",
     "prisma": "7.10.0"
   },
   "overrides": {
@@ -150,7 +154,9 @@
     },
     "@prisma/config@7.10.0": {
       "deepmerge-ts": "8.0.2"
-    }
+    },
+    "shell-quote": "1.12.0",
+    "source-map-js": "1.2.2"
   },
   "allowScripts": {
     "esbuild": true,

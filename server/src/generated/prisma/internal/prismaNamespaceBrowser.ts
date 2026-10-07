@@ -102,6 +102,7 @@ export const ModelName = {
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
   SupportMessage: 'SupportMessage',
+  SupportRecoveryGrant: 'SupportRecoveryGrant',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -1159,6 +1160,25 @@ export const SupportMessageScalarFieldEnum = {
 } as const
 
 export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
+
+
+export const SupportRecoveryGrantScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  userId: 'userId',
+  grantedByUserId: 'grantedByUserId',
+  kind: 'kind',
+  couponAmount: 'couponAmount',
+  points: 'points',
+  couponId: 'couponId',
+  couponCodeSnapshot: 'couponCodeSnapshot',
+  rewardTransactionId: 'rewardTransactionId',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SupportRecoveryGrantScalarFieldEnum = (typeof SupportRecoveryGrantScalarFieldEnum)[keyof typeof SupportRecoveryGrantScalarFieldEnum]
 
 
 export const EmailDeliveryLogScalarFieldEnum = {

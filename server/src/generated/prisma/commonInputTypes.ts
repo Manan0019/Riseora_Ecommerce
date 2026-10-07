@@ -990,6 +990,23 @@ export type EnumSupportMessageSenderWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumSupportMessageSenderFilter<$PrismaModel>
 }
 
+export type EnumSupportRecoveryKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportRecoveryKind | Prisma.EnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel> | $Enums.SupportRecoveryKind
+}
+
+export type EnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportRecoveryKind | Prisma.EnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel> | $Enums.SupportRecoveryKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
+}
+
 export type EnumEmailDeliveryStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.EmailDeliveryStatus | Prisma.EnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
   in?: $Enums.EmailDeliveryStatus[] | Prisma.ListEnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
@@ -2106,6 +2123,23 @@ export type NestedEnumSupportMessageSenderWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSupportMessageSenderFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSupportMessageSenderFilter<$PrismaModel>
+}
+
+export type NestedEnumSupportRecoveryKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportRecoveryKind | Prisma.EnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel> | $Enums.SupportRecoveryKind
+}
+
+export type NestedEnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportRecoveryKind | Prisma.EnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportRecoveryKind[] | Prisma.ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel> | $Enums.SupportRecoveryKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
 }
 
 export type NestedEnumEmailDeliveryStatusFilter<$PrismaModel = never> = {

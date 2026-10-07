@@ -273,6 +273,11 @@ export type ContactMessage = Prisma.ContactMessageModel
  */
 export type SupportMessage = Prisma.SupportMessageModel
 /**
+ * Model SupportRecoveryGrant
+ * 
+ */
+export type SupportRecoveryGrant = Prisma.SupportRecoveryGrantModel
+/**
  * Model EmailDeliveryLog
  * 
  */

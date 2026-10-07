@@ -448,6 +448,7 @@ export const ModelName = {
   CartRecoverySession: 'CartRecoverySession',
   ContactMessage: 'ContactMessage',
   SupportMessage: 'SupportMessage',
+  SupportRecoveryGrant: 'SupportRecoveryGrant',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -474,7 +475,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "supportRecoveryGrant" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4252,6 +4253,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SupportRecoveryGrant: {
+      payload: Prisma.$SupportRecoveryGrantPayload<ExtArgs>
+      fields: Prisma.SupportRecoveryGrantFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SupportRecoveryGrantFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SupportRecoveryGrantFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        findFirst: {
+          args: Prisma.SupportRecoveryGrantFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SupportRecoveryGrantFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        findMany: {
+          args: Prisma.SupportRecoveryGrantFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>[]
+        }
+        create: {
+          args: Prisma.SupportRecoveryGrantCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        createMany: {
+          args: Prisma.SupportRecoveryGrantCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SupportRecoveryGrantCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>[]
+        }
+        delete: {
+          args: Prisma.SupportRecoveryGrantDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        update: {
+          args: Prisma.SupportRecoveryGrantUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        deleteMany: {
+          args: Prisma.SupportRecoveryGrantDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SupportRecoveryGrantUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SupportRecoveryGrantUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>[]
+        }
+        upsert: {
+          args: Prisma.SupportRecoveryGrantUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupportRecoveryGrantPayload>
+        }
+        aggregate: {
+          args: Prisma.SupportRecoveryGrantAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSupportRecoveryGrant>
+        }
+        groupBy: {
+          args: Prisma.SupportRecoveryGrantGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportRecoveryGrantGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SupportRecoveryGrantCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SupportRecoveryGrantCountAggregateOutputType> | number
+        }
+      }
+    }
     EmailDeliveryLog: {
       payload: Prisma.$EmailDeliveryLogPayload<ExtArgs>
       fields: Prisma.EmailDeliveryLogFieldRefs
@@ -6135,6 +6210,25 @@ export const SupportMessageScalarFieldEnum = {
 export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
 
 
+export const SupportRecoveryGrantScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  userId: 'userId',
+  grantedByUserId: 'grantedByUserId',
+  kind: 'kind',
+  couponAmount: 'couponAmount',
+  points: 'points',
+  couponId: 'couponId',
+  couponCodeSnapshot: 'couponCodeSnapshot',
+  rewardTransactionId: 'rewardTransactionId',
+  reason: 'reason',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type SupportRecoveryGrantScalarFieldEnum = (typeof SupportRecoveryGrantScalarFieldEnum)[keyof typeof SupportRecoveryGrantScalarFieldEnum]
+
+
 export const EmailDeliveryLogScalarFieldEnum = {
   id: 'id',
   toEmail: 'toEmail',
@@ -6910,6 +7004,20 @@ export type ListEnumSupportMessageSenderFieldRefInput<$PrismaModel> = FieldRefIn
 
 
 /**
+ * Reference to a field of type 'SupportRecoveryKind'
+ */
+export type EnumSupportRecoveryKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportRecoveryKind'>
+    
+
+
+/**
+ * Reference to a field of type 'SupportRecoveryKind[]'
+ */
+export type ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportRecoveryKind[]'>
+    
+
+
+/**
  * Reference to a field of type 'EmailDeliveryStatus'
  */
 export type EnumEmailDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailDeliveryStatus'>
@@ -7278,6 +7386,7 @@ export type GlobalOmitConfig = {
   cartRecoverySession?: Prisma.CartRecoverySessionOmit
   contactMessage?: Prisma.ContactMessageOmit
   supportMessage?: Prisma.SupportMessageOmit
+  supportRecoveryGrant?: Prisma.SupportRecoveryGrantOmit
   emailDeliveryLog?: Prisma.EmailDeliveryLogOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
   marketingPreference?: Prisma.MarketingPreferenceOmit

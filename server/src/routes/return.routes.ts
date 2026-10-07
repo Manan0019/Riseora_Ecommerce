@@ -101,8 +101,17 @@ function makeSupportTicketNumber() {
 }
 
 function customerSupportView(ticket: any) {
+  const recoveryGrant = ticket.recoveryGrant ? {
+    kind: ticket.recoveryGrant.kind,
+    couponAmount: ticket.recoveryGrant.couponAmount,
+    points: ticket.recoveryGrant.points,
+    couponCodeSnapshot: ticket.recoveryGrant.couponCodeSnapshot,
+    expiresAt: ticket.recoveryGrant.expiresAt,
+    createdAt: ticket.recoveryGrant.createdAt,
+  } : null;
   return {
     ...ticket,
+    recoveryGrant,
     messages: (ticket.messages || []).filter((message: any) => !message.isInternal),
     supportHealth: phase84SupportHealth(ticket),
   };
@@ -111,7 +120,7 @@ function customerSupportView(ticket: any) {
 router.get("/support-cases", asyncHandler(async (req, res) => {
   const rows = await prisma.contactMessage.findMany({
     where: { userId: req.user!.id },
-    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
+    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, recoveryGrant: true, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
     orderBy: { lastActivityAt: "desc" },
   });
   res.json({ success: true, data: rows.map(customerSupportView) });
@@ -120,7 +129,7 @@ router.get("/support-cases", asyncHandler(async (req, res) => {
 router.get("/support-cases/:id", asyncHandler(async (req, res) => {
   const item = await prisma.contactMessage.findFirst({
     where: { id: String(req.params.id), userId: req.user!.id },
-    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
+    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, recoveryGrant: true, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
   });
   if (!item) return res.status(404).json({ success: false, message: "Support case not found" });
   res.json({ success: true, data: customerSupportView(item) });

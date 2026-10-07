@@ -3475,3 +3475,20 @@ textarea { min-height: 105px; resize: vertical; }
 .phase84-resolution-panel{border-left:4px solid #b79b72}
 @media(max-width:1100px){.phase84-admin-support-kpis{grid-template-columns:repeat(3,1fr)}.phase84-admin-support-layout{grid-template-columns:1fr}.phase84-ticket-list{max-height:320px}.phase84-support-admin-meta{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:760px){.phase84-support-head,.phase84-thread-head{flex-direction:column}.phase84-support-grid{grid-template-columns:1fr}.phase84-support-kpis{width:100%}.phase84-support-kpis span{flex:1}.phase84-admin-support-kpis{grid-template-columns:repeat(2,1fr)}.phase84-support-admin-meta{grid-template-columns:1fr}.phase84-reply-box{grid-template-columns:1fr}.phase84-message{max-width:96%}}
+
+/* Phase 85 · Customer 360, service recovery and release reliability */
+.phase85-support-kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+.phase85-support-kpis .phase85-kpi-accent{background:linear-gradient(145deg,#f6efe4,#fff);border-color:#d9c3a1}
+.phase85-recovery-list-tag{color:#7b5521;font-weight:800;letter-spacing:.04em}
+.phase85-customer360-panel,.phase85-recovery-panel{border:1px solid #dfd1bd;background:linear-gradient(145deg,#fff,#fcf8f2)}
+.phase85-risk{display:inline-flex;align-items:center;justify-content:center;padding:7px 12px;border-radius:999px;font-size:11px;font-weight:900;letter-spacing:.08em;background:#edf5ed;color:#2f6a39}
+.phase85-risk.watch{background:#fff3df;color:#8c5b0b}.phase85-risk.high{background:#ffe8e5;color:#9a3027}
+.phase85-profile-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:16px}
+.phase85-profile-grid span,.phase85-recovery-policy span{padding:12px;border:1px solid #eadfd2;border-radius:14px;background:#fff;display:flex;flex-direction:column;gap:4px}
+.phase85-profile-grid small,.phase85-recovery-policy small{font-size:9px;letter-spacing:.08em;color:#756d64}.phase85-profile-grid strong,.phase85-recovery-policy strong{font-size:17px}
+.phase85-recovery-policy{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:12px 0}
+.phase85-recovery-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}.phase85-recovery-form .wide{grid-column:1/-1}.phase85-recovery-form label{margin:0}
+.phase85-issued-benefit{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;padding:16px;border-radius:16px;background:#eef6ed;border:1px solid #c9ddc7}.phase85-issued-benefit span{font-size:10px;font-weight:900;letter-spacing:.08em}.phase85-issued-benefit strong{font-size:20px}.phase85-issued-benefit code{padding:7px 10px;border-radius:9px;background:#fff;border:1px dashed #8eaf8b}.phase85-issued-benefit p{grid-column:1/-1;margin:0;color:#625c55}
+.phase85-customer-benefit{margin:16px 0;padding:16px;border-radius:18px;background:linear-gradient(135deg,#eef6ed,#fff9ee);border:1px solid #cddfc9}.phase85-customer-benefit>div{display:flex;flex-direction:column;gap:4px}.phase85-customer-benefit small{font-size:10px;letter-spacing:.08em;font-weight:900}.phase85-customer-benefit strong{font-size:20px}.phase85-customer-benefit code{display:inline-block;margin-top:10px;padding:8px 11px;border-radius:9px;background:white;border:1px dashed #90aa8d;font-weight:800}.phase85-customer-benefit p{margin:9px 0 0}
+@media(max-width:1100px){.phase85-support-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.phase85-profile-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.phase85-profile-grid,.phase85-recovery-policy,.phase85-recovery-form{grid-template-columns:1fr}.phase85-recovery-form .wide{grid-column:auto}.phase85-issued-benefit{grid-template-columns:1fr}.phase85-issued-benefit p{grid-column:auto}}

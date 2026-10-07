@@ -1,3 +1,4 @@
+import { randomBytes } from "node:crypto";
 import { Router } from "express";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
@@ -21,6 +22,7 @@ import { fulfilmentShipmentTrackingHealth } from "../services/shipment-tracking-
 import { fulfilmentRtoRecoveryHealth } from "../services/rto-recovery.service";
 import { adminReturnResolutionSnapshot, returnResolutionHealth } from "../services/return-resolution.service";
 import { nextEscalationLevel, phase84SupportHealth, phase84SupportSlaDueAt, phase84SupportSummary } from "../services/support-operations.service";
+import { PHASE85_RECOVERY_POLICY, phase85Customer360Profile, phase85RecoveryEligibility } from "../services/support-recovery.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -718,10 +720,19 @@ router.get("/support-cases/phase84-summary", asyncHandler(async (_req, res) => {
   res.json({ success: true, data: phase84SupportSummary(rows) });
 }));
 
+router.get("/support-cases/phase85-recovery-summary", asyncHandler(async (_req, res) => {
+  const since = new Date(Date.now() - PHASE85_RECOVERY_POLICY.lookbackDays * 86400000);
+  const rows = await prisma.supportRecoveryGrant.findMany({ where: { createdAt: { gte: since } }, orderBy: { createdAt: "desc" } });
+  const couponTotal = Math.round(rows.filter((row: any) => row.kind === "COUPON").reduce((sum: number, row: any) => sum + Number(row.couponAmount || 0), 0) * 100) / 100;
+  const pointsTotal = rows.filter((row: any) => row.kind === "REWARD_POINTS").reduce((sum: number, row: any) => sum + Number(row.points || 0), 0);
+  res.json({ success: true, data: { lookbackDays: PHASE85_RECOVERY_POLICY.lookbackDays, grants: rows.length, couponTotal, pointsTotal, customers: new Set(rows.map((row: any) => row.userId)).size } });
+}));
+
 router.get("/support-cases", asyncHandler(async (_req, res) => {
   const rows = await prisma.contactMessage.findMany({
     include: {
       returnRequest: { select: { id: true, returnNumber: true, status: true } },
+      recoveryGrant: true,
       messages: { orderBy: { createdAt: "asc" }, take: 2 },
     },
     orderBy: [{ priority: "desc" }, { lastActivityAt: "desc" }],
@@ -734,6 +745,7 @@ router.get("/support-cases/:id", asyncHandler(async (req, res) => {
     where: { id: String(req.params.id) },
     include: {
       returnRequest: { select: { id: true, returnNumber: true, status: true, approvedResolution: true } },
+      recoveryGrant: true,
       messages: { orderBy: { createdAt: "asc" } },
     },
   });
@@ -743,6 +755,106 @@ router.get("/support-cases/:id", asyncHandler(async (req, res) => {
     assignedAdmin = await prisma.user.findUnique({ where: { id: item.assignedAdminUserId }, select: { id: true, firstName: true, lastName: true, email: true } });
   }
   res.json({ success: true, data: { ...item, assignedAdmin, supportHealth: phase84SupportHealth(item) } });
+}));
+
+router.get("/support-cases/:id/phase85-customer360", asyncHandler(async (req, res) => {
+  const current = await prisma.contactMessage.findUnique({
+    where: { id: String(req.params.id) },
+    include: { recoveryGrant: true },
+  });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (!current.userId) return res.json({ success: true, data: { linkedCustomer: false, eligibility: phase85RecoveryEligibility(current, []), profile: null } });
+
+  const since = new Date(Date.now() - PHASE85_RECOVERY_POLICY.lookbackDays * 86400000);
+  const [user, orders, returns, tickets, rewardAccount, recentGrants] = await Promise.all([
+    prisma.user.findUnique({ where: { id: current.userId }, select: { id: true, firstName: true, lastName: true, email: true, phone: true, createdAt: true } }),
+    prisma.order.findMany({ where: { userId: current.userId }, select: { status: true, totalAmount: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
+    prisma.returnRequest.findMany({ where: { userId: current.userId }, select: { status: true, requestedAt: true }, orderBy: { requestedAt: "desc" } }),
+    prisma.contactMessage.findMany({ where: { userId: current.userId }, select: { status: true, satisfactionScore: true, createdAt: true }, orderBy: { createdAt: "desc" } }),
+    prisma.rewardAccount.findUnique({ where: { userId: current.userId }, select: { balance: true } }),
+    prisma.supportRecoveryGrant.findMany({ where: { userId: current.userId, createdAt: { gte: since } }, orderBy: { createdAt: "desc" } }),
+  ]);
+  const profile = phase85Customer360Profile({ orders, returns, tickets, rewardBalance: rewardAccount?.balance || 0, recoveryGrants: recentGrants });
+  res.json({ success: true, data: { linkedCustomer: true, customer: user, profile, recentGrants, eligibility: phase85RecoveryEligibility(current, recentGrants) } });
+}));
+
+const supportRecoverySchema = z.discriminatedUnion("kind", [
+  z.object({ kind: z.literal("COUPON"), amount: z.number().min(50).max(PHASE85_RECOVERY_POLICY.maxCouponPerGrant), reason: z.string().trim().min(10).max(1000) }),
+  z.object({ kind: z.literal("REWARD_POINTS"), points: z.number().int().min(50).max(PHASE85_RECOVERY_POLICY.maxPointsPerGrant), reason: z.string().trim().min(10).max(1000) }),
+]);
+
+router.post("/support-cases/:id/phase85-recovery", asyncHandler(async (req, res) => {
+  const parsed = supportRecoverySchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid service-recovery benefit", errors: parsed.error.flatten() });
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) }, include: { recoveryGrant: true } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (!current.userId) return res.status(409).json({ success: false, message: "SERVICE_RECOVERY_BLOCKED: case is not linked to a signed-in customer" });
+  if (current.assignedAdminUserId !== req.user!.id) return res.status(409).json({ success: false, message: "SERVICE_RECOVERY_BLOCKED: assign this case to yourself before issuing a benefit" });
+
+  const since = new Date(Date.now() - PHASE85_RECOVERY_POLICY.lookbackDays * 86400000);
+  const recentGrants = await prisma.supportRecoveryGrant.findMany({ where: { userId: current.userId, createdAt: { gte: since } }, orderBy: { createdAt: "desc" } });
+  const eligibility = phase85RecoveryEligibility(current, recentGrants);
+  if (!eligibility.eligible) return res.status(409).json({ success: false, message: `SERVICE_RECOVERY_BLOCKED: ${eligibility.blockers.join(" ")}`, data: eligibility });
+
+  if (parsed.data.kind === "COUPON") {
+    if (parsed.data.amount > eligibility.couponRemaining) return res.status(409).json({ success: false, message: `SERVICE_RECOVERY_LIMIT: only ₹${eligibility.couponRemaining.toFixed(2)} coupon value remains in the 30-day allowance` });
+  } else if (parsed.data.points > eligibility.pointsRemaining) {
+    return res.status(409).json({ success: false, message: `SERVICE_RECOVERY_LIMIT: only ${eligibility.pointsRemaining} reward points remain in the 30-day allowance` });
+  }
+
+  const now = new Date();
+  const expiresAt = new Date(now.getTime() + PHASE85_RECOVERY_POLICY.couponValidityDays * 86400000);
+  const result = await prisma.$transaction(async (tx) => {
+    if (parsed.data.kind === "COUPON") {
+      const code = `CARE-${randomBytes(4).toString("hex").toUpperCase()}`;
+      const coupon = await tx.coupon.create({
+        data: {
+          code,
+          description: `Phase 85 service recovery for ${current.ticketNumber}`,
+          discountType: "FIXED",
+          discountValue: parsed.data.amount,
+          scope: "ORDER",
+          application: "ORDER_TOTAL",
+          maxDiscountAmount: parsed.data.amount,
+          usageLimit: 1,
+          perCustomerUsageLimit: 1,
+          rewardOwnerUserId: current.userId!,
+          startsAt: now,
+          endsAt: expiresAt,
+          isActive: true,
+        },
+      });
+      const grant = await tx.supportRecoveryGrant.create({ data: { ticketId: current.id, userId: current.userId!, grantedByUserId: req.user!.id, kind: "COUPON", couponAmount: parsed.data.amount, couponId: coupon.id, couponCodeSnapshot: coupon.code, reason: parsed.data.reason, expiresAt } });
+      await tx.supportMessage.create({ data: { ticketId: current.id, sender: "SYSTEM", isInternal: false, message: `Riseora care benefit issued: ₹${Number(parsed.data.amount).toFixed(2)} coupon ${coupon.code}, valid for ${PHASE85_RECOVERY_POLICY.couponValidityDays} days.` } });
+      await tx.contactMessage.update({ where: { id: current.id }, data: { lastActivityAt: now } });
+      return grant;
+    }
+
+    const account = await tx.rewardAccount.upsert({
+      where: { userId: current.userId! },
+      create: { userId: current.userId!, balance: parsed.data.points, lifetimeEarned: parsed.data.points },
+      update: { balance: { increment: parsed.data.points }, lifetimeEarned: { increment: parsed.data.points } },
+    });
+    const reward = await tx.rewardTransaction.create({
+      data: { userId: current.userId!, type: "ADMIN_ADJUST", points: parsed.data.points, balanceAfter: account.balance, description: `Phase 85 service recovery · ${current.ticketNumber}`, sourceKey: `support-recovery/${current.id}`, metadata: { ticketNumber: current.ticketNumber, reason: parsed.data.reason } },
+    });
+    const grant = await tx.supportRecoveryGrant.create({ data: { ticketId: current.id, userId: current.userId!, grantedByUserId: req.user!.id, kind: "REWARD_POINTS", points: parsed.data.points, rewardTransactionId: reward.id, reason: parsed.data.reason } });
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "SYSTEM", isInternal: false, message: `Riseora care benefit issued: ${parsed.data.points} reward points were added to your account.` } });
+    await tx.contactMessage.update({ where: { id: current.id }, data: { lastActivityAt: now } });
+    return grant;
+  });
+
+  await createUserNotification({
+    userId: current.userId,
+    title: `Riseora care benefit · ${current.ticketNumber}`,
+    message: parsed.data.kind === "COUPON" ? `A ₹${Number(parsed.data.amount).toFixed(2)} care coupon has been added to your support case.` : `${parsed.data.points} reward points have been added to your account.`,
+    type: "SUPPORT",
+    ctaLabel: "View support case",
+    ctaUrl: "/returns",
+    metadata: { supportTicketId: current.id, ticketNumber: current.ticketNumber, recoveryKind: parsed.data.kind },
+    dedupeKey: `support-recovery/${current.id}`,
+  });
+  res.json({ success: true, data: result });
 }));
 
 router.post("/support-cases/:id/assign-to-me", asyncHandler(async (req, res) => {

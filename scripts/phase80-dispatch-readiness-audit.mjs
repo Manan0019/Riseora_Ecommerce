@@ -101,8 +101,8 @@ read("scripts/phase49-release-prepare.mjs").includes("verify:phase80") ? pass("p
 const migrationDir = path.join(root, "server/prisma/migrations");
 if (fs.existsSync(migrationDir)) {
   const migrations = fs.readdirSync(migrationDir).filter((name) => /^2026/.test(name)).sort();
-  migrations.at(-1) === "20261006121500_phase69_account_saved_bag_v2"
-    ? pass("Phase 69 remains migration head; Phase 80 adds no migration") : fail(`unexpected migration head ${migrations.at(-1)}`);
+  !migrations.some((name) => /phase80/i.test(name))
+    ? pass("Phase 80 itself adds no migration; later migration heads are allowed") : fail(`unexpected Phase 80 migration present · latest ${migrations.at(-1)}`);
 } else {
   pass("migration tree not included in overlay package; no Phase 80 migration file is present");
 }

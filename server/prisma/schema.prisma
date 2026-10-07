@@ -224,6 +224,11 @@ enum SupportResolutionCode {
   OTHER
 }
 
+enum SupportRecoveryKind {
+  COUPON
+  REWARD_POINTS
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -360,6 +365,8 @@ model User {
   rewardCoupons Coupon[] @relation("RewardCouponOwner")
   adminAuditLogs AdminAuditLog[] @relation("AdminAuditActor")
   supportTickets ContactMessage[]
+  supportRecoveryGrants SupportRecoveryGrant[] @relation("SupportRecoveryCustomer")
+  grantedSupportRecoveries SupportRecoveryGrant[] @relation("SupportRecoveryAdmin")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -1317,6 +1324,7 @@ model Coupon {
   products     CouponProduct[]
   categories   CouponCategory[]
   redemptions  CouponRedemption[]
+  supportRecoveryGrant SupportRecoveryGrant?
 
   startsAt DateTime?
   endsAt   DateTime?
@@ -1645,6 +1653,7 @@ model ContactMessage {
   satisfactionSubmittedAt DateTime?
 
   messages SupportMessage[]
+  recoveryGrant SupportRecoveryGrant?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1672,6 +1681,36 @@ model SupportMessage {
 
   @@index([ticketId, createdAt])
   @@index([authorUserId, createdAt])
+}
+
+model SupportRecoveryGrant {
+  id String @id @default(uuid()) @db.Uuid
+
+  ticketId String @unique @db.Uuid
+  ticket ContactMessage @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  userId String @db.Uuid
+  user User @relation("SupportRecoveryCustomer", fields: [userId], references: [id], onDelete: Cascade)
+
+  grantedByUserId String? @db.Uuid
+  grantedBy User? @relation("SupportRecoveryAdmin", fields: [grantedByUserId], references: [id], onDelete: SetNull)
+
+  kind SupportRecoveryKind
+  couponAmount Decimal? @db.Decimal(12, 2)
+  points Int?
+
+  couponId String? @unique @db.Uuid
+  coupon Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCodeSnapshot String?
+  rewardTransactionId String? @unique @db.Uuid
+
+  reason String
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([kind, createdAt])
+  @@index([grantedByUserId, createdAt])
 }
 
 model EmailDeliveryLog {

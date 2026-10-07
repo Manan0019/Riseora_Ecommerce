@@ -531,3 +531,7 @@ Phase 83 is a major schema-backed returns upgrade. Customers choose refund or re
 ## Phase 84 — Customer Care Case Management & Service Operations V2
 
 Phase 84 upgrades the existing ContactMessage/SupportMessage foundation into SLA-driven post-purchase customer care. Customers can open order/return-linked cases, exchange messages, reopen recent resolutions and submit CSAT. Admin Returns now includes a Customer Care Command Center with ownership, priority/SLA, internal notes, escalation, auditable resolution and CSAT. Run `npm run support-operations:doctor` and `npm run verify:phase84`.
+
+## Phase 85 — Production Reliability & Customer Recovery V2
+
+Phase 85 repairs the forward-verification regression exposed after Phase 84, hardens the dependency policy against the reported `shell-quote` and `source-map-js` advisories, and adds a major Customer 360 + controlled service-recovery workflow to Customer Care. Admins can see relationship/friction context and issue one auditable customer-owned coupon or reward-points benefit under strict 30-day caps. Run `npm run release-chain:doctor`, `npm run dependency-security:doctor`, `npm run service-recovery:doctor`, and `npm run verify:phase85`.

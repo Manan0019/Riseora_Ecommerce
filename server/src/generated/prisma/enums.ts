@@ -306,6 +306,14 @@ export const SupportResolutionCode = {
 export type SupportResolutionCode = (typeof SupportResolutionCode)[keyof typeof SupportResolutionCode]
 
 
+export const SupportRecoveryKind = {
+  COUPON: 'COUPON',
+  REWARD_POINTS: 'REWARD_POINTS'
+} as const
+
+export type SupportRecoveryKind = (typeof SupportRecoveryKind)[keyof typeof SupportRecoveryKind]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'
