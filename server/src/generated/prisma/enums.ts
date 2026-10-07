@@ -453,6 +453,50 @@ export const PurchaseVarianceStatus = {
 export type PurchaseVarianceStatus = (typeof PurchaseVarianceStatus)[keyof typeof PurchaseVarianceStatus]
 
 
+export const InventoryRole = {
+  FINISHED_GOOD: 'FINISHED_GOOD',
+  RAW_MATERIAL: 'RAW_MATERIAL',
+  PACKAGING: 'PACKAGING',
+  CONSUMABLE: 'CONSUMABLE'
+} as const
+
+export type InventoryRole = (typeof InventoryRole)[keyof typeof InventoryRole]
+
+
+export const ManufacturingBomStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ManufacturingBomStatus = (typeof ManufacturingBomStatus)[keyof typeof ManufacturingBomStatus]
+
+
+export const ProductionOrderStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  MATERIAL_ISSUED: 'MATERIAL_ISSUED',
+  IN_PRODUCTION: 'IN_PRODUCTION',
+  QA_PENDING: 'QA_PENDING',
+  RELEASED: 'RELEASED',
+  QA_REJECTED: 'QA_REJECTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ProductionOrderStatus = (typeof ProductionOrderStatus)[keyof typeof ProductionOrderStatus]
+
+
+export const ProductionVarianceStatus = {
+  ON_TARGET: 'ON_TARGET',
+  YIELD_VARIANCE: 'YIELD_VARIANCE',
+  MATERIAL_VARIANCE: 'MATERIAL_VARIANCE',
+  COST_VARIANCE: 'COST_VARIANCE',
+  MULTIPLE_VARIANCE: 'MULTIPLE_VARIANCE'
+} as const
+
+export type ProductionVarianceStatus = (typeof ProductionVarianceStatus)[keyof typeof ProductionVarianceStatus]
+
+
 export const WarehouseStatus = {
   ACTIVE: 'ACTIVE',
   HOLD: 'HOLD',
@@ -495,7 +539,14 @@ export const InventoryBatchMovementType = {
   WRITE_OFF: 'WRITE_OFF',
   CYCLE_COUNT: 'CYCLE_COUNT',
   RECALL: 'RECALL',
-  EXPIRY_HOLD: 'EXPIRY_HOLD'
+  EXPIRY_HOLD: 'EXPIRY_HOLD',
+  QA_HOLD: 'QA_HOLD',
+  QA_RELEASE: 'QA_RELEASE',
+  QA_REJECT: 'QA_REJECT',
+  PRODUCTION_ISSUE: 'PRODUCTION_ISSUE',
+  PRODUCTION_RETURN: 'PRODUCTION_RETURN',
+  PRODUCTION_OUTPUT: 'PRODUCTION_OUTPUT',
+  PRODUCTION_WASTE: 'PRODUCTION_WASTE'
 } as const
 
 export type InventoryBatchMovementType = (typeof InventoryBatchMovementType)[keyof typeof InventoryBatchMovementType]
@@ -520,6 +571,82 @@ export const InventoryRecallStatus = {
 } as const
 
 export type InventoryRecallStatus = (typeof InventoryRecallStatus)[keyof typeof InventoryRecallStatus]
+
+
+export const QualityBatchStatus = {
+  PENDING: 'PENDING',
+  SAMPLING: 'SAMPLING',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  RELEASED: 'RELEASED',
+  CONDITIONAL_RELEASE: 'CONDITIONAL_RELEASE',
+  FAILED: 'FAILED'
+} as const
+
+export type QualityBatchStatus = (typeof QualityBatchStatus)[keyof typeof QualityBatchStatus]
+
+
+export const QualityInspectionStatus = {
+  DRAFT: 'DRAFT',
+  SAMPLING: 'SAMPLING',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type QualityInspectionStatus = (typeof QualityInspectionStatus)[keyof typeof QualityInspectionStatus]
+
+
+export const QualityDisposition = {
+  RELEASE: 'RELEASE',
+  CONDITIONAL_RELEASE: 'CONDITIONAL_RELEASE',
+  HOLD: 'HOLD',
+  RETURN_TO_SUPPLIER: 'RETURN_TO_SUPPLIER',
+  DESTROY: 'DESTROY'
+} as const
+
+export type QualityDisposition = (typeof QualityDisposition)[keyof typeof QualityDisposition]
+
+
+export const QualityTestResult = {
+  PASS: 'PASS',
+  WARN: 'WARN',
+  FAIL: 'FAIL',
+  NOT_TESTED: 'NOT_TESTED'
+} as const
+
+export type QualityTestResult = (typeof QualityTestResult)[keyof typeof QualityTestResult]
+
+
+export const QualitySeverity = {
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type QualitySeverity = (typeof QualitySeverity)[keyof typeof QualitySeverity]
+
+
+export const QualityIncidentStatus = {
+  OPEN: 'OPEN',
+  INVESTIGATING: 'INVESTIGATING',
+  CLOSED: 'CLOSED'
+} as const
+
+export type QualityIncidentStatus = (typeof QualityIncidentStatus)[keyof typeof QualityIncidentStatus]
+
+
+export const QualityIncidentType = {
+  RECEIPT_REJECTION: 'RECEIPT_REJECTION',
+  QA_FAILURE: 'QA_FAILURE',
+  COST_VARIANCE: 'COST_VARIANCE',
+  RECALL: 'RECALL',
+  CUSTOMER_QUALITY: 'CUSTOMER_QUALITY',
+  EXPIRY_NONCOMPLIANCE: 'EXPIRY_NONCOMPLIANCE',
+  DOCUMENTATION: 'DOCUMENTATION'
+} as const
+
+export type QualityIncidentType = (typeof QualityIncidentType)[keyof typeof QualityIncidentType]
 
 
 export const EmailDeliveryStatus = {
@@ -680,6 +807,10 @@ export const InventoryMovementType = {
   WAREHOUSE_RELEASE: 'WAREHOUSE_RELEASE',
   WAREHOUSE_WRITE_OFF: 'WAREHOUSE_WRITE_OFF',
   WAREHOUSE_COUNT_ADJUSTMENT: 'WAREHOUSE_COUNT_ADJUSTMENT',
+  QA_RELEASE: 'QA_RELEASE',
+  QA_REJECT: 'QA_REJECT',
+  PRODUCTION_ISSUE: 'PRODUCTION_ISSUE',
+  PRODUCTION_RETURN: 'PRODUCTION_RETURN',
   ERP_SYNC: 'ERP_SYNC',
   CORRECTION: 'CORRECTION'
 } as const
@@ -694,6 +825,8 @@ export const InventoryMovementSource = {
   RETURN: 'RETURN',
   PURCHASE: 'PURCHASE',
   WAREHOUSE: 'WAREHOUSE',
+  QUALITY: 'QUALITY',
+  MANUFACTURING: 'MANUFACTURING',
   ERP: 'ERP',
   SYSTEM: 'SYSTEM'
 } as const

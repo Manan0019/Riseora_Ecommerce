@@ -122,6 +122,15 @@ export const ModelName = {
   CycleCountItem: 'CycleCountItem',
   InventoryRecall: 'InventoryRecall',
   InventoryRecallBatch: 'InventoryRecallBatch',
+  ManufacturingBom: 'ManufacturingBom',
+  ManufacturingBomItem: 'ManufacturingBomItem',
+  ProductionOrder: 'ProductionOrder',
+  ProductionOrderMaterial: 'ProductionOrderMaterial',
+  ProductionMaterialAllocation: 'ProductionMaterialAllocation',
+  QualitySpecification: 'QualitySpecification',
+  QualityInspection: 'QualityInspection',
+  QualityInspectionTest: 'QualityInspectionTest',
+  SupplierQualityIncident: 'SupplierQualityIncident',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -361,6 +370,7 @@ export const ProductVariantScalarFieldEnum = {
   hsnCode: 'hsnCode',
   gstRate: 'gstRate',
   isActive: 'isActive',
+  inventoryRole: 'inventoryRole',
   erpId: 'erpId',
   erpManaged: 'erpManaged',
   createdAt: 'createdAt',
@@ -1491,6 +1501,7 @@ export const InventoryBatchScalarFieldEnum = {
   goodsReceiptItemId: 'goodsReceiptItemId',
   batchCode: 'batchCode',
   status: 'status',
+  qualityStatus: 'qualityStatus',
   quantityOnHand: 'quantityOnHand',
   quantityReserved: 'quantityReserved',
   quantityBlocked: 'quantityBlocked',
@@ -1603,6 +1614,197 @@ export const InventoryRecallBatchScalarFieldEnum = {
 } as const
 
 export type InventoryRecallBatchScalarFieldEnum = (typeof InventoryRecallBatchScalarFieldEnum)[keyof typeof InventoryRecallBatchScalarFieldEnum]
+
+
+export const ManufacturingBomScalarFieldEnum = {
+  id: 'id',
+  bomCode: 'bomCode',
+  name: 'name',
+  outputVariantId: 'outputVariantId',
+  outputQuantity: 'outputQuantity',
+  version: 'version',
+  status: 'status',
+  yieldTolerancePercent: 'yieldTolerancePercent',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ManufacturingBomScalarFieldEnum = (typeof ManufacturingBomScalarFieldEnum)[keyof typeof ManufacturingBomScalarFieldEnum]
+
+
+export const ManufacturingBomItemScalarFieldEnum = {
+  id: 'id',
+  bomId: 'bomId',
+  componentVariantId: 'componentVariantId',
+  quantityPerRun: 'quantityPerRun',
+  wastagePercent: 'wastagePercent',
+  isCritical: 'isCritical',
+  sortOrder: 'sortOrder',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ManufacturingBomItemScalarFieldEnum = (typeof ManufacturingBomItemScalarFieldEnum)[keyof typeof ManufacturingBomItemScalarFieldEnum]
+
+
+export const ProductionOrderScalarFieldEnum = {
+  id: 'id',
+  productionNumber: 'productionNumber',
+  bomId: 'bomId',
+  outputVariantId: 'outputVariantId',
+  warehouseId: 'warehouseId',
+  status: 'status',
+  plannedRuns: 'plannedRuns',
+  plannedOutputQty: 'plannedOutputQty',
+  actualOutputQty: 'actualOutputQty',
+  plannedMaterialCost: 'plannedMaterialCost',
+  actualMaterialCost: 'actualMaterialCost',
+  labourCost: 'labourCost',
+  overheadCost: 'overheadCost',
+  totalProductionCost: 'totalProductionCost',
+  unitProductionCost: 'unitProductionCost',
+  yieldVariancePercent: 'yieldVariancePercent',
+  varianceStatus: 'varianceStatus',
+  plannedStartAt: 'plannedStartAt',
+  dueAt: 'dueAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  outputBatchCode: 'outputBatchCode',
+  outputBatchId: 'outputBatchId',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  approvedByUserId: 'approvedByUserId',
+  startedByUserId: 'startedByUserId',
+  completedByUserId: 'completedByUserId',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionOrderScalarFieldEnum = (typeof ProductionOrderScalarFieldEnum)[keyof typeof ProductionOrderScalarFieldEnum]
+
+
+export const ProductionOrderMaterialScalarFieldEnum = {
+  id: 'id',
+  productionOrderId: 'productionOrderId',
+  componentVariantId: 'componentVariantId',
+  plannedQty: 'plannedQty',
+  issuedQty: 'issuedQty',
+  consumedQty: 'consumedQty',
+  returnedQty: 'returnedQty',
+  wasteQty: 'wasteQty',
+  unitCostSnapshot: 'unitCostSnapshot',
+  actualCost: 'actualCost',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionOrderMaterialScalarFieldEnum = (typeof ProductionOrderMaterialScalarFieldEnum)[keyof typeof ProductionOrderMaterialScalarFieldEnum]
+
+
+export const ProductionMaterialAllocationScalarFieldEnum = {
+  id: 'id',
+  materialLineId: 'materialLineId',
+  batchId: 'batchId',
+  quantityIssued: 'quantityIssued',
+  quantityConsumed: 'quantityConsumed',
+  quantityReturned: 'quantityReturned',
+  unitCostSnapshot: 'unitCostSnapshot',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionMaterialAllocationScalarFieldEnum = (typeof ProductionMaterialAllocationScalarFieldEnum)[keyof typeof ProductionMaterialAllocationScalarFieldEnum]
+
+
+export const QualitySpecificationScalarFieldEnum = {
+  id: 'id',
+  variantId: 'variantId',
+  version: 'version',
+  isActive: 'isActive',
+  sampleQty: 'sampleQty',
+  coaRequired: 'coaRequired',
+  labReportRequired: 'labReportRequired',
+  minShelfLifeDays: 'minShelfLifeDays',
+  checks: 'checks',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QualitySpecificationScalarFieldEnum = (typeof QualitySpecificationScalarFieldEnum)[keyof typeof QualitySpecificationScalarFieldEnum]
+
+
+export const QualityInspectionScalarFieldEnum = {
+  id: 'id',
+  inspectionNumber: 'inspectionNumber',
+  batchId: 'batchId',
+  variantId: 'variantId',
+  goodsReceiptItemId: 'goodsReceiptItemId',
+  supplierId: 'supplierId',
+  status: 'status',
+  disposition: 'disposition',
+  severity: 'severity',
+  sampleQty: 'sampleQty',
+  coaNumber: 'coaNumber',
+  coaUrl: 'coaUrl',
+  labReportUrl: 'labReportUrl',
+  manufactureDate: 'manufactureDate',
+  expiryDate: 'expiryDate',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  reviewedByUserId: 'reviewedByUserId',
+  sampledAt: 'sampledAt',
+  reviewedAt: 'reviewedAt',
+  releasedAt: 'releasedAt',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QualityInspectionScalarFieldEnum = (typeof QualityInspectionScalarFieldEnum)[keyof typeof QualityInspectionScalarFieldEnum]
+
+
+export const QualityInspectionTestScalarFieldEnum = {
+  id: 'id',
+  inspectionId: 'inspectionId',
+  code: 'code',
+  name: 'name',
+  specification: 'specification',
+  measuredValue: 'measuredValue',
+  unit: 'unit',
+  result: 'result',
+  critical: 'critical',
+  note: 'note',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type QualityInspectionTestScalarFieldEnum = (typeof QualityInspectionTestScalarFieldEnum)[keyof typeof QualityInspectionTestScalarFieldEnum]
+
+
+export const SupplierQualityIncidentScalarFieldEnum = {
+  id: 'id',
+  sourceKey: 'sourceKey',
+  supplierId: 'supplierId',
+  batchId: 'batchId',
+  inspectionId: 'inspectionId',
+  type: 'type',
+  severity: 'severity',
+  status: 'status',
+  title: 'title',
+  notes: 'notes',
+  closedByUserId: 'closedByUserId',
+  closedAt: 'closedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SupplierQualityIncidentScalarFieldEnum = (typeof SupplierQualityIncidentScalarFieldEnum)[keyof typeof SupplierQualityIncidentScalarFieldEnum]
 
 
 export const EmailDeliveryLogScalarFieldEnum = {

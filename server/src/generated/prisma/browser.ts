@@ -373,6 +373,51 @@ export type InventoryRecall = Prisma.InventoryRecallModel
  */
 export type InventoryRecallBatch = Prisma.InventoryRecallBatchModel
 /**
+ * Model ManufacturingBom
+ * 
+ */
+export type ManufacturingBom = Prisma.ManufacturingBomModel
+/**
+ * Model ManufacturingBomItem
+ * 
+ */
+export type ManufacturingBomItem = Prisma.ManufacturingBomItemModel
+/**
+ * Model ProductionOrder
+ * 
+ */
+export type ProductionOrder = Prisma.ProductionOrderModel
+/**
+ * Model ProductionOrderMaterial
+ * 
+ */
+export type ProductionOrderMaterial = Prisma.ProductionOrderMaterialModel
+/**
+ * Model ProductionMaterialAllocation
+ * 
+ */
+export type ProductionMaterialAllocation = Prisma.ProductionMaterialAllocationModel
+/**
+ * Model QualitySpecification
+ * 
+ */
+export type QualitySpecification = Prisma.QualitySpecificationModel
+/**
+ * Model QualityInspection
+ * 
+ */
+export type QualityInspection = Prisma.QualityInspectionModel
+/**
+ * Model QualityInspectionTest
+ * 
+ */
+export type QualityInspectionTest = Prisma.QualityInspectionTestModel
+/**
+ * Model SupplierQualityIncident
+ * 
+ */
+export type SupplierQualityIncident = Prisma.SupplierQualityIncidentModel
+/**
  * Model EmailDeliveryLog
  * 
  */

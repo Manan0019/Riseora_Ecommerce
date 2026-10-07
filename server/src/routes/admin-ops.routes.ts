@@ -29,6 +29,7 @@ import { PHASE88_DEMAND_POLICY, phase88DemandRow, phase88DemandSummary } from ".
 import { PHASE89_PROCUREMENT_POLICY, phase89PurchaseTotals, phase89RankSupplierOffers, phase89ReceiptVariance, phase89WeightedAverageCost } from "../services/procurement-intelligence.service";
 import { PHASE90_WAREHOUSE_POLICY, phase90BlockBatch, phase90CycleCountVariance, phase90PostCycleCount, phase90ReleaseQuarantine, phase90WarehouseOverview, phase90WriteOffBatch } from "../services/warehouse-inventory.service";
 import { PHASE91_QUALITY_POLICY, phase91CreateInboundQaHold, phase91InspectionDecision, phase91QualityOverview, phase91RejectBatch, phase91ReleaseBatch, phase91SupplierScorecard } from "../services/quality-assurance.service";
+import { PHASE92_MANUFACTURING_POLICY, phase92CompleteProduction, phase92IssueProductionMaterials, phase92ManufacturingOverview, phase92MaterialAvailability, phase92MaterialRequirement, phase92ProductionTrace } from "../services/manufacturing-control.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1189,7 +1190,7 @@ async function phase88LiveDemand(options:{horizonDays:number;leadTimeDays:number
   const campaignSince=new Date(now.getTime()-PHASE88_DEMAND_POLICY.recentCampaignWindowDays*86400000);
   const [variants,recentCampaignCount]=await Promise.all([
     prisma.productVariant.findMany({
-      where:{isActive:true,product:{isActive:true}},
+      where:{isActive:true,inventoryRole:"FINISHED_GOOD",product:{isActive:true}},
       select:{
         id:true,sku:true,name:true,stockQuantity:true,safetyStock:true,lowStockThreshold:true,sellingPrice:true,costPrice:true,
         product:{select:{name:true}},
@@ -1289,7 +1290,7 @@ router.get("/phase89-procurement/summary",asyncHandler(async(_req,res)=>{
   const now=new Date();
   const [suppliers,variants,plans,purchaseOrders,receipts]=await Promise.all([
     prisma.supplier.findMany({orderBy:[{isPreferred:"desc"},{name:"asc"}],include:{variantOffers:{where:{isActive:true},select:{id:true,variantId:true,unitCost:true,minimumOrderQty:true,packSize:true,leadTimeDays:true,isPreferred:true,supplierSku:true}}},take:PHASE89_PROCUREMENT_POLICY.maxSuppliers}),
-    prisma.productVariant.findMany({where:{isActive:true,product:{isActive:true}},select:{id:true,sku:true,name:true,costPrice:true,stockQuantity:true,product:{select:{name:true}}},orderBy:[{product:{name:"asc"}},{name:"asc"}],take:500}),
+    prisma.productVariant.findMany({where:{isActive:true},select:{id:true,sku:true,name:true,costPrice:true,stockQuantity:true,inventoryRole:true,product:{select:{name:true,isActive:true}}},orderBy:[{product:{name:"asc"}},{name:"asc"}],take:500}),
     prisma.demandPlan.findMany({where:{status:"APPROVED"},select:{id:true,name:true,recommendedUnits:true,recommendedPurchaseValue:true,approvedAt:true,_count:{select:{purchaseOrders:true}}},orderBy:{approvedAt:"desc"},take:30}),
     prisma.purchaseOrder.findMany({include:{supplier:true,items:{include:{variant:{select:{sku:true,name:true,product:{select:{name:true}}}}}},receipts:{select:{id:true,grnNumber:true,receivedAt:true,totalAcceptedQty:true,totalRejectedQty:true,varianceItemCount:true}}},orderBy:{createdAt:"desc"},take:60}),
     prisma.goodsReceipt.findMany({include:{purchaseOrder:{select:{poNumber:true,supplier:{select:{name:true}}}}},orderBy:{receivedAt:"desc"},take:30})
@@ -1457,5 +1458,155 @@ router.post("/phase91-quality/inspections/:id/decision",asyncHandler(async(req,r
 router.get("/phase91-quality/suppliers/:id/scorecard",asyncHandler(async(req,res)=>{res.json({success:true,data:await phase91SupplierScorecard(prisma,String(req.params.id))});}));
 router.post("/phase91-quality/suppliers/:id/hold",asyncHandler(async(req,res)=>{const supplier:any=await (prisma as any).supplier.findUnique({where:{id:String(req.params.id)}});if(!supplier)return res.status(404).json({success:false,message:"Supplier not found"});const score=await phase91SupplierScorecard(prisma,supplier.id);if(score.recommendation!=="HOLD"&&!req.body?.force)return res.status(409).json({success:false,message:"SUPPLIER_QUALITY_HOLD_REQUIRES_FORCE",data:score});const row=await (prisma as any).supplier.update({where:{id:supplier.id},data:{status:"HOLD"}});res.json({success:true,data:row,scorecard:score});}));
 router.post("/phase91-quality/incidents/:id/close",asyncHandler(async(req,res)=>{const row=await (prisma as any).supplierQualityIncident.update({where:{id:String(req.params.id)},data:{status:"CLOSED",closedAt:new Date(),closedByUserId:req.user!.id}});res.json({success:true,data:row});}));
+
+
+// Phase 92 · Manufacturing BOM, Production Control & Traceability V2
+const phase92RoleSchema=z.object({inventoryRole:z.enum(["FINISHED_GOOD","RAW_MATERIAL","PACKAGING","CONSUMABLE"])});
+const phase92BomSchema=z.object({
+  name:z.string().trim().min(2).max(140),
+  outputVariantId:z.string().uuid(),
+  outputQuantity:z.number().int().min(1).max(1000000),
+  yieldTolerancePercent:z.number().min(0).max(100).default(5),
+  notes:z.string().trim().max(4000).nullable().optional(),
+  items:z.array(z.object({
+    componentVariantId:z.string().uuid(),
+    quantityPerRun:z.number().int().min(1).max(100000000),
+    wastagePercent:z.number().min(0).max(100).default(0),
+    isCritical:z.boolean().default(true),
+  })).min(1).max(PHASE92_MANUFACTURING_POLICY.maxBomItems),
+});
+const phase92ProductionCreateSchema=z.object({
+  bomId:z.string().uuid(),
+  warehouseId:z.string().uuid(),
+  plannedRuns:z.number().int().min(1).max(PHASE92_MANUFACTURING_POLICY.maxProductionRuns),
+  plannedStartAt:z.coerce.date().nullable().optional(),
+  dueAt:z.coerce.date().nullable().optional(),
+  notes:z.string().trim().max(4000).nullable().optional(),
+});
+const phase92CompleteSchema=z.object({
+  actualOutputQty:z.number().int().min(1).max(100000000),
+  outputBatchCode:z.string().trim().min(2).max(80),
+  manufacturedAt:z.coerce.date().nullable().optional(),
+  expiryDate:z.coerce.date().nullable().optional(),
+  labourCost:z.number().min(0).max(100000000).default(0),
+  overheadCost:z.number().min(0).max(100000000).default(0),
+  materials:z.array(z.object({
+    materialLineId:z.string().uuid(),
+    consumedQty:z.number().int().min(0),
+    wasteQty:z.number().int().min(0),
+    returnedQty:z.number().int().min(0),
+  })).min(1).max(PHASE92_MANUFACTURING_POLICY.maxBomItems),
+});
+const phase92Code=(prefix:string)=>`${prefix}-${new Date().toISOString().slice(0,10).replaceAll("-","")}-${randomBytes(4).toString("hex").toUpperCase()}`;
+
+router.get("/phase92-manufacturing/overview",asyncHandler(async(_req,res)=>{
+  res.json({success:true,data:await phase92ManufacturingOverview(prisma)});
+}));
+
+router.patch("/phase92-manufacturing/variants/:id/role",asyncHandler(async(req,res)=>{
+  const parsed=phase92RoleSchema.safeParse(req.body);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid inventory role",errors:parsed.error.flatten()});
+  const variant:any=await (prisma as any).productVariant.findUnique({where:{id:String(req.params.id)},include:{manufacturingBomOutputs:{where:{status:"ACTIVE"}},manufacturingBomComponents:{include:{bom:true}}}});
+  if(!variant)return res.status(404).json({success:false,message:"Variant not found"});
+  if(parsed.data.inventoryRole!=="FINISHED_GOOD"&&variant.manufacturingBomOutputs?.length)return res.status(409).json({success:false,message:"MANUFACTURING_OUTPUT_ROLE_BLOCKED"});
+  if(parsed.data.inventoryRole==="FINISHED_GOOD"&&variant.manufacturingBomComponents?.some((x:any)=>x.bom?.status==="ACTIVE"))return res.status(409).json({success:false,message:"MANUFACTURING_COMPONENT_ROLE_BLOCKED"});
+  const row=await (prisma as any).productVariant.update({where:{id:variant.id},data:{inventoryRole:parsed.data.inventoryRole}});
+  res.json({success:true,data:row});
+}));
+
+router.post("/phase92-manufacturing/boms",asyncHandler(async(req,res)=>{
+  const parsed=phase92BomSchema.safeParse(req.body);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid manufacturing BOM",errors:parsed.error.flatten()});
+  const uniqueIds=new Set(parsed.data.items.map(x=>x.componentVariantId));
+  if(uniqueIds.size!==parsed.data.items.length)return res.status(400).json({success:false,message:"BOM component variants must be unique"});
+  if(uniqueIds.has(parsed.data.outputVariantId))return res.status(400).json({success:false,message:"Finished output cannot consume itself"});
+  const output:any=await (prisma as any).productVariant.findUnique({where:{id:parsed.data.outputVariantId}});
+  if(!output)return res.status(404).json({success:false,message:"Output variant not found"});
+  if(output.inventoryRole!=="FINISHED_GOOD")return res.status(409).json({success:false,message:"BOM_OUTPUT_MUST_BE_FINISHED_GOOD"});
+  const components:any[]=await (prisma as any).productVariant.findMany({where:{id:{in:[...uniqueIds]}}});
+  if(components.length!==uniqueIds.size)return res.status(404).json({success:false,message:"One or more BOM components were not found"});
+  const invalid=components.filter(x=>x.inventoryRole==="FINISHED_GOOD");
+  if(invalid.length)return res.status(409).json({success:false,message:"BOM_COMPONENT_ROLE_BLOCKED",data:invalid.map(x=>x.sku)});
+  const latest:any=await (prisma as any).manufacturingBom.findFirst({where:{outputVariantId:output.id},orderBy:{version:"desc"}});
+  const version=Number(latest?.version||0)+1;
+  const bom=await (prisma as any).manufacturingBom.create({data:{
+    bomCode:phase92Code("BOM"),name:parsed.data.name,outputVariantId:output.id,outputQuantity:parsed.data.outputQuantity,version,status:"DRAFT",yieldTolerancePercent:parsed.data.yieldTolerancePercent,notes:parsed.data.notes||null,createdByUserId:req.user!.id,
+    items:{create:parsed.data.items.map((x,i)=>({...x,sortOrder:i}))}
+  },include:{outputVariant:{include:{product:true}},items:{include:{componentVariant:{include:{product:true}}}}}});
+  res.status(201).json({success:true,data:bom});
+}));
+
+router.post("/phase92-manufacturing/boms/:id/activate",asyncHandler(async(req,res)=>{
+  const bom:any=await (prisma as any).manufacturingBom.findUnique({where:{id:String(req.params.id)},include:{items:true}});
+  if(!bom)return res.status(404).json({success:false,message:"BOM not found"});
+  if(!bom.items.length)return res.status(409).json({success:false,message:"BOM_EMPTY"});
+  const row=await prisma.$transaction(async tx=>{
+    await (tx as any).manufacturingBom.updateMany({where:{outputVariantId:bom.outputVariantId,status:"ACTIVE",id:{not:bom.id}},data:{status:"ARCHIVED"}});
+    return (tx as any).manufacturingBom.update({where:{id:bom.id},data:{status:"ACTIVE"},include:{outputVariant:{include:{product:true}},items:{include:{componentVariant:{include:{product:true}}}}}});
+  });
+  res.json({success:true,data:row});
+}));
+
+router.post("/phase92-manufacturing/production-orders",asyncHandler(async(req,res)=>{
+  const parsed=phase92ProductionCreateSchema.safeParse(req.body);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid production order",errors:parsed.error.flatten()});
+  if(parsed.data.plannedStartAt&&parsed.data.dueAt&&parsed.data.dueAt<parsed.data.plannedStartAt)return res.status(400).json({success:false,message:"Production due date must be after planned start"});
+  const bom:any=await (prisma as any).manufacturingBom.findUnique({where:{id:parsed.data.bomId},include:{outputVariant:true,items:{include:{componentVariant:true}}}});
+  if(!bom)return res.status(404).json({success:false,message:"BOM not found"});
+  if(bom.status!=="ACTIVE")return res.status(409).json({success:false,message:"PRODUCTION_ACTIVE_BOM_REQUIRED"});
+  const warehouse:any=await (prisma as any).warehouse.findUnique({where:{id:parsed.data.warehouseId}});
+  if(!warehouse||warehouse.status!=="ACTIVE")return res.status(409).json({success:false,message:"PRODUCTION_ACTIVE_WAREHOUSE_REQUIRED"});
+  const materials=bom.items.map((x:any)=>({componentVariantId:x.componentVariantId,plannedQty:phase92MaterialRequirement(x.quantityPerRun,parsed.data.plannedRuns,Number(x.wastagePercent||0)),unitCostSnapshot:x.componentVariant.costPrice==null?null:Number(x.componentVariant.costPrice)}));
+  const plannedMaterialCost=materials.reduce((sum:number,x:any)=>sum+x.plannedQty*Number(x.unitCostSnapshot||0),0);
+  const order=await (prisma as any).productionOrder.create({data:{
+    productionNumber:phase92Code("MFG"),bomId:bom.id,outputVariantId:bom.outputVariantId,warehouseId:warehouse.id,status:"DRAFT",plannedRuns:parsed.data.plannedRuns,plannedOutputQty:Number(bom.outputQuantity)*parsed.data.plannedRuns,plannedMaterialCost,plannedStartAt:parsed.data.plannedStartAt||null,dueAt:parsed.data.dueAt||null,notes:parsed.data.notes||null,createdByUserId:req.user!.id,
+    materials:{create:materials}
+  },include:{bom:true,outputVariant:{include:{product:true}},warehouse:true,materials:{include:{componentVariant:{include:{product:true}}}}}});
+  res.status(201).json({success:true,data:order});
+}));
+
+router.post("/phase92-manufacturing/production-orders/:id/approve",asyncHandler(async(req,res)=>{
+  const order:any=await (prisma as any).productionOrder.findUnique({where:{id:String(req.params.id)},include:{bom:true,materials:true}});
+  if(!order)return res.status(404).json({success:false,message:"Production order not found"});
+  if(order.status!=="DRAFT")return res.status(409).json({success:false,message:"PRODUCTION_APPROVAL_STATUS_BLOCKED"});
+  if(order.bom.status!=="ACTIVE")return res.status(409).json({success:false,message:"PRODUCTION_ACTIVE_BOM_REQUIRED"});
+  const availability=await phase92MaterialAvailability(prisma,order.warehouseId,order.materials.map((x:any)=>({componentVariantId:x.componentVariantId,plannedQty:Number(x.plannedQty)})));
+  const row=await (prisma as any).productionOrder.update({where:{id:order.id},data:{status:"APPROVED",approvedAt:new Date(),approvedByUserId:req.user!.id}});
+  res.json({success:true,data:row,materialAvailability:availability});
+}));
+
+router.post("/phase92-manufacturing/production-orders/:id/issue-materials",asyncHandler(async(req,res)=>{
+  try{const row=await prisma.$transaction(tx=>phase92IssueProductionMaterials(tx,String(req.params.id),req.user!.id));res.json({success:true,data:row});}
+  catch(error:any){if(String(error?.message||"").startsWith("PRODUCTION_"))return res.status(409).json({success:false,message:error.message});throw error;}
+}));
+
+router.post("/phase92-manufacturing/production-orders/:id/start",asyncHandler(async(req,res)=>{
+  const row:any=await (prisma as any).productionOrder.findUnique({where:{id:String(req.params.id)}});
+  if(!row)return res.status(404).json({success:false,message:"Production order not found"});
+  if(row.status!=="MATERIAL_ISSUED")return res.status(409).json({success:false,message:"PRODUCTION_START_STATUS_BLOCKED"});
+  const updated=await (prisma as any).productionOrder.update({where:{id:row.id},data:{status:"IN_PRODUCTION",startedAt:new Date(),startedByUserId:req.user!.id}});
+  res.json({success:true,data:updated});
+}));
+
+router.post("/phase92-manufacturing/production-orders/:id/complete",asyncHandler(async(req,res)=>{
+  const parsed=phase92CompleteSchema.safeParse(req.body);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid production completion",errors:parsed.error.flatten()});
+  if(parsed.data.expiryDate&&parsed.data.manufacturedAt&&parsed.data.expiryDate<=parsed.data.manufacturedAt)return res.status(400).json({success:false,message:"Expiry date must be after manufacture date"});
+  try{const row=await prisma.$transaction(tx=>phase92CompleteProduction(tx,{productionOrderId:String(req.params.id),...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
+  catch(error:any){if(String(error?.message||"").startsWith("PRODUCTION_"))return res.status(409).json({success:false,message:error.message});throw error;}
+}));
+
+router.post("/phase92-manufacturing/production-orders/:id/cancel",asyncHandler(async(req,res)=>{
+  const row:any=await (prisma as any).productionOrder.findUnique({where:{id:String(req.params.id)}});
+  if(!row)return res.status(404).json({success:false,message:"Production order not found"});
+  if(!["DRAFT","APPROVED"].includes(row.status))return res.status(409).json({success:false,message:"PRODUCTION_CANCEL_AFTER_MATERIAL_ISSUE_BLOCKED"});
+  const updated=await (prisma as any).productionOrder.update({where:{id:row.id},data:{status:"CANCELLED"}});
+  res.json({success:true,data:updated});
+}));
+
+router.get("/phase92-manufacturing/production-orders/:id/trace",asyncHandler(async(req,res)=>{
+  try{res.json({success:true,data:await phase92ProductionTrace(prisma,String(req.params.id))});}
+  catch(error:any){if(error?.message==="PRODUCTION_ORDER_NOT_FOUND")return res.status(404).json({success:false,message:error.message});throw error;}
+}));
 
 export default router;

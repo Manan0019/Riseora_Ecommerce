@@ -15,10 +15,14 @@ export type InventoryMovementTypeName =
   | "WAREHOUSE_RELEASE"
   | "WAREHOUSE_WRITE_OFF"
   | "WAREHOUSE_COUNT_ADJUSTMENT"
+  | "QA_RELEASE"
+  | "QA_REJECT"
+  | "PRODUCTION_ISSUE"
+  | "PRODUCTION_RETURN"
   | "ERP_SYNC"
   | "CORRECTION";
 
-export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "PURCHASE" | "WAREHOUSE" | "ERP" | "SYSTEM";
+export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "PURCHASE" | "WAREHOUSE" | "QUALITY" | "MANUFACTURING" | "ERP" | "SYSTEM";
 
 export function availableToSell(variant: { stockQuantity?: number | null; safetyStock?: number | null }) {
   return Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));

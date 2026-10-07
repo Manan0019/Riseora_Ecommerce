@@ -65,6 +65,7 @@ export type ProductVariantMinAggregateOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   isActive: boolean | null
+  inventoryRole: $Enums.InventoryRole | null
   erpId: string | null
   erpManaged: boolean | null
   createdAt: Date | null
@@ -88,6 +89,7 @@ export type ProductVariantMaxAggregateOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal | null
   isActive: boolean | null
+  inventoryRole: $Enums.InventoryRole | null
   erpId: string | null
   erpManaged: boolean | null
   createdAt: Date | null
@@ -111,6 +113,7 @@ export type ProductVariantCountAggregateOutputType = {
   hsnCode: number
   gstRate: number
   isActive: number
+  inventoryRole: number
   erpId: number
   erpManaged: number
   createdAt: number
@@ -158,6 +161,7 @@ export type ProductVariantMinAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  inventoryRole?: true
   erpId?: true
   erpManaged?: true
   createdAt?: true
@@ -181,6 +185,7 @@ export type ProductVariantMaxAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  inventoryRole?: true
   erpId?: true
   erpManaged?: true
   createdAt?: true
@@ -204,6 +209,7 @@ export type ProductVariantCountAggregateInputType = {
   hsnCode?: true
   gstRate?: true
   isActive?: true
+  inventoryRole?: true
   erpId?: true
   erpManaged?: true
   createdAt?: true
@@ -314,6 +320,7 @@ export type ProductVariantGroupByOutputType = {
   hsnCode: string | null
   gstRate: runtime.Decimal
   isActive: boolean
+  inventoryRole: $Enums.InventoryRole
   erpId: string | null
   erpManaged: boolean
   createdAt: Date
@@ -360,6 +367,7 @@ export type ProductVariantWhereInput = {
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFilter<"ProductVariant"> | $Enums.InventoryRole
   erpId?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -378,6 +386,12 @@ export type ProductVariantWhereInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementListRelationFilter
   orderBatchAllocations?: Prisma.OrderBatchAllocationListRelationFilter
   cycleCountItems?: Prisma.CycleCountItemListRelationFilter
+  qualitySpecification?: Prisma.XOR<Prisma.QualitySpecificationNullableScalarRelationFilter, Prisma.QualitySpecificationWhereInput> | null
+  qualityInspections?: Prisma.QualityInspectionListRelationFilter
+  manufacturingBomOutputs?: Prisma.ManufacturingBomListRelationFilter
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemListRelationFilter
+  productionOutputs?: Prisma.ProductionOrderListRelationFilter
+  productionMaterialLines?: Prisma.ProductionOrderMaterialListRelationFilter
 }
 
 export type ProductVariantOrderByWithRelationInput = {
@@ -397,6 +411,7 @@ export type ProductVariantOrderByWithRelationInput = {
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  inventoryRole?: Prisma.SortOrder
   erpId?: Prisma.SortOrderInput | Prisma.SortOrder
   erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -415,6 +430,12 @@ export type ProductVariantOrderByWithRelationInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementOrderByRelationAggregateInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationOrderByRelationAggregateInput
   cycleCountItems?: Prisma.CycleCountItemOrderByRelationAggregateInput
+  qualitySpecification?: Prisma.QualitySpecificationOrderByWithRelationInput
+  qualityInspections?: Prisma.QualityInspectionOrderByRelationAggregateInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomOrderByRelationAggregateInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemOrderByRelationAggregateInput
+  productionOutputs?: Prisma.ProductionOrderOrderByRelationAggregateInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialOrderByRelationAggregateInput
 }
 
 export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -438,6 +459,7 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFilter<"ProductVariant"> | $Enums.InventoryRole
   erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -455,6 +477,12 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   inventoryBatchMovements?: Prisma.InventoryBatchMovementListRelationFilter
   orderBatchAllocations?: Prisma.OrderBatchAllocationListRelationFilter
   cycleCountItems?: Prisma.CycleCountItemListRelationFilter
+  qualitySpecification?: Prisma.XOR<Prisma.QualitySpecificationNullableScalarRelationFilter, Prisma.QualitySpecificationWhereInput> | null
+  qualityInspections?: Prisma.QualityInspectionListRelationFilter
+  manufacturingBomOutputs?: Prisma.ManufacturingBomListRelationFilter
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemListRelationFilter
+  productionOutputs?: Prisma.ProductionOrderListRelationFilter
+  productionMaterialLines?: Prisma.ProductionOrderMaterialListRelationFilter
 }, "id" | "sku" | "erpId">
 
 export type ProductVariantOrderByWithAggregationInput = {
@@ -474,6 +502,7 @@ export type ProductVariantOrderByWithAggregationInput = {
   hsnCode?: Prisma.SortOrderInput | Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  inventoryRole?: Prisma.SortOrder
   erpId?: Prisma.SortOrderInput | Prisma.SortOrder
   erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -505,6 +534,7 @@ export type ProductVariantScalarWhereWithAggregatesInput = {
   hsnCode?: Prisma.StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalWithAggregatesFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleWithAggregatesFilter<"ProductVariant"> | $Enums.InventoryRole
   erpId?: Prisma.StringNullableWithAggregatesFilter<"ProductVariant"> | string | null
   erpManaged?: Prisma.BoolWithAggregatesFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductVariant"> | Date | string
@@ -527,6 +557,7 @@ export type ProductVariantCreateInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -545,6 +576,12 @@ export type ProductVariantCreateInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateInput = {
@@ -564,6 +601,7 @@ export type ProductVariantUncheckedCreateInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -581,6 +619,12 @@ export type ProductVariantUncheckedCreateInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUpdateInput = {
@@ -599,6 +643,7 @@ export type ProductVariantUpdateInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -617,6 +662,12 @@ export type ProductVariantUpdateInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateInput = {
@@ -636,6 +687,7 @@ export type ProductVariantUncheckedUpdateInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -653,6 +705,12 @@ export type ProductVariantUncheckedUpdateInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateManyInput = {
@@ -672,6 +730,7 @@ export type ProductVariantCreateManyInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -694,6 +753,7 @@ export type ProductVariantUpdateManyMutationInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -717,6 +777,7 @@ export type ProductVariantUncheckedUpdateManyInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -750,6 +811,7 @@ export type ProductVariantCountOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  inventoryRole?: Prisma.SortOrder
   erpId?: Prisma.SortOrder
   erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -784,6 +846,7 @@ export type ProductVariantMaxOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  inventoryRole?: Prisma.SortOrder
   erpId?: Prisma.SortOrder
   erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -807,6 +870,7 @@ export type ProductVariantMinOrderByAggregateInput = {
   hsnCode?: Prisma.SortOrder
   gstRate?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
+  inventoryRole?: Prisma.SortOrder
   erpId?: Prisma.SortOrder
   erpManaged?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -890,6 +954,10 @@ export type NullableDecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type EnumInventoryRoleFieldUpdateOperationsInput = {
+  set?: $Enums.InventoryRole
 }
 
 export type ProductVariantCreateNestedOneWithoutInventoryMovementsInput = {
@@ -1034,6 +1102,90 @@ export type ProductVariantUpdateOneRequiredWithoutCycleCountItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutCycleCountItemsInput, Prisma.ProductVariantUpdateWithoutCycleCountItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutCycleCountItemsInput>
 }
 
+export type ProductVariantCreateNestedOneWithoutManufacturingBomOutputsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutManufacturingBomOutputsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutManufacturingBomOutputsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutManufacturingBomOutputsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutManufacturingBomOutputsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUpdateWithoutManufacturingBomOutputsInput>, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutManufacturingBomComponentsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutManufacturingBomComponentsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutManufacturingBomComponentsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutManufacturingBomComponentsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutManufacturingBomComponentsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUpdateWithoutManufacturingBomComponentsInput>, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutProductionOutputsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutProductionOutputsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutProductionOutputsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutProductionOutputsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutProductionOutputsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutProductionOutputsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutProductionOutputsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutProductionOutputsInput, Prisma.ProductVariantUpdateWithoutProductionOutputsInput>, Prisma.ProductVariantUncheckedUpdateWithoutProductionOutputsInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutProductionMaterialLinesInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutProductionMaterialLinesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutProductionMaterialLinesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutProductionMaterialLinesInput
+  upsert?: Prisma.ProductVariantUpsertWithoutProductionMaterialLinesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutProductionMaterialLinesInput, Prisma.ProductVariantUpdateWithoutProductionMaterialLinesInput>, Prisma.ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutQualitySpecificationInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedCreateWithoutQualitySpecificationInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutQualitySpecificationInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutQualitySpecificationNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedCreateWithoutQualitySpecificationInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutQualitySpecificationInput
+  upsert?: Prisma.ProductVariantUpsertWithoutQualitySpecificationInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutQualitySpecificationInput, Prisma.ProductVariantUpdateWithoutQualitySpecificationInput>, Prisma.ProductVariantUncheckedUpdateWithoutQualitySpecificationInput>
+}
+
+export type ProductVariantCreateNestedOneWithoutQualityInspectionsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedCreateWithoutQualityInspectionsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutQualityInspectionsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutQualityInspectionsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedCreateWithoutQualityInspectionsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutQualityInspectionsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutQualityInspectionsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutQualityInspectionsInput, Prisma.ProductVariantUpdateWithoutQualityInspectionsInput>, Prisma.ProductVariantUncheckedUpdateWithoutQualityInspectionsInput>
+}
+
 export type ProductVariantCreateNestedOneWithoutStockAlertsInput = {
   create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutStockAlertsInput, Prisma.ProductVariantUncheckedCreateWithoutStockAlertsInput>
   connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutStockAlertsInput
@@ -1092,6 +1244,7 @@ export type ProductVariantCreateWithoutProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1109,6 +1262,12 @@ export type ProductVariantCreateWithoutProductInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -1127,6 +1286,7 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1144,6 +1304,12 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -1192,6 +1358,7 @@ export type ProductVariantScalarWhereInput = {
   hsnCode?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   gstRate?: Prisma.DecimalFilter<"ProductVariant"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFilter<"ProductVariant"> | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFilter<"ProductVariant"> | $Enums.InventoryRole
   erpId?: Prisma.StringNullableFilter<"ProductVariant"> | string | null
   erpManaged?: Prisma.BoolFilter<"ProductVariant"> | boolean
   createdAt?: Prisma.DateTimeFilter<"ProductVariant"> | Date | string
@@ -1214,6 +1381,7 @@ export type ProductVariantCreateWithoutInventoryMovementsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1231,6 +1399,12 @@ export type ProductVariantCreateWithoutInventoryMovementsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
@@ -1250,6 +1424,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1266,6 +1441,12 @@ export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryMovementsInput = {
@@ -1300,6 +1481,7 @@ export type ProductVariantUpdateWithoutInventoryMovementsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1317,6 +1499,12 @@ export type ProductVariantUpdateWithoutInventoryMovementsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
@@ -1336,6 +1524,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1352,6 +1541,12 @@ export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutOrderItemsInput = {
@@ -1370,6 +1565,7 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1387,6 +1583,12 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
@@ -1406,6 +1608,7 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1422,6 +1625,12 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutOrderItemsInput = {
@@ -1456,6 +1665,7 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1473,6 +1683,12 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
@@ -1492,6 +1708,7 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1508,6 +1725,12 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutDemandPlanItemsInput = {
@@ -1526,6 +1749,7 @@ export type ProductVariantCreateWithoutDemandPlanItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1543,6 +1767,12 @@ export type ProductVariantCreateWithoutDemandPlanItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
@@ -1562,6 +1792,7 @@ export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1578,6 +1809,12 @@ export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutDemandPlanItemsInput = {
@@ -1612,6 +1849,7 @@ export type ProductVariantUpdateWithoutDemandPlanItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1629,6 +1867,12 @@ export type ProductVariantUpdateWithoutDemandPlanItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
@@ -1648,6 +1892,7 @@ export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1664,6 +1909,12 @@ export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutSupplierOffersInput = {
@@ -1682,6 +1933,7 @@ export type ProductVariantCreateWithoutSupplierOffersInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1699,6 +1951,12 @@ export type ProductVariantCreateWithoutSupplierOffersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutSupplierOffersInput = {
@@ -1718,6 +1976,7 @@ export type ProductVariantUncheckedCreateWithoutSupplierOffersInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1734,6 +1993,12 @@ export type ProductVariantUncheckedCreateWithoutSupplierOffersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutSupplierOffersInput = {
@@ -1768,6 +2033,7 @@ export type ProductVariantUpdateWithoutSupplierOffersInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1785,6 +2051,12 @@ export type ProductVariantUpdateWithoutSupplierOffersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutSupplierOffersInput = {
@@ -1804,6 +2076,7 @@ export type ProductVariantUncheckedUpdateWithoutSupplierOffersInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1820,6 +2093,12 @@ export type ProductVariantUncheckedUpdateWithoutSupplierOffersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutPurchaseOrderItemsInput = {
@@ -1838,6 +2117,7 @@ export type ProductVariantCreateWithoutPurchaseOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1855,6 +2135,12 @@ export type ProductVariantCreateWithoutPurchaseOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutPurchaseOrderItemsInput = {
@@ -1874,6 +2160,7 @@ export type ProductVariantUncheckedCreateWithoutPurchaseOrderItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -1890,6 +2177,12 @@ export type ProductVariantUncheckedCreateWithoutPurchaseOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPurchaseOrderItemsInput = {
@@ -1924,6 +2217,7 @@ export type ProductVariantUpdateWithoutPurchaseOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1941,6 +2235,12 @@ export type ProductVariantUpdateWithoutPurchaseOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutPurchaseOrderItemsInput = {
@@ -1960,6 +2260,7 @@ export type ProductVariantUncheckedUpdateWithoutPurchaseOrderItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1976,6 +2277,12 @@ export type ProductVariantUncheckedUpdateWithoutPurchaseOrderItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutGoodsReceiptItemsInput = {
@@ -1994,6 +2301,7 @@ export type ProductVariantCreateWithoutGoodsReceiptItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2011,6 +2319,12 @@ export type ProductVariantCreateWithoutGoodsReceiptItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutGoodsReceiptItemsInput = {
@@ -2030,6 +2344,7 @@ export type ProductVariantUncheckedCreateWithoutGoodsReceiptItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2046,6 +2361,12 @@ export type ProductVariantUncheckedCreateWithoutGoodsReceiptItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutGoodsReceiptItemsInput = {
@@ -2080,6 +2401,7 @@ export type ProductVariantUpdateWithoutGoodsReceiptItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2097,6 +2419,12 @@ export type ProductVariantUpdateWithoutGoodsReceiptItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutGoodsReceiptItemsInput = {
@@ -2116,6 +2444,7 @@ export type ProductVariantUncheckedUpdateWithoutGoodsReceiptItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2132,6 +2461,12 @@ export type ProductVariantUncheckedUpdateWithoutGoodsReceiptItemsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutInventoryBatchesInput = {
@@ -2150,6 +2485,7 @@ export type ProductVariantCreateWithoutInventoryBatchesInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2167,6 +2503,12 @@ export type ProductVariantCreateWithoutInventoryBatchesInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryBatchesInput = {
@@ -2186,6 +2528,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchesInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2202,6 +2545,12 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchesInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryBatchesInput = {
@@ -2236,6 +2585,7 @@ export type ProductVariantUpdateWithoutInventoryBatchesInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2253,6 +2603,12 @@ export type ProductVariantUpdateWithoutInventoryBatchesInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryBatchesInput = {
@@ -2272,6 +2628,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchesInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2288,6 +2645,12 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchesInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutInventoryBatchMovementsInput = {
@@ -2306,6 +2669,7 @@ export type ProductVariantCreateWithoutInventoryBatchMovementsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2323,6 +2687,12 @@ export type ProductVariantCreateWithoutInventoryBatchMovementsInput = {
   inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryBatchMovementsInput = {
@@ -2342,6 +2712,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchMovementsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2358,6 +2729,12 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchMovementsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryBatchMovementsInput = {
@@ -2392,6 +2769,7 @@ export type ProductVariantUpdateWithoutInventoryBatchMovementsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2409,6 +2787,12 @@ export type ProductVariantUpdateWithoutInventoryBatchMovementsInput = {
   inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryBatchMovementsInput = {
@@ -2428,6 +2812,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchMovementsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2444,6 +2829,12 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchMovementsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutOrderBatchAllocationsInput = {
@@ -2462,6 +2853,7 @@ export type ProductVariantCreateWithoutOrderBatchAllocationsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2479,6 +2871,12 @@ export type ProductVariantCreateWithoutOrderBatchAllocationsInput = {
   inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutOrderBatchAllocationsInput = {
@@ -2498,6 +2896,7 @@ export type ProductVariantUncheckedCreateWithoutOrderBatchAllocationsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2514,6 +2913,12 @@ export type ProductVariantUncheckedCreateWithoutOrderBatchAllocationsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutOrderBatchAllocationsInput = {
@@ -2548,6 +2953,7 @@ export type ProductVariantUpdateWithoutOrderBatchAllocationsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2565,6 +2971,12 @@ export type ProductVariantUpdateWithoutOrderBatchAllocationsInput = {
   inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutOrderBatchAllocationsInput = {
@@ -2584,6 +2996,7 @@ export type ProductVariantUncheckedUpdateWithoutOrderBatchAllocationsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2600,6 +3013,12 @@ export type ProductVariantUncheckedUpdateWithoutOrderBatchAllocationsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutCycleCountItemsInput = {
@@ -2618,6 +3037,7 @@ export type ProductVariantCreateWithoutCycleCountItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2635,6 +3055,12 @@ export type ProductVariantCreateWithoutCycleCountItemsInput = {
   inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutCycleCountItemsInput = {
@@ -2654,6 +3080,7 @@ export type ProductVariantUncheckedCreateWithoutCycleCountItemsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2670,6 +3097,12 @@ export type ProductVariantUncheckedCreateWithoutCycleCountItemsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutCycleCountItemsInput = {
@@ -2704,6 +3137,7 @@ export type ProductVariantUpdateWithoutCycleCountItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2721,6 +3155,12 @@ export type ProductVariantUpdateWithoutCycleCountItemsInput = {
   inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutCycleCountItemsInput = {
@@ -2740,6 +3180,7 @@ export type ProductVariantUncheckedUpdateWithoutCycleCountItemsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2756,6 +3197,1116 @@ export type ProductVariantUncheckedUpdateWithoutCycleCountItemsInput = {
   inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutManufacturingBomOutputsInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutManufacturingBomOutputsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput>
+}
+
+export type ProductVariantUpsertWithoutManufacturingBomOutputsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutManufacturingBomOutputsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutManufacturingBomOutputsInput, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput>
+}
+
+export type ProductVariantUpdateWithoutManufacturingBomOutputsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutManufacturingBomComponentsInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutManufacturingBomComponentsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput>
+}
+
+export type ProductVariantUpsertWithoutManufacturingBomComponentsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutManufacturingBomComponentsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutManufacturingBomComponentsInput, Prisma.ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput>
+}
+
+export type ProductVariantUpdateWithoutManufacturingBomComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutProductionOutputsInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutProductionOutputsInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutProductionOutputsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutProductionOutputsInput>
+}
+
+export type ProductVariantUpsertWithoutProductionOutputsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedUpdateWithoutProductionOutputsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedCreateWithoutProductionOutputsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutProductionOutputsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutProductionOutputsInput, Prisma.ProductVariantUncheckedUpdateWithoutProductionOutputsInput>
+}
+
+export type ProductVariantUpdateWithoutProductionOutputsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutProductionOutputsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutProductionMaterialLinesInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutProductionMaterialLinesInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput>
+}
+
+export type ProductVariantUpsertWithoutProductionMaterialLinesInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutProductionMaterialLinesInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutProductionMaterialLinesInput, Prisma.ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput>
+}
+
+export type ProductVariantUpdateWithoutProductionMaterialLinesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutQualitySpecificationInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutQualitySpecificationInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutQualitySpecificationInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedCreateWithoutQualitySpecificationInput>
+}
+
+export type ProductVariantUpsertWithoutQualitySpecificationInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedUpdateWithoutQualitySpecificationInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedCreateWithoutQualitySpecificationInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutQualitySpecificationInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedUpdateWithoutQualitySpecificationInput>
+}
+
+export type ProductVariantUpdateWithoutQualitySpecificationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutQualitySpecificationInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutQualityInspectionsInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutQualityInspectionsInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutQualityInspectionsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedCreateWithoutQualityInspectionsInput>
+}
+
+export type ProductVariantUpsertWithoutQualityInspectionsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedUpdateWithoutQualityInspectionsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedCreateWithoutQualityInspectionsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutQualityInspectionsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutQualityInspectionsInput, Prisma.ProductVariantUncheckedUpdateWithoutQualityInspectionsInput>
+}
+
+export type ProductVariantUpdateWithoutQualityInspectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutQualityInspectionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutStockAlertsInput = {
@@ -2774,6 +4325,7 @@ export type ProductVariantCreateWithoutStockAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2791,6 +4343,12 @@ export type ProductVariantCreateWithoutStockAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
@@ -2810,6 +4368,7 @@ export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2826,6 +4385,12 @@ export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockAlertsInput = {
@@ -2860,6 +4425,7 @@ export type ProductVariantUpdateWithoutStockAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2877,6 +4443,12 @@ export type ProductVariantUpdateWithoutStockAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
@@ -2896,6 +4468,7 @@ export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2912,6 +4485,12 @@ export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutPriceAlertsInput = {
@@ -2930,6 +4509,7 @@ export type ProductVariantCreateWithoutPriceAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2947,6 +4527,12 @@ export type ProductVariantCreateWithoutPriceAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
@@ -2966,6 +4552,7 @@ export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -2982,6 +4569,12 @@ export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPriceAlertsInput = {
@@ -3016,6 +4609,7 @@ export type ProductVariantUpdateWithoutPriceAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3033,6 +4627,12 @@ export type ProductVariantUpdateWithoutPriceAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
@@ -3052,6 +4652,7 @@ export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3068,6 +4669,12 @@ export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutRefillRemindersInput = {
@@ -3086,6 +4693,7 @@ export type ProductVariantCreateWithoutRefillRemindersInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -3103,6 +4711,12 @@ export type ProductVariantCreateWithoutRefillRemindersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
@@ -3122,6 +4736,7 @@ export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -3138,6 +4753,12 @@ export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutRefillRemindersInput = {
@@ -3172,6 +4793,7 @@ export type ProductVariantUpdateWithoutRefillRemindersInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3189,6 +4811,12 @@ export type ProductVariantUpdateWithoutRefillRemindersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
@@ -3208,6 +4836,7 @@ export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3224,6 +4853,12 @@ export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantCreateManyProductInput = {
@@ -3242,6 +4877,7 @@ export type ProductVariantCreateManyProductInput = {
   hsnCode?: string | null
   gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
   erpId?: string | null
   erpManaged?: boolean
   createdAt?: Date | string
@@ -3264,6 +4900,7 @@ export type ProductVariantUpdateWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3281,6 +4918,12 @@ export type ProductVariantUpdateWithoutProductInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -3299,6 +4942,7 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3316,6 +4960,12 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
   orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
   cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -3334,6 +4984,7 @@ export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
   hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
   erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3359,6 +5010,11 @@ export type ProductVariantCountOutputType = {
   inventoryBatchMovements: number
   orderBatchAllocations: number
   cycleCountItems: number
+  qualityInspections: number
+  manufacturingBomOutputs: number
+  manufacturingBomComponents: number
+  productionOutputs: number
+  productionMaterialLines: number
 }
 
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3375,6 +5031,11 @@ export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   inventoryBatchMovements?: boolean | ProductVariantCountOutputTypeCountInventoryBatchMovementsArgs
   orderBatchAllocations?: boolean | ProductVariantCountOutputTypeCountOrderBatchAllocationsArgs
   cycleCountItems?: boolean | ProductVariantCountOutputTypeCountCycleCountItemsArgs
+  qualityInspections?: boolean | ProductVariantCountOutputTypeCountQualityInspectionsArgs
+  manufacturingBomOutputs?: boolean | ProductVariantCountOutputTypeCountManufacturingBomOutputsArgs
+  manufacturingBomComponents?: boolean | ProductVariantCountOutputTypeCountManufacturingBomComponentsArgs
+  productionOutputs?: boolean | ProductVariantCountOutputTypeCountProductionOutputsArgs
+  productionMaterialLines?: boolean | ProductVariantCountOutputTypeCountProductionMaterialLinesArgs
 }
 
 /**
@@ -3478,6 +5139,41 @@ export type ProductVariantCountOutputTypeCountCycleCountItemsArgs<ExtArgs extend
   where?: Prisma.CycleCountItemWhereInput
 }
 
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountQualityInspectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.QualityInspectionWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountManufacturingBomOutputsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ManufacturingBomWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountManufacturingBomComponentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ManufacturingBomItemWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountProductionOutputsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductionOrderWhereInput
+}
+
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountProductionMaterialLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ProductionOrderMaterialWhereInput
+}
+
 
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3496,6 +5192,7 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  inventoryRole?: boolean
   erpId?: boolean
   erpManaged?: boolean
   createdAt?: boolean
@@ -3514,6 +5211,12 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   inventoryBatchMovements?: boolean | Prisma.ProductVariant$inventoryBatchMovementsArgs<ExtArgs>
   orderBatchAllocations?: boolean | Prisma.ProductVariant$orderBatchAllocationsArgs<ExtArgs>
   cycleCountItems?: boolean | Prisma.ProductVariant$cycleCountItemsArgs<ExtArgs>
+  qualitySpecification?: boolean | Prisma.ProductVariant$qualitySpecificationArgs<ExtArgs>
+  qualityInspections?: boolean | Prisma.ProductVariant$qualityInspectionsArgs<ExtArgs>
+  manufacturingBomOutputs?: boolean | Prisma.ProductVariant$manufacturingBomOutputsArgs<ExtArgs>
+  manufacturingBomComponents?: boolean | Prisma.ProductVariant$manufacturingBomComponentsArgs<ExtArgs>
+  productionOutputs?: boolean | Prisma.ProductVariant$productionOutputsArgs<ExtArgs>
+  productionMaterialLines?: boolean | Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
 
@@ -3534,6 +5237,7 @@ export type ProductVariantSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  inventoryRole?: boolean
   erpId?: boolean
   erpManaged?: boolean
   createdAt?: boolean
@@ -3558,6 +5262,7 @@ export type ProductVariantSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  inventoryRole?: boolean
   erpId?: boolean
   erpManaged?: boolean
   createdAt?: boolean
@@ -3582,13 +5287,14 @@ export type ProductVariantSelectScalar = {
   hsnCode?: boolean
   gstRate?: boolean
   isActive?: boolean
+  inventoryRole?: boolean
   erpId?: boolean
   erpManaged?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "safetyStock" | "weightGrams" | "hsnCode" | "gstRate" | "isActive" | "erpId" | "erpManaged" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
+export type ProductVariantOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "name" | "sku" | "size" | "unit" | "mrp" | "sellingPrice" | "costPrice" | "stockQuantity" | "lowStockThreshold" | "safetyStock" | "weightGrams" | "hsnCode" | "gstRate" | "isActive" | "inventoryRole" | "erpId" | "erpManaged" | "createdAt" | "updatedAt", ExtArgs["result"]["productVariant"]>
 export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
   orderItems?: boolean | Prisma.ProductVariant$orderItemsArgs<ExtArgs>
@@ -3604,6 +5310,12 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   inventoryBatchMovements?: boolean | Prisma.ProductVariant$inventoryBatchMovementsArgs<ExtArgs>
   orderBatchAllocations?: boolean | Prisma.ProductVariant$orderBatchAllocationsArgs<ExtArgs>
   cycleCountItems?: boolean | Prisma.ProductVariant$cycleCountItemsArgs<ExtArgs>
+  qualitySpecification?: boolean | Prisma.ProductVariant$qualitySpecificationArgs<ExtArgs>
+  qualityInspections?: boolean | Prisma.ProductVariant$qualityInspectionsArgs<ExtArgs>
+  manufacturingBomOutputs?: boolean | Prisma.ProductVariant$manufacturingBomOutputsArgs<ExtArgs>
+  manufacturingBomComponents?: boolean | Prisma.ProductVariant$manufacturingBomComponentsArgs<ExtArgs>
+  productionOutputs?: boolean | Prisma.ProductVariant$productionOutputsArgs<ExtArgs>
+  productionMaterialLines?: boolean | Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3630,6 +5342,12 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     inventoryBatchMovements: Prisma.$InventoryBatchMovementPayload<ExtArgs>[]
     orderBatchAllocations: Prisma.$OrderBatchAllocationPayload<ExtArgs>[]
     cycleCountItems: Prisma.$CycleCountItemPayload<ExtArgs>[]
+    qualitySpecification: Prisma.$QualitySpecificationPayload<ExtArgs> | null
+    qualityInspections: Prisma.$QualityInspectionPayload<ExtArgs>[]
+    manufacturingBomOutputs: Prisma.$ManufacturingBomPayload<ExtArgs>[]
+    manufacturingBomComponents: Prisma.$ManufacturingBomItemPayload<ExtArgs>[]
+    productionOutputs: Prisma.$ProductionOrderPayload<ExtArgs>[]
+    productionMaterialLines: Prisma.$ProductionOrderMaterialPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3648,6 +5366,7 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     hsnCode: string | null
     gstRate: runtime.Decimal
     isActive: boolean
+    inventoryRole: $Enums.InventoryRole
     erpId: string | null
     erpManaged: boolean
     createdAt: Date
@@ -4060,6 +5779,12 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
   inventoryBatchMovements<T extends Prisma.ProductVariant$inventoryBatchMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$inventoryBatchMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryBatchMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderBatchAllocations<T extends Prisma.ProductVariant$orderBatchAllocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$orderBatchAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderBatchAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cycleCountItems<T extends Prisma.ProductVariant$cycleCountItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$cycleCountItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CycleCountItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  qualitySpecification<T extends Prisma.ProductVariant$qualitySpecificationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$qualitySpecificationArgs<ExtArgs>>): Prisma.Prisma__QualitySpecificationClient<runtime.Types.Result.GetResult<Prisma.$QualitySpecificationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  qualityInspections<T extends Prisma.ProductVariant$qualityInspectionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$qualityInspectionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$QualityInspectionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  manufacturingBomOutputs<T extends Prisma.ProductVariant$manufacturingBomOutputsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$manufacturingBomOutputsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ManufacturingBomPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  manufacturingBomComponents<T extends Prisma.ProductVariant$manufacturingBomComponentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$manufacturingBomComponentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ManufacturingBomItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productionOutputs<T extends Prisma.ProductVariant$productionOutputsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$productionOutputsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductionOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  productionMaterialLines<T extends Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductionOrderMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4105,6 +5830,7 @@ export interface ProductVariantFieldRefs {
   readonly hsnCode: Prisma.FieldRef<"ProductVariant", 'String'>
   readonly gstRate: Prisma.FieldRef<"ProductVariant", 'Decimal'>
   readonly isActive: Prisma.FieldRef<"ProductVariant", 'Boolean'>
+  readonly inventoryRole: Prisma.FieldRef<"ProductVariant", 'InventoryRole'>
   readonly erpId: Prisma.FieldRef<"ProductVariant", 'String'>
   readonly erpManaged: Prisma.FieldRef<"ProductVariant", 'Boolean'>
   readonly createdAt: Prisma.FieldRef<"ProductVariant", 'DateTime'>
@@ -4819,6 +6545,145 @@ export type ProductVariant$cycleCountItemsArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.CycleCountItemScalarFieldEnum | Prisma.CycleCountItemScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.qualitySpecification
+ */
+export type ProductVariant$qualitySpecificationArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QualitySpecification
+   */
+  select?: Prisma.QualitySpecificationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QualitySpecification
+   */
+  omit?: Prisma.QualitySpecificationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QualitySpecificationInclude<ExtArgs> | null
+  where?: Prisma.QualitySpecificationWhereInput
+}
+
+/**
+ * ProductVariant.qualityInspections
+ */
+export type ProductVariant$qualityInspectionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the QualityInspection
+   */
+  select?: Prisma.QualityInspectionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the QualityInspection
+   */
+  omit?: Prisma.QualityInspectionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.QualityInspectionInclude<ExtArgs> | null
+  where?: Prisma.QualityInspectionWhereInput
+  orderBy?: Prisma.QualityInspectionOrderByWithRelationInput | Prisma.QualityInspectionOrderByWithRelationInput[]
+  cursor?: Prisma.QualityInspectionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.QualityInspectionScalarFieldEnum | Prisma.QualityInspectionScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.manufacturingBomOutputs
+ */
+export type ProductVariant$manufacturingBomOutputsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ManufacturingBom
+   */
+  select?: Prisma.ManufacturingBomSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ManufacturingBom
+   */
+  omit?: Prisma.ManufacturingBomOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ManufacturingBomInclude<ExtArgs> | null
+  where?: Prisma.ManufacturingBomWhereInput
+  orderBy?: Prisma.ManufacturingBomOrderByWithRelationInput | Prisma.ManufacturingBomOrderByWithRelationInput[]
+  cursor?: Prisma.ManufacturingBomWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ManufacturingBomScalarFieldEnum | Prisma.ManufacturingBomScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.manufacturingBomComponents
+ */
+export type ProductVariant$manufacturingBomComponentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ManufacturingBomItem
+   */
+  select?: Prisma.ManufacturingBomItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ManufacturingBomItem
+   */
+  omit?: Prisma.ManufacturingBomItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ManufacturingBomItemInclude<ExtArgs> | null
+  where?: Prisma.ManufacturingBomItemWhereInput
+  orderBy?: Prisma.ManufacturingBomItemOrderByWithRelationInput | Prisma.ManufacturingBomItemOrderByWithRelationInput[]
+  cursor?: Prisma.ManufacturingBomItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ManufacturingBomItemScalarFieldEnum | Prisma.ManufacturingBomItemScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.productionOutputs
+ */
+export type ProductVariant$productionOutputsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductionOrder
+   */
+  select?: Prisma.ProductionOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductionOrder
+   */
+  omit?: Prisma.ProductionOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductionOrderInclude<ExtArgs> | null
+  where?: Prisma.ProductionOrderWhereInput
+  orderBy?: Prisma.ProductionOrderOrderByWithRelationInput | Prisma.ProductionOrderOrderByWithRelationInput[]
+  cursor?: Prisma.ProductionOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductionOrderScalarFieldEnum | Prisma.ProductionOrderScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.productionMaterialLines
+ */
+export type ProductVariant$productionMaterialLinesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ProductionOrderMaterial
+   */
+  select?: Prisma.ProductionOrderMaterialSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ProductionOrderMaterial
+   */
+  omit?: Prisma.ProductionOrderMaterialOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ProductionOrderMaterialInclude<ExtArgs> | null
+  where?: Prisma.ProductionOrderMaterialWhereInput
+  orderBy?: Prisma.ProductionOrderMaterialOrderByWithRelationInput | Prisma.ProductionOrderMaterialOrderByWithRelationInput[]
+  cursor?: Prisma.ProductionOrderMaterialWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ProductionOrderMaterialScalarFieldEnum | Prisma.ProductionOrderMaterialScalarFieldEnum[]
 }
 
 /**

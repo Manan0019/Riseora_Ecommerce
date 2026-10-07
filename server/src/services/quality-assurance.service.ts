@@ -65,15 +65,17 @@ export async function phase91ReleaseBatch(tx:Prisma.TransactionClient,input:{bat
   await batchMovement(client,updated,{type:"QA_RELEASE",blockedChange:-releaseQty,referenceType:"QUALITY_INSPECTION",referenceId:input.inspectionId,note:input.conditional?"Conditional QA release":"QA release to sellable stock",actorUserId:input.actorUserId});
   const before=n(variant.stockQuantity),after=before+releaseQty;const nextCost=batch.unitCost==null?variant.costPrice:(before<=0||variant.costPrice==null?n(batch.unitCost):Number(((before*n(variant.costPrice)+releaseQty*n(batch.unitCost))/(before+releaseQty)).toFixed(2)));await client.productVariant.update({where:{id:batch.variantId},data:{stockQuantity:after,costPrice:nextCost}});
   await client.inventoryMovement.create({data:{variantId:batch.variantId,type:"QA_RELEASE",source:"QUALITY",quantityChange:releaseQty,stockBefore:before,stockAfter:after,safetyStockSnapshot:Math.max(0,n(variant.safetyStock)),reason:input.conditional?"Conditional QA batch release":"QA batch release",referenceType:"QUALITY_INSPECTION",referenceId:input.inspectionId,actorUserId:input.actorUserId||null}});
+  await client.productionOrder.updateMany({where:{outputBatchId:batch.id,status:"QA_PENDING"},data:{status:"RELEASED"}});
   return updated;
 }
 
 export async function phase91RejectBatch(tx:Prisma.TransactionClient,input:{batchId:string;inspectionId:string;actorUserId?:string|null;disposition:"RETURN_TO_SUPPLIER"|"DESTROY"|"HOLD";note?:string|null}){
   const client:any=tx;const batch=await client.inventoryBatch.findUnique({where:{id:input.batchId}});if(!batch)throw new Error("QA_BATCH_NOT_FOUND");
   if(batch.quantityReserved>0)throw new Error("QA_REJECT_RESERVED_STOCK_BLOCKED");
-  if(input.disposition==="HOLD")return client.inventoryBatch.update({where:{id:batch.id},data:{status:["RECALLED","EXPIRED"].includes(String(batch.status))?batch.status:"QUARANTINED",qualityStatus:"FAILED",quantityBlocked:batch.quantityOnHand}});
+  if(input.disposition==="HOLD"){const held=await client.inventoryBatch.update({where:{id:batch.id},data:{status:["RECALLED","EXPIRED"].includes(String(batch.status))?batch.status:"QUARANTINED",qualityStatus:"FAILED",quantityBlocked:batch.quantityOnHand}});await client.productionOrder.updateMany({where:{outputBatchId:batch.id,status:"QA_PENDING"},data:{status:"QA_REJECTED"}});return held;}
   const qty=batch.quantityOnHand;const updated=await client.inventoryBatch.update({where:{id:batch.id},data:{quantityOnHand:0,quantityBlocked:0,status:"DEPLETED",qualityStatus:"FAILED"}});
   await batchMovement(client,updated,{type:"QA_REJECT",onHandChange:-qty,blockedChange:-Math.min(qty,batch.quantityBlocked),referenceType:"QUALITY_INSPECTION",referenceId:input.inspectionId,note:`${input.disposition}: ${input.note||"QA rejection disposition"}`,actorUserId:input.actorUserId});
+  await client.productionOrder.updateMany({where:{outputBatchId:batch.id,status:"QA_PENDING"},data:{status:"QA_REJECTED"}});
   return updated;
 }
 

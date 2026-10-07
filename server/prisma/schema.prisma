@@ -326,6 +326,38 @@ enum PurchaseVarianceStatus {
   COST_AND_QUALITY_VARIANCE
 }
 
+enum InventoryRole {
+  FINISHED_GOOD
+  RAW_MATERIAL
+  PACKAGING
+  CONSUMABLE
+}
+
+enum ManufacturingBomStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum ProductionOrderStatus {
+  DRAFT
+  APPROVED
+  MATERIAL_ISSUED
+  IN_PRODUCTION
+  QA_PENDING
+  RELEASED
+  QA_REJECTED
+  CANCELLED
+}
+
+enum ProductionVarianceStatus {
+  ON_TARGET
+  YIELD_VARIANCE
+  MATERIAL_VARIANCE
+  COST_VARIANCE
+  MULTIPLE_VARIANCE
+}
+
 enum WarehouseStatus {
   ACTIVE
   HOLD
@@ -363,6 +395,10 @@ enum InventoryBatchMovementType {
   QA_HOLD
   QA_RELEASE
   QA_REJECT
+  PRODUCTION_ISSUE
+  PRODUCTION_RETURN
+  PRODUCTION_OUTPUT
+  PRODUCTION_WASTE
 }
 
 enum CycleCountStatus {
@@ -594,6 +630,11 @@ model User {
   createdQualityInspections QualityInspection[] @relation("QualityInspectionCreatedBy")
   reviewedQualityInspections QualityInspection[] @relation("QualityInspectionReviewedBy")
   closedQualityIncidents SupplierQualityIncident[] @relation("SupplierQualityIncidentClosedBy")
+  createdManufacturingBoms ManufacturingBom[] @relation("ManufacturingBomCreatedBy")
+  createdProductionOrders ProductionOrder[] @relation("ProductionOrderCreatedBy")
+  approvedProductionOrders ProductionOrder[] @relation("ProductionOrderApprovedBy")
+  startedProductionOrders ProductionOrder[] @relation("ProductionOrderStartedBy")
+  completedProductionOrders ProductionOrder[] @relation("ProductionOrderCompletedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -788,6 +829,8 @@ enum InventoryMovementType {
   WAREHOUSE_COUNT_ADJUSTMENT
   QA_RELEASE
   QA_REJECT
+  PRODUCTION_ISSUE
+  PRODUCTION_RETURN
   ERP_SYNC
   CORRECTION
 }
@@ -800,6 +843,7 @@ enum InventoryMovementSource {
   PURCHASE
   WAREHOUSE
   QUALITY
+  MANUFACTURING
   ERP
   SYSTEM
 }
@@ -866,6 +910,7 @@ model ProductVariant {
   hsnCode           String?
   gstRate           Decimal  @default(0) @db.Decimal(5, 2)
   isActive          Boolean  @default(true)
+  inventoryRole     InventoryRole @default(FINISHED_GOOD)
   erpId             String?  @unique
   erpManaged        Boolean  @default(false)
 
@@ -884,6 +929,10 @@ model ProductVariant {
   cycleCountItems CycleCountItem[]
   qualitySpecification QualitySpecification?
   qualityInspections QualityInspection[]
+  manufacturingBomOutputs ManufacturingBom[] @relation("ManufacturingBomOutput")
+  manufacturingBomComponents ManufacturingBomItem[] @relation("ManufacturingBomComponent")
+  productionOutputs ProductionOrder[] @relation("ProductionOutputVariant")
+  productionMaterialLines ProductionOrderMaterial[] @relation("ProductionMaterialVariant")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2054,8 +2103,6 @@ model DemandPlan {
   approvedAt DateTime?
   items DemandPlanItem[]
   purchaseOrders PurchaseOrder[]
-  qualityInspections QualityInspection[]
-  qualityIncidents SupplierQualityIncident[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2280,6 +2327,7 @@ model Warehouse {
   bins WarehouseBin[]
   batches InventoryBatch[]
   cycleCounts CycleCount[]
+  productionOrders ProductionOrder[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2327,11 +2375,11 @@ model InventoryBatch {
   movements InventoryBatchMovement[]
   orderAllocations OrderBatchAllocation[]
   cycleCountItems CycleCountItem[]
-  qualitySpecification QualitySpecification?
   qualityInspections QualityInspection[]
   recallLinks InventoryRecallBatch[]
-  qualityInspections QualityInspection[]
   qualityIncidents SupplierQualityIncident[]
+  productionOutput ProductionOrder? @relation("ProductionOutputBatch")
+  productionMaterialAllocations ProductionMaterialAllocation[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2458,6 +2506,132 @@ model InventoryRecallBatch {
   @@index([batchId, recallId])
 }
 
+
+
+model ManufacturingBom {
+  id String @id @default(uuid()) @db.Uuid
+  bomCode String @unique
+  name String
+  outputVariantId String @db.Uuid
+  outputVariant ProductVariant @relation("ManufacturingBomOutput", fields: [outputVariantId], references: [id], onDelete: Restrict)
+  outputQuantity Int @default(1)
+  version Int @default(1)
+  status ManufacturingBomStatus @default(DRAFT)
+  yieldTolerancePercent Decimal @default(5) @db.Decimal(6,2)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("ManufacturingBomCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  items ManufacturingBomItem[]
+  productionOrders ProductionOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([outputVariantId, version])
+  @@index([status, outputVariantId])
+}
+
+model ManufacturingBomItem {
+  id String @id @default(uuid()) @db.Uuid
+  bomId String @db.Uuid
+  bom ManufacturingBom @relation(fields: [bomId], references: [id], onDelete: Cascade)
+  componentVariantId String @db.Uuid
+  componentVariant ProductVariant @relation("ManufacturingBomComponent", fields: [componentVariantId], references: [id], onDelete: Restrict)
+  quantityPerRun Int
+  wastagePercent Decimal @default(0) @db.Decimal(6,2)
+  isCritical Boolean @default(true)
+  sortOrder Int @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([bomId, componentVariantId])
+  @@index([componentVariantId, bomId])
+}
+
+model ProductionOrder {
+  id String @id @default(uuid()) @db.Uuid
+  productionNumber String @unique
+  bomId String @db.Uuid
+  bom ManufacturingBom @relation(fields: [bomId], references: [id], onDelete: Restrict)
+  outputVariantId String @db.Uuid
+  outputVariant ProductVariant @relation("ProductionOutputVariant", fields: [outputVariantId], references: [id], onDelete: Restrict)
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status ProductionOrderStatus @default(DRAFT)
+  plannedRuns Int @default(1)
+  plannedOutputQty Int
+  actualOutputQty Int?
+  plannedMaterialCost Decimal @default(0) @db.Decimal(14,2)
+  actualMaterialCost Decimal @default(0) @db.Decimal(14,2)
+  labourCost Decimal @default(0) @db.Decimal(14,2)
+  overheadCost Decimal @default(0) @db.Decimal(14,2)
+  totalProductionCost Decimal @default(0) @db.Decimal(14,2)
+  unitProductionCost Decimal? @db.Decimal(14,4)
+  yieldVariancePercent Decimal? @db.Decimal(8,2)
+  varianceStatus ProductionVarianceStatus @default(ON_TARGET)
+  plannedStartAt DateTime?
+  dueAt DateTime?
+  startedAt DateTime?
+  completedAt DateTime?
+  outputBatchCode String?
+  outputBatchId String? @unique @db.Uuid
+  outputBatch InventoryBatch? @relation("ProductionOutputBatch", fields: [outputBatchId], references: [id], onDelete: SetNull)
+  expiryDate DateTime?
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("ProductionOrderCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  approvedByUserId String? @db.Uuid
+  approvedBy User? @relation("ProductionOrderApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  startedByUserId String? @db.Uuid
+  startedBy User? @relation("ProductionOrderStartedBy", fields: [startedByUserId], references: [id], onDelete: SetNull)
+  completedByUserId String? @db.Uuid
+  completedBy User? @relation("ProductionOrderCompletedBy", fields: [completedByUserId], references: [id], onDelete: SetNull)
+  approvedAt DateTime?
+  materials ProductionOrderMaterial[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, dueAt])
+  @@index([warehouseId, status, createdAt])
+  @@index([outputVariantId, createdAt])
+}
+
+model ProductionOrderMaterial {
+  id String @id @default(uuid()) @db.Uuid
+  productionOrderId String @db.Uuid
+  productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  componentVariantId String @db.Uuid
+  componentVariant ProductVariant @relation("ProductionMaterialVariant", fields: [componentVariantId], references: [id], onDelete: Restrict)
+  plannedQty Int
+  issuedQty Int @default(0)
+  consumedQty Int @default(0)
+  returnedQty Int @default(0)
+  wasteQty Int @default(0)
+  unitCostSnapshot Decimal? @db.Decimal(14,4)
+  actualCost Decimal @default(0) @db.Decimal(14,2)
+  allocations ProductionMaterialAllocation[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productionOrderId, componentVariantId])
+  @@index([componentVariantId, productionOrderId])
+}
+
+model ProductionMaterialAllocation {
+  id String @id @default(uuid()) @db.Uuid
+  materialLineId String @db.Uuid
+  materialLine ProductionOrderMaterial @relation(fields: [materialLineId], references: [id], onDelete: Cascade)
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  quantityIssued Int
+  quantityConsumed Int @default(0)
+  quantityReturned Int @default(0)
+  unitCostSnapshot Decimal? @db.Decimal(14,4)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([materialLineId, batchId])
+  @@index([batchId, materialLineId])
+}
 
 model QualitySpecification {
   id String @id @default(uuid()) @db.Uuid
