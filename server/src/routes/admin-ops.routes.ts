@@ -24,6 +24,7 @@ import { adminReturnResolutionSnapshot, returnResolutionHealth } from "../servic
 import { nextEscalationLevel, phase84SupportHealth, phase84SupportSlaDueAt, phase84SupportSummary } from "../services/support-operations.service";
 import { PHASE85_RECOVERY_POLICY, phase85Customer360Profile, phase85RecoveryEligibility } from "../services/support-recovery.service";
 import { PHASE86_RETENTION_POLICY, phase86GrowthSummary, phase86LifecycleProfile, phase86Suppression } from "../services/retention-growth.service";
+import { PHASE87_ATTRIBUTION_POLICY, phase87BuildAttribution, phase87CampaignMetrics, phase87ExperimentGroup } from "../services/retention-attribution.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1012,9 +1013,15 @@ router.post("/support-cases/:id/reopen", asyncHandler(async (req, res) => {
 }));
 
 
+const phase87ExperimentFields = {
+  experimentMode: z.enum(["NONE","HOLDOUT","AB_TEST"]).default("NONE"),
+  holdoutPercent: z.number().int().min(0).max(PHASE87_ATTRIBUTION_POLICY.maxHoldoutPercent).default(10),
+  variantBLabel: z.string().trim().min(1).max(60).optional().or(z.literal("")),
+  attributionWindowDays: z.number().int().min(PHASE87_ATTRIBUTION_POLICY.minAttributionWindowDays).max(PHASE87_ATTRIBUTION_POLICY.maxAttributionWindowDays).default(30),
+};
 const retentionCampaignSchema = z.discriminatedUnion("benefitKind", [
-  z.object({ name: z.string().trim().min(3).max(120), segment: z.enum(["NEW","ACTIVE","LOYAL","VIP","AT_RISK","LAPSED"]), benefitKind: z.literal("COUPON"), couponAmount: z.number().min(50).max(PHASE86_RETENTION_POLICY.maxCouponAmount), validDays: z.number().int().min(1).max(PHASE86_RETENTION_POLICY.maxValidDays).default(30), audiencePolicy: z.enum(["ACCOUNT_PERSONALIZATION","MARKETING_OPT_IN_ONLY"]).default("ACCOUNT_PERSONALIZATION") }),
-  z.object({ name: z.string().trim().min(3).max(120), segment: z.enum(["NEW","ACTIVE","LOYAL","VIP","AT_RISK","LAPSED"]), benefitKind: z.literal("REWARD_POINTS"), rewardPoints: z.number().int().min(50).max(PHASE86_RETENTION_POLICY.maxRewardPoints), validDays: z.number().int().min(1).max(PHASE86_RETENTION_POLICY.maxValidDays).default(30), audiencePolicy: z.enum(["ACCOUNT_PERSONALIZATION","MARKETING_OPT_IN_ONLY"]).default("ACCOUNT_PERSONALIZATION") }),
+  z.object({ name: z.string().trim().min(3).max(120), segment: z.enum(["NEW","ACTIVE","LOYAL","VIP","AT_RISK","LAPSED"]), benefitKind: z.literal("COUPON"), couponAmount: z.number().min(50).max(PHASE86_RETENTION_POLICY.maxCouponAmount), variantBCouponAmount: z.number().min(50).max(PHASE86_RETENTION_POLICY.maxCouponAmount).optional(), validDays: z.number().int().min(1).max(PHASE86_RETENTION_POLICY.maxValidDays).default(30), audiencePolicy: z.enum(["ACCOUNT_PERSONALIZATION","MARKETING_OPT_IN_ONLY"]).default("ACCOUNT_PERSONALIZATION"), ...phase87ExperimentFields }),
+  z.object({ name: z.string().trim().min(3).max(120), segment: z.enum(["NEW","ACTIVE","LOYAL","VIP","AT_RISK","LAPSED"]), benefitKind: z.literal("REWARD_POINTS"), rewardPoints: z.number().int().min(50).max(PHASE86_RETENTION_POLICY.maxRewardPoints), variantBRewardPoints: z.number().int().min(50).max(PHASE86_RETENTION_POLICY.maxRewardPoints).optional(), pointValueRupees: z.number().min(0.01).max(10).default(1), validDays: z.number().int().min(1).max(PHASE86_RETENTION_POLICY.maxValidDays).default(30), audiencePolicy: z.enum(["ACCOUNT_PERSONALIZATION","MARKETING_OPT_IN_ONLY"]).default("ACCOUNT_PERSONALIZATION"), ...phase87ExperimentFields }),
 ]);
 
 async function phase86CustomerRows() {
@@ -1078,8 +1085,9 @@ router.post("/phase86-retention/campaigns", asyncHandler(async (req, res) => {
   const eligible = evaluated.filter((item: any) => item.suppression.eligible).length;
   const suppressed = evaluated.length - eligible;
   if (eligible > PHASE86_RETENTION_POLICY.maxCampaignAudience) return res.status(409).json({ success: false, message: `RETENTION_AUDIENCE_BLOCKED: ${eligible} eligible customers exceeds the ${PHASE86_RETENTION_POLICY.maxCampaignAudience}-customer activation cap.` });
-  const data: any = { name: parsed.data.name, segment: parsed.data.segment, benefitKind: parsed.data.benefitKind, audiencePolicy: parsed.data.audiencePolicy, validDays: parsed.data.validDays, createdByUserId: req.user!.id, previewEligible: eligible, previewSuppressed: suppressed };
-  if (parsed.data.benefitKind === "COUPON") data.couponAmount = parsed.data.couponAmount; else data.rewardPoints = parsed.data.rewardPoints;
+  const data: any = { name: parsed.data.name, segment: parsed.data.segment, benefitKind: parsed.data.benefitKind, audiencePolicy: parsed.data.audiencePolicy, validDays: parsed.data.validDays, createdByUserId: req.user!.id, previewEligible: eligible, previewSuppressed: suppressed, experimentMode: parsed.data.experimentMode, holdoutPercent: parsed.data.experimentMode === "NONE" ? 0 : parsed.data.holdoutPercent, variantBLabel: parsed.data.variantBLabel || null, attributionWindowDays: parsed.data.attributionWindowDays };
+  if (parsed.data.benefitKind === "COUPON") { data.couponAmount = parsed.data.couponAmount; data.variantBCouponAmount = parsed.data.experimentMode === "AB_TEST" ? (parsed.data.variantBCouponAmount || parsed.data.couponAmount) : null; }
+  else { data.rewardPoints = parsed.data.rewardPoints; data.variantBRewardPoints = parsed.data.experimentMode === "AB_TEST" ? (parsed.data.variantBRewardPoints || parsed.data.rewardPoints) : null; data.pointValueRupees = parsed.data.pointValueRupees; }
   const campaign = await prisma.retentionCampaign.create({ data });
   res.status(201).json({ success: true, data: campaign });
 }));
@@ -1101,23 +1109,67 @@ router.post("/phase86-retention/campaigns/:id/activate", asyncHandler(async (req
         await tx.retentionEnrollment.create({ data: { campaignId: campaign.id, userId: item.row.id, segmentSnapshot: item.profile.segment as any, riskScoreSnapshot: item.profile.riskScore, lifetimeSpendSnapshot: item.profile.lifetimeSpend, status: "SUPPRESSED", suppressionReason: item.suppression.reasons.join(" | ") } });
         continue;
       }
+      const experimentGroup = phase87ExperimentGroup(campaign.id, item.row.id, campaign.experimentMode, campaign.holdoutPercent);
+      const exposedAt = new Date();
+      if (experimentGroup === "CONTROL") {
+        await tx.retentionEnrollment.create({ data: { campaignId: campaign.id, userId: item.row.id, segmentSnapshot: item.profile.segment as any, riskScoreSnapshot: item.profile.riskScore, lifetimeSpendSnapshot: item.profile.lifetimeSpend, status: "CONTROL", experimentGroup: "CONTROL", variantLabel: "Control", exposedAt, benefitFaceValue: 0 } });
+        continue;
+      }
+      const variantB = experimentGroup === "VARIANT_B";
+      const couponValue = Number(variantB ? (campaign.variantBCouponAmount || campaign.couponAmount || 0) : (campaign.couponAmount || 0));
+      const pointsValue = Number(variantB ? (campaign.variantBRewardPoints || campaign.rewardPoints || 0) : (campaign.rewardPoints || 0));
+      const variantLabel = experimentGroup === "VARIANT_B" ? (campaign.variantBLabel || "Variant B") : campaign.experimentMode === "NONE" ? "Standard" : "Variant A";
       let couponId: string | null = null, couponCodeSnapshot: string | null = null, rewardTransactionId: string | null = null;
       if (campaign.benefitKind === "COUPON") {
         const code = `GROW-${randomBytes(4).toString("hex").toUpperCase()}`;
-        const coupon = await tx.coupon.create({ data: { code, description: `Phase 86 lifecycle benefit · ${campaign.name}`, discountType: "FIXED", discountValue: campaign.couponAmount!, scope: "ORDER", application: "ORDER_TOTAL", usageLimit: 1, perCustomerUsageLimit: 1, rewardOwnerUserId: item.row.id, startsAt: new Date(), endsAt: expiresAt, isActive: true } });
+        const coupon = await tx.coupon.create({ data: { code, description: `Phase 87 ${variantLabel} lifecycle benefit · ${campaign.name}`, discountType: "FIXED", discountValue: couponValue, scope: "ORDER", application: "ORDER_TOTAL", usageLimit: 1, perCustomerUsageLimit: 1, rewardOwnerUserId: item.row.id, startsAt: new Date(), endsAt: expiresAt, isActive: true } });
         couponId = coupon.id; couponCodeSnapshot = code;
       } else {
-        const account = await tx.rewardAccount.upsert({ where: { userId: item.row.id }, create: { userId: item.row.id, balance: campaign.rewardPoints || 0, lifetimeEarned: campaign.rewardPoints || 0 }, update: { balance: { increment: campaign.rewardPoints || 0 }, lifetimeEarned: { increment: campaign.rewardPoints || 0 } } });
-        const reward = await tx.rewardTransaction.create({ data: { userId: item.row.id, type: "ADMIN_ADJUST", points: campaign.rewardPoints || 0, balanceAfter: account.balance, description: `Phase 86 lifecycle campaign · ${campaign.name}`, sourceKey: `retention/${campaign.id}/${item.row.id}`, metadata: { campaignId: campaign.id, segment: campaign.segment } } });
+        const account = await tx.rewardAccount.upsert({ where: { userId: item.row.id }, create: { userId: item.row.id, balance: pointsValue, lifetimeEarned: pointsValue }, update: { balance: { increment: pointsValue }, lifetimeEarned: { increment: pointsValue } } });
+        const reward = await tx.rewardTransaction.create({ data: { userId: item.row.id, type: "ADMIN_ADJUST", points: pointsValue, balanceAfter: account.balance, description: `Phase 87 ${variantLabel} lifecycle campaign · ${campaign.name}`, sourceKey: `retention/${campaign.id}/${item.row.id}`, metadata: { campaignId: campaign.id, segment: campaign.segment, experimentGroup, variantLabel } } });
         rewardTransactionId = reward.id;
       }
-      const enrollment = await tx.retentionEnrollment.create({ data: { campaignId: campaign.id, userId: item.row.id, segmentSnapshot: item.profile.segment as any, riskScoreSnapshot: item.profile.riskScore, lifetimeSpendSnapshot: item.profile.lifetimeSpend, status: "ISSUED", couponId, couponCodeSnapshot, rewardTransactionId, expiresAt: campaign.benefitKind === "COUPON" ? expiresAt : null, notifiedAt: new Date() } });
-      await tx.notification.create({ data: { userId: item.row.id, title: `A Riseora benefit for your ${String(item.profile.segment).replaceAll("_"," ").toLowerCase()} journey`, message: campaign.benefitKind === "COUPON" ? `₹${Number(campaign.couponAmount || 0).toFixed(0)} personal coupon ${couponCodeSnapshot} is ready for you.` : `${campaign.rewardPoints || 0} reward points have been added to your account.`, type: "CAMPAIGN", ctaLabel: "View my benefits", ctaUrl: "/returns", metadata: { campaignId: campaign.id, retentionEnrollmentId: enrollment.id, segment: campaign.segment }, dedupeKey: `retention/${campaign.id}/${item.row.id}` } });
+      const benefitFaceValue = campaign.benefitKind === "COUPON" ? couponValue : pointsValue;
+      const enrollment = await tx.retentionEnrollment.create({ data: { campaignId: campaign.id, userId: item.row.id, segmentSnapshot: item.profile.segment as any, riskScoreSnapshot: item.profile.riskScore, lifetimeSpendSnapshot: item.profile.lifetimeSpend, status: "ISSUED", experimentGroup: experimentGroup as any, variantLabel, exposedAt, benefitFaceValue, couponId, couponCodeSnapshot, rewardTransactionId, expiresAt: campaign.benefitKind === "COUPON" ? expiresAt : null, notifiedAt: new Date() } });
+      await tx.notification.create({ data: { userId: item.row.id, title: `A Riseora benefit for your ${String(item.profile.segment).replaceAll("_"," ").toLowerCase()} journey`, message: campaign.benefitKind === "COUPON" ? `₹${couponValue.toFixed(0)} personal coupon ${couponCodeSnapshot} is ready for you.` : `${pointsValue} reward points have been added to your account.`, type: "CAMPAIGN", ctaLabel: "View my benefits", ctaUrl: "/returns", metadata: { campaignId: campaign.id, retentionEnrollmentId: enrollment.id, segment: campaign.segment, experimentGroup, variantLabel }, dedupeKey: `retention/${campaign.id}/${item.row.id}` } });
       issued += 1;
     }
     await tx.retentionCampaign.update({ where: { id: campaign.id }, data: { status: "COMPLETED", activatedAt: new Date(), completedAt: new Date(), previewEligible: issued, previewSuppressed: suppressed } });
   }, { timeout: 30000 });
   res.json({ success: true, data: { campaignId: campaign.id, issued, suppressed } });
+}));
+
+
+async function phase87AttributionDataset() {
+  const enrollments:any[] = await prisma.retentionEnrollment.findMany({
+    where: { status: { in: ["ISSUED", "CONTROL"] } },
+    include: { campaign: true, coupon: { include: { redemptions: { include: { order: { select: { id:true, status:true, totalAmount:true, discountAmount:true, createdAt:true, orderNumber:true, userId:true } } } } } } },
+    orderBy: { createdAt: "asc" },
+  });
+  if (!enrollments.length) return { enrollments, orders:[], attributed:[] };
+  const earliest = enrollments.map((e:any)=>new Date(e.exposedAt || e.createdAt).getTime()).reduce((a:number,b:number)=>Math.min(a,b), Date.now());
+  const orders:any[] = await prisma.order.findMany({ where: { status:"DELIVERED", userId:{ not:null }, createdAt:{ gte:new Date(earliest) } }, select:{ id:true,userId:true,status:true,totalAmount:true,discountAmount:true,createdAt:true,orderNumber:true }, orderBy:{ createdAt:"asc" } });
+  return { enrollments, orders, attributed: phase87BuildAttribution(enrollments as any, orders as any) };
+}
+
+router.get("/phase87-growth/summary", asyncHandler(async (_req, res) => {
+  const { enrollments, attributed } = await phase87AttributionDataset();
+  const campaigns:any[] = await prisma.retentionCampaign.findMany({ where:{ status:"COMPLETED" }, orderBy:{ createdAt:"desc" }, take:100 });
+  const rows = campaigns.map((c:any)=>phase87CampaignMetrics(c, enrollments as any, attributed as any));
+  const attributedRevenue = rows.reduce((s:number,r:any)=>s+r.attributedRevenue,0);
+  const incentiveCost = rows.reduce((s:number,r:any)=>s+r.incentiveCost,0);
+  const conversions = rows.reduce((s:number,r:any)=>s+r.conversions,0);
+  const best = [...rows].filter((r:any)=>r.roiPercent != null).sort((a:any,b:any)=>b.roiPercent-a.roiPercent)[0] || null;
+  res.json({ success:true, data:{ campaigns:rows, totals:{ campaignCount:rows.length, conversions, attributedRevenue, incentiveCost, roiPercent:incentiveCost>0?((attributedRevenue-incentiveCost)/incentiveCost)*100:null, bestCampaign:best?{id:best.campaignId,name:best.name,roiPercent:best.roiPercent}:null } } });
+}));
+
+router.get("/phase87-growth/campaigns/:id", asyncHandler(async (req, res) => {
+  const campaign:any = await prisma.retentionCampaign.findUnique({ where:{ id:String(req.params.id) } });
+  if (!campaign) return res.status(404).json({ success:false, message:"Retention campaign not found" });
+  const { enrollments, attributed } = await phase87AttributionDataset();
+  const metrics = phase87CampaignMetrics(campaign, enrollments as any, attributed as any);
+  const conversions = attributed.filter((a:any)=>a.enrollment.campaignId===campaign.id).slice(-100).reverse().map((a:any)=>({ orderNumber:a.order.orderNumber, revenue:a.order.totalAmount, kind:a.kind, group:a.enrollment.experimentGroup, variantLabel:a.enrollment.variantLabel }));
+  res.json({ success:true, data:{ ...metrics, attributionWindowDays:campaign.attributionWindowDays, conversions } });
 }));
 
 

@@ -17,9 +17,11 @@ function gte(actual, minimum) {
 }
 
 const concurrently = pkg.devDependencies?.concurrently;
+const directSourceMap = pkg.devDependencies?.["source-map-js"];
 gte(concurrently, "10.0.5") ? pass(`concurrently policy · ${concurrently}`) : fail("concurrently policy", String(concurrently));
 const shellQuote = pkg.overrides?.["shell-quote"];
 gte(shellQuote, "1.11.0") ? pass(`shell-quote override · ${shellQuote}`) : fail("shell-quote secure override", String(shellQuote));
+gte(directSourceMap, "1.2.2") ? pass(`source-map-js direct pin · ${directSourceMap}`) : fail("source-map-js direct pin", String(directSourceMap));
 const sourceMap = pkg.overrides?.["source-map-js"];
 gte(sourceMap, "1.2.2") ? pass(`source-map-js override · ${sourceMap}`) : fail("source-map-js secure override", String(sourceMap));
 

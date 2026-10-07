@@ -258,8 +258,22 @@ enum RetentionAudiencePolicy {
 enum RetentionEnrollmentStatus {
   ELIGIBLE
   SUPPRESSED
+  CONTROL
   ISSUED
   EXPIRED
+}
+
+enum RetentionExperimentMode {
+  NONE
+  HOLDOUT
+  AB_TEST
+}
+
+enum RetentionExperimentGroup {
+  STANDARD
+  CONTROL
+  VARIANT_A
+  VARIANT_B
 }
 
 enum EmailDeliveryStatus {
@@ -1760,6 +1774,13 @@ model RetentionCampaign {
   couponAmount Decimal? @db.Decimal(12, 2)
   rewardPoints Int?
   validDays Int @default(30)
+  experimentMode RetentionExperimentMode @default(NONE)
+  holdoutPercent Int @default(0)
+  variantBLabel String?
+  variantBCouponAmount Decimal? @db.Decimal(12, 2)
+  variantBRewardPoints Int?
+  attributionWindowDays Int @default(30)
+  pointValueRupees Decimal @default(1) @db.Decimal(8, 2)
   createdByUserId String? @db.Uuid
   createdBy User? @relation("RetentionCampaignCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
   previewEligible Int @default(0)
@@ -1785,6 +1806,10 @@ model RetentionEnrollment {
   riskScoreSnapshot Int
   lifetimeSpendSnapshot Decimal @db.Decimal(12, 2)
   status RetentionEnrollmentStatus
+  experimentGroup RetentionExperimentGroup @default(STANDARD)
+  variantLabel String?
+  exposedAt DateTime?
+  benefitFaceValue Decimal? @db.Decimal(12, 2)
   suppressionReason String?
   couponId String? @unique @db.Uuid
   coupon Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
@@ -1799,6 +1824,8 @@ model RetentionEnrollment {
   @@index([userId, status, createdAt])
   @@index([campaignId, status])
   @@index([segmentSnapshot, status, createdAt])
+  @@index([campaignId, experimentGroup, status])
+  @@index([userId, exposedAt])
 }
 
 model EmailDeliveryLog {

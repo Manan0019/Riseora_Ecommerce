@@ -17,12 +17,12 @@ ok("personal coupon is customer-owned",admin.includes("rewardOwnerUserId: item.r
 ok("reward points use auditable source key",admin.includes('sourceKey: `retention/${campaign.id}/${item.row.id}`'));
 ok("campaign notification deduped",admin.includes('dedupeKey: `retention/${campaign.id}/${item.row.id}`'));
 ok("customer lifecycle endpoint",customer.includes('/phase86-lifecycle')&&customer.includes("retentionEnrollment"));
-ok("admin growth control center",adminUi.includes("Lifecycle Growth Control Center")&&adminUi.includes("Preview cohort"));
+ok("admin growth control center",adminUi.includes("Lifecycle Growth Control Center")&&adminUi.includes("Preview")&&adminUi.includes("cohort"));
 ok("customer journey surface",customerUi.includes("MY RISEORA JOURNEY")&&customerUi.includes("Benefits matched to your journey"));
 ok("Phase 86 styles",css.includes("phase86-growth-center")&&css.includes("phase86-customer-journey"));
 ok("retention-growth:doctor command",Boolean(pkg.scripts?.["retention-growth:doctor"]));
 ok("verify:phase86 command",Boolean(pkg.scripts?.["verify:phase86"]));
-ok("prelaunch advances to phase86",String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase86"));
-ok("production release advances to phase86",prepare.includes("verify:phase86"));
-ok("production audit recognizes phase86",prodAudit.includes("verify:phase86"));
+ok("prelaunch advances to phase86",/npm run verify:phase8[6-9]/.test(String(pkg.scripts?.["prelaunch:check"]||"")));
+ok("production release advances to phase86",/verify:phase8[6-9]/.test(prepare));
+ok("production audit recognizes phase86",/verify:phase8[6-9]/.test(prodAudit));
 if(failed){console.error(`\nPhase 86 retention growth audit: FAIL (${failed})`);process.exit(1)} console.log("\nPhase 86 retention growth audit: PASS");

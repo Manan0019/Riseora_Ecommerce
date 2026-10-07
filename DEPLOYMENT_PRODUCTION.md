@@ -225,3 +225,7 @@ Dependency security policy now pins `concurrently` 10.0.5 and overrides `shell-q
 
 ## Phase 86
 Retention Intelligence, Lifecycle Campaigns & Growth Control Center V2. Latest verification gate: `npm run verify:phase86`. Expected migration head: `20261007183000_phase86_retention_lifecycle_growth_v2`.
+
+
+## Phase 87 · Growth Attribution, Campaign ROI & Experimentation V2
+Lifecycle campaigns now support deterministic holdout/A-B experiments, attribution windows, direct coupon and last-touch conversion attribution, incremental lift, incentive-cost/ROI reporting, customer benefit redemption visibility, and an explicit source-map-js lockfile repair. Latest verification gate: `npm run verify:phase87`. Expected migration head: `20261007203000_phase87_growth_attribution_experimentation_v2`.

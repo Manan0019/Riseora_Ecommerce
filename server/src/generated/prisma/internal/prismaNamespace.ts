@@ -6389,6 +6389,13 @@ export const RetentionCampaignScalarFieldEnum = {
   couponAmount: 'couponAmount',
   rewardPoints: 'rewardPoints',
   validDays: 'validDays',
+  experimentMode: 'experimentMode',
+  holdoutPercent: 'holdoutPercent',
+  variantBLabel: 'variantBLabel',
+  variantBCouponAmount: 'variantBCouponAmount',
+  variantBRewardPoints: 'variantBRewardPoints',
+  attributionWindowDays: 'attributionWindowDays',
+  pointValueRupees: 'pointValueRupees',
   createdByUserId: 'createdByUserId',
   previewEligible: 'previewEligible',
   previewSuppressed: 'previewSuppressed',
@@ -6409,6 +6416,10 @@ export const RetentionEnrollmentScalarFieldEnum = {
   riskScoreSnapshot: 'riskScoreSnapshot',
   lifetimeSpendSnapshot: 'lifetimeSpendSnapshot',
   status: 'status',
+  experimentGroup: 'experimentGroup',
+  variantLabel: 'variantLabel',
+  exposedAt: 'exposedAt',
+  benefitFaceValue: 'benefitFaceValue',
   suppressionReason: 'suppressionReason',
   couponId: 'couponId',
   couponCodeSnapshot: 'couponCodeSnapshot',
@@ -7267,6 +7278,20 @@ export type ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel> = FieldRe
 
 
 /**
+ * Reference to a field of type 'RetentionExperimentMode'
+ */
+export type EnumRetentionExperimentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionExperimentMode'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionExperimentMode[]'
+ */
+export type ListEnumRetentionExperimentModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionExperimentMode[]'>
+    
+
+
+/**
  * Reference to a field of type 'RetentionEnrollmentStatus'
  */
 export type EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionEnrollmentStatus'>
@@ -7277,6 +7302,20 @@ export type EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel> = FieldRefI
  * Reference to a field of type 'RetentionEnrollmentStatus[]'
  */
 export type ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionEnrollmentStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionExperimentGroup'
+ */
+export type EnumRetentionExperimentGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionExperimentGroup'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionExperimentGroup[]'
+ */
+export type ListEnumRetentionExperimentGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionExperimentGroup[]'>
     
 
 

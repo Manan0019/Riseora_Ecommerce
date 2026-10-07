@@ -11,9 +11,9 @@ if (missing.length) {
   process.exit(1);
 }
 const command = String(pkg.scripts?.["prelaunch:check"] || "");
-if (!command.includes("verify:phase86")) {
-  console.error("FAIL  prelaunch does not execute verify:phase86");
+if (!command.includes("verify:phase87")) {
+  console.error("FAIL  prelaunch does not execute verify:phase87");
   process.exit(1);
 }
 console.log(`PASS  forward audit compatibility tokens · ${expected[0]} through ${expected.at(-1)}`);
-console.log("PASS  prelaunch executes verify:phase86");
+console.log("PASS  prelaunch executes verify:phase87");

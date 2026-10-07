@@ -355,11 +355,31 @@ export type RetentionAudiencePolicy = (typeof RetentionAudiencePolicy)[keyof typ
 export const RetentionEnrollmentStatus = {
   ELIGIBLE: 'ELIGIBLE',
   SUPPRESSED: 'SUPPRESSED',
+  CONTROL: 'CONTROL',
   ISSUED: 'ISSUED',
   EXPIRED: 'EXPIRED'
 } as const
 
 export type RetentionEnrollmentStatus = (typeof RetentionEnrollmentStatus)[keyof typeof RetentionEnrollmentStatus]
+
+
+export const RetentionExperimentMode = {
+  NONE: 'NONE',
+  HOLDOUT: 'HOLDOUT',
+  AB_TEST: 'AB_TEST'
+} as const
+
+export type RetentionExperimentMode = (typeof RetentionExperimentMode)[keyof typeof RetentionExperimentMode]
+
+
+export const RetentionExperimentGroup = {
+  STANDARD: 'STANDARD',
+  CONTROL: 'CONTROL',
+  VARIANT_A: 'VARIANT_A',
+  VARIANT_B: 'VARIANT_B'
+} as const
+
+export type RetentionExperimentGroup = (typeof RetentionExperimentGroup)[keyof typeof RetentionExperimentGroup]
 
 
 export const EmailDeliveryStatus = {
