@@ -360,6 +360,9 @@ enum InventoryBatchMovementType {
   CYCLE_COUNT
   RECALL
   EXPIRY_HOLD
+  QA_HOLD
+  QA_RELEASE
+  QA_REJECT
 }
 
 enum CycleCountStatus {
@@ -375,6 +378,62 @@ enum InventoryRecallStatus {
   ACTIVE
   COMPLETED
   CANCELLED
+}
+
+
+enum QualityBatchStatus {
+  PENDING
+  SAMPLING
+  UNDER_REVIEW
+  RELEASED
+  CONDITIONAL_RELEASE
+  FAILED
+}
+
+enum QualityInspectionStatus {
+  DRAFT
+  SAMPLING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  CLOSED
+}
+
+enum QualityDisposition {
+  RELEASE
+  CONDITIONAL_RELEASE
+  HOLD
+  RETURN_TO_SUPPLIER
+  DESTROY
+}
+
+enum QualityTestResult {
+  PASS
+  WARN
+  FAIL
+  NOT_TESTED
+}
+
+enum QualitySeverity {
+  MINOR
+  MAJOR
+  CRITICAL
+}
+
+enum QualityIncidentStatus {
+  OPEN
+  INVESTIGATING
+  CLOSED
+}
+
+enum QualityIncidentType {
+  RECEIPT_REJECTION
+  QA_FAILURE
+  COST_VARIANCE
+  RECALL
+  CUSTOMER_QUALITY
+  EXPIRY_NONCOMPLIANCE
+  DOCUMENTATION
 }
 
 enum EmailDeliveryStatus {
@@ -531,6 +590,10 @@ model User {
   activatedInventoryRecalls InventoryRecall[] @relation("InventoryRecallActivatedBy")
   completedInventoryRecalls InventoryRecall[] @relation("InventoryRecallCompletedBy")
   inventoryBatchMovements InventoryBatchMovement[] @relation("InventoryBatchMovementActor")
+  createdQualitySpecifications QualitySpecification[] @relation("QualitySpecificationCreatedBy")
+  createdQualityInspections QualityInspection[] @relation("QualityInspectionCreatedBy")
+  reviewedQualityInspections QualityInspection[] @relation("QualityInspectionReviewedBy")
+  closedQualityIncidents SupplierQualityIncident[] @relation("SupplierQualityIncidentClosedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -723,6 +786,8 @@ enum InventoryMovementType {
   WAREHOUSE_RELEASE
   WAREHOUSE_WRITE_OFF
   WAREHOUSE_COUNT_ADJUSTMENT
+  QA_RELEASE
+  QA_REJECT
   ERP_SYNC
   CORRECTION
 }
@@ -734,6 +799,7 @@ enum InventoryMovementSource {
   RETURN
   PURCHASE
   WAREHOUSE
+  QUALITY
   ERP
   SYSTEM
 }
@@ -816,6 +882,8 @@ model ProductVariant {
   inventoryBatchMovements InventoryBatchMovement[]
   orderBatchAllocations OrderBatchAllocation[]
   cycleCountItems CycleCountItem[]
+  qualitySpecification QualitySpecification?
+  qualityInspections QualityInspection[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1986,6 +2054,8 @@ model DemandPlan {
   approvedAt DateTime?
   items DemandPlanItem[]
   purchaseOrders PurchaseOrder[]
+  qualityInspections QualityInspection[]
+  qualityIncidents SupplierQualityIncident[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2050,6 +2120,8 @@ model Supplier {
   notes String?
   variantOffers SupplierVariant[]
   purchaseOrders PurchaseOrder[]
+  qualityInspections QualityInspection[]
+  qualityIncidents SupplierQualityIncident[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2186,6 +2258,7 @@ model GoodsReceiptItem {
   expiryDate DateTime?
   qualityNote String?
   inventoryBatch InventoryBatch?
+  qualityInspections QualityInspection[]
   createdAt DateTime @default(now())
 
   @@index([goodsReceiptId, variantId])
@@ -2241,6 +2314,7 @@ model InventoryBatch {
   goodsReceiptItem GoodsReceiptItem? @relation(fields: [goodsReceiptItemId], references: [id], onDelete: SetNull)
   batchCode String
   status InventoryBatchStatus @default(AVAILABLE)
+  qualityStatus QualityBatchStatus @default(RELEASED)
   quantityOnHand Int @default(0)
   quantityReserved Int @default(0)
   quantityBlocked Int @default(0)
@@ -2253,7 +2327,11 @@ model InventoryBatch {
   movements InventoryBatchMovement[]
   orderAllocations OrderBatchAllocation[]
   cycleCountItems CycleCountItem[]
+  qualitySpecification QualitySpecification?
+  qualityInspections QualityInspection[]
   recallLinks InventoryRecallBatch[]
+  qualityInspections QualityInspection[]
+  qualityIncidents SupplierQualityIncident[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2378,6 +2456,110 @@ model InventoryRecallBatch {
 
   @@unique([recallId, batchId])
   @@index([batchId, recallId])
+}
+
+
+model QualitySpecification {
+  id String @id @default(uuid()) @db.Uuid
+  variantId String @unique @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  version Int @default(1)
+  isActive Boolean @default(true)
+  sampleQty Int @default(1)
+  coaRequired Boolean @default(false)
+  labReportRequired Boolean @default(false)
+  minShelfLifeDays Int @default(90)
+  checks Json
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("QualitySpecificationCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([isActive, updatedAt])
+}
+
+model QualityInspection {
+  id String @id @default(uuid()) @db.Uuid
+  inspectionNumber String @unique
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  goodsReceiptItemId String? @db.Uuid
+  goodsReceiptItem GoodsReceiptItem? @relation(fields: [goodsReceiptItemId], references: [id], onDelete: SetNull)
+  supplierId String? @db.Uuid
+  supplier Supplier? @relation(fields: [supplierId], references: [id], onDelete: SetNull)
+  status QualityInspectionStatus @default(DRAFT)
+  disposition QualityDisposition @default(HOLD)
+  severity QualitySeverity @default(MINOR)
+  sampleQty Int @default(1)
+  coaNumber String?
+  coaUrl String?
+  labReportUrl String?
+  manufactureDate DateTime?
+  expiryDate DateTime?
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("QualityInspectionCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  reviewedByUserId String? @db.Uuid
+  reviewedBy User? @relation("QualityInspectionReviewedBy", fields: [reviewedByUserId], references: [id], onDelete: SetNull)
+  sampledAt DateTime?
+  reviewedAt DateTime?
+  releasedAt DateTime?
+  closedAt DateTime?
+  tests QualityInspectionTest[]
+  incidents SupplierQualityIncident[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([batchId, createdAt])
+  @@index([supplierId, status, createdAt])
+  @@index([variantId, status, createdAt])
+}
+
+model QualityInspectionTest {
+  id String @id @default(uuid()) @db.Uuid
+  inspectionId String @db.Uuid
+  inspection QualityInspection @relation(fields: [inspectionId], references: [id], onDelete: Cascade)
+  code String
+  name String
+  specification String?
+  measuredValue String?
+  unit String?
+  result QualityTestResult @default(NOT_TESTED)
+  critical Boolean @default(false)
+  note String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([inspectionId, code])
+  @@index([inspectionId, result])
+}
+
+model SupplierQualityIncident {
+  id String @id @default(uuid()) @db.Uuid
+  sourceKey String @unique
+  supplierId String @db.Uuid
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  batchId String? @db.Uuid
+  batch InventoryBatch? @relation(fields: [batchId], references: [id], onDelete: SetNull)
+  inspectionId String? @db.Uuid
+  inspection QualityInspection? @relation(fields: [inspectionId], references: [id], onDelete: SetNull)
+  type QualityIncidentType
+  severity QualitySeverity @default(MINOR)
+  status QualityIncidentStatus @default(OPEN)
+  title String
+  notes String?
+  closedByUserId String? @db.Uuid
+  closedBy User? @relation("SupplierQualityIncidentClosedBy", fields: [closedByUserId], references: [id], onDelete: SetNull)
+  closedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([supplierId, status, createdAt])
+  @@index([batchId, createdAt])
+  @@index([inspectionId])
 }
 
 model EmailDeliveryLog {

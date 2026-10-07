@@ -98,7 +98,7 @@ async function writeBatchMovement(tx: any, batch: any, input: {
 
 async function availableBatches(tx: any, variantId: string) {
   const rows = await tx.inventoryBatch.findMany({
-    where: { variantId, status: "AVAILABLE" },
+    where: { variantId, status: "AVAILABLE", qualityStatus: { in: ["RELEASED", "CONDITIONAL_RELEASE"] } },
     orderBy: { receivedAt: "asc" },
   });
   const now = Date.now();
@@ -276,7 +276,7 @@ export async function phase90CommitOrderReservations(tx: Prisma.TransactionClien
     const outstanding = Math.max(0, asInt(row.reservedChange) - already);
     if (!outstanding) continue;
     const batch = await client.inventoryBatch.findUnique({ where: { id: row.batchId } });
-    if (!batch || batch.status !== "AVAILABLE" || batch.quantityReserved < outstanding || batch.quantityOnHand < outstanding) throw new Error("BATCH_RESERVATION_INTEGRITY_BLOCKED");
+    if (!batch || batch.status !== "AVAILABLE" || !["RELEASED","CONDITIONAL_RELEASE"].includes(String(batch.qualityStatus)) || batch.quantityReserved < outstanding || batch.quantityOnHand < outstanding) throw new Error("BATCH_RESERVATION_INTEGRITY_BLOCKED");
     const updated = await client.inventoryBatch.update({ where: { id: batch.id }, data: { quantityOnHand: { decrement: outstanding }, quantityReserved: { decrement: outstanding }, ...(batch.quantityOnHand - outstanding === 0 ? { status: "DEPLETED" } : {}) } });
     await writeBatchMovement(client, updated, { type: "SHIPMENT", onHandChange: -outstanding, reservedChange: -outstanding, referenceType: "ORDER", referenceId: orderId, note: "FEFO batch committed to shipped order" });
     await client.orderBatchAllocation.upsert({
@@ -324,6 +324,7 @@ export async function phase90ReleaseQuarantine(tx: Prisma.TransactionClient, bat
   const batch = await client.inventoryBatch.findUnique({ where: { id: batchId } });
   if (!batch) throw new Error("BATCH_NOT_FOUND");
   if (batch.status !== "QUARANTINED") throw new Error("BATCH_RELEASE_BLOCKED");
+  if (!["RELEASED","CONDITIONAL_RELEASE"].includes(String(batch.qualityStatus))) throw new Error("BATCH_QA_RELEASE_REQUIRED");
   if (batch.expiryDate && new Date(batch.expiryDate).getTime() < Date.now()) throw new Error("BATCH_EXPIRED_RELEASE_BLOCKED");
   const qty = asInt(batch.quantityBlocked);
   if (!qty) return batch;

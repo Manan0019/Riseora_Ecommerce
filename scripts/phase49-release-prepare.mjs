@@ -38,9 +38,9 @@ const forwardAuditCompatibility = [
   "verify:phase51", "verify:phase52", "verify:phase53", "verify:phase54", "verify:phase55", "verify:phase56", "verify:phase57", "verify:phase58", "verify:phase59", "verify:phase60",
   "verify:phase61", "verify:phase62", "verify:phase63", "verify:phase64", "verify:phase65", "verify:phase66", "verify:phase67", "verify:phase68", "verify:phase69", "verify:phase70",
   "verify:phase71", "verify:phase72", "verify:phase73", "verify:phase74", "verify:phase75", "verify:phase76", "verify:phase77", "verify:phase78", "verify:phase79", "verify:phase80",
-  "verify:phase81", "verify:phase82", "verify:phase83", "verify:phase84", "verify:phase85", "verify:phase86", "verify:phase87", "verify:phase88", "verify:phase89",
+  "verify:phase81", "verify:phase82", "verify:phase83", "verify:phase84", "verify:phase85", "verify:phase86", "verify:phase87", "verify:phase88", "verify:phase89", "verify:phase90",
 ];
-console.log(`Forward audit compatibility: ${forwardAuditCompatibility.join(" ")} are superseded by verify:phase90`);
-run("npm", ["run", "verify:phase90"]);
-console.log("\nPhase 90 production release preparation: PASS");
+console.log(`Forward audit compatibility: ${forwardAuditCompatibility.join(" ")} are superseded by verify:phase91`);
+run("npm", ["run", "verify:phase91"]);
+console.log("\nPhase 91 production release preparation: PASS");
 console.log("Database rollback is intentionally not automated. Recover from a verified backup or ship an explicit forward-fix migration.");

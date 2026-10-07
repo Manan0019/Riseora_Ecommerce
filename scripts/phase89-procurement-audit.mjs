@@ -17,8 +17,8 @@ ok("supplier minimum order is enforced",admin.includes("PROCUREMENT_MINIMUM_ORDE
 ok("PO approval and send lifecycle",admin.includes('purchase-orders/:id/approve')&&admin.includes('purchase-orders/:id/send'));
 ok("goods receipt requires sent PO",admin.includes("GOODS_RECEIPT_BLOCKED")&&admin.includes('PARTIALLY_RECEIVED'));
 ok("physical over-receipt blocked",admin.includes("GOODS_RECEIPT_OVERAGE_BLOCKED")&&admin.includes("acceptedQty+row.rejectedQty>outstanding"));
-ok("only accepted goods change inventory",admin.includes('delta:item.row.acceptedQty')&&admin.includes('type:"PURCHASE_RECEIPT"')&&admin.includes('source:"PURCHASE"'));
-ok("accepted goods refresh weighted cost",service.includes("phase89WeightedAverageCost")&&admin.includes("nextCost=phase89WeightedAverageCost")&&admin.includes("costPrice:nextCost"));
+const quality=fs.existsSync(path.join(root,"server/src/services/quality-assurance.service.ts"))?read("server/src/services/quality-assurance.service.ts"):"";ok("only accepted goods change inventory",(admin.includes('delta:item.row.acceptedQty')&&admin.includes('type:"PURCHASE_RECEIPT"'))||(admin.includes("phase91CreateInboundQaHold")&&quality.includes("phase91ReleaseBatch")));
+ok("accepted goods refresh weighted cost",service.includes("phase89WeightedAverageCost")&&((admin.includes("nextCost=phase89WeightedAverageCost")&&admin.includes("costPrice:nextCost"))||quality.includes("phase91ReleaseBatch")&&quality.includes("const nextCost=")&&quality.includes("costPrice:nextCost")));
 ok("rejected goods tracked separately",admin.includes('rejectedQty:{increment:item.row.rejectedQty}'));
 ok("admin procurement center",ui.includes("Supplier Purchasing, PO & Goods Receipt Command Center")&&ui.includes("Generate PO drafts")&&ui.includes("Post goods receipt"));
 ok("Admin Fulfilment mounts procurement",fulfil.includes("AdminProcurementCenter"));
