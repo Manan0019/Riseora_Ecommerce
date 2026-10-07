@@ -21,6 +21,7 @@ import { shopDiscoveryHealth } from "../services/shop-discovery.service";
 import { savedShoppingHealth } from "../services/saved-shopping.service";
 import { cartQuantityHealth } from "../services/cart-quantity-intelligence.service";
 import { assertOrderIntegrityForFulfilment, getOrderIntegrity } from "../services/order-integrity.service";
+import { assertDispatchReadinessForTransition, getDispatchReadiness } from "../services/dispatch-readiness.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -298,8 +299,8 @@ router.get(
       },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    const integrity = await getOrderIntegrity(order.id);
-    res.json({ success: true, data: { ...order, integrity } });
+    const [integrity, dispatchReadiness] = await Promise.all([getOrderIntegrity(order.id), getDispatchReadiness(order.id)]);
+    res.json({ success: true, data: { ...order, integrity, dispatchReadiness } });
   }),
 );
 
@@ -335,6 +336,9 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     const isSameStatus = order.status === payload.status;
     if (!isSameStatus && payload.status !== "CANCELLED") {
       await assertOrderIntegrityForFulfilment(order.id, tx);
+    }
+    if (!isSameStatus && ["SHIPPED", "DELIVERED"].includes(payload.status)) {
+      await assertDispatchReadinessForTransition(order.id, payload.status, { carrier: payload.carrier, trackingNumber: payload.trackingNumber, trackingUrl: payload.trackingUrl }, tx);
     }
     if (!isSameStatus && !allowedTransitions[order.status].includes(payload.status)) {
       throw new Error(`INVALID_TRANSITION:${order.status}:${payload.status}`);
@@ -596,6 +600,8 @@ router.patch(
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
       if (message.startsWith("ORDER_INTEGRITY_BLOCKED:")) return res.status(409).json({ success: false, code: "ORDER_INTEGRITY_BLOCKED", message: "Order integrity checks found a critical mismatch. Review the Phase 79 integrity panel before moving fulfilment forward." });
+      if (message.startsWith("DISPATCH_READINESS_BLOCKED:")) return res.status(409).json({ success: false, code: "DISPATCH_READINESS_BLOCKED", message: "Dispatch readiness checks found a blocking courier, tracking, address or parcel issue. Review the Phase 80 dispatch panel before marking the order shipped." });
+      if (message.startsWith("DELIVERY_EVIDENCE_BLOCKED:")) return res.status(409).json({ success: false, code: "DELIVERY_EVIDENCE_BLOCKED", message: "Shipment evidence is incomplete or contradictory. Review the Phase 80 dispatch panel before marking the order delivered." });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }

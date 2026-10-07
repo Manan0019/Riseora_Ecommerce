@@ -30,8 +30,9 @@ export default function AdminFulfilment() {
     if (filter === "confirmed") return rows.filter((row) => row.status === "CONFIRMED");
     if (filter === "processing") return rows.filter((row) => row.status === "PROCESSING");
     if (filter === "integrity") return rows.filter((row) => row.integrity?.status === "BLOCK" || row.integrity?.status === "REVIEW");
+    if (filter === "dispatch") return rows.filter((row) => row.dispatchReadiness?.status === "BLOCK" || row.dispatchReadiness?.status === "REVIEW");
     if (filter === "all") return rows;
-    return rows.filter((row) => row.overdue || row.dueSoon || row.cancellationPending || row.integrity?.status === "BLOCK");
+    return rows.filter((row) => row.overdue || row.dueSoon || row.cancellationPending || row.integrity?.status === "BLOCK" || row.dispatchReadiness?.status === "BLOCK");
   }, [data, filter]);
 
   if (!data && !error) return <div className="admin-panel"><div className="skeleton-card tall" /></div>;
@@ -49,6 +50,7 @@ export default function AdminFulfilment() {
       <div><small>IN TRANSIT</small><strong>{counts.inTransit || 0}</strong><span>Shipped orders</span></div>
       <div className={(counts.exceptions || 0) > 0 ? "danger" : ""}><small>SHIPMENT EXCEPTIONS</small><strong>{counts.exceptions || 0}</strong><span>Last 14 days</span></div>
       <button type="button" className={(counts.integrityBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("integrity")}><small>INTEGRITY HOLD</small><strong>{counts.integrityBlocked || 0}</strong><span>{counts.integrityReview || 0} review warning(s)</span></button>
+      <button type="button" className={(counts.dispatchBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("dispatch")}><small>DISPATCH HOLD</small><strong>{counts.dispatchBlocked || 0}</strong><span>{counts.dispatchReview || 0} readiness review(s)</span></button>
     </section>
 
     {data?.deliveryPromiseHealth && <section className="admin-panel phase73-delivery-health">
@@ -91,12 +93,23 @@ export default function AdminFulfilment() {
       <p className="phase79-integrity-note">{data.orderIntegrityHealth.note}</p>
     </section>}
 
+    {data?.dispatchReadinessHealth && <section className="admin-panel phase80-dispatch-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 80 · DISPATCH READINESS</p><h2>Courier handoff & shipment evidence</h2><p>Operational checks cover shipping-address completeness, parcel weight, courier constraints, tracking uniqueness and persisted shipment evidence before shipped/delivered transitions.</p></div></div>
+      <div className="phase80-dispatch-health-grid">
+        <article><small>PROCESSING CHECKED</small><strong>{data.dispatchReadinessHealth.checkedOrders ?? 0}</strong><span>Orders preparing for dispatch</span></article>
+        <article><small>READY</small><strong>{data.dispatchReadinessHealth.ready ?? 0}</strong><span>Base dispatch checks clear</span></article>
+        <article><small>REVIEW</small><strong>{data.dispatchReadinessHealth.review ?? 0}</strong><span>{data.dispatchReadinessHealth.reviewIssues ?? 0} non-blocking issue(s)</span></article>
+        <article className={(data.dispatchReadinessHealth.blocked || 0) > 0 ? "danger" : ""}><small>BLOCKED</small><strong>{data.dispatchReadinessHealth.blocked ?? 0}</strong><span>{data.dispatchReadinessHealth.blockingIssues ?? 0} blocking issue(s)</span></article>
+      </div>
+      <p className="phase80-dispatch-note">{data.dispatchReadinessHealth.note}</p>
+    </section>}
+
     <section className="admin-panel phase44-fulfilment-queue">
-      <div className="admin-panel-head"><div><h2>Dispatch queue</h2><p>Orders are sorted by promised dispatch time. Open an order to pack, ship and add tracking.</p></div><div className="phase44-filter-row">{[["attention","Attention"],["integrity","Integrity"],["overdue","Overdue"],["due","Due soon"],["confirmed","Confirmed"],["processing","Processing"],["all","All"]].map(([value,label]) => <button type="button" key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
+      <div className="admin-panel-head"><div><h2>Dispatch queue</h2><p>Orders are sorted by promised dispatch time. Open an order to pack, ship and add tracking.</p></div><div className="phase44-filter-row">{[["attention","Attention"],["integrity","Integrity"],["dispatch","Dispatch"],["overdue","Overdue"],["due","Due soon"],["confirmed","Confirmed"],["processing","Processing"],["all","All"]].map(([value,label]) => <button type="button" key={value} className={filter === value ? "active" : ""} onClick={() => setFilter(value)}>{label}</button>)}</div></div>
       {orders.length === 0 ? <div className="admin-empty"><strong>Nothing in this queue</strong><p>There are no orders matching the selected fulfilment view.</p></div> : <div className="phase44-fulfilment-list">{orders.map((order) => <article key={order.id} className={`${order.overdue ? "overdue" : order.dueSoon ? "due" : ""}`}>
         <div><span className={`status-pill status-${order.status.toLowerCase()}`}>{order.status}</span><strong>{order.orderNumber}</strong><small>{order.customerName} · {order.shippingZoneName || "Store-wide delivery"}</small></div>
         <div className="phase44-fulfilment-facts"><span><b>{relativeDeadline(order.dispatchDueAt)}</b>Dispatch SLA</span><span><b>{order.totalWeightGrams ? `${(Number(order.totalWeightGrams) / 1000).toFixed(2)} kg` : "—"}</b>Parcel weight</span><span><b>{order.preferredShippingPartnerName || "Any active courier"}</b>Suggested courier</span><span><b>{order.paymentMethod}</b>{order.paymentStatus}</span></div>
-        <div className="phase44-fulfilment-actions">{order.integrity && <span className={`phase79-integrity-badge ${String(order.integrity.status || "pass").toLowerCase()}`}>{order.integrity.status === "BLOCK" ? "Integrity hold" : order.integrity.status === "REVIEW" ? "Integrity review" : "Integrity pass"}</span>}{order.cancellationPending && <span className="phase44-warning">Cancellation pending</span>}<Link className="button button-secondary" to={`/admin/orders/${order.id}`}>Open order</Link></div>
+        <div className="phase44-fulfilment-actions">{order.integrity && <span className={`phase79-integrity-badge ${String(order.integrity.status || "pass").toLowerCase()}`}>{order.integrity.status === "BLOCK" ? "Integrity hold" : order.integrity.status === "REVIEW" ? "Integrity review" : "Integrity pass"}</span>}{order.dispatchReadiness && <span className={`phase80-dispatch-badge ${String(order.dispatchReadiness.status || "ready").toLowerCase()}`}>{order.dispatchReadiness.status === "BLOCK" ? "Dispatch hold" : order.dispatchReadiness.status === "REVIEW" ? "Dispatch review" : "Dispatch ready"}</span>}{order.cancellationPending && <span className="phase44-warning">Cancellation pending</span>}<Link className="button button-secondary" to={`/admin/orders/${order.id}`}>Open order</Link></div>
       </article>)}</div>}
     </section>
 

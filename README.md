@@ -510,3 +510,7 @@ Phase 76 adds a server-generated final checkout snapshot and explicit customer c
 ## Phase 79 — Post-Payment Order Integrity & Fulfilment Handoff V2
 
 Phase 79 adds a read-only integrity gate between checkout/order creation and physical fulfilment. Admin → Fulfilment and Order Detail now verify payment consistency, line/order totals, coupon redemption, checkout inventory-reservation trace and status history. Critical contradictions block forward fulfilment server-side, while legacy/missing evidence is surfaced as non-blocking REVIEW guidance. Use `npm run order-integrity:doctor` and `npm run verify:phase79`. No new database migration is required.
+
+## Phase 80 — Dispatch Readiness & Courier Handoff V2
+
+Phase 80 extends the Phase 79 fulfilment boundary with server-authoritative dispatch checks. Before SHIPPED, Riseora validates shipping-address completeness, courier/COD/weight constraints, tracking uniqueness and tracking URL hygiene. Before DELIVERED, persisted shipment handoff evidence must remain coherent. Admin → Fulfilment and Order Detail show READY / REVIEW / BLOCK dispatch readiness. Use `npm run dispatch-readiness:doctor` and `npm run verify:phase80`. No new database migration is required.
