@@ -358,6 +358,46 @@ enum ProductionVarianceStatus {
   MULTIPLE_VARIANCE
 }
 
+enum WorkCenterStatus {
+  ACTIVE
+  HOLD
+  INACTIVE
+}
+
+enum ProductionRoutingStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+}
+
+enum MrpPlanStatus {
+  DRAFT
+  APPROVED
+  CONVERTED
+  ARCHIVED
+}
+
+enum MrpSupplyAction {
+  MAKE
+  BUY
+  NONE
+}
+
+enum ProductionScheduleStatus {
+  DRAFT
+  PUBLISHED
+  LOCKED
+  ARCHIVED
+}
+
+enum ProductionScheduleSlotStatus {
+  PLANNED
+  RELEASED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
 enum WarehouseStatus {
   ACTIVE
   HOLD
@@ -635,6 +675,12 @@ model User {
   approvedProductionOrders ProductionOrder[] @relation("ProductionOrderApprovedBy")
   startedProductionOrders ProductionOrder[] @relation("ProductionOrderStartedBy")
   completedProductionOrders ProductionOrder[] @relation("ProductionOrderCompletedBy")
+  createdWorkCenters WorkCenter[] @relation("WorkCenterCreatedBy")
+  createdProductionRoutings ProductionRouting[] @relation("ProductionRoutingCreatedBy")
+  generatedMrpPlans MrpPlan[] @relation("MrpPlanGeneratedBy")
+  approvedMrpPlans MrpPlan[] @relation("MrpPlanApprovedBy")
+  createdProductionSchedules ProductionSchedule[] @relation("ProductionScheduleCreatedBy")
+  publishedProductionSchedules ProductionSchedule[] @relation("ProductionSchedulePublishedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -933,6 +979,8 @@ model ProductVariant {
   manufacturingBomComponents ManufacturingBomItem[] @relation("ManufacturingBomComponent")
   productionOutputs ProductionOrder[] @relation("ProductionOutputVariant")
   productionMaterialLines ProductionOrderMaterial[] @relation("ProductionMaterialVariant")
+  productionRoutings ProductionRouting[] @relation("ProductionRoutingOutput")
+  mrpPlanItems MrpPlanItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2103,6 +2151,7 @@ model DemandPlan {
   approvedAt DateTime?
   items DemandPlanItem[]
   purchaseOrders PurchaseOrder[]
+  mrpPlans MrpPlan[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2241,6 +2290,8 @@ model PurchaseOrderItem {
   supplierVariant SupplierVariant? @relation(fields: [supplierVariantId], references: [id], onDelete: SetNull)
   demandPlanItemId String? @db.Uuid
   demandPlanItem DemandPlanItem? @relation(fields: [demandPlanItemId], references: [id], onDelete: SetNull)
+  mrpPlanItemId String? @db.Uuid
+  mrpPlanItem MrpPlanItem? @relation(fields: [mrpPlanItemId], references: [id], onDelete: SetNull)
   orderedQty Int
   receivedQty Int @default(0)
   rejectedQty Int @default(0)
@@ -2259,6 +2310,7 @@ model PurchaseOrderItem {
   @@unique([purchaseOrderId, variantId])
   @@index([variantId, purchaseOrderId])
   @@index([demandPlanItemId])
+  @@index([mrpPlanItemId])
 }
 
 model GoodsReceipt {
@@ -2328,6 +2380,10 @@ model Warehouse {
   batches InventoryBatch[]
   cycleCounts CycleCount[]
   productionOrders ProductionOrder[]
+  workCenters WorkCenter[]
+  mrpPlans MrpPlan[]
+  productionSchedules ProductionSchedule[]
+  productionRoutings ProductionRouting[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2523,11 +2579,12 @@ model ManufacturingBom {
   createdBy User? @relation("ManufacturingBomCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   items ManufacturingBomItem[]
   productionOrders ProductionOrder[]
+  mrpPlanItems MrpPlanItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([outputVariantId, version])
-  @@index([status, outputVariantId])
+  @@unique([outputVariantId, warehouseId, version])
+  @@index([status, outputVariantId, warehouseId])
 }
 
 model ManufacturingBomItem {
@@ -2576,6 +2633,12 @@ model ProductionOrder {
   outputBatchId String? @unique @db.Uuid
   outputBatch InventoryBatch? @relation("ProductionOutputBatch", fields: [outputBatchId], references: [id], onDelete: SetNull)
   expiryDate DateTime?
+  mrpPlanItemId String? @unique @db.Uuid
+  mrpPlanItem MrpPlanItem? @relation(fields: [mrpPlanItemId], references: [id], onDelete: SetNull)
+  routingId String? @db.Uuid
+  routing ProductionRouting? @relation(fields: [routingId], references: [id], onDelete: SetNull)
+  priority Int @default(50)
+  scheduleSlots ProductionScheduleSlot[]
   notes String?
   createdByUserId String? @db.Uuid
   createdBy User? @relation("ProductionOrderCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
@@ -2593,6 +2656,8 @@ model ProductionOrder {
   @@index([status, dueAt])
   @@index([warehouseId, status, createdAt])
   @@index([outputVariantId, createdAt])
+  @@index([routingId, status, dueAt])
+  @@index([priority, dueAt])
 }
 
 model ProductionOrderMaterial {
@@ -2631,6 +2696,178 @@ model ProductionMaterialAllocation {
 
   @@unique([materialLineId, batchId])
   @@index([batchId, materialLineId])
+}
+
+model WorkCenter {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique
+  name String
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status WorkCenterStatus @default(ACTIVE)
+  dailyCapacityMinutes Int @default(480)
+  defaultSetupMinutes Int @default(15)
+  efficiencyPercent Decimal @default(100) @db.Decimal(6,2)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("WorkCenterCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  routingOperations ProductionRoutingOperation[]
+  scheduleSlots ProductionScheduleSlot[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([warehouseId, status])
+}
+
+model ProductionRouting {
+  id String @id @default(uuid()) @db.Uuid
+  routingCode String @unique
+  name String
+  outputVariantId String @db.Uuid
+  outputVariant ProductVariant @relation("ProductionRoutingOutput", fields: [outputVariantId], references: [id], onDelete: Restrict)
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  version Int @default(1)
+  status ProductionRoutingStatus @default(DRAFT)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("ProductionRoutingCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  operations ProductionRoutingOperation[]
+  productionOrders ProductionOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([outputVariantId, warehouseId, version])
+  @@index([status, outputVariantId, warehouseId])
+}
+
+model ProductionRoutingOperation {
+  id String @id @default(uuid()) @db.Uuid
+  routingId String @db.Uuid
+  routing ProductionRouting @relation(fields: [routingId], references: [id], onDelete: Cascade)
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  sequence Int
+  name String
+  setupMinutes Int @default(0)
+  runMinutesPerUnit Decimal @default(0) @db.Decimal(10,4)
+  queueMinutes Int @default(0)
+  notes String?
+  scheduleSlots ProductionScheduleSlot[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([routingId, sequence])
+  @@index([workCenterId, routingId])
+}
+
+model MrpPlan {
+  id String @id @default(uuid()) @db.Uuid
+  planNumber String @unique
+  name String
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  demandPlanId String? @db.Uuid
+  demandPlan DemandPlan? @relation(fields: [demandPlanId], references: [id], onDelete: SetNull)
+  status MrpPlanStatus @default(DRAFT)
+  horizonStart DateTime
+  horizonEnd DateTime
+  itemCount Int @default(0)
+  makeUnits Int @default(0)
+  buyUnits Int @default(0)
+  shortageCount Int @default(0)
+  notes String?
+  generatedByUserId String? @db.Uuid
+  generatedBy User? @relation("MrpPlanGeneratedBy", fields: [generatedByUserId], references: [id], onDelete: SetNull)
+  approvedByUserId String? @db.Uuid
+  approvedBy User? @relation("MrpPlanApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  approvedAt DateTime?
+  productionConvertedAt DateTime?
+  procurementConvertedAt DateTime?
+  convertedAt DateTime?
+  items MrpPlanItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([warehouseId, status, createdAt])
+  @@index([demandPlanId, status])
+}
+
+model MrpPlanItem {
+  id String @id @default(uuid()) @db.Uuid
+  planId String @db.Uuid
+  plan MrpPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  inventoryRole InventoryRole
+  supplyAction MrpSupplyAction
+  grossRequirementQty Int
+  availableStockQty Int
+  safetyStockQty Int
+  scheduledReceiptQty Int
+  netRequirementQty Int
+  plannedSupplyQty Int
+  requiredBy DateTime
+  bomId String? @db.Uuid
+  bom ManufacturingBom? @relation(fields: [bomId], references: [id], onDelete: SetNull)
+  sourceReason String?
+  productionOrder ProductionOrder?
+  purchaseOrderItems PurchaseOrderItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([planId, variantId])
+  @@index([planId, supplyAction])
+  @@index([variantId, requiredBy])
+}
+
+model ProductionSchedule {
+  id String @id @default(uuid()) @db.Uuid
+  scheduleNumber String @unique
+  name String
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status ProductionScheduleStatus @default(DRAFT)
+  horizonStart DateTime
+  horizonEnd DateTime
+  totalMinutes Int @default(0)
+  lateRiskCount Int @default(0)
+  overloadCount Int @default(0)
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("ProductionScheduleCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  publishedByUserId String? @db.Uuid
+  publishedBy User? @relation("ProductionSchedulePublishedBy", fields: [publishedByUserId], references: [id], onDelete: SetNull)
+  publishedAt DateTime?
+  slots ProductionScheduleSlot[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([warehouseId, status, horizonStart])
+}
+
+model ProductionScheduleSlot {
+  id String @id @default(uuid()) @db.Uuid
+  scheduleId String @db.Uuid
+  schedule ProductionSchedule @relation(fields: [scheduleId], references: [id], onDelete: Cascade)
+  productionOrderId String @db.Uuid
+  productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  routingOperationId String? @db.Uuid
+  routingOperation ProductionRoutingOperation? @relation(fields: [routingOperationId], references: [id], onDelete: SetNull)
+  sequence Int
+  operationName String
+  plannedStartAt DateTime
+  plannedEndAt DateTime
+  plannedMinutes Int
+  status ProductionScheduleSlotStatus @default(PLANNED)
+  lateRisk Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([scheduleId, productionOrderId, sequence])
+  @@index([workCenterId, plannedStartAt, plannedEndAt])
+  @@index([productionOrderId, sequence])
 }
 
 model QualitySpecification {

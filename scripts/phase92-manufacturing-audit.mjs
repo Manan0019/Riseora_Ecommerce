@@ -43,7 +43,7 @@ check("admin manufacturing cockpit",ui.includes("PHASE 92 · MANUFACTURING CONTR
 check("fulfilment renders Phase 92 center",fulfil.includes("AdminManufacturingControlCenter"));
 check("manufacturing:doctor command",pkg.scripts?.["manufacturing:doctor"]?.includes("phase92-manufacturing-audit"));
 check("verify:phase92 command",String(pkg.scripts?.["verify:phase92"]||"").includes("manufacturing:doctor")&&String(pkg.scripts?.["verify:phase92"]||"").includes("quality-assurance:doctor")&&String(pkg.scripts?.["verify:phase92"]||"").includes("npm run build"));
-check("prelaunch advances to phase92",prelaunch.includes("verify:phase92")&&prelaunch.includes("npm run verify:phase92"));
+check("prelaunch advances to phase92",prelaunch.includes("verify:phase92")&&/npm run verify:phase(?:9[2-9]|[1-9][0-9]{2,})/.test(prelaunch));
 
 // Pure behavior checks mirror the exported production math without touching the database.
 const materialRequirement=(qty,runs,waste)=>Math.ceil(Math.max(0,Math.trunc(qty))*Math.max(1,Math.trunc(runs))*(1+Math.max(0,Number(waste||0))/100));
