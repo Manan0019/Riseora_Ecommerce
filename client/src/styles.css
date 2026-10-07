@@ -3413,3 +3413,65 @@ textarea { min-height: 105px; resize: vertical; }
 .phase83-replacement-card{border-color:#bad9c1;background:linear-gradient(135deg,#fff,#f4fbf5)}
 @media(max-width:1100px){.phase83-admin-kpis{grid-template-columns:repeat(3,1fr)}.phase83-resolution-hero{grid-template-columns:repeat(2,1fr)}.phase83-inspection-grid{grid-template-columns:repeat(2,1fr)}.phase83-admin-returns-layout{grid-template-columns:1fr}}
 @media(max-width:720px){.phase83-return-window{grid-template-columns:1fr}.phase83-resolution-choice,.phase83-return-kpis,.phase83-return-meta,.phase83-resolution-hero,.phase83-admin-kpis,.phase83-admin-meta{grid-template-columns:1fr}.phase83-customer-inspection{grid-template-columns:1fr}.phase83-customer-inspection>div:last-child{grid-template-columns:1fr}.phase83-inspection-grid{grid-template-columns:1fr}}
+
+
+/* Phase 84 — Customer Care Case Management & Service Operations V2 */
+.phase84-support-center{margin-top:36px;padding:28px;border:1px solid var(--border-color,#e7e2dc);border-radius:28px;background:linear-gradient(180deg,rgba(250,248,244,.95),#fff)}
+.phase84-support-center.compact{margin-top:24px}
+.phase84-support-head,.phase84-thread-head,.phase84-support-admin-head{display:flex;justify-content:space-between;gap:24px;align-items:flex-start}
+.phase84-support-head h2,.phase84-support-admin-head h2{margin:.15rem 0 .4rem}
+.phase84-support-kpis{display:flex;gap:10px;flex-wrap:wrap}
+.phase84-support-kpis span,.phase84-support-admin-meta span{min-width:112px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid #e8e2da;display:flex;flex-direction:column;gap:3px}
+.phase84-support-kpis span.warn{border-color:#d99c4b;background:#fff8ed}
+.phase84-support-kpis small,.phase84-support-admin-meta small{font-size:10px;letter-spacing:.08em;color:#756f67}
+.phase84-support-kpis strong{font-size:24px}
+.phase84-support-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.8fr);gap:18px;margin-top:20px}
+.phase84-support-center.compact .phase84-support-grid{grid-template-columns:1fr}
+.phase84-support-create label,.phase84-reply-box,.phase84-csat,.phase84-admin-reply label,.phase84-resolution-panel label{display:flex;flex-direction:column;gap:7px;margin-top:12px}
+.phase84-support-create textarea,.phase84-reply-box textarea,.phase84-csat textarea,.phase84-admin-reply textarea,.phase84-resolution-panel textarea{min-height:110px}
+.phase84-support-case-list,.phase84-ticket-list{display:flex;flex-direction:column;gap:8px}
+.phase84-support-case-list button,.phase84-ticket-list>button{border:1px solid #e8e2da;background:#fff;border-radius:14px;padding:12px;text-align:left;display:flex;justify-content:space-between;gap:12px;cursor:pointer}
+.phase84-support-case-list button.active,.phase84-ticket-list>button.active{border-color:#29251f;box-shadow:0 0 0 1px #29251f inset}
+.phase84-support-case-list span,.phase84-ticket-list>button span{display:flex;flex-direction:column;gap:2px}
+.phase84-support-case-list small,.phase84-ticket-list small{color:#777066}
+.phase84-support-thread{margin-top:18px}
+.phase84-thread-head>div:last-child{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.phase84-case-state{display:inline-flex;padding:6px 10px;border-radius:999px;background:#eaf5ec;font-size:11px;font-weight:800;letter-spacing:.06em}
+.phase84-case-state.attention,.phase84-case-state.sla_breach{background:#fff0db;color:#955a00}
+.phase84-case-state.escalated{background:#fee7e7;color:#9b2626}
+.phase84-case-state.closed{background:#efefef;color:#555}
+.phase84-conversation{display:flex;flex-direction:column;gap:10px;margin:18px 0}
+.phase84-message{max-width:82%;padding:12px 14px;border-radius:16px;background:#f5f2ee}
+.phase84-message.customer{align-self:flex-end;background:#f0f6ee}
+.phase84-message.admin{align-self:flex-start;background:#f7f1e8}
+.phase84-message.system{align-self:center;max-width:92%;background:#f1f1f1}
+.phase84-message.internal{border:1px dashed #b28b55;background:#fff7e9}
+.phase84-message p{margin:4px 0 0;white-space:pre-wrap}
+.phase84-message small{font-size:10px;color:#746d64}
+.phase84-reply-box{display:grid;grid-template-columns:1fr auto;align-items:end}
+.phase84-reply-box textarea{grid-column:1/2;margin:0}
+.phase84-resolved-actions{display:flex;justify-content:space-between;gap:18px;align-items:center;padding-top:14px;border-top:1px solid #eee5dc}
+.phase84-csat{margin-top:16px;padding:16px;border-radius:16px;background:#fbf8f3}
+.phase84-score{display:flex;gap:8px}
+.phase84-score button{width:36px;height:36px;border-radius:50%;border:1px solid #d8d1c8;background:white}
+.phase84-score button.active{background:#2b2722;color:white}
+.phase84-csat-done,.phase84-linked-pill{display:inline-flex;padding:7px 10px;border-radius:999px;background:#edf5ed;font-weight:700;font-size:12px}
+.phase84-admin-support{margin:0 0 34px;padding:26px;border-radius:26px;background:#f7f5f1;border:1px solid #e4ddd4}
+.phase84-admin-support-kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:18px 0}
+.phase84-admin-support-kpis article{padding:14px;border-radius:16px;background:#fff;border:1px solid #e6ded4;display:flex;flex-direction:column;gap:4px}
+.phase84-admin-support-kpis article.warn{background:#fff8ec;border-color:#e7bd7e}.phase84-admin-support-kpis article.danger{background:#fff0ef;border-color:#e6a19a}
+.phase84-admin-support-kpis span{font-size:10px;letter-spacing:.08em}.phase84-admin-support-kpis strong{font-size:24px}
+.phase84-support-filters{margin-bottom:14px}
+.phase84-admin-support-layout{display:grid;grid-template-columns:340px minmax(0,1fr);gap:16px}
+.phase84-ticket-list{max-height:760px;overflow:auto}
+.phase84-ticket-workbench{display:flex;flex-direction:column;gap:14px;min-width:0}
+.phase84-support-admin-meta{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin:16px 0}
+.phase84-support-actions{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+.phase84-support-actions select{min-width:130px}
+.phase84-admin-thread .phase84-conversation{max-height:420px;overflow:auto;padding-right:5px}
+.phase84-admin-reply{border-top:1px solid #eee3d8;padding-top:12px}
+.phase84-reply-options{display:flex;gap:18px;flex-wrap:wrap;margin:8px 0 12px}
+.phase84-reply-options label{display:flex;flex-direction:row;align-items:center;margin:0}
+.phase84-resolution-panel{border-left:4px solid #b79b72}
+@media(max-width:1100px){.phase84-admin-support-kpis{grid-template-columns:repeat(3,1fr)}.phase84-admin-support-layout{grid-template-columns:1fr}.phase84-ticket-list{max-height:320px}.phase84-support-admin-meta{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:760px){.phase84-support-head,.phase84-thread-head{flex-direction:column}.phase84-support-grid{grid-template-columns:1fr}.phase84-support-kpis{width:100%}.phase84-support-kpis span{flex:1}.phase84-admin-support-kpis{grid-template-columns:repeat(2,1fr)}.phase84-support-admin-meta{grid-template-columns:1fr}.phase84-reply-box{grid-template-columns:1fr}.phase84-message{max-width:96%}}

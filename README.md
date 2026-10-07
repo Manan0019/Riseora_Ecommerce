@@ -526,3 +526,8 @@ Phase 82 adds no Prisma schema change. The database migration head remains `2026
 
 ## Phase 83 — Return Resolution Center V2
 Phase 83 is a major schema-backed returns upgrade. Customers choose refund or replacement, receive server-side eligibility and evidence validation, and follow one durable resolution journey. Admin → Returns gains SLA/priority triage, physical inspection, item-level sellable/quarantine/write-off disposition, approved refund control, replacement stock allocation and replacement delivery tracking. `RECEIVED` no longer blindly restocks returned products. Deploy migration `20261007123000_phase83_returns_resolution_inspection_v2`, then run `npm run returns-resolution:doctor` and `npm run verify:phase83`.
+
+
+## Phase 84 — Customer Care Case Management & Service Operations V2
+
+Phase 84 upgrades the existing ContactMessage/SupportMessage foundation into SLA-driven post-purchase customer care. Customers can open order/return-linked cases, exchange messages, reopen recent resolutions and submit CSAT. Admin Returns now includes a Customer Care Command Center with ownership, priority/SLA, internal notes, escalation, auditable resolution and CSAT. Run `npm run support-operations:doctor` and `npm run verify:phase84`.

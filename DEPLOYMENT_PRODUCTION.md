@@ -210,3 +210,8 @@ Phase 82 adds no Prisma schema change. The database migration head remains `2026
 
 ## Phase 83 — Return Resolution Center V2
 Phase 83 introduces database migration `20261007123000_phase83_returns_resolution_inspection_v2`. Expected migration count becomes 36. Run `npm run db:deploy`, `npm run db:generate`, `npm run db:status`, `npm run returns-resolution:doctor`, and `npm run verify:phase83` before public traffic. Do not mark returned merchandise sellable merely because a return reached RECEIVED; Phase 83 inspection must explicitly classify restock, quarantine and write-off quantities. Replacement dispatch must allocate inventory atomically and preserve safety stock. Refunds must not bypass inspection approval.
+
+
+## Phase 84 production note
+
+Phase 84 adds migration `20261007143000_phase84_customer_care_service_ops_v2`. Production deployment must preserve the release order: backup → db:deploy → db:generate → db:status → verify:phase84. Expected migration count is 37 and expected head is the Phase 84 migration.

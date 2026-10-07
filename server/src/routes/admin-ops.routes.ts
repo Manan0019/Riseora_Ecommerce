@@ -20,6 +20,7 @@ import { fulfilmentDispatchReadinessHealth } from "../services/dispatch-readines
 import { fulfilmentShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
 import { fulfilmentRtoRecoveryHealth } from "../services/rto-recovery.service";
 import { adminReturnResolutionSnapshot, returnResolutionHealth } from "../services/return-resolution.service";
+import { nextEscalationLevel, phase84SupportHealth, phase84SupportSlaDueAt, phase84SupportSummary } from "../services/support-operations.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -710,5 +711,192 @@ router.post("/returns/:id/replacement-delivered", asyncHandler(async (req, res) 
   void createReturnStatusInAppNotification(updated).catch((error) => console.error("Replacement delivered notification failed", error));
   res.json({ success: true, data: updated });
 }));
+
+
+router.get("/support-cases/phase84-summary", asyncHandler(async (_req, res) => {
+  const rows = await prisma.contactMessage.findMany({ orderBy: { lastActivityAt: "desc" } });
+  res.json({ success: true, data: phase84SupportSummary(rows) });
+}));
+
+router.get("/support-cases", asyncHandler(async (_req, res) => {
+  const rows = await prisma.contactMessage.findMany({
+    include: {
+      returnRequest: { select: { id: true, returnNumber: true, status: true } },
+      messages: { orderBy: { createdAt: "asc" }, take: 2 },
+    },
+    orderBy: [{ priority: "desc" }, { lastActivityAt: "desc" }],
+  });
+  res.json({ success: true, data: rows.map((item: any) => ({ ...item, supportHealth: phase84SupportHealth(item) })) });
+}));
+
+router.get("/support-cases/:id", asyncHandler(async (req, res) => {
+  const item = await prisma.contactMessage.findUnique({
+    where: { id: String(req.params.id) },
+    include: {
+      returnRequest: { select: { id: true, returnNumber: true, status: true, approvedResolution: true } },
+      messages: { orderBy: { createdAt: "asc" } },
+    },
+  });
+  if (!item) return res.status(404).json({ success: false, message: "Support case not found" });
+  let assignedAdmin = null;
+  if (item.assignedAdminUserId) {
+    assignedAdmin = await prisma.user.findUnique({ where: { id: item.assignedAdminUserId }, select: { id: true, firstName: true, lastName: true, email: true } });
+  }
+  res.json({ success: true, data: { ...item, assignedAdmin, supportHealth: phase84SupportHealth(item) } });
+}));
+
+router.post("/support-cases/:id/assign-to-me", asyncHandler(async (req, res) => {
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (["CLOSED", "SPAM"].includes(current.status)) return res.status(409).json({ success: false, message: "Closed/spam cases cannot be assigned" });
+  const now = new Date();
+  const updated = await prisma.contactMessage.update({
+    where: { id: current.id },
+    data: {
+      assignedAdminUserId: req.user!.id,
+      status: current.status === "NEW" ? "IN_PROGRESS" : current.status,
+      firstResponseAt: current.firstResponseAt,
+      lastActivityAt: now,
+    },
+  });
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
+const adminSupportReplySchema = z.object({
+  message: z.string().trim().min(2).max(5000),
+  internal: z.boolean().default(false),
+  waitForCustomer: z.boolean().default(true),
+});
+router.post("/support-cases/:id/reply", asyncHandler(async (req, res) => {
+  const parsed = adminSupportReplySchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid support reply", errors: parsed.error.flatten() });
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (current.status === "SPAM") return res.status(409).json({ success: false, message: "Spam cases cannot receive replies" });
+  const now = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    await tx.supportMessage.create({
+      data: {
+        ticketId: current.id,
+        sender: "ADMIN",
+        authorUserId: req.user!.id,
+        message: parsed.data.message,
+        isInternal: parsed.data.internal,
+      },
+    });
+    return tx.contactMessage.update({
+      where: { id: current.id },
+      data: parsed.data.internal ? {
+        assignedAdminUserId: current.assignedAdminUserId || req.user!.id,
+        lastActivityAt: now,
+      } : {
+        assignedAdminUserId: current.assignedAdminUserId || req.user!.id,
+        status: parsed.data.waitForCustomer ? "WAITING_CUSTOMER" : "IN_PROGRESS",
+        firstResponseAt: current.firstResponseAt || now,
+        lastAdminReplyAt: now,
+        lastActivityAt: now,
+      },
+    });
+  });
+  if (!parsed.data.internal && current.userId) {
+    await createUserNotification({
+      userId: current.userId,
+      title: `Support update · ${current.ticketNumber}`,
+      message: parsed.data.message,
+      type: "SUPPORT",
+      ctaLabel: "View support case",
+      ctaUrl: "/returns",
+      metadata: { supportTicketId: current.id, ticketNumber: current.ticketNumber },
+      dedupeKey: `support-reply/${current.id}/${now.toISOString()}`,
+    });
+  }
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
+const supportPrioritySchema = z.object({ priority: z.enum(["LOW", "NORMAL", "HIGH", "URGENT"]) });
+router.patch("/support-cases/:id/priority", asyncHandler(async (req, res) => {
+  const parsed = supportPrioritySchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid support priority" });
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  const now = new Date();
+  const updated = await prisma.contactMessage.update({
+    where: { id: current.id },
+    data: { priority: parsed.data.priority, slaDueAt: phase84SupportSlaDueAt(now, parsed.data.priority), lastActivityAt: now },
+  });
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
+router.post("/support-cases/:id/escalate", asyncHandler(async (req, res) => {
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (["RESOLVED", "CLOSED", "SPAM"].includes(current.status)) return res.status(409).json({ success: false, message: "Only active support cases can be escalated" });
+  const next = nextEscalationLevel(current.escalationLevel);
+  const now = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    const item = await tx.contactMessage.update({ where: { id: current.id }, data: { escalationLevel: next as any, escalatedAt: now, assignedAdminUserId: current.assignedAdminUserId || req.user!.id, status: "IN_PROGRESS", lastActivityAt: now } });
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "SYSTEM", message: `Case escalated to ${next}.`, isInternal: true } });
+    return item;
+  });
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
+const supportResolveSchema = z.object({
+  resolutionCode: z.enum(["INFORMATION_PROVIDED", "ORDER_CORRECTED", "PAYMENT_RESOLVED", "DELIVERY_RESOLVED", "RETURN_RESOLVED", "REPLACEMENT_RESOLVED", "ACCOUNT_RESOLVED", "GOODWILL_RESOLUTION", "NO_ACTION_REQUIRED", "DUPLICATE", "OTHER"]),
+  resolutionSummary: z.string().trim().min(8).max(3000),
+  customerVisibleMessage: z.string().trim().min(4).max(4000),
+});
+router.post("/support-cases/:id/resolve", asyncHandler(async (req, res) => {
+  const parsed = supportResolveSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Resolution evidence is incomplete", errors: parsed.error.flatten() });
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (["CLOSED", "SPAM"].includes(current.status)) return res.status(409).json({ success: false, message: "This case can no longer be resolved" });
+  const now = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "ADMIN", authorUserId: req.user!.id, message: parsed.data.customerVisibleMessage, isInternal: false } });
+    return tx.contactMessage.update({
+      where: { id: current.id },
+      data: {
+        status: "RESOLVED",
+        resolutionCode: parsed.data.resolutionCode as any,
+        resolutionSummary: parsed.data.resolutionSummary,
+        resolvedByUserId: req.user!.id,
+        assignedAdminUserId: current.assignedAdminUserId || req.user!.id,
+        firstResponseAt: current.firstResponseAt || now,
+        lastAdminReplyAt: now,
+        lastActivityAt: now,
+        resolvedAt: now,
+      },
+    });
+  });
+  if (current.userId) {
+    await createUserNotification({
+      userId: current.userId,
+      title: `Support case resolved · ${current.ticketNumber}`,
+      message: parsed.data.customerVisibleMessage,
+      type: "SUPPORT",
+      ctaLabel: "Review resolution",
+      ctaUrl: "/returns",
+      metadata: { supportTicketId: current.id, ticketNumber: current.ticketNumber, resolutionCode: parsed.data.resolutionCode },
+      dedupeKey: `support-resolved/${current.id}/${now.toISOString()}`,
+    });
+  }
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
+router.post("/support-cases/:id/reopen", asyncHandler(async (req, res) => {
+  const current = await prisma.contactMessage.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (!["RESOLVED", "CLOSED"].includes(current.status)) return res.status(409).json({ success: false, message: "Only resolved cases can be reopened" });
+  const now = new Date();
+  const updated = await prisma.$transaction(async (tx) => {
+    const item = await tx.contactMessage.update({ where: { id: current.id }, data: { status: "IN_PROGRESS", reopenedAt: now, resolvedAt: null, resolutionCode: null, resolutionSummary: null, satisfactionScore: null, satisfactionComment: null, satisfactionSubmittedAt: null, slaDueAt: phase84SupportSlaDueAt(now, current.priority), lastActivityAt: now } });
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "SYSTEM", message: "Case reopened by Riseora operations.", isInternal: false } });
+    return item;
+  });
+  res.json({ success: true, data: { ...updated, supportHealth: phase84SupportHealth(updated) } });
+}));
+
 
 export default router;

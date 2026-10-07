@@ -203,6 +203,27 @@ enum SupportMessageSender {
   SYSTEM
 }
 
+enum SupportEscalationLevel {
+  NONE
+  L1
+  L2
+  MANAGEMENT
+}
+
+enum SupportResolutionCode {
+  INFORMATION_PROVIDED
+  ORDER_CORRECTED
+  PAYMENT_RESOLVED
+  DELIVERY_RESOLVED
+  RETURN_RESOLVED
+  REPLACEMENT_RESOLVED
+  ACCOUNT_RESOLVED
+  GOODWILL_RESOLUTION
+  NO_ACTION_REQUIRED
+  DUPLICATE
+  OTHER
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -1207,6 +1228,7 @@ model ReturnRequest {
   evidence ReturnEvidence[]
   statusHistory ReturnStatusHistory[]
   creditNote CreditNote?
+  supportTickets ContactMessage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1596,12 +1618,31 @@ model ContactMessage {
   category SupportTicketCategory @default(GENERAL)
   priority SupportTicketPriority @default(NORMAL)
   orderNumber String?
+
+  returnRequestId String? @db.Uuid
+  returnRequest ReturnRequest? @relation(fields: [returnRequestId], references: [id], onDelete: SetNull)
+
   assignedAdminUserId String? @db.Uuid
+  resolvedByUserId String? @db.Uuid
 
   status    ContactMessageStatus @default(NEW)
+  escalationLevel SupportEscalationLevel @default(NONE)
+  resolutionCode SupportResolutionCode?
   adminNote String?
+  resolutionSummary String?
+
+  slaDueAt DateTime?
+  firstResponseAt DateTime?
+  lastCustomerReplyAt DateTime?
+  lastAdminReplyAt DateTime?
+  escalatedAt DateTime?
+  reopenedAt DateTime?
   lastActivityAt DateTime @default(now())
   resolvedAt DateTime?
+
+  satisfactionScore Int?
+  satisfactionComment String?
+  satisfactionSubmittedAt DateTime?
 
   messages SupportMessage[]
 
@@ -1614,6 +1655,9 @@ model ContactMessage {
   @@index([userId, lastActivityAt])
   @@index([assignedAdminUserId, status])
   @@index([orderNumber])
+  @@index([returnRequestId, status])
+  @@index([slaDueAt, status])
+  @@index([escalationLevel, status])
 }
 
 model SupportMessage {

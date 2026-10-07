@@ -279,6 +279,33 @@ export const SupportMessageSender = {
 export type SupportMessageSender = (typeof SupportMessageSender)[keyof typeof SupportMessageSender]
 
 
+export const SupportEscalationLevel = {
+  NONE: 'NONE',
+  L1: 'L1',
+  L2: 'L2',
+  MANAGEMENT: 'MANAGEMENT'
+} as const
+
+export type SupportEscalationLevel = (typeof SupportEscalationLevel)[keyof typeof SupportEscalationLevel]
+
+
+export const SupportResolutionCode = {
+  INFORMATION_PROVIDED: 'INFORMATION_PROVIDED',
+  ORDER_CORRECTED: 'ORDER_CORRECTED',
+  PAYMENT_RESOLVED: 'PAYMENT_RESOLVED',
+  DELIVERY_RESOLVED: 'DELIVERY_RESOLVED',
+  RETURN_RESOLVED: 'RETURN_RESOLVED',
+  REPLACEMENT_RESOLVED: 'REPLACEMENT_RESOLVED',
+  ACCOUNT_RESOLVED: 'ACCOUNT_RESOLVED',
+  GOODWILL_RESOLUTION: 'GOODWILL_RESOLUTION',
+  NO_ACTION_REQUIRED: 'NO_ACTION_REQUIRED',
+  DUPLICATE: 'DUPLICATE',
+  OTHER: 'OTHER'
+} as const
+
+export type SupportResolutionCode = (typeof SupportResolutionCode)[keyof typeof SupportResolutionCode]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'

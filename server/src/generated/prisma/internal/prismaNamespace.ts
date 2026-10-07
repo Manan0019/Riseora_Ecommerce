@@ -6096,11 +6096,25 @@ export const ContactMessageScalarFieldEnum = {
   category: 'category',
   priority: 'priority',
   orderNumber: 'orderNumber',
+  returnRequestId: 'returnRequestId',
   assignedAdminUserId: 'assignedAdminUserId',
+  resolvedByUserId: 'resolvedByUserId',
   status: 'status',
+  escalationLevel: 'escalationLevel',
+  resolutionCode: 'resolutionCode',
   adminNote: 'adminNote',
+  resolutionSummary: 'resolutionSummary',
+  slaDueAt: 'slaDueAt',
+  firstResponseAt: 'firstResponseAt',
+  lastCustomerReplyAt: 'lastCustomerReplyAt',
+  lastAdminReplyAt: 'lastAdminReplyAt',
+  escalatedAt: 'escalatedAt',
+  reopenedAt: 'reopenedAt',
   lastActivityAt: 'lastActivityAt',
   resolvedAt: 'resolvedAt',
+  satisfactionScore: 'satisfactionScore',
+  satisfactionComment: 'satisfactionComment',
+  satisfactionSubmittedAt: 'satisfactionSubmittedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -6850,6 +6864,34 @@ export type EnumContactMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputT
  * Reference to a field of type 'ContactMessageStatus[]'
  */
 export type ListEnumContactMessageStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ContactMessageStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SupportEscalationLevel'
+ */
+export type EnumSupportEscalationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportEscalationLevel'>
+    
+
+
+/**
+ * Reference to a field of type 'SupportEscalationLevel[]'
+ */
+export type ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportEscalationLevel[]'>
+    
+
+
+/**
+ * Reference to a field of type 'SupportResolutionCode'
+ */
+export type EnumSupportResolutionCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportResolutionCode'>
+    
+
+
+/**
+ * Reference to a field of type 'SupportResolutionCode[]'
+ */
+export type ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SupportResolutionCode[]'>
     
 
 

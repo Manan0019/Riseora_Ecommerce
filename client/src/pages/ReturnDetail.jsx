@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import ReturnTimeline from "../components/ReturnTimeline";
+import SupportCaseCenter from "../components/SupportCaseCenter";
 const money = (value) => `₹${Number(value || 0).toFixed(0)}`;
 export default function ReturnDetail() {
   const { id } = useParams(); const [item, setItem] = useState(null); const [error, setError] = useState("");
@@ -18,5 +19,6 @@ export default function ReturnDetail() {
     {(item.evidence || []).length > 0 && <section className="order-detail-card"><h2>Evidence shared</h2><div className="return-evidence-grid">{item.evidence.map((image) => <a href={mediaUrl(image.url)} target="_blank" rel="noreferrer" key={image.id}><img src={mediaUrl(image.url)} alt={image.originalName || "Return evidence"} /></a>)}</div></section>}
     {item.reverseTrackingNumber && <section className="order-detail-card"><h2>Return pickup</h2><div className="shipment-box"><span>{item.reverseCarrier || "Return courier"}</span><strong>{item.reverseTrackingNumber}</strong>{item.reverseTrackingUrl && <a href={item.reverseTrackingUrl} target="_blank" rel="noreferrer">Track return ↗</a>}</div></section>}
     {item.replacementTrackingNumber && <section className="order-detail-card phase83-replacement-card"><h2>Replacement shipment</h2><div className="shipment-box"><span>{item.replacementCarrier || "Replacement courier"}</span><strong>{item.replacementTrackingNumber}</strong>{item.replacementTrackingUrl && <a href={item.replacementTrackingUrl} target="_blank" rel="noreferrer">Track replacement ↗</a>}</div>{item.replacementDeliveredAt && <p className="alert success">Replacement delivered {new Date(item.replacementDeliveredAt).toLocaleString()}.</p>}</section>}
+    <SupportCaseCenter compact linkedReturn={{ id: item.id, returnNumber: item.returnNumber, orderNumber: item.order?.orderNumber }} />
   </div>;
 }

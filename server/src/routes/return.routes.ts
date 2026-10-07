@@ -6,6 +6,7 @@ import { requireAuth } from "../middleware/auth";
 import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
 import { phase83Priority, phase83SlaDueAt, returnResolutionHealth } from "../services/return-resolution.service";
+import { phase84SupportHealth, phase84SupportPriority, phase84SupportSlaDueAt } from "../services/support-operations.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -83,6 +84,132 @@ router.get("/", asyncHandler(async (req, res) => {
     }, orderBy: { requestedAt: "desc" },
   });
   res.json({ success: true, data: await Promise.all(rows.map(decorateReturn)) });
+}));
+
+
+const supportCaseSchema = z.object({
+  category: z.enum(["GENERAL", "ORDER", "PAYMENT", "DELIVERY", "RETURN_REFUND", "PRODUCT", "ACCOUNT", "REWARDS"]).default("GENERAL"),
+  subject: z.string().trim().min(4).max(180),
+  message: z.string().trim().min(10).max(4000),
+  orderNumber: z.string().trim().max(80).optional().or(z.literal("")),
+  returnRequestId: z.string().uuid().optional().nullable(),
+});
+
+function makeSupportTicketNumber() {
+  const date = new Date().toISOString().slice(0, 10).replaceAll("-", "");
+  return `SUP-${date}-${randomBytes(3).toString("hex").toUpperCase()}`;
+}
+
+function customerSupportView(ticket: any) {
+  return {
+    ...ticket,
+    messages: (ticket.messages || []).filter((message: any) => !message.isInternal),
+    supportHealth: phase84SupportHealth(ticket),
+  };
+}
+
+router.get("/support-cases", asyncHandler(async (req, res) => {
+  const rows = await prisma.contactMessage.findMany({
+    where: { userId: req.user!.id },
+    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
+    orderBy: { lastActivityAt: "desc" },
+  });
+  res.json({ success: true, data: rows.map(customerSupportView) });
+}));
+
+router.get("/support-cases/:id", asyncHandler(async (req, res) => {
+  const item = await prisma.contactMessage.findFirst({
+    where: { id: String(req.params.id), userId: req.user!.id },
+    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
+  });
+  if (!item) return res.status(404).json({ success: false, message: "Support case not found" });
+  res.json({ success: true, data: customerSupportView(item) });
+}));
+
+router.post("/support-cases", asyncHandler(async (req, res) => {
+  const parsed = supportCaseSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid support case", errors: parsed.error.flatten() });
+
+  const user = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { id: true, firstName: true, lastName: true, email: true, phone: true } });
+  if (!user) return res.status(404).json({ success: false, message: "Customer account not found" });
+
+  let orderNumber: string | null = parsed.data.orderNumber || null;
+  if (orderNumber) {
+    const order = await prisma.order.findFirst({ where: { orderNumber, userId: req.user!.id }, select: { orderNumber: true } });
+    if (!order) return res.status(400).json({ success: false, message: "Choose an order that belongs to your account" });
+  }
+
+  let returnRequestId: string | null = parsed.data.returnRequestId || null;
+  if (returnRequestId) {
+    const linked = await prisma.returnRequest.findFirst({ where: { id: returnRequestId, userId: req.user!.id }, select: { id: true, order: { select: { orderNumber: true } } } });
+    if (!linked) return res.status(400).json({ success: false, message: "Return case does not belong to your account" });
+    orderNumber ||= linked.order.orderNumber;
+  }
+
+  const createdAt = new Date();
+  const priority = phase84SupportPriority(parsed.data.category, parsed.data.subject, parsed.data.message);
+  const created = await prisma.contactMessage.create({
+    data: {
+      ticketNumber: makeSupportTicketNumber(),
+      userId: user.id,
+      name: `${user.firstName} ${user.lastName || ""}`.trim(),
+      email: user.email,
+      phone: user.phone,
+      subject: parsed.data.subject,
+      message: parsed.data.message,
+      category: parsed.data.category as any,
+      priority: priority as any,
+      orderNumber,
+      returnRequestId,
+      status: "NEW",
+      slaDueAt: phase84SupportSlaDueAt(createdAt, priority),
+      lastActivityAt: createdAt,
+      lastCustomerReplyAt: createdAt,
+      messages: { create: { sender: "CUSTOMER", authorUserId: user.id, message: parsed.data.message, isInternal: false } },
+    },
+    include: { returnRequest: { select: { id: true, returnNumber: true, status: true } }, messages: { where: { isInternal: false }, orderBy: { createdAt: "asc" } } },
+  });
+  res.status(201).json({ success: true, data: customerSupportView(created) });
+}));
+
+const supportReplySchema = z.object({ message: z.string().trim().min(2).max(4000) });
+router.post("/support-cases/:id/reply", asyncHandler(async (req, res) => {
+  const parsed = supportReplySchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Write a valid reply" });
+  const current = await prisma.contactMessage.findFirst({ where: { id: String(req.params.id), userId: req.user!.id } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (["RESOLVED", "CLOSED", "SPAM"].includes(current.status)) return res.status(409).json({ success: false, message: "Reopen this resolved case before replying" });
+  const now = new Date();
+  await prisma.$transaction(async (tx) => {
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "CUSTOMER", authorUserId: req.user!.id, message: parsed.data.message, isInternal: false } });
+    await tx.contactMessage.update({ where: { id: current.id }, data: { status: "IN_PROGRESS", lastCustomerReplyAt: now, lastActivityAt: now } });
+  });
+  res.json({ success: true });
+}));
+
+router.post("/support-cases/:id/reopen", asyncHandler(async (req, res) => {
+  const current = await prisma.contactMessage.findFirst({ where: { id: String(req.params.id), userId: req.user!.id } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (!["RESOLVED", "CLOSED"].includes(current.status)) return res.status(409).json({ success: false, message: "Only a resolved case can be reopened" });
+  if (current.resolvedAt && Date.now() - new Date(current.resolvedAt).getTime() > 14 * 86400000) return res.status(409).json({ success: false, message: "This case is older than the 14-day reopen window. Please open a new support case." });
+  const now = new Date();
+  await prisma.$transaction(async (tx) => {
+    await tx.contactMessage.update({ where: { id: current.id }, data: { status: "IN_PROGRESS", reopenedAt: now, resolvedAt: null, resolutionCode: null, resolutionSummary: null, satisfactionScore: null, satisfactionComment: null, satisfactionSubmittedAt: null, slaDueAt: phase84SupportSlaDueAt(now, current.priority), lastActivityAt: now } });
+    await tx.supportMessage.create({ data: { ticketId: current.id, sender: "SYSTEM", message: "Customer reopened this support case.", isInternal: false } });
+  });
+  res.json({ success: true });
+}));
+
+const supportRatingSchema = z.object({ score: z.number().int().min(1).max(5), comment: z.string().trim().max(1200).optional().or(z.literal("")) });
+router.post("/support-cases/:id/rating", asyncHandler(async (req, res) => {
+  const parsed = supportRatingSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Rating must be between 1 and 5" });
+  const current = await prisma.contactMessage.findFirst({ where: { id: String(req.params.id), userId: req.user!.id } });
+  if (!current) return res.status(404).json({ success: false, message: "Support case not found" });
+  if (!["RESOLVED", "CLOSED"].includes(current.status)) return res.status(409).json({ success: false, message: "Rate the support experience after the case is resolved" });
+  if (current.satisfactionSubmittedAt) return res.status(409).json({ success: false, message: "Feedback has already been submitted for this case" });
+  await prisma.contactMessage.update({ where: { id: current.id }, data: { satisfactionScore: parsed.data.score, satisfactionComment: parsed.data.comment || null, satisfactionSubmittedAt: new Date() } });
+  res.json({ success: true });
 }));
 
 router.get("/:id", asyncHandler(async (req, res) => {

@@ -909,6 +909,20 @@ export type EnumContactMessageStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel> | $Enums.ContactMessageStatus
 }
 
+export type EnumSupportEscalationLevelFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportEscalationLevel | Prisma.EnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel> | $Enums.SupportEscalationLevel
+}
+
+export type EnumSupportResolutionCodeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportResolutionCode | Prisma.EnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel> | $Enums.SupportResolutionCode | null
+}
+
 export type EnumSupportTicketCategoryWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.SupportTicketCategory | Prisma.EnumSupportTicketCategoryFieldRefInput<$PrismaModel>
   in?: $Enums.SupportTicketCategory[] | Prisma.ListEnumSupportTicketCategoryFieldRefInput<$PrismaModel>
@@ -937,6 +951,26 @@ export type EnumContactMessageStatusWithAggregatesFilter<$PrismaModel = never> =
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel>
+}
+
+export type EnumSupportEscalationLevelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportEscalationLevel | Prisma.EnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportEscalationLevelWithAggregatesFilter<$PrismaModel> | $Enums.SupportEscalationLevel
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel>
+}
+
+export type EnumSupportResolutionCodeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportResolutionCode | Prisma.EnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSupportResolutionCodeNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupportResolutionCode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel>
 }
 
 export type EnumSupportMessageSenderFilter<$PrismaModel = never> = {
@@ -1993,6 +2027,20 @@ export type NestedEnumContactMessageStatusFilter<$PrismaModel = never> = {
   not?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel> | $Enums.ContactMessageStatus
 }
 
+export type NestedEnumSupportEscalationLevelFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportEscalationLevel | Prisma.EnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel> | $Enums.SupportEscalationLevel
+}
+
+export type NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportResolutionCode | Prisma.EnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel> | $Enums.SupportResolutionCode | null
+}
+
 export type NestedEnumSupportTicketCategoryWithAggregatesFilter<$PrismaModel = never> = {
   equals?: $Enums.SupportTicketCategory | Prisma.EnumSupportTicketCategoryFieldRefInput<$PrismaModel>
   in?: $Enums.SupportTicketCategory[] | Prisma.ListEnumSupportTicketCategoryFieldRefInput<$PrismaModel>
@@ -2021,6 +2069,26 @@ export type NestedEnumContactMessageStatusWithAggregatesFilter<$PrismaModel = ne
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel>
   _max?: Prisma.NestedEnumContactMessageStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumSupportEscalationLevelWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportEscalationLevel | Prisma.EnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  in?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  notIn?: $Enums.SupportEscalationLevel[] | Prisma.ListEnumSupportEscalationLevelFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumSupportEscalationLevelWithAggregatesFilter<$PrismaModel> | $Enums.SupportEscalationLevel
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportEscalationLevelFilter<$PrismaModel>
+}
+
+export type NestedEnumSupportResolutionCodeNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.SupportResolutionCode | Prisma.EnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  in?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.SupportResolutionCode[] | Prisma.ListEnumSupportResolutionCodeFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumSupportResolutionCodeNullableWithAggregatesFilter<$PrismaModel> | $Enums.SupportResolutionCode | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumSupportResolutionCodeNullableFilter<$PrismaModel>
 }
 
 export type NestedEnumSupportMessageSenderFilter<$PrismaModel = never> = {
