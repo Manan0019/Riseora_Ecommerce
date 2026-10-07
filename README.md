@@ -1,8 +1,8 @@
-# Riseora E-commerce · Phase 88 cumulative overlay
+# Riseora E-commerce · Phase 89 cumulative overlay
 
-Latest milestone: **Demand Intelligence, Replenishment Planning & Merchandising Control V2**.
+Latest milestone: **Supplier Procurement, Purchase Orders & Goods Receipt Control V2**.
 
-Apply this overlay over the existing Riseora e-commerce checkout, then follow `PHASE_88_RELEASE.md`.
+Apply this overlay over the existing Riseora e-commerce checkout, then follow `PHASE_89_RELEASE.md`.
 
 # 🌿 Riseora E-Commerce
 
@@ -21,6 +21,7 @@ This repository is intentionally independent from the Riseora ERP. The storefron
 - COD plus optional Razorpay checkout with transactional stock reservation/reduction
 - Customer order history, detail timeline and guest order tracking
 - Admin dashboard for catalogue, product content, inventory, customers, promotions, reviews, returns, audience and order fulfilment
+- Demand planning plus supplier procurement, purchase-order approval, goods receipts and receipt variance control
 - PostgreSQL + Prisma 7
 - Public-repository-safe environment templates
 
@@ -70,7 +71,7 @@ server/prisma/migrations/
 
 Do not publish `server/.env`. It contains credentials.
 
-This ZIP deliberately does **not** include a migrations folder, so extracting/copying it over your existing project will not overwrite your current migration history. If you are creating a fresh database, Prisma will create migrations when you run `npm run db:migrate`.
+This cumulative overlay includes the committed Phase 83–89 migrations required by these releases. Apply it over the existing project, keep your database backup, then use `npm run db:deploy` so Prisma applies only migrations that are not already recorded.
 
 ## Windows setup
 

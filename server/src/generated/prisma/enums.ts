@@ -414,6 +414,45 @@ export const MerchandisingAction = {
 export type MerchandisingAction = (typeof MerchandisingAction)[keyof typeof MerchandisingAction]
 
 
+export const SupplierStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  HOLD: 'HOLD'
+} as const
+
+export type SupplierStatus = (typeof SupplierStatus)[keyof typeof SupplierStatus]
+
+
+export const PurchaseOrderStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  SENT: 'SENT',
+  PARTIALLY_RECEIVED: 'PARTIALLY_RECEIVED',
+  RECEIVED: 'RECEIVED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type PurchaseOrderStatus = (typeof PurchaseOrderStatus)[keyof typeof PurchaseOrderStatus]
+
+
+export const GoodsReceiptStatus = {
+  POSTED: 'POSTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type GoodsReceiptStatus = (typeof GoodsReceiptStatus)[keyof typeof GoodsReceiptStatus]
+
+
+export const PurchaseVarianceStatus = {
+  MATCHED: 'MATCHED',
+  COST_VARIANCE: 'COST_VARIANCE',
+  QUALITY_VARIANCE: 'QUALITY_VARIANCE',
+  COST_AND_QUALITY_VARIANCE: 'COST_AND_QUALITY_VARIANCE'
+} as const
+
+export type PurchaseVarianceStatus = (typeof PurchaseVarianceStatus)[keyof typeof PurchaseVarianceStatus]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'
@@ -567,6 +606,7 @@ export const InventoryMovementType = {
   RETURN_RESTOCK: 'RETURN_RESTOCK',
   RETURN_REPLACEMENT: 'RETURN_REPLACEMENT',
   REFUND_RESTOCK: 'REFUND_RESTOCK',
+  PURCHASE_RECEIPT: 'PURCHASE_RECEIPT',
   ERP_SYNC: 'ERP_SYNC',
   CORRECTION: 'CORRECTION'
 } as const
@@ -579,6 +619,7 @@ export const InventoryMovementSource = {
   CHECKOUT: 'CHECKOUT',
   ORDER: 'ORDER',
   RETURN: 'RETURN',
+  PURCHASE: 'PURCHASE',
   ERP: 'ERP',
   SYSTEM: 'SYSTEM'
 } as const

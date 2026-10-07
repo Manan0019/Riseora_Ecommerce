@@ -348,6 +348,11 @@ export type UserWhereInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignListRelationFilter
   generatedDemandPlans?: Prisma.DemandPlanListRelationFilter
   approvedDemandPlans?: Prisma.DemandPlanListRelationFilter
+  createdPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  approvedPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  sentPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  createdGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
+  postedGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -401,6 +406,11 @@ export type UserOrderByWithRelationInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignOrderByRelationAggregateInput
   generatedDemandPlans?: Prisma.DemandPlanOrderByRelationAggregateInput
   approvedDemandPlans?: Prisma.DemandPlanOrderByRelationAggregateInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderOrderByRelationAggregateInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderOrderByRelationAggregateInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderOrderByRelationAggregateInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptOrderByRelationAggregateInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptOrderByRelationAggregateInput
   refillReminders?: Prisma.RefillReminderOrderByRelationAggregateInput
   inventoryMovements?: Prisma.InventoryMovementOrderByRelationAggregateInput
   authSessions?: Prisma.AuthSessionOrderByRelationAggregateInput
@@ -457,6 +467,11 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   createdRetentionCampaigns?: Prisma.RetentionCampaignListRelationFilter
   generatedDemandPlans?: Prisma.DemandPlanListRelationFilter
   approvedDemandPlans?: Prisma.DemandPlanListRelationFilter
+  createdPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  approvedPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  sentPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
+  createdGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
+  postedGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -559,6 +574,11 @@ export type UserCreateInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -611,6 +631,11 @@ export type UserUncheckedCreateInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -663,6 +688,11 @@ export type UserUpdateInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -715,6 +745,11 @@ export type UserUncheckedUpdateInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1364,6 +1399,86 @@ export type UserUpdateOneWithoutApprovedDemandPlansNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovedDemandPlansInput, Prisma.UserUpdateWithoutApprovedDemandPlansInput>, Prisma.UserUncheckedUpdateWithoutApprovedDemandPlansInput>
 }
 
+export type UserCreateNestedOneWithoutCreatedPurchaseOrdersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPurchaseOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutApprovedPurchaseOrdersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutApprovedPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedPurchaseOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutSentPurchaseOrdersInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutSentPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentPurchaseOrdersInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedPurchaseOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedPurchaseOrdersInput
+  upsert?: Prisma.UserUpsertWithoutCreatedPurchaseOrdersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedPurchaseOrdersInput, Prisma.UserUpdateWithoutCreatedPurchaseOrdersInput>, Prisma.UserUncheckedUpdateWithoutCreatedPurchaseOrdersInput>
+}
+
+export type UserUpdateOneWithoutApprovedPurchaseOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutApprovedPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedPurchaseOrdersInput
+  upsert?: Prisma.UserUpsertWithoutApprovedPurchaseOrdersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovedPurchaseOrdersInput, Prisma.UserUpdateWithoutApprovedPurchaseOrdersInput>, Prisma.UserUncheckedUpdateWithoutApprovedPurchaseOrdersInput>
+}
+
+export type UserUpdateOneWithoutSentPurchaseOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutSentPurchaseOrdersInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSentPurchaseOrdersInput
+  upsert?: Prisma.UserUpsertWithoutSentPurchaseOrdersInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSentPurchaseOrdersInput, Prisma.UserUpdateWithoutSentPurchaseOrdersInput>, Prisma.UserUncheckedUpdateWithoutSentPurchaseOrdersInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedGoodsReceiptsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutCreatedGoodsReceiptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedGoodsReceiptsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutPostedGoodsReceiptsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutPostedGoodsReceiptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostedGoodsReceiptsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedGoodsReceiptsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutCreatedGoodsReceiptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedGoodsReceiptsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedGoodsReceiptsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedGoodsReceiptsInput, Prisma.UserUpdateWithoutCreatedGoodsReceiptsInput>, Prisma.UserUncheckedUpdateWithoutCreatedGoodsReceiptsInput>
+}
+
+export type UserUpdateOneWithoutPostedGoodsReceiptsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutPostedGoodsReceiptsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostedGoodsReceiptsInput
+  upsert?: Prisma.UserUpsertWithoutPostedGoodsReceiptsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostedGoodsReceiptsInput, Prisma.UserUpdateWithoutPostedGoodsReceiptsInput>, Prisma.UserUncheckedUpdateWithoutPostedGoodsReceiptsInput>
+}
+
 export type UserCreateNestedOneWithoutMarketingPreferenceInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMarketingPreferenceInput, Prisma.UserUncheckedCreateWithoutMarketingPreferenceInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMarketingPreferenceInput
@@ -1463,6 +1578,11 @@ export type UserCreateWithoutReferralsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1514,6 +1634,11 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1570,6 +1695,11 @@ export type UserCreateWithoutReferredByInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1621,6 +1751,11 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1693,6 +1828,11 @@ export type UserUpdateWithoutReferralsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -1744,6 +1884,11 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1836,6 +1981,11 @@ export type UserCreateWithoutAccountCartInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1887,6 +2037,11 @@ export type UserUncheckedCreateWithoutAccountCartInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1954,6 +2109,11 @@ export type UserUpdateWithoutAccountCartInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2005,6 +2165,11 @@ export type UserUncheckedUpdateWithoutAccountCartInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2056,6 +2221,11 @@ export type UserCreateWithoutAuthSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -2107,6 +2277,11 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -2174,6 +2349,11 @@ export type UserUpdateWithoutAuthSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -2225,6 +2405,11 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2276,6 +2461,11 @@ export type UserCreateWithoutAuthSecurityEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2327,6 +2517,11 @@ export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2394,6 +2589,11 @@ export type UserUpdateWithoutAuthSecurityEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2445,6 +2645,11 @@ export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2495,6 +2700,11 @@ export type UserCreateWithoutRewardAccountInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2546,6 +2756,11 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2613,6 +2828,11 @@ export type UserUpdateWithoutRewardAccountInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2664,6 +2884,11 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2715,6 +2940,11 @@ export type UserCreateWithoutRewardTransactionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2766,6 +2996,11 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2833,6 +3068,11 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2884,6 +3124,11 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2935,6 +3180,11 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2986,6 +3236,11 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3053,6 +3308,11 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3104,6 +3364,11 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3155,6 +3420,11 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3206,6 +3476,11 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3273,6 +3548,11 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3324,6 +3604,11 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3375,6 +3660,11 @@ export type UserCreateWithoutAddressesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3426,6 +3716,11 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3493,6 +3788,11 @@ export type UserUpdateWithoutAddressesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3544,6 +3844,11 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3596,6 +3901,11 @@ export type UserCreateWithoutInventoryMovementsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -3647,6 +3957,11 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -3714,6 +4029,11 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -3765,6 +4085,11 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3815,6 +4140,11 @@ export type UserCreateWithoutOrdersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3866,6 +4196,11 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3933,6 +4268,11 @@ export type UserUpdateWithoutOrdersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3984,6 +4324,11 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4035,6 +4380,11 @@ export type UserCreateWithoutCancellationRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4086,6 +4436,11 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4153,6 +4508,11 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4204,6 +4564,11 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4255,6 +4620,11 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4306,6 +4676,11 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4373,6 +4748,11 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4424,6 +4804,11 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4475,6 +4860,11 @@ export type UserCreateWithoutNotificationsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4526,6 +4916,11 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4593,6 +4988,11 @@ export type UserUpdateWithoutNotificationsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4644,6 +5044,11 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4695,6 +5100,11 @@ export type UserCreateWithoutWishlistItemsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4746,6 +5156,11 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4813,6 +5228,11 @@ export type UserUpdateWithoutWishlistItemsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4864,6 +5284,11 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4915,6 +5340,11 @@ export type UserCreateWithoutReturnRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4966,6 +5396,11 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5033,6 +5468,11 @@ export type UserUpdateWithoutReturnRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5084,6 +5524,11 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5135,6 +5580,11 @@ export type UserCreateWithoutRewardCouponsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5186,6 +5636,11 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5253,6 +5708,11 @@ export type UserUpdateWithoutRewardCouponsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5304,6 +5764,11 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5355,6 +5820,11 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5406,6 +5876,11 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5473,6 +5948,11 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5524,6 +6004,11 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5575,6 +6060,11 @@ export type UserCreateWithoutReviewsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5626,6 +6116,11 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5693,6 +6188,11 @@ export type UserUpdateWithoutReviewsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5744,6 +6244,11 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5795,6 +6300,11 @@ export type UserCreateWithoutProductQuestionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5846,6 +6356,11 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5913,6 +6428,11 @@ export type UserUpdateWithoutProductQuestionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5964,6 +6484,11 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6015,6 +6540,11 @@ export type UserCreateWithoutSupportTicketsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6066,6 +6596,11 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6133,6 +6668,11 @@ export type UserUpdateWithoutSupportTicketsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6184,6 +6724,11 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6235,6 +6780,11 @@ export type UserCreateWithoutSupportRecoveryGrantsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6286,6 +6836,11 @@ export type UserUncheckedCreateWithoutSupportRecoveryGrantsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6342,6 +6897,11 @@ export type UserCreateWithoutGrantedSupportRecoveriesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6393,6 +6953,11 @@ export type UserUncheckedCreateWithoutGrantedSupportRecoveriesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6460,6 +7025,11 @@ export type UserUpdateWithoutSupportRecoveryGrantsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6511,6 +7081,11 @@ export type UserUncheckedUpdateWithoutSupportRecoveryGrantsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6573,6 +7148,11 @@ export type UserUpdateWithoutGrantedSupportRecoveriesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6624,6 +7204,11 @@ export type UserUncheckedUpdateWithoutGrantedSupportRecoveriesInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6675,6 +7260,11 @@ export type UserCreateWithoutCreatedRetentionCampaignsInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6726,6 +7316,11 @@ export type UserUncheckedCreateWithoutCreatedRetentionCampaignsInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6793,6 +7388,11 @@ export type UserUpdateWithoutCreatedRetentionCampaignsInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6844,6 +7444,11 @@ export type UserUncheckedUpdateWithoutCreatedRetentionCampaignsInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6895,6 +7500,11 @@ export type UserCreateWithoutRetentionEnrollmentsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6946,6 +7556,11 @@ export type UserUncheckedCreateWithoutRetentionEnrollmentsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7013,6 +7628,11 @@ export type UserUpdateWithoutRetentionEnrollmentsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7064,6 +7684,11 @@ export type UserUncheckedUpdateWithoutRetentionEnrollmentsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7115,6 +7740,11 @@ export type UserCreateWithoutGeneratedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7166,6 +7796,11 @@ export type UserUncheckedCreateWithoutGeneratedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7222,6 +7857,11 @@ export type UserCreateWithoutApprovedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7273,6 +7913,11 @@ export type UserUncheckedCreateWithoutApprovedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7340,6 +7985,11 @@ export type UserUpdateWithoutGeneratedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7391,6 +8041,11 @@ export type UserUncheckedUpdateWithoutGeneratedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7453,6 +8108,11 @@ export type UserUpdateWithoutApprovedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7504,6 +8164,1211 @@ export type UserUncheckedUpdateWithoutApprovedDemandPlansInput = {
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreatedPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedPurchaseOrdersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedPurchaseOrdersInput>
+}
+
+export type UserCreateWithoutApprovedPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApprovedPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApprovedPurchaseOrdersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutApprovedPurchaseOrdersInput>
+}
+
+export type UserCreateWithoutSentPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSentPurchaseOrdersInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSentPurchaseOrdersInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutSentPurchaseOrdersInput>
+}
+
+export type UserUpsertWithoutCreatedPurchaseOrdersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedPurchaseOrdersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutCreatedPurchaseOrdersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedPurchaseOrdersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutCreatedPurchaseOrdersInput>
+}
+
+export type UserUpdateWithoutCreatedPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutApprovedPurchaseOrdersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutApprovedPurchaseOrdersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutApprovedPurchaseOrdersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApprovedPurchaseOrdersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApprovedPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutApprovedPurchaseOrdersInput>
+}
+
+export type UserUpdateWithoutApprovedPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApprovedPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutSentPurchaseOrdersInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutSentPurchaseOrdersInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedCreateWithoutSentPurchaseOrdersInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSentPurchaseOrdersInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSentPurchaseOrdersInput, Prisma.UserUncheckedUpdateWithoutSentPurchaseOrdersInput>
+}
+
+export type UserUpdateWithoutSentPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSentPurchaseOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreatedGoodsReceiptsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedGoodsReceiptsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedGoodsReceiptsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutCreatedGoodsReceiptsInput>
+}
+
+export type UserCreateWithoutPostedGoodsReceiptsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPostedGoodsReceiptsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPostedGoodsReceiptsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutPostedGoodsReceiptsInput>
+}
+
+export type UserUpsertWithoutCreatedGoodsReceiptsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedUpdateWithoutCreatedGoodsReceiptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutCreatedGoodsReceiptsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedGoodsReceiptsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedGoodsReceiptsInput, Prisma.UserUncheckedUpdateWithoutCreatedGoodsReceiptsInput>
+}
+
+export type UserUpdateWithoutCreatedGoodsReceiptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedGoodsReceiptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutPostedGoodsReceiptsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedUpdateWithoutPostedGoodsReceiptsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedCreateWithoutPostedGoodsReceiptsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPostedGoodsReceiptsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPostedGoodsReceiptsInput, Prisma.UserUncheckedUpdateWithoutPostedGoodsReceiptsInput>
+}
+
+export type UserUpdateWithoutPostedGoodsReceiptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPostedGoodsReceiptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7556,6 +9421,11 @@ export type UserCreateWithoutMarketingPreferenceInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7607,6 +9477,11 @@ export type UserUncheckedCreateWithoutMarketingPreferenceInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7674,6 +9549,11 @@ export type UserUpdateWithoutMarketingPreferenceInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7725,6 +9605,11 @@ export type UserUncheckedUpdateWithoutMarketingPreferenceInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7776,6 +9661,11 @@ export type UserCreateWithoutConsentEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7827,6 +9717,11 @@ export type UserUncheckedCreateWithoutConsentEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7894,6 +9789,11 @@ export type UserUpdateWithoutConsentEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7945,6 +9845,11 @@ export type UserUncheckedUpdateWithoutConsentEventsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7996,6 +9901,11 @@ export type UserCreateWithoutPrivacyRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -8047,6 +9957,11 @@ export type UserUncheckedCreateWithoutPrivacyRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -8114,6 +10029,11 @@ export type UserUpdateWithoutPrivacyRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8165,6 +10085,11 @@ export type UserUncheckedUpdateWithoutPrivacyRequestsInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8216,6 +10141,11 @@ export type UserCreateWithoutRefillRemindersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -8267,6 +10197,11 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -8334,6 +10269,11 @@ export type UserUpdateWithoutRefillRemindersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -8385,6 +10325,11 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -8455,6 +10400,11 @@ export type UserUpdateWithoutReferredByInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8506,6 +10456,11 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
   generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8564,6 +10519,11 @@ export type UserCountOutputType = {
   createdRetentionCampaigns: number
   generatedDemandPlans: number
   approvedDemandPlans: number
+  createdPurchaseOrders: number
+  approvedPurchaseOrders: number
+  sentPurchaseOrders: number
+  createdGoodsReceipts: number
+  postedGoodsReceipts: number
   refillReminders: number
   inventoryMovements: number
   authSessions: number
@@ -8595,6 +10555,11 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   createdRetentionCampaigns?: boolean | UserCountOutputTypeCountCreatedRetentionCampaignsArgs
   generatedDemandPlans?: boolean | UserCountOutputTypeCountGeneratedDemandPlansArgs
   approvedDemandPlans?: boolean | UserCountOutputTypeCountApprovedDemandPlansArgs
+  createdPurchaseOrders?: boolean | UserCountOutputTypeCountCreatedPurchaseOrdersArgs
+  approvedPurchaseOrders?: boolean | UserCountOutputTypeCountApprovedPurchaseOrdersArgs
+  sentPurchaseOrders?: boolean | UserCountOutputTypeCountSentPurchaseOrdersArgs
+  createdGoodsReceipts?: boolean | UserCountOutputTypeCountCreatedGoodsReceiptsArgs
+  postedGoodsReceipts?: boolean | UserCountOutputTypeCountPostedGoodsReceiptsArgs
   refillReminders?: boolean | UserCountOutputTypeCountRefillRemindersArgs
   inventoryMovements?: boolean | UserCountOutputTypeCountInventoryMovementsArgs
   authSessions?: boolean | UserCountOutputTypeCountAuthSessionsArgs
@@ -8770,6 +10735,41 @@ export type UserCountOutputTypeCountApprovedDemandPlansArgs<ExtArgs extends runt
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCreatedPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PurchaseOrderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApprovedPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PurchaseOrderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSentPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PurchaseOrderWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedGoodsReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GoodsReceiptWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPostedGoodsReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GoodsReceiptWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountRefillRemindersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefillReminderWhereInput
 }
@@ -8853,6 +10853,11 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   createdRetentionCampaigns?: boolean | Prisma.User$createdRetentionCampaignsArgs<ExtArgs>
   generatedDemandPlans?: boolean | Prisma.User$generatedDemandPlansArgs<ExtArgs>
   approvedDemandPlans?: boolean | Prisma.User$approvedDemandPlansArgs<ExtArgs>
+  createdPurchaseOrders?: boolean | Prisma.User$createdPurchaseOrdersArgs<ExtArgs>
+  approvedPurchaseOrders?: boolean | Prisma.User$approvedPurchaseOrdersArgs<ExtArgs>
+  sentPurchaseOrders?: boolean | Prisma.User$sentPurchaseOrdersArgs<ExtArgs>
+  createdGoodsReceipts?: boolean | Prisma.User$createdGoodsReceiptsArgs<ExtArgs>
+  postedGoodsReceipts?: boolean | Prisma.User$postedGoodsReceiptsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -8955,6 +10960,11 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   createdRetentionCampaigns?: boolean | Prisma.User$createdRetentionCampaignsArgs<ExtArgs>
   generatedDemandPlans?: boolean | Prisma.User$generatedDemandPlansArgs<ExtArgs>
   approvedDemandPlans?: boolean | Prisma.User$approvedDemandPlansArgs<ExtArgs>
+  createdPurchaseOrders?: boolean | Prisma.User$createdPurchaseOrdersArgs<ExtArgs>
+  approvedPurchaseOrders?: boolean | Prisma.User$approvedPurchaseOrdersArgs<ExtArgs>
+  sentPurchaseOrders?: boolean | Prisma.User$sentPurchaseOrdersArgs<ExtArgs>
+  createdGoodsReceipts?: boolean | Prisma.User$createdGoodsReceiptsArgs<ExtArgs>
+  postedGoodsReceipts?: boolean | Prisma.User$postedGoodsReceiptsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -8999,6 +11009,11 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     createdRetentionCampaigns: Prisma.$RetentionCampaignPayload<ExtArgs>[]
     generatedDemandPlans: Prisma.$DemandPlanPayload<ExtArgs>[]
     approvedDemandPlans: Prisma.$DemandPlanPayload<ExtArgs>[]
+    createdPurchaseOrders: Prisma.$PurchaseOrderPayload<ExtArgs>[]
+    approvedPurchaseOrders: Prisma.$PurchaseOrderPayload<ExtArgs>[]
+    sentPurchaseOrders: Prisma.$PurchaseOrderPayload<ExtArgs>[]
+    createdGoodsReceipts: Prisma.$GoodsReceiptPayload<ExtArgs>[]
+    postedGoodsReceipts: Prisma.$GoodsReceiptPayload<ExtArgs>[]
     refillReminders: Prisma.$RefillReminderPayload<ExtArgs>[]
     inventoryMovements: Prisma.$InventoryMovementPayload<ExtArgs>[]
     authSessions: Prisma.$AuthSessionPayload<ExtArgs>[]
@@ -9445,6 +11460,11 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   createdRetentionCampaigns<T extends Prisma.User$createdRetentionCampaignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdRetentionCampaignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RetentionCampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   generatedDemandPlans<T extends Prisma.User$generatedDemandPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$generatedDemandPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DemandPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   approvedDemandPlans<T extends Prisma.User$approvedDemandPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedDemandPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DemandPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdPurchaseOrders<T extends Prisma.User$createdPurchaseOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdPurchaseOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvedPurchaseOrders<T extends Prisma.User$approvedPurchaseOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedPurchaseOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  sentPurchaseOrders<T extends Prisma.User$sentPurchaseOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentPurchaseOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdGoodsReceipts<T extends Prisma.User$createdGoodsReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdGoodsReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoodsReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  postedGoodsReceipts<T extends Prisma.User$postedGoodsReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postedGoodsReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoodsReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refillReminders<T extends Prisma.User$refillRemindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refillRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefillReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryMovements<T extends Prisma.User$inventoryMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   authSessions<T extends Prisma.User$authSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -10464,6 +12484,126 @@ export type User$approvedDemandPlansArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.DemandPlanScalarFieldEnum | Prisma.DemandPlanScalarFieldEnum[]
+}
+
+/**
+ * User.createdPurchaseOrders
+ */
+export type User$createdPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PurchaseOrder
+   */
+  select?: Prisma.PurchaseOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PurchaseOrder
+   */
+  omit?: Prisma.PurchaseOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PurchaseOrderInclude<ExtArgs> | null
+  where?: Prisma.PurchaseOrderWhereInput
+  orderBy?: Prisma.PurchaseOrderOrderByWithRelationInput | Prisma.PurchaseOrderOrderByWithRelationInput[]
+  cursor?: Prisma.PurchaseOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PurchaseOrderScalarFieldEnum | Prisma.PurchaseOrderScalarFieldEnum[]
+}
+
+/**
+ * User.approvedPurchaseOrders
+ */
+export type User$approvedPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PurchaseOrder
+   */
+  select?: Prisma.PurchaseOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PurchaseOrder
+   */
+  omit?: Prisma.PurchaseOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PurchaseOrderInclude<ExtArgs> | null
+  where?: Prisma.PurchaseOrderWhereInput
+  orderBy?: Prisma.PurchaseOrderOrderByWithRelationInput | Prisma.PurchaseOrderOrderByWithRelationInput[]
+  cursor?: Prisma.PurchaseOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PurchaseOrderScalarFieldEnum | Prisma.PurchaseOrderScalarFieldEnum[]
+}
+
+/**
+ * User.sentPurchaseOrders
+ */
+export type User$sentPurchaseOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PurchaseOrder
+   */
+  select?: Prisma.PurchaseOrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PurchaseOrder
+   */
+  omit?: Prisma.PurchaseOrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PurchaseOrderInclude<ExtArgs> | null
+  where?: Prisma.PurchaseOrderWhereInput
+  orderBy?: Prisma.PurchaseOrderOrderByWithRelationInput | Prisma.PurchaseOrderOrderByWithRelationInput[]
+  cursor?: Prisma.PurchaseOrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PurchaseOrderScalarFieldEnum | Prisma.PurchaseOrderScalarFieldEnum[]
+}
+
+/**
+ * User.createdGoodsReceipts
+ */
+export type User$createdGoodsReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GoodsReceipt
+   */
+  select?: Prisma.GoodsReceiptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GoodsReceipt
+   */
+  omit?: Prisma.GoodsReceiptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GoodsReceiptInclude<ExtArgs> | null
+  where?: Prisma.GoodsReceiptWhereInput
+  orderBy?: Prisma.GoodsReceiptOrderByWithRelationInput | Prisma.GoodsReceiptOrderByWithRelationInput[]
+  cursor?: Prisma.GoodsReceiptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GoodsReceiptScalarFieldEnum | Prisma.GoodsReceiptScalarFieldEnum[]
+}
+
+/**
+ * User.postedGoodsReceipts
+ */
+export type User$postedGoodsReceiptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the GoodsReceipt
+   */
+  select?: Prisma.GoodsReceiptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the GoodsReceipt
+   */
+  omit?: Prisma.GoodsReceiptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GoodsReceiptInclude<ExtArgs> | null
+  where?: Prisma.GoodsReceiptWhereInput
+  orderBy?: Prisma.GoodsReceiptOrderByWithRelationInput | Prisma.GoodsReceiptOrderByWithRelationInput[]
+  cursor?: Prisma.GoodsReceiptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GoodsReceiptScalarFieldEnum | Prisma.GoodsReceiptScalarFieldEnum[]
 }
 
 /**

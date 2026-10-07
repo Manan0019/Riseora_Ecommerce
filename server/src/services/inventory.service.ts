@@ -9,10 +9,11 @@ export type InventoryMovementTypeName =
   | "RETURN_RESTOCK"
   | "RETURN_REPLACEMENT"
   | "REFUND_RESTOCK"
+  | "PURCHASE_RECEIPT"
   | "ERP_SYNC"
   | "CORRECTION";
 
-export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "ERP" | "SYSTEM";
+export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "PURCHASE" | "ERP" | "SYSTEM";
 
 export function availableToSell(variant: { stockQuantity?: number | null; safetyStock?: number | null }) {
   return Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));

@@ -1,4 +1,6 @@
-# Riseora Production Deployment — Phase 49
+# Riseora Production Deployment — Phase 89 cumulative release
+
+Current production verification target: `verify:phase89`. Phase 89 adds the committed procurement/PO/goods-receipt migration and must be deployed with `db:backup` → `db:deploy` → `db:generate` before release verification.
 
 Riseora remains a standalone e-commerce application. ERP synchronization stays deferred until the standalone web release is verified in production.
 

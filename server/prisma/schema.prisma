@@ -299,6 +299,33 @@ enum MerchandisingAction {
   DORMANT_REVIEW
 }
 
+enum SupplierStatus {
+  ACTIVE
+  INACTIVE
+  HOLD
+}
+
+enum PurchaseOrderStatus {
+  DRAFT
+  APPROVED
+  SENT
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+enum GoodsReceiptStatus {
+  POSTED
+  CANCELLED
+}
+
+enum PurchaseVarianceStatus {
+  MATCHED
+  COST_VARIANCE
+  QUALITY_VARIANCE
+  COST_AND_QUALITY_VARIANCE
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -441,6 +468,11 @@ model User {
   createdRetentionCampaigns RetentionCampaign[] @relation("RetentionCampaignCreator")
   generatedDemandPlans DemandPlan[] @relation("DemandPlanGeneratedBy")
   approvedDemandPlans DemandPlan[] @relation("DemandPlanApprovedBy")
+  createdPurchaseOrders PurchaseOrder[] @relation("PurchaseOrderCreatedBy")
+  approvedPurchaseOrders PurchaseOrder[] @relation("PurchaseOrderApprovedBy")
+  sentPurchaseOrders PurchaseOrder[] @relation("PurchaseOrderSentBy")
+  createdGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptCreatedBy")
+  postedGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptPostedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -628,6 +660,7 @@ enum InventoryMovementType {
   RETURN_RESTOCK
   RETURN_REPLACEMENT
   REFUND_RESTOCK
+  PURCHASE_RECEIPT
   ERP_SYNC
   CORRECTION
 }
@@ -637,6 +670,7 @@ enum InventoryMovementSource {
   CHECKOUT
   ORDER
   RETURN
+  PURCHASE
   ERP
   SYSTEM
 }
@@ -712,6 +746,9 @@ model ProductVariant {
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[]
   demandPlanItems DemandPlanItem[]
+  supplierOffers SupplierVariant[]
+  purchaseOrderItems PurchaseOrderItem[]
+  goodsReceiptItems GoodsReceiptItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1880,6 +1917,7 @@ model DemandPlan {
   generatedAt DateTime @default(now())
   approvedAt DateTime?
   items DemandPlanItem[]
+  purchaseOrders PurchaseOrder[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -1914,12 +1952,176 @@ model DemandPlanItem {
   potentialLostRevenue Decimal @default(0) @db.Decimal(14,2)
   overstockCapital Decimal @default(0) @db.Decimal(14,2)
   reason String?
+  purchaseOrderItems PurchaseOrderItem[]
   createdAt DateTime @default(now())
 
   @@unique([planId, variantId])
   @@index([variantId, createdAt])
   @@index([planId, risk])
   @@index([risk, action])
+}
+
+model Supplier {
+  id String @id @default(uuid()) @db.Uuid
+  name String @unique
+  contactName String?
+  email String?
+  phone String?
+  gstin String?
+  addressLine1 String?
+  addressLine2 String?
+  city String?
+  state String?
+  postalCode String?
+  country String @default("India")
+  status SupplierStatus @default(ACTIVE)
+  defaultLeadTimeDays Int @default(14)
+  minimumOrderValue Decimal @default(0) @db.Decimal(14,2)
+  paymentTermsDays Int @default(0)
+  isPreferred Boolean @default(false)
+  notes String?
+  variantOffers SupplierVariant[]
+  purchaseOrders PurchaseOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, isPreferred, name])
+}
+
+model SupplierVariant {
+  id String @id @default(uuid()) @db.Uuid
+  supplierId String @db.Uuid
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  supplierSku String?
+  unitCost Decimal @db.Decimal(14,2)
+  minimumOrderQty Int @default(1)
+  packSize Int @default(1)
+  leadTimeDays Int @default(14)
+  isPreferred Boolean @default(false)
+  isActive Boolean @default(true)
+  lastQuotedAt DateTime @default(now())
+  purchaseOrderItems PurchaseOrderItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([supplierId, variantId])
+  @@index([variantId, isActive, unitCost])
+  @@index([supplierId, isActive])
+}
+
+model PurchaseOrder {
+  id String @id @default(uuid()) @db.Uuid
+  poNumber String @unique
+  supplierId String @db.Uuid
+  supplier Supplier @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  demandPlanId String? @db.Uuid
+  demandPlan DemandPlan? @relation(fields: [demandPlanId], references: [id], onDelete: SetNull)
+  status PurchaseOrderStatus @default(DRAFT)
+  expectedAt DateTime?
+  paymentTermsDays Int @default(0)
+  subtotal Decimal @default(0) @db.Decimal(14,2)
+  taxAmount Decimal @default(0) @db.Decimal(14,2)
+  totalAmount Decimal @default(0) @db.Decimal(14,2)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("PurchaseOrderCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  approvedByUserId String? @db.Uuid
+  approvedBy User? @relation("PurchaseOrderApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  sentByUserId String? @db.Uuid
+  sentBy User? @relation("PurchaseOrderSentBy", fields: [sentByUserId], references: [id], onDelete: SetNull)
+  approvedAt DateTime?
+  sentAt DateTime?
+  closedAt DateTime?
+  items PurchaseOrderItem[]
+  receipts GoodsReceipt[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, expectedAt])
+  @@index([supplierId, status, createdAt])
+  @@index([demandPlanId, status])
+}
+
+model PurchaseOrderItem {
+  id String @id @default(uuid()) @db.Uuid
+  purchaseOrderId String @db.Uuid
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  supplierVariantId String? @db.Uuid
+  supplierVariant SupplierVariant? @relation(fields: [supplierVariantId], references: [id], onDelete: SetNull)
+  demandPlanItemId String? @db.Uuid
+  demandPlanItem DemandPlanItem? @relation(fields: [demandPlanItemId], references: [id], onDelete: SetNull)
+  orderedQty Int
+  receivedQty Int @default(0)
+  rejectedQty Int @default(0)
+  unitCost Decimal @db.Decimal(14,2)
+  gstRate Decimal @default(0) @db.Decimal(6,2)
+  lineSubtotal Decimal @db.Decimal(14,2)
+  taxAmount Decimal @db.Decimal(14,2)
+  lineTotal Decimal @db.Decimal(14,2)
+  supplierSkuSnapshot String?
+  leadTimeDaysSnapshot Int
+  notes String?
+  receiptItems GoodsReceiptItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([purchaseOrderId, variantId])
+  @@index([variantId, purchaseOrderId])
+  @@index([demandPlanItemId])
+}
+
+model GoodsReceipt {
+  id String @id @default(uuid()) @db.Uuid
+  receiptKey String @unique @db.Uuid
+  grnNumber String @unique
+  purchaseOrderId String @db.Uuid
+  purchaseOrder PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Restrict)
+  status GoodsReceiptStatus @default(POSTED)
+  supplierInvoiceNumber String?
+  supplierInvoiceDate DateTime?
+  receivedAt DateTime @default(now())
+  totalAcceptedQty Int @default(0)
+  totalRejectedQty Int @default(0)
+  varianceItemCount Int @default(0)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("GoodsReceiptCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  postedByUserId String? @db.Uuid
+  postedBy User? @relation("GoodsReceiptPostedBy", fields: [postedByUserId], references: [id], onDelete: SetNull)
+  postedAt DateTime @default(now())
+  items GoodsReceiptItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([purchaseOrderId, createdAt])
+  @@index([status, receivedAt])
+}
+
+model GoodsReceiptItem {
+  id String @id @default(uuid()) @db.Uuid
+  goodsReceiptId String @db.Uuid
+  goodsReceipt GoodsReceipt @relation(fields: [goodsReceiptId], references: [id], onDelete: Cascade)
+  purchaseOrderItemId String @db.Uuid
+  purchaseOrderItem PurchaseOrderItem @relation(fields: [purchaseOrderItemId], references: [id], onDelete: Restrict)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  acceptedQty Int
+  rejectedQty Int @default(0)
+  expectedUnitCost Decimal @db.Decimal(14,2)
+  actualUnitCost Decimal @db.Decimal(14,2)
+  varianceStatus PurchaseVarianceStatus @default(MATCHED)
+  batchNumber String?
+  expiryDate DateTime?
+  qualityNote String?
+  createdAt DateTime @default(now())
+
+  @@index([goodsReceiptId, variantId])
+  @@index([purchaseOrderItemId])
+  @@index([varianceStatus, createdAt])
 }
 
 model EmailDeliveryLog {

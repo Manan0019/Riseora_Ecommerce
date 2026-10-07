@@ -11,7 +11,8 @@ ok("stock risk taxonomy",["OUT_OF_STOCK","CRITICAL","LOW","HEALTHY","OVERSTOCK",
 ok("planning computes reorder and purchase capital without stock mutation",service.includes("recommendedReorderQty")&&service.includes("recommendedPurchaseValue")&&service.includes("targetStock"));
 ok("live demand endpoint",admin.includes('/phase88-demand/summary')&&admin.includes("phase88LiveDemand"));
 ok("durable plan create/approve endpoints",admin.includes('/phase88-demand/plans')&&admin.includes('/phase88-demand/plans/:id/approve'));
-ok("plan approval does not adjust inventory",admin.includes("Inventory quantities were not changed")&&!admin.slice(admin.indexOf('/phase88-demand/plans/:id/approve')).includes("adjustInventory(tx"));
+const phase88Approve=admin.slice(admin.indexOf('/phase88-demand/plans/:id/approve'),admin.indexOf('/phase88-demand/plans/:id/archive'));
+ok("plan approval does not adjust inventory",phase88Approve.includes("Inventory quantities were not changed")&&!phase88Approve.includes("adjustInventory(tx"));
 ok("order velocity excludes cancelled orders",admin.includes('status:{in:["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"]}'));
 ok("refill and stock-alert signals included",admin.includes("refillReminders")&&admin.includes("stockAlerts"));
 ok("admin command center exists",ui.includes("Inventory Growth & Replenishment Command Center")&&ui.includes("Save replenishment snapshot"));
@@ -20,8 +21,9 @@ ok("Fulfilment mounts Phase 88",fulfilment.includes("AdminDemandIntelligenceCent
 ok("Phase 88 responsive styling",css.includes("phase88-demand-center")&&css.includes("phase88-table-wrap"));
 ok("demand-intelligence:doctor command",Boolean(pkg.scripts?.["demand-intelligence:doctor"]));
 ok("verify:phase88 command",Boolean(pkg.scripts?.["verify:phase88"]));
-ok("prelaunch advances to phase88",String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase88"));
-ok("production release advances to phase88",prepare.includes('run("npm", ["run", "verify:phase88"])'));
+const phases=Object.keys(pkg.scripts||{}).map(k=>/^verify:phase(\d+)$/.exec(k)).filter(Boolean).map(m=>Number(m[1]));const latestVerify=`verify:phase${Math.max(...phases)}`;
+ok("prelaunch retains Phase 88 and advances",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase88")&&String(pkg.scripts?.["prelaunch:check"]||"").includes(`npm run ${latestVerify}`));
+ok("production release retains Phase 88 and advances",prepare.includes("verify:phase88")&&prepare.includes(`run("npm", ["run", "${latestVerify}"])`));
 ok("production audit recognizes phase88",prod.includes('"verify:phase88"'));
 ok("forward compatibility is future-safe",compat.includes("latestVerify")&&releaseChain.includes("latestVerify"));
 if(failed){console.error(`\nPhase 88 demand intelligence audit: FAIL (${failed})`);process.exit(1)}console.log("\nPhase 88 demand intelligence audit: PASS");

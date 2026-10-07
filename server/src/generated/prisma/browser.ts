@@ -298,6 +298,36 @@ export type DemandPlan = Prisma.DemandPlanModel
  */
 export type DemandPlanItem = Prisma.DemandPlanItemModel
 /**
+ * Model Supplier
+ * 
+ */
+export type Supplier = Prisma.SupplierModel
+/**
+ * Model SupplierVariant
+ * 
+ */
+export type SupplierVariant = Prisma.SupplierVariantModel
+/**
+ * Model PurchaseOrder
+ * 
+ */
+export type PurchaseOrder = Prisma.PurchaseOrderModel
+/**
+ * Model PurchaseOrderItem
+ * 
+ */
+export type PurchaseOrderItem = Prisma.PurchaseOrderItemModel
+/**
+ * Model GoodsReceipt
+ * 
+ */
+export type GoodsReceipt = Prisma.GoodsReceiptModel
+/**
+ * Model GoodsReceiptItem
+ * 
+ */
+export type GoodsReceiptItem = Prisma.GoodsReceiptItemModel
+/**
  * Model EmailDeliveryLog
  * 
  */
