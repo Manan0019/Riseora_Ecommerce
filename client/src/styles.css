@@ -3359,3 +3359,31 @@ textarea { min-height: 105px; resize: vertical; }
 .phase81-tracking-badge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:6px 10px;font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--border)}.phase81-tracking-badge.healthy{background:rgba(55,112,78,.09);color:#2d7249;border-color:rgba(55,112,78,.25)}.phase81-tracking-badge.review{background:rgba(163,111,21,.09);color:#8d641d;border-color:rgba(163,111,21,.3)}.phase81-tracking-badge.block{background:rgba(171,52,45,.09);color:#9d302b;border-color:rgba(171,52,45,.3)}
 .phase81-order-tracking{border-left:4px solid rgba(98,72,126,.6)}.phase81-order-tracking.review{border-left-color:rgba(163,111,21,.75)}.phase81-order-tracking.block{border-left-color:rgba(171,52,45,.8)}.phase81-order-checks{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.phase81-order-checks span{border:1px solid var(--border);border-radius:999px;padding:6px 10px;font-size:.8rem;font-weight:700}.phase81-order-checks .ok{color:#2d7249;background:rgba(55,112,78,.07)}.phase81-order-checks .review{color:#8d641d;background:rgba(163,111,21,.07)}.phase81-order-checks .bad{color:#9d302b;background:rgba(171,52,45,.07)}.phase81-tracking-latest{margin:12px 0 0;color:var(--muted)}.phase81-tracking-issues{display:grid;gap:8px;margin-top:14px}.phase81-tracking-issues>div{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border-radius:12px;background:var(--surface-soft)}.phase81-tracking-issues>div.block{border-left:3px solid #9d302b}.phase81-tracking-issues>div.review{border-left:3px solid #8d641d}.phase81-tracking-issues strong{min-width:62px}.phase81-tracking-stop{margin:14px 0 0;padding:12px;border-radius:12px;background:rgba(171,52,45,.08);color:#8f2c27;font-weight:700}
 @media(max-width:1180px){.phase81-tracking-health-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}@media(max-width:760px){.phase81-tracking-health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.phase81-tracking-health-grid{grid-template-columns:1fr}.phase81-tracking-issues>div{flex-direction:column;gap:4px}}
+
+/* Phase 82 · RTO recovery */
+.phase82-rto-recovery,.phase82-rto-health{border:1px solid rgba(148,163,184,.24)}
+.phase82-rto-recovery.block,.phase82-rto-recovery.refund_required,.phase82-rto-recovery.ready_to_close{border-color:rgba(239,68,68,.35)}
+.phase82-rto-badge{display:inline-flex;align-items:center;border-radius:999px;padding:.4rem .72rem;font-size:.72rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;background:rgba(148,163,184,.14)}
+.phase82-rto-badge.reconciled{background:rgba(34,197,94,.14)}
+.phase82-rto-badge.in_transit,.phase82-rto-badge.action_required{background:rgba(245,158,11,.14)}
+.phase82-rto-badge.ready_to_close,.phase82-rto-badge.refund_required,.phase82-rto-badge.block{background:rgba(239,68,68,.14)}
+.phase82-rto-checks{display:flex;flex-wrap:wrap;gap:.55rem;margin:1rem 0}
+.phase82-rto-checks span{border-radius:999px;padding:.45rem .7rem;font-size:.78rem;font-weight:700;background:rgba(148,163,184,.12)}
+.phase82-rto-checks .ok{background:rgba(34,197,94,.12)}
+.phase82-rto-checks .review{background:rgba(245,158,11,.12)}
+.phase82-rto-checks .bad{background:rgba(239,68,68,.12)}
+.phase82-rto-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:.7rem;margin:1rem 0}
+.phase82-rto-meta span{display:flex;flex-direction:column;gap:.2rem;padding:.75rem;border-radius:14px;background:rgba(148,163,184,.08)}
+.phase82-rto-meta b{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;opacity:.7}
+.phase82-rto-issues{display:grid;gap:.6rem;margin:1rem 0}
+.phase82-rto-issues>div{display:flex;gap:.75rem;align-items:flex-start;padding:.75rem;border-radius:12px;background:rgba(148,163,184,.08)}
+.phase82-rto-issues strong{min-width:64px;font-size:.72rem;letter-spacing:.05em}
+.phase82-rto-issues .block{background:rgba(239,68,68,.1)}
+.phase82-rto-issues .review,.phase82-rto-issues .action{background:rgba(245,158,11,.1)}
+.phase82-rto-guidance,.phase82-rto-note{margin-top:.9rem;opacity:.78}
+.phase82-rto-health-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:.75rem;margin-top:1rem}
+.phase82-rto-health-grid article{display:flex;flex-direction:column;gap:.25rem;padding:.9rem;border-radius:14px;background:rgba(148,163,184,.08)}
+.phase82-rto-health-grid article.danger{background:rgba(239,68,68,.1)}
+.phase82-rto-health-grid small{font-size:.68rem;font-weight:800;letter-spacing:.05em}
+.phase82-rto-health-grid strong{font-size:1.5rem}
+.phase82-rto-health-grid span{font-size:.76rem;opacity:.72}

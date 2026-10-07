@@ -23,6 +23,7 @@ import { cartQuantityHealth } from "../services/cart-quantity-intelligence.servi
 import { assertOrderIntegrityForFulfilment, getOrderIntegrity } from "../services/order-integrity.service";
 import { assertDispatchReadinessForTransition, getDispatchReadiness } from "../services/dispatch-readiness.service";
 import { assertShipmentEventTransition, assertShipmentTrackingCanDeliver, getShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
+import { assertCodRtoCanClose, assertPrepaidRtoCanRefund, getRtoRecoveryHealth } from "../services/rto-recovery.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -300,8 +301,8 @@ router.get(
       },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    const [integrity, dispatchReadiness, trackingHealth] = await Promise.all([getOrderIntegrity(order.id), getDispatchReadiness(order.id), getShipmentTrackingHealth(order.id)]);
-    res.json({ success: true, data: { ...order, integrity, dispatchReadiness, trackingHealth } });
+    const [integrity, dispatchReadiness, trackingHealth, rtoRecovery] = await Promise.all([getOrderIntegrity(order.id), getDispatchReadiness(order.id), getShipmentTrackingHealth(order.id), getRtoRecoveryHealth(order.id)]);
+    res.json({ success: true, data: { ...order, integrity, dispatchReadiness, trackingHealth, rtoRecovery } });
   }),
 );
 
@@ -546,11 +547,69 @@ router.post(
 );
 
 router.post(
+  "/orders/:id/rto-recovery/close",
+  asyncHandler(async (req, res) => {
+    const parsed = z.object({ note: z.string().trim().max(500).optional().or(z.literal("")) }).safeParse(req.body || {});
+    if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid RTO recovery note" });
+    const orderId = String(req.params.id);
+    try {
+      const updated = await prisma.$transaction(async (tx) => {
+        await assertCodRtoCanClose(orderId, tx);
+        const order = await tx.order.findUnique({ where: { id: orderId }, include: { items: true, payment: true } });
+        if (!order) throw new Error("ORDER_NOT_FOUND");
+        for (const item of order.items) {
+          if (!item.variantId) continue;
+          await adjustInventory(tx, {
+            variantId: item.variantId,
+            delta: item.quantity,
+            type: "ORDER_CANCELLATION",
+            source: "ORDER",
+            reason: "RTO delivered to origin; COD order stock restored",
+            referenceType: "ORDER",
+            referenceId: order.id,
+            actorUserId: req.user!.id,
+          });
+        }
+        if (order.couponCode) {
+          await tx.coupon.updateMany({ where: { code: order.couponCode, usageCount: { gt: 0 } }, data: { usageCount: { decrement: 1 } } });
+          await tx.couponRedemption.deleteMany({ where: { orderId: order.id } });
+        }
+        if (order.payment?.status === "PENDING") {
+          await tx.payment.update({ where: { orderId: order.id }, data: { status: "CANCELLED", reconciliationStatus: "MATCHED", reconciledAt: new Date(), reconciliationNote: "COD not collected; parcel returned to origin" } });
+        }
+        await tx.order.update({ where: { id: order.id }, data: { status: "CANCELLED" } });
+        await tx.orderStatusHistory.create({ data: { orderId: order.id, status: "CANCELLED", note: parsed.data.note || "RTO delivered to origin; stock restored and COD order closed", source: "ADMIN" } });
+        return tx.order.findUnique({ where: { id: order.id }, include: { items: true, payment: true, cancellationRequest: true, shipment: { include: { events: { orderBy: { eventAt: "asc" } } } }, statusHistory: { orderBy: { createdAt: "asc" } } } });
+      });
+      if (updated) {
+        void sendOrderStatusNotification(updated).catch((error) => console.error("RTO closure email failed", error));
+        void createOrderStatusInAppNotification(updated).catch((error) => console.error("RTO closure in-app notification failed", error));
+        try { await ensureCreditNoteForCancelledOrder(updated.id); } catch (error) { console.error("RTO cancellation credit note issuance failed", error); }
+      }
+      res.json({ success: true, data: updated });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "RTO_RECOVERY_FAILED";
+      if (message === "ORDER_NOT_FOUND") return res.status(404).json({ success: false, message: "Order not found" });
+      if (message.startsWith("RTO_RECOVERY_BLOCKED:")) return res.status(409).json({ success: false, code: "RTO_RECOVERY_BLOCKED", message: "RTO recovery is not ready to close. Confirm RTO_DELIVERED and resolve any payment contradiction first." });
+      throw error;
+    }
+  }),
+);
+
+router.post(
   "/orders/:id/refund",
   asyncHandler(async (req, res) => {
     const order = await prisma.order.findUnique({ where: { id: String(req.params.id) }, include: { items: true, payment: true, shipment: true } });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    if (["SHIPPED", "DELIVERED", "CANCELLED"].includes(order.status)) return res.status(400).json({ success: false, message: "This order can no longer be refunded from the dashboard" });
+    if (["DELIVERED", "CANCELLED"].includes(order.status)) return res.status(400).json({ success: false, message: "This order can no longer be refunded from the dashboard" });
+    if (order.status === "SHIPPED") {
+      try { await assertPrepaidRtoCanRefund(order.id); }
+      catch (error) {
+        const message = error instanceof Error ? error.message : "RTO_REFUND_BLOCKED";
+        if (message.startsWith("RTO_REFUND_BLOCKED:")) return res.status(409).json({ success: false, code: "RTO_REFUND_BLOCKED", message: "A shipped prepaid order can only be refunded after the parcel is physically returned to origin (RTO_DELIVERED)." });
+        throw error;
+      }
+    }
     if (order.paymentMethod !== "ONLINE" || !order.payment?.providerPaymentId || order.payment.status !== "PAID") return res.status(400).json({ success: false, message: "This order does not have a refundable online payment" });
 
     const locked = await prisma.payment.updateMany({ where: { orderId: order.id, status: "PAID" }, data: { status: "REFUNDING", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });

@@ -127,7 +127,9 @@
     "dispatch-readiness:doctor": "node scripts/phase80-dispatch-readiness-audit.mjs",
     "verify:phase80": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget",
     "tracking-health:doctor": "node scripts/phase81-shipment-tracking-health-audit.mjs",
-    "verify:phase81": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget"
+    "verify:phase81": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget",
+    "rto-recovery:doctor": "node scripts/phase82-rto-recovery-audit.mjs",
+    "verify:phase82": "npm run client:doctor && node scripts/phase52-react-runtime-audit.mjs && node scripts/phase49-production-release-audit.mjs && node scripts/phase50-runtime-recovery-audit.mjs && node scripts/phase50-client-state-test.mjs && npm run security:tree && npm run db:generate && npm run typecheck && npm run build && npm run performance:budget"
   },
   "devDependencies": {
     "concurrently": "^9.2.1",

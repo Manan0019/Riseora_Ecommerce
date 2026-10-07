@@ -52,6 +52,7 @@ export default function AdminFulfilment() {
       <button type="button" className={(counts.integrityBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("integrity")}><small>INTEGRITY HOLD</small><strong>{counts.integrityBlocked || 0}</strong><span>{counts.integrityReview || 0} review warning(s)</span></button>
       <button type="button" className={(counts.dispatchBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("dispatch")}><small>DISPATCH HOLD</small><strong>{counts.dispatchBlocked || 0}</strong><span>{counts.dispatchReview || 0} readiness review(s)</span></button>
       <div className={(counts.trackingBlocked || 0) > 0 ? "danger" : ""}><small>TRACKING HOLD</small><strong>{counts.trackingBlocked || 0}</strong><span>{counts.trackingReview || 0} review · {counts.trackingStale || 0} stale</span></div>
+      <div className={(counts.rtoBlocked || 0) > 0 || (counts.rtoReadyToClose || 0) > 0 || (counts.rtoRefundRequired || 0) > 0 ? "danger" : ""}><small>RTO RECOVERY</small><strong>{(counts.rtoReadyToClose || 0) + (counts.rtoRefundRequired || 0)}</strong><span>{counts.rtoInTransit || 0} returning · {counts.rtoBlocked || 0} blocked</span></div>
     </section>
 
     {data?.deliveryPromiseHealth && <section className="admin-panel phase73-delivery-health">
@@ -117,6 +118,19 @@ export default function AdminFulfilment() {
         <article className={(data.shipmentTrackingHealth.activeExceptions || 0) > 0 ? "danger" : ""}><small>ACTIVE EXCEPTION / RTO</small><strong>{data.shipmentTrackingHealth.activeExceptions ?? 0}</strong><span>Needs operations follow-up</span></article>
       </div>
       <p className="phase81-tracking-note">{data.shipmentTrackingHealth.note}</p>
+    </section>}
+
+    {data?.rtoRecoveryHealth && <section className="admin-panel phase82-rto-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 82 · RTO RECOVERY</p><h2>Returned-parcel reconciliation</h2><p>RTO orders stay operationally separate from ordinary delivery: physical return must complete before stock restoration, COD closure is atomic, and prepaid returns require refund evidence.</p></div></div>
+      <div className="phase82-rto-health-grid">
+        <article><small>RTO CHECKED</small><strong>{data.rtoRecoveryHealth.checkedOrders ?? 0}</strong><span>Last 120 days</span></article>
+        <article><small>RETURNING</small><strong>{data.rtoRecoveryHealth.inTransit ?? 0}</strong><span>Awaiting RTO delivery</span></article>
+        <article className={(data.rtoRecoveryHealth.readyToClose || 0) > 0 ? "danger" : ""}><small>COD READY TO CLOSE</small><strong>{data.rtoRecoveryHealth.readyToClose ?? 0}</strong><span>Returned stock can be reconciled</span></article>
+        <article className={(data.rtoRecoveryHealth.refundRequired || 0) > 0 ? "danger" : ""}><small>PREPAID REFUND</small><strong>{data.rtoRecoveryHealth.refundRequired ?? 0}</strong><span>Provider refund required</span></article>
+        <article><small>RECONCILED</small><strong>{data.rtoRecoveryHealth.reconciled ?? 0}</strong><span>Stock/payment/order aligned</span></article>
+        <article className={(data.rtoRecoveryHealth.blocked || 0) > 0 ? "danger" : ""}><small>BLOCKED</small><strong>{data.rtoRecoveryHealth.blocked ?? 0}</strong><span>Manual contradiction review</span></article>
+      </div>
+      <p className="phase82-rto-note">{data.rtoRecoveryHealth.note}</p>
     </section>}
 
     <section className="admin-panel phase44-fulfilment-queue">

@@ -18,6 +18,7 @@ import { addressReadinessHealth } from "../services/address-readiness.service";
 import { fulfilmentIntegrityHealth } from "../services/order-integrity.service";
 import { fulfilmentDispatchReadinessHealth } from "../services/dispatch-readiness.service";
 import { fulfilmentShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
+import { fulfilmentRtoRecoveryHealth } from "../services/rto-recovery.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -322,13 +323,14 @@ router.get(
         id: order.id, orderNumber: order.orderNumber, status: order.status, customerName: order.customerName, customerPhone: order.customerPhone, paymentMethod: order.paymentMethod, paymentStatus: order.payment?.status || "PENDING", totalAmount: Number(order.totalAmount), shippingZoneName: order.shippingZoneName, createdAt: order.createdAt, dispatchDueAt, totalWeightGrams, preferredShippingPartnerName: typeof estimate?.preferredShippingPartnerName === "string" ? estimate.preferredShippingPartnerName : null, cancellationPending: Boolean(order.cancellationRequest && ["REQUESTED", "APPROVED"].includes(order.cancellationRequest.status)), overdue, dueSoon,
       };
     });
-    const [inTransit, promiseHealth, addressHealth, integrityHealth, dispatchHealth, trackingHealth] = await Promise.all([
+    const [inTransit, promiseHealth, addressHealth, integrityHealth, dispatchHealth, trackingHealth, rtoRecoveryHealth] = await Promise.all([
       prisma.order.count({ where: { status: "SHIPPED" } }),
       deliveryPromiseHealth(),
       addressReadinessHealth(),
       fulfilmentIntegrityHealth(),
       fulfilmentDispatchReadinessHealth(),
       fulfilmentShipmentTrackingHealth(),
+      fulfilmentRtoRecoveryHealth(),
     ]);
     const exceptionEvents = await prisma.shipmentEvent.findMany({
       where: { type: { in: ["EXCEPTION", "RTO_INITIATED"] }, eventAt: { gte: new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000) } },
@@ -339,8 +341,8 @@ router.get(
     const activeExceptions = exceptionEvents.filter((event) => event.shipment.order.status === "SHIPPED").map((event) => ({ id: event.id, orderId: event.shipment.order.id, orderNumber: event.shipment.order.orderNumber, customerName: event.shipment.order.customerName, type: event.type, title: event.title, note: event.note, location: event.location, eventAt: event.eventAt }));
     const enrichedWithIntegrity = enriched.map((row) => ({ ...row, integrity: integrityHealth.byOrderId[row.id] || null, dispatchReadiness: dispatchHealth.byOrderId[row.id] || null }));
     res.json({ success: true, data: {
-      counts: { awaiting: enriched.filter((row) => row.status === "CONFIRMED").length, processing: enriched.filter((row) => row.status === "PROCESSING").length, overdue: enriched.filter((row) => row.overdue).length, dueSoon: enriched.filter((row) => row.dueSoon).length, inTransit, exceptions: activeExceptions.length, integrityBlocked: integrityHealth.blocked, integrityReview: integrityHealth.review, dispatchBlocked: dispatchHealth.blocked, dispatchReview: dispatchHealth.review, trackingBlocked: trackingHealth.blocked, trackingReview: trackingHealth.review, trackingStale: trackingHealth.stale, trackingOverdue: trackingHealth.overdue },
-      orders: enrichedWithIntegrity, exceptions: activeExceptions, deliveryPromiseHealth: promiseHealth, addressReadinessHealth: addressHealth, orderIntegrityHealth: { ...integrityHealth, byOrderId: undefined }, dispatchReadinessHealth: { ...dispatchHealth, byOrderId: undefined }, shipmentTrackingHealth: trackingHealth,
+      counts: { awaiting: enriched.filter((row) => row.status === "CONFIRMED").length, processing: enriched.filter((row) => row.status === "PROCESSING").length, overdue: enriched.filter((row) => row.overdue).length, dueSoon: enriched.filter((row) => row.dueSoon).length, inTransit, exceptions: activeExceptions.length, integrityBlocked: integrityHealth.blocked, integrityReview: integrityHealth.review, dispatchBlocked: dispatchHealth.blocked, dispatchReview: dispatchHealth.review, trackingBlocked: trackingHealth.blocked, trackingReview: trackingHealth.review, trackingStale: trackingHealth.stale, trackingOverdue: trackingHealth.overdue, rtoInTransit: rtoRecoveryHealth.inTransit, rtoReadyToClose: rtoRecoveryHealth.readyToClose, rtoRefundRequired: rtoRecoveryHealth.refundRequired, rtoBlocked: rtoRecoveryHealth.blocked },
+      orders: enrichedWithIntegrity, exceptions: activeExceptions, deliveryPromiseHealth: promiseHealth, addressReadinessHealth: addressHealth, orderIntegrityHealth: { ...integrityHealth, byOrderId: undefined }, dispatchReadinessHealth: { ...dispatchHealth, byOrderId: undefined }, shipmentTrackingHealth: trackingHealth, rtoRecoveryHealth: { ...rtoRecoveryHealth, byOrderId: undefined },
     } });
   }),
 );

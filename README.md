@@ -518,3 +518,8 @@ Phase 80 extends the Phase 79 fulfilment boundary with server-authoritative disp
 ## Phase 81 — Shipment Tracking Health & Delivery Exception Control V2
 
 Phase 81 adds post-dispatch tracking-health checks, stale/overdue shipment review, exception/RTO controls, chronological shipment-event validation, and a server-side delivery gate. Run `npm run tracking-health:doctor` or the full `npm run verify:phase81` chain.
+
+
+## Phase 82 RTO recovery / reconciliation acceptance
+
+Phase 82 adds no Prisma schema change. The database migration head remains `20261006121500_phase69_account_saved_bag_v2` with 35 migrations. Before public traffic, confirm `npm run rto-recovery:doctor` and `npm run verify:phase82` both pass. RTO stock must never be restored merely because `RTO_INITIATED` exists; physical `RTO_DELIVERED` evidence is required. Completed COD RTO closure must atomically restore item stock, roll back coupon redemption where applicable, cancel an uncollected COD payment and close the order. A prepaid shipped order may use the provider refund path only after Phase 82 confirms completed RTO evidence. Cancelled RTO orders must retain inventory-restoration and payment evidence; contradictory collected COD or missing prepaid refund evidence is a blocking reconciliation issue.

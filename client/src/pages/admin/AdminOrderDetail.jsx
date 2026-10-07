@@ -24,6 +24,7 @@ export default function AdminOrderDetail() {
   const [deliveryDate, setDeliveryDate] = useState("");
   const [shipmentEvent, setShipmentEvent] = useState({ type: "IN_TRANSIT", title: "In transit", note: "", location: "", customerVisible: true });
   const [shipmentSaving, setShipmentSaving] = useState(false);
+  const [rtoClosing, setRtoClosing] = useState(false);
 
   async function load() {
     const [response, partnerResponse] = await Promise.all([apiFetch(`/admin/orders/${id}`), apiFetch("/admin/shipping-partners")]);
@@ -90,6 +91,16 @@ export default function AdminOrderDetail() {
     } catch (e) { setError(e.message); } finally { setShipmentSaving(false); }
   }
 
+  async function closeCodRto() {
+    if (!order || !window.confirm(`Close RTO for ${order.orderNumber}, restore returned stock and cancel the COD order?`)) return;
+    setRtoClosing(true); setMessage(""); setError("");
+    try {
+      await apiFetch(`/admin/orders/${id}/rto-recovery/close`, { method: "POST", body: JSON.stringify({ note: "RTO delivered to origin and reconciled by admin" }) });
+      setMessage("RTO reconciled: returned stock restored, COD payment closed and order cancelled.");
+      await load();
+    } catch (e) { setError(e.message); } finally { setRtoClosing(false); }
+  }
+
   if (error && !order) return <><p className="alert error">{error}</p><Link to="/admin/orders">← Back to orders</Link></>;
   if (!order) return <div className="admin-panel"><div className="skeleton-card" /></div>;
   const address = order.shippingAddress || {};
@@ -147,9 +158,25 @@ export default function AdminOrderDetail() {
       {trackingBlocked && <p className="phase81-tracking-stop">DELIVERED is server-blocked while an RTO or contradictory shipment lifecycle is active. Correct the courier journey first.</p>}
     </section>}
 
+    {order.rtoRecovery && order.rtoRecovery.status !== "NOT_APPLICABLE" && <section className={`admin-panel phase82-rto-recovery ${String(order.rtoRecovery.status || "action_required").toLowerCase()}`}>
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 82 · RTO RECOVERY</p><h2>{order.rtoRecovery.status === "RECONCILED" ? "Return fully reconciled" : order.rtoRecovery.status === "REFUND_REQUIRED" ? "Prepaid refund required" : order.rtoRecovery.status === "READY_TO_CLOSE" ? "Returned parcel ready to close" : order.rtoRecovery.status === "BLOCK" ? "RTO reconciliation hold" : order.rtoRecovery.status === "IN_TRANSIT" ? "Return is still in transit" : "RTO action required"}</h2><p>Physical return, payment outcome, inventory restoration and final order closure are reconciled together after a return-to-origin.</p></div><span className={`phase82-rto-badge ${String(order.rtoRecovery.status || "action_required").toLowerCase()}`}>{String(order.rtoRecovery.status || "").replaceAll("_", " ")}</span></div>
+      <div className="phase82-rto-checks">
+        <span className={order.rtoRecovery.checks?.rtoSequence === false ? "bad" : order.rtoRecovery.checks?.rtoSequence === null ? "review" : "ok"}>RTO sequence</span>
+        <span className={order.rtoRecovery.checks?.physicalReturn ? "ok" : "review"}>Physical return</span>
+        <span className={order.rtoRecovery.checks?.payment === false ? "bad" : order.rtoRecovery.checks?.payment === null ? "review" : "ok"}>Payment</span>
+        <span className={order.rtoRecovery.checks?.inventory === false ? "review" : order.rtoRecovery.checks?.inventory === null ? "review" : "ok"}>Inventory</span>
+        <span className={order.rtoRecovery.checks?.orderClosure ? "ok" : "review"}>Order closure</span>
+      </div>
+      <div className="phase82-rto-meta">{order.rtoRecovery.rtoInitiatedAt && <span><b>RTO initiated</b>{new Date(order.rtoRecovery.rtoInitiatedAt).toLocaleString()}</span>}{order.rtoRecovery.rtoDeliveredAt && <span><b>Returned to origin</b>{new Date(order.rtoRecovery.rtoDeliveredAt).toLocaleString()}</span>}<span><b>Payment</b>{order.rtoRecovery.paymentMethod} · {order.rtoRecovery.paymentStatus || "PENDING"}</span></div>
+      {(order.rtoRecovery.issues || []).length > 0 && <div className="phase82-rto-issues">{order.rtoRecovery.issues.map((item) => <div key={`${item.severity}-${item.code}`} className={item.severity.toLowerCase()}><strong>{item.severity}</strong><span>{item.message}</span></div>)}</div>}
+      {order.rtoRecovery.canCloseCod && <button type="button" className="button" disabled={rtoClosing} onClick={closeCodRto}>{rtoClosing ? "Reconciling…" : "Close COD RTO & restore stock"}</button>}
+      {order.rtoRecovery.canRefundPrepaid && <button type="button" className="button button-danger" disabled={refunding} onClick={refundAndCancel}>{refunding ? "Refunding…" : "Refund prepaid RTO & close order"}</button>}
+      {order.rtoRecovery.status === "IN_TRANSIT" && <p className="phase82-rto-guidance">Do not restore stock yet. Wait until the courier records RTO_DELIVERED and the parcel is physically back at origin.</p>}
+    </section>}
+
     <div className="admin-order-detail-grid">
       <section className="admin-panel"><div className="admin-panel-head"><div><h2>Customer & delivery</h2><p>Shipping snapshot captured at checkout.</p></div></div><div className="admin-detail-stack"><strong>{order.customerName}</strong><span>{order.customerPhone}</span>{order.customerEmail && <span>{order.customerEmail}</span>}<p>{[address.line1, address.line2, address.landmark, address.city, address.state, address.postalCode, address.country].filter(Boolean).join(", ")}</p>{(order.shippingZoneName || order.deliveryEstimate) && <div className="phase21-order-zone admin"><span><b>Delivery zone</b>{order.shippingZoneName || "Store-wide rules"}</span>{order.deliveryEstimate && <span><b>Checkout ETA</b>{order.deliveryEstimate.deliveryMinDays}–{order.deliveryEstimate.deliveryMaxDays} days + {order.deliveryEstimate.dispatchWithinDays || 0} dispatch day(s)</span>}{order.dispatchDueAt && <span><b>Dispatch SLA</b>{new Date(order.dispatchDueAt).toLocaleString()}</span>}{order.deliveryEstimate?.totalWeightGrams > 0 && <span><b>Parcel weight</b>{(Number(order.deliveryEstimate.totalWeightGrams) / 1000).toFixed(2)} kg</span>}{order.deliveryEstimate?.preferredShippingPartnerName && <span><b>Suggested courier</b>{order.deliveryEstimate.preferredShippingPartnerName}</span>}</div>}</div></section>
-      <section className="admin-panel"><div className="admin-panel-head"><div><h2>Payment</h2><p>{order.paymentMethod}</p></div></div><div className="admin-payment-summary"><span>Status <strong>{order.payment?.status || "PENDING"}</strong></span><span>Total <strong>₹{Number(order.totalAmount).toFixed(0)}</strong></span>{order.payment?.providerPaymentId && <span>Payment ID <strong>{order.payment.providerPaymentId}</strong></span>}{order.payment?.refundId && <span>Refund ID <strong>{order.payment.refundId}</strong></span>}{order.couponCode && <span>Coupon <strong>{order.couponCode}</strong></span>}</div>{order.paymentMethod === "ONLINE" && order.payment?.status === "PAID" && !["SHIPPED","DELIVERED","CANCELLED"].includes(order.status) && <button type="button" className="button button-danger admin-refund-button" disabled={refunding} onClick={refundAndCancel}>{refunding ? "Refunding…" : "Refund payment & cancel order"}</button>}</section>
+      <section className="admin-panel"><div className="admin-panel-head"><div><h2>Payment</h2><p>{order.paymentMethod}</p></div></div><div className="admin-payment-summary"><span>Status <strong>{order.payment?.status || "PENDING"}</strong></span><span>Total <strong>₹{Number(order.totalAmount).toFixed(0)}</strong></span>{order.payment?.providerPaymentId && <span>Payment ID <strong>{order.payment.providerPaymentId}</strong></span>}{order.payment?.refundId && <span>Refund ID <strong>{order.payment.refundId}</strong></span>}{order.couponCode && <span>Coupon <strong>{order.couponCode}</strong></span>}</div>{order.paymentMethod === "ONLINE" && order.payment?.status === "PAID" && (!(["SHIPPED","DELIVERED","CANCELLED"].includes(order.status)) || order.rtoRecovery?.canRefundPrepaid) && <button type="button" className="button button-danger admin-refund-button" disabled={refunding} onClick={refundAndCancel}>{refunding ? "Refunding…" : order.rtoRecovery?.canRefundPrepaid ? "Refund prepaid RTO & close order" : "Refund payment & cancel order"}</button>}</section>
     </div>
 
     <div className="admin-order-detail-grid fulfilment-grid">
