@@ -77,7 +77,7 @@ for (const [label, content] of [["backup", backupScript], ["doctor", doctorScrip
 }
 
 const prepare = read("scripts/phase49-release-prepare.mjs");
-const finalVerifyToken = ["verify:phase80", "verify:phase79", "verify:phase78", "verify:phase77", "verify:phase76", "verify:phase75", "verify:phase74", "verify:phase73", "verify:phase72", "verify:phase71", "verify:phase70", "verify:phase69", "verify:phase68", "verify:phase65", "verify:phase63", "verify:phase62", "verify:phase61", "verify:phase60", "verify:phase59", "verify:phase58", "verify:phase57", "verify:phase56", "verify:phase55", "verify:phase54", "verify:phase53", "verify:phase52", "verify:phase51"].find((token) => prepare.includes(token)) || "verify:phase49";
+const finalVerifyToken = ["verify:phase81", "verify:phase80", "verify:phase79", "verify:phase78", "verify:phase77", "verify:phase76", "verify:phase75", "verify:phase74", "verify:phase73", "verify:phase72", "verify:phase71", "verify:phase70", "verify:phase69", "verify:phase68", "verify:phase65", "verify:phase63", "verify:phase62", "verify:phase61", "verify:phase60", "verify:phase59", "verify:phase58", "verify:phase57", "verify:phase56", "verify:phase55", "verify:phase54", "verify:phase53", "verify:phase52", "verify:phase51"].find((token) => prepare.includes(token)) || "verify:phase49";
 const order = ["phase49-release-doctor", "db:backup", "db:deploy", "db:generate", "db-schema-status", finalVerifyToken].map((token) => prepare.indexOf(token));
 order.every((value) => value >= 0) && order.every((value, index) => index === 0 || value > order[index - 1])
   ? pass(`release order backup-before-migrate-before-build · ${finalVerifyToken}`) : fail("release order backup-before-migrate-before-build");

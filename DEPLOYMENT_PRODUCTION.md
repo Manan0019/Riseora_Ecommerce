@@ -198,3 +198,7 @@ Phase 79 adds no Prisma schema change. The database migration head remains `2026
 ## Phase 80 dispatch readiness
 
 Phase 80 adds no Prisma schema change. Migration head remains `20261006121500_phase69_account_saved_bag_v2` with 35 migrations. Run `npm run dispatch-readiness:doctor` and `npm run verify:phase80`. A SHIPPED transition must be rejected with `DISPATCH_READINESS_BLOCKED` when address, courier, tracking uniqueness or parcel/courier constraints are critically invalid. A DELIVERED transition must be rejected with `DELIVERY_EVIDENCE_BLOCKED` when persisted shipment handoff evidence is missing or contradictory. Cancellation/refund workflows remain unchanged.
+
+## Phase 81 verification
+
+Before production release, Phase 81 requires `npm run verify:phase81`. The phase adds no Prisma migration; database head remains `20261006121500_phase69_account_saved_bag_v2`.

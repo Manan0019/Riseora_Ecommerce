@@ -22,6 +22,7 @@ import { savedShoppingHealth } from "../services/saved-shopping.service";
 import { cartQuantityHealth } from "../services/cart-quantity-intelligence.service";
 import { assertOrderIntegrityForFulfilment, getOrderIntegrity } from "../services/order-integrity.service";
 import { assertDispatchReadinessForTransition, getDispatchReadiness } from "../services/dispatch-readiness.service";
+import { assertShipmentEventTransition, assertShipmentTrackingCanDeliver, getShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -299,8 +300,8 @@ router.get(
       },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    const [integrity, dispatchReadiness] = await Promise.all([getOrderIntegrity(order.id), getDispatchReadiness(order.id)]);
-    res.json({ success: true, data: { ...order, integrity, dispatchReadiness } });
+    const [integrity, dispatchReadiness, trackingHealth] = await Promise.all([getOrderIntegrity(order.id), getDispatchReadiness(order.id), getShipmentTrackingHealth(order.id)]);
+    res.json({ success: true, data: { ...order, integrity, dispatchReadiness, trackingHealth } });
   }),
 );
 
@@ -339,6 +340,9 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
     if (!isSameStatus && ["SHIPPED", "DELIVERED"].includes(payload.status)) {
       await assertDispatchReadinessForTransition(order.id, payload.status, { carrier: payload.carrier, trackingNumber: payload.trackingNumber, trackingUrl: payload.trackingUrl }, tx);
+    }
+    if (!isSameStatus && payload.status === "DELIVERED") {
+      await assertShipmentTrackingCanDeliver(order.id, tx);
     }
     if (!isSameStatus && !allowedTransitions[order.status].includes(payload.status)) {
       throw new Error(`INVALID_TRANSITION:${order.status}:${payload.status}`);
@@ -499,6 +503,19 @@ router.post(
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
     if (!order.shipment) return res.status(409).json({ success: false, message: "Create shipment details before adding courier events" });
 
+    const eventAt = parsed.data.eventAt ? new Date(parsed.data.eventAt) : new Date();
+    try {
+      await assertShipmentEventTransition(order.id, { type: parsed.data.type, eventAt });
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "SHIPMENT_EVENT_INVALID";
+      if (message === "SHIPMENT_EVENT_FUTURE") return res.status(409).json({ success: false, code: message, message: "Courier event time cannot be materially in the future." });
+      if (message === "SHIPMENT_EVENT_BEFORE_SHIPMENT") return res.status(409).json({ success: false, code: message, message: "Courier event cannot be earlier than the shipment handoff time." });
+      if (message === "SHIPMENT_DELIVERED_USE_FULFILMENT") return res.status(409).json({ success: false, code: message, message: "Mark the order DELIVERED through fulfilment so payment, order status and delivery evidence stay atomic." });
+      if (message === "SHIPMENT_EVENT_AFTER_DELIVERY") return res.status(409).json({ success: false, code: message, message: "RTO events cannot be added after the order is delivered." });
+      if (message === "RTO_INITIATION_REQUIRED") return res.status(409).json({ success: false, code: message, message: "Add RTO_INITIATED before RTO_DELIVERED." });
+      throw error;
+    }
+
     const event = await prisma.shipmentEvent.create({
       data: {
         shipmentId: order.shipment.id,
@@ -507,7 +524,7 @@ router.post(
         note: parsed.data.note || null,
         location: parsed.data.location || null,
         customerVisible: parsed.data.customerVisible,
-        eventAt: parsed.data.eventAt ? new Date(parsed.data.eventAt) : new Date(),
+        eventAt,
       },
     });
 
@@ -602,6 +619,7 @@ router.patch(
       if (message.startsWith("ORDER_INTEGRITY_BLOCKED:")) return res.status(409).json({ success: false, code: "ORDER_INTEGRITY_BLOCKED", message: "Order integrity checks found a critical mismatch. Review the Phase 79 integrity panel before moving fulfilment forward." });
       if (message.startsWith("DISPATCH_READINESS_BLOCKED:")) return res.status(409).json({ success: false, code: "DISPATCH_READINESS_BLOCKED", message: "Dispatch readiness checks found a blocking courier, tracking, address or parcel issue. Review the Phase 80 dispatch panel before marking the order shipped." });
       if (message.startsWith("DELIVERY_EVIDENCE_BLOCKED:")) return res.status(409).json({ success: false, code: "DELIVERY_EVIDENCE_BLOCKED", message: "Shipment evidence is incomplete or contradictory. Review the Phase 80 dispatch panel before marking the order delivered." });
+      if (message.startsWith("SHIPMENT_TRACKING_BLOCKED:")) return res.status(409).json({ success: false, code: "SHIPMENT_TRACKING_BLOCKED", message: "Shipment tracking has an active RTO or contradictory lifecycle state. Review the Phase 81 tracking panel before marking the order delivered." });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }

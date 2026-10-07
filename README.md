@@ -514,3 +514,7 @@ Phase 79 adds a read-only integrity gate between checkout/order creation and phy
 ## Phase 80 — Dispatch Readiness & Courier Handoff V2
 
 Phase 80 extends the Phase 79 fulfilment boundary with server-authoritative dispatch checks. Before SHIPPED, Riseora validates shipping-address completeness, courier/COD/weight constraints, tracking uniqueness and tracking URL hygiene. Before DELIVERED, persisted shipment handoff evidence must remain coherent. Admin → Fulfilment and Order Detail show READY / REVIEW / BLOCK dispatch readiness. Use `npm run dispatch-readiness:doctor` and `npm run verify:phase80`. No new database migration is required.
+
+## Phase 81 — Shipment Tracking Health & Delivery Exception Control V2
+
+Phase 81 adds post-dispatch tracking-health checks, stale/overdue shipment review, exception/RTO controls, chronological shipment-event validation, and a server-side delivery gate. Run `npm run tracking-health:doctor` or the full `npm run verify:phase81` chain.

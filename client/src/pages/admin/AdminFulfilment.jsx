@@ -51,6 +51,7 @@ export default function AdminFulfilment() {
       <div className={(counts.exceptions || 0) > 0 ? "danger" : ""}><small>SHIPMENT EXCEPTIONS</small><strong>{counts.exceptions || 0}</strong><span>Last 14 days</span></div>
       <button type="button" className={(counts.integrityBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("integrity")}><small>INTEGRITY HOLD</small><strong>{counts.integrityBlocked || 0}</strong><span>{counts.integrityReview || 0} review warning(s)</span></button>
       <button type="button" className={(counts.dispatchBlocked || 0) > 0 ? "danger" : ""} onClick={() => setFilter("dispatch")}><small>DISPATCH HOLD</small><strong>{counts.dispatchBlocked || 0}</strong><span>{counts.dispatchReview || 0} readiness review(s)</span></button>
+      <div className={(counts.trackingBlocked || 0) > 0 ? "danger" : ""}><small>TRACKING HOLD</small><strong>{counts.trackingBlocked || 0}</strong><span>{counts.trackingReview || 0} review · {counts.trackingStale || 0} stale</span></div>
     </section>
 
     {data?.deliveryPromiseHealth && <section className="admin-panel phase73-delivery-health">
@@ -102,6 +103,20 @@ export default function AdminFulfilment() {
         <article className={(data.dispatchReadinessHealth.blocked || 0) > 0 ? "danger" : ""}><small>BLOCKED</small><strong>{data.dispatchReadinessHealth.blocked ?? 0}</strong><span>{data.dispatchReadinessHealth.blockingIssues ?? 0} blocking issue(s)</span></article>
       </div>
       <p className="phase80-dispatch-note">{data.dispatchReadinessHealth.note}</p>
+    </section>}
+
+    {data?.shipmentTrackingHealth && <section className="admin-panel phase81-tracking-health">
+      <div className="admin-panel-head"><div><p className="eyebrow">PHASE 81 · SHIPMENT TRACKING HEALTH</p><h2>Post-dispatch delivery control</h2><p>Read-only tracking health checks shipped/delivered orders for chronological courier events, stale movement, overdue ETA, unresolved exceptions and return-to-origin evidence.</p></div></div>
+      <div className="phase81-tracking-health-grid">
+        <article><small>CHECKED ORDERS</small><strong>{data.shipmentTrackingHealth.checkedOrders ?? 0}</strong><span>Last 90 days · shipped / delivered</span></article>
+        <article><small>HEALTHY</small><strong>{data.shipmentTrackingHealth.healthy ?? 0}</strong><span>Tracking lifecycle coherent</span></article>
+        <article><small>REVIEW</small><strong>{data.shipmentTrackingHealth.review ?? 0}</strong><span>{data.shipmentTrackingHealth.reviewIssues ?? 0} warning(s)</span></article>
+        <article className={(data.shipmentTrackingHealth.blocked || 0) > 0 ? "danger" : ""}><small>BLOCKED</small><strong>{data.shipmentTrackingHealth.blocked ?? 0}</strong><span>{data.shipmentTrackingHealth.blockingIssues ?? 0} contradiction(s)</span></article>
+        <article><small>STALE MOVEMENT</small><strong>{data.shipmentTrackingHealth.stale ?? 0}</strong><span>No movement / OFD stale</span></article>
+        <article><small>ETA OVERDUE</small><strong>{data.shipmentTrackingHealth.overdue ?? 0}</strong><span>Still shipped after promise</span></article>
+        <article className={(data.shipmentTrackingHealth.activeExceptions || 0) > 0 ? "danger" : ""}><small>ACTIVE EXCEPTION / RTO</small><strong>{data.shipmentTrackingHealth.activeExceptions ?? 0}</strong><span>Needs operations follow-up</span></article>
+      </div>
+      <p className="phase81-tracking-note">{data.shipmentTrackingHealth.note}</p>
     </section>}
 
     <section className="admin-panel phase44-fulfilment-queue">
