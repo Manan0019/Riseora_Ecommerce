@@ -326,6 +326,57 @@ enum PurchaseVarianceStatus {
   COST_AND_QUALITY_VARIANCE
 }
 
+enum WarehouseStatus {
+  ACTIVE
+  HOLD
+  INACTIVE
+}
+
+enum WarehouseBinKind {
+  PICK
+  BULK
+  QUARANTINE
+  RETURNS
+}
+
+enum InventoryBatchStatus {
+  AVAILABLE
+  QUARANTINED
+  RECALLED
+  EXPIRED
+  DEPLETED
+}
+
+enum InventoryBatchMovementType {
+  RECEIPT
+  RESERVATION
+  RELEASE
+  SHIPMENT
+  RETURN_RESTOCK
+  ADJUSTMENT
+  QUARANTINE
+  RELEASE_QUARANTINE
+  WRITE_OFF
+  CYCLE_COUNT
+  RECALL
+  EXPIRY_HOLD
+}
+
+enum CycleCountStatus {
+  DRAFT
+  REVIEW_REQUIRED
+  APPROVED
+  POSTED
+  CANCELLED
+}
+
+enum InventoryRecallStatus {
+  DRAFT
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -473,6 +524,13 @@ model User {
   sentPurchaseOrders PurchaseOrder[] @relation("PurchaseOrderSentBy")
   createdGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptCreatedBy")
   postedGoodsReceipts GoodsReceipt[] @relation("GoodsReceiptPostedBy")
+  createdCycleCounts CycleCount[] @relation("CycleCountCreatedBy")
+  approvedCycleCounts CycleCount[] @relation("CycleCountApprovedBy")
+  postedCycleCounts CycleCount[] @relation("CycleCountPostedBy")
+  createdInventoryRecalls InventoryRecall[] @relation("InventoryRecallCreatedBy")
+  activatedInventoryRecalls InventoryRecall[] @relation("InventoryRecallActivatedBy")
+  completedInventoryRecalls InventoryRecall[] @relation("InventoryRecallCompletedBy")
+  inventoryBatchMovements InventoryBatchMovement[] @relation("InventoryBatchMovementActor")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -661,6 +719,10 @@ enum InventoryMovementType {
   RETURN_REPLACEMENT
   REFUND_RESTOCK
   PURCHASE_RECEIPT
+  WAREHOUSE_QUARANTINE
+  WAREHOUSE_RELEASE
+  WAREHOUSE_WRITE_OFF
+  WAREHOUSE_COUNT_ADJUSTMENT
   ERP_SYNC
   CORRECTION
 }
@@ -671,6 +733,7 @@ enum InventoryMovementSource {
   ORDER
   RETURN
   PURCHASE
+  WAREHOUSE
   ERP
   SYSTEM
 }
@@ -749,6 +812,10 @@ model ProductVariant {
   supplierOffers SupplierVariant[]
   purchaseOrderItems PurchaseOrderItem[]
   goodsReceiptItems GoodsReceiptItem[]
+  inventoryBatches InventoryBatch[]
+  inventoryBatchMovements InventoryBatchMovement[]
+  orderBatchAllocations OrderBatchAllocation[]
+  cycleCountItems CycleCountItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -838,6 +905,7 @@ model Order {
   returnRequests ReturnRequest[]
   cancellationRequest OrderCancellationRequest?
   couponRedemption CouponRedemption?
+  batchAllocations OrderBatchAllocation[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2117,11 +2185,199 @@ model GoodsReceiptItem {
   batchNumber String?
   expiryDate DateTime?
   qualityNote String?
+  inventoryBatch InventoryBatch?
   createdAt DateTime @default(now())
 
   @@index([goodsReceiptId, variantId])
   @@index([purchaseOrderItemId])
   @@index([varianceStatus, createdAt])
+}
+
+model Warehouse {
+  id String @id @default(uuid()) @db.Uuid
+  code String @unique
+  name String
+  status WarehouseStatus @default(ACTIVE)
+  isDefault Boolean @default(false)
+  addressLine1 String?
+  city String?
+  state String?
+  postalCode String?
+  notes String?
+  bins WarehouseBin[]
+  batches InventoryBatch[]
+  cycleCounts CycleCount[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, isDefault])
+}
+
+model WarehouseBin {
+  id String @id @default(uuid()) @db.Uuid
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  code String
+  name String
+  kind WarehouseBinKind @default(PICK)
+  isActive Boolean @default(true)
+  batches InventoryBatch[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([warehouseId, code])
+  @@index([warehouseId, kind, isActive])
+}
+
+model InventoryBatch {
+  id String @id @default(uuid()) @db.Uuid
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  binId String? @db.Uuid
+  bin WarehouseBin? @relation(fields: [binId], references: [id], onDelete: SetNull)
+  goodsReceiptItemId String? @unique @db.Uuid
+  goodsReceiptItem GoodsReceiptItem? @relation(fields: [goodsReceiptItemId], references: [id], onDelete: SetNull)
+  batchCode String
+  status InventoryBatchStatus @default(AVAILABLE)
+  quantityOnHand Int @default(0)
+  quantityReserved Int @default(0)
+  quantityBlocked Int @default(0)
+  unitCost Decimal? @db.Decimal(14,2)
+  manufacturedAt DateTime?
+  expiryDate DateTime?
+  receivedAt DateTime @default(now())
+  sourceType String?
+  sourceReference String?
+  movements InventoryBatchMovement[]
+  orderAllocations OrderBatchAllocation[]
+  cycleCountItems CycleCountItem[]
+  recallLinks InventoryRecallBatch[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([warehouseId, variantId, batchCode])
+  @@index([variantId, status, expiryDate])
+  @@index([warehouseId, binId, status])
+}
+
+model InventoryBatchMovement {
+  id String @id @default(uuid()) @db.Uuid
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  type InventoryBatchMovementType
+  onHandChange Int @default(0)
+  reservedChange Int @default(0)
+  blockedChange Int @default(0)
+  onHandAfter Int
+  reservedAfter Int
+  blockedAfter Int
+  referenceType String?
+  referenceId String?
+  note String?
+  actorUserId String? @db.Uuid
+  actorUser User? @relation("InventoryBatchMovementActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([batchId, createdAt])
+  @@index([variantId, type, createdAt])
+  @@index([referenceType, referenceId, variantId])
+}
+
+model OrderBatchAllocation {
+  id String @id @default(uuid()) @db.Uuid
+  orderId String @db.Uuid
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  quantity Int
+  shippedAt DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@unique([orderId, variantId, batchId])
+  @@index([batchId, shippedAt])
+  @@index([orderId, variantId])
+}
+
+model CycleCount {
+  id String @id @default(uuid()) @db.Uuid
+  countNumber String @unique
+  warehouseId String @db.Uuid
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  status CycleCountStatus @default(DRAFT)
+  notes String?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("CycleCountCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  approvedByUserId String? @db.Uuid
+  approvedBy User? @relation("CycleCountApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  postedByUserId String? @db.Uuid
+  postedBy User? @relation("CycleCountPostedBy", fields: [postedByUserId], references: [id], onDelete: SetNull)
+  approvedAt DateTime?
+  postedAt DateTime?
+  items CycleCountItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([warehouseId, status, createdAt])
+}
+
+model CycleCountItem {
+  id String @id @default(uuid()) @db.Uuid
+  cycleCountId String @db.Uuid
+  cycleCount CycleCount @relation(fields: [cycleCountId], references: [id], onDelete: Cascade)
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  systemQty Int
+  countedQty Int?
+  varianceQty Int @default(0)
+  reason String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cycleCountId, batchId])
+  @@index([variantId, cycleCountId])
+}
+
+model InventoryRecall {
+  id String @id @default(uuid()) @db.Uuid
+  recallNumber String @unique
+  status InventoryRecallStatus @default(DRAFT)
+  reason String
+  customerMessage String?
+  noticePublishedAt DateTime?
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("InventoryRecallCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  activatedByUserId String? @db.Uuid
+  activatedBy User? @relation("InventoryRecallActivatedBy", fields: [activatedByUserId], references: [id], onDelete: SetNull)
+  completedByUserId String? @db.Uuid
+  completedBy User? @relation("InventoryRecallCompletedBy", fields: [completedByUserId], references: [id], onDelete: SetNull)
+  activatedAt DateTime?
+  completedAt DateTime?
+  batches InventoryRecallBatch[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model InventoryRecallBatch {
+  id String @id @default(uuid()) @db.Uuid
+  recallId String @db.Uuid
+  recall InventoryRecall @relation(fields: [recallId], references: [id], onDelete: Cascade)
+  batchId String @db.Uuid
+  batch InventoryBatch @relation(fields: [batchId], references: [id], onDelete: Restrict)
+  quantityAtRecall Int @default(0)
+  createdAt DateTime @default(now())
+
+  @@unique([recallId, batchId])
+  @@index([batchId, recallId])
 }
 
 model EmailDeliveryLog {

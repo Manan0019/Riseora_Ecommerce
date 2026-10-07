@@ -25,7 +25,8 @@ ok("Admin Fulfilment mounts procurement",fulfil.includes("AdminProcurementCenter
 ok("Phase 89 styles",css.includes("Phase 89 — Supplier Procurement"));
 ok("procurement doctor command",Boolean(pkg.scripts?.["procurement:doctor"]));
 ok("verify:phase89 command",Boolean(pkg.scripts?.["verify:phase89"]));
-ok("prelaunch advances to phase89",String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase89"));
-ok("production release advances to phase89",prepare.includes('run("npm", ["run", "verify:phase89"])'));
+const phases=Object.keys(pkg.scripts||{}).map(k=>/^verify:phase(\d+)$/.exec(k)).filter(Boolean).map(m=>Number(m[1]));const latestVerify=`verify:phase${Math.max(...phases)}`;
+ok("prelaunch retains Phase 89 and advances",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase89")&&String(pkg.scripts?.["prelaunch:check"]||"").includes(`npm run ${latestVerify}`));
+ok("production release retains Phase 89 and advances",prepare.includes("verify:phase89")&&prepare.includes(`run("npm", ["run", "${latestVerify}"])`));
 ok("production audit recognizes phase89",prod.includes('"verify:phase89"'));
 if(failed){console.error(`\nPhase 89 procurement audit: FAIL (${failed})`);process.exit(1)}console.log("\nPhase 89 procurement audit: PASS");

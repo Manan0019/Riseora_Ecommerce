@@ -371,6 +371,7 @@ export type OrderWhereInput = {
   returnRequests?: Prisma.ReturnRequestListRelationFilter
   cancellationRequest?: Prisma.XOR<Prisma.OrderCancellationRequestNullableScalarRelationFilter, Prisma.OrderCancellationRequestWhereInput> | null
   couponRedemption?: Prisma.XOR<Prisma.CouponRedemptionNullableScalarRelationFilter, Prisma.CouponRedemptionWhereInput> | null
+  batchAllocations?: Prisma.OrderBatchAllocationListRelationFilter
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -407,6 +408,7 @@ export type OrderOrderByWithRelationInput = {
   returnRequests?: Prisma.ReturnRequestOrderByRelationAggregateInput
   cancellationRequest?: Prisma.OrderCancellationRequestOrderByWithRelationInput
   couponRedemption?: Prisma.CouponRedemptionOrderByWithRelationInput
+  batchAllocations?: Prisma.OrderBatchAllocationOrderByRelationAggregateInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -446,6 +448,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   returnRequests?: Prisma.ReturnRequestListRelationFilter
   cancellationRequest?: Prisma.XOR<Prisma.OrderCancellationRequestNullableScalarRelationFilter, Prisma.OrderCancellationRequestWhereInput> | null
   couponRedemption?: Prisma.XOR<Prisma.CouponRedemptionNullableScalarRelationFilter, Prisma.CouponRedemptionWhereInput> | null
+  batchAllocations?: Prisma.OrderBatchAllocationListRelationFilter
 }, "id" | "orderNumber" | "checkoutRequestKey">
 
 export type OrderOrderByWithAggregationInput = {
@@ -539,6 +542,7 @@ export type OrderCreateInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
@@ -574,6 +578,7 @@ export type OrderUncheckedCreateInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
@@ -609,6 +614,7 @@ export type OrderUpdateInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -644,6 +650,7 @@ export type OrderUncheckedUpdateInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
@@ -1019,6 +1026,20 @@ export type OrderUpdateOneRequiredWithoutCouponRedemptionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutCouponRedemptionInput, Prisma.OrderUpdateWithoutCouponRedemptionInput>, Prisma.OrderUncheckedUpdateWithoutCouponRedemptionInput>
 }
 
+export type OrderCreateNestedOneWithoutBatchAllocationsInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutBatchAllocationsInput, Prisma.OrderUncheckedCreateWithoutBatchAllocationsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutBatchAllocationsInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneRequiredWithoutBatchAllocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutBatchAllocationsInput, Prisma.OrderUncheckedCreateWithoutBatchAllocationsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutBatchAllocationsInput
+  upsert?: Prisma.OrderUpsertWithoutBatchAllocationsInput
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutBatchAllocationsInput, Prisma.OrderUpdateWithoutBatchAllocationsInput>, Prisma.OrderUncheckedUpdateWithoutBatchAllocationsInput>
+}
+
 export type OrderCreateWithoutUserInput = {
   id?: string
   orderNumber: string
@@ -1051,6 +1072,7 @@ export type OrderCreateWithoutUserInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutUserInput = {
@@ -1085,6 +1107,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutUserInput = {
@@ -1173,6 +1196,7 @@ export type OrderCreateWithoutStatusHistoryInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutStatusHistoryInput = {
@@ -1207,6 +1231,7 @@ export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutStatusHistoryInput = {
@@ -1257,6 +1282,7 @@ export type OrderUpdateWithoutStatusHistoryInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
@@ -1291,6 +1317,7 @@ export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutShipmentInput = {
@@ -1325,6 +1352,7 @@ export type OrderCreateWithoutShipmentInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutShipmentInput = {
@@ -1359,6 +1387,7 @@ export type OrderUncheckedCreateWithoutShipmentInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutShipmentInput = {
@@ -1409,6 +1438,7 @@ export type OrderUpdateWithoutShipmentInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutShipmentInput = {
@@ -1443,6 +1473,7 @@ export type OrderUncheckedUpdateWithoutShipmentInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCancellationRequestInput = {
@@ -1477,6 +1508,7 @@ export type OrderCreateWithoutCancellationRequestInput = {
   creditNotes?: Prisma.CreditNoteCreateNestedManyWithoutOrderInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCancellationRequestInput = {
@@ -1511,6 +1543,7 @@ export type OrderUncheckedCreateWithoutCancellationRequestInput = {
   creditNotes?: Prisma.CreditNoteUncheckedCreateNestedManyWithoutOrderInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCancellationRequestInput = {
@@ -1561,6 +1594,7 @@ export type OrderUpdateWithoutCancellationRequestInput = {
   creditNotes?: Prisma.CreditNoteUpdateManyWithoutOrderNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCancellationRequestInput = {
@@ -1595,6 +1629,7 @@ export type OrderUncheckedUpdateWithoutCancellationRequestInput = {
   creditNotes?: Prisma.CreditNoteUncheckedUpdateManyWithoutOrderNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutItemsInput = {
@@ -1629,6 +1664,7 @@ export type OrderCreateWithoutItemsInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutItemsInput = {
@@ -1663,6 +1699,7 @@ export type OrderUncheckedCreateWithoutItemsInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutItemsInput = {
@@ -1713,6 +1750,7 @@ export type OrderUpdateWithoutItemsInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutItemsInput = {
@@ -1747,6 +1785,7 @@ export type OrderUncheckedUpdateWithoutItemsInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutPaymentInput = {
@@ -1781,6 +1820,7 @@ export type OrderCreateWithoutPaymentInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPaymentInput = {
@@ -1815,6 +1855,7 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPaymentInput = {
@@ -1865,6 +1906,7 @@ export type OrderUpdateWithoutPaymentInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPaymentInput = {
@@ -1899,6 +1941,7 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCheckoutSessionInput = {
@@ -1933,6 +1976,7 @@ export type OrderCreateWithoutCheckoutSessionInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCheckoutSessionInput = {
@@ -1967,6 +2011,7 @@ export type OrderUncheckedCreateWithoutCheckoutSessionInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCheckoutSessionInput = {
@@ -2017,6 +2062,7 @@ export type OrderUpdateWithoutCheckoutSessionInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCheckoutSessionInput = {
@@ -2051,6 +2097,7 @@ export type OrderUncheckedUpdateWithoutCheckoutSessionInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutInvoiceInput = {
@@ -2085,6 +2132,7 @@ export type OrderCreateWithoutInvoiceInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutInvoiceInput = {
@@ -2119,6 +2167,7 @@ export type OrderUncheckedCreateWithoutInvoiceInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutInvoiceInput = {
@@ -2169,6 +2218,7 @@ export type OrderUpdateWithoutInvoiceInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutInvoiceInput = {
@@ -2203,6 +2253,7 @@ export type OrderUncheckedUpdateWithoutInvoiceInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCreditNotesInput = {
@@ -2237,6 +2288,7 @@ export type OrderCreateWithoutCreditNotesInput = {
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCreditNotesInput = {
@@ -2271,6 +2323,7 @@ export type OrderUncheckedCreateWithoutCreditNotesInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCreditNotesInput = {
@@ -2321,6 +2374,7 @@ export type OrderUpdateWithoutCreditNotesInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCreditNotesInput = {
@@ -2355,6 +2409,7 @@ export type OrderUncheckedUpdateWithoutCreditNotesInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutReturnRequestsInput = {
@@ -2389,6 +2444,7 @@ export type OrderCreateWithoutReturnRequestsInput = {
   creditNotes?: Prisma.CreditNoteCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutReturnRequestsInput = {
@@ -2423,6 +2479,7 @@ export type OrderUncheckedCreateWithoutReturnRequestsInput = {
   creditNotes?: Prisma.CreditNoteUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutReturnRequestsInput = {
@@ -2473,6 +2530,7 @@ export type OrderUpdateWithoutReturnRequestsInput = {
   creditNotes?: Prisma.CreditNoteUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutReturnRequestsInput = {
@@ -2507,6 +2565,7 @@ export type OrderUncheckedUpdateWithoutReturnRequestsInput = {
   creditNotes?: Prisma.CreditNoteUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCouponRedemptionInput = {
@@ -2541,6 +2600,7 @@ export type OrderCreateWithoutCouponRedemptionInput = {
   creditNotes?: Prisma.CreditNoteCreateNestedManyWithoutOrderInput
   returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
@@ -2575,6 +2635,7 @@ export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   creditNotes?: Prisma.CreditNoteUncheckedCreateNestedManyWithoutOrderInput
   returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCouponRedemptionInput = {
@@ -2625,6 +2686,7 @@ export type OrderUpdateWithoutCouponRedemptionInput = {
   creditNotes?: Prisma.CreditNoteUpdateManyWithoutOrderNestedInput
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
@@ -2659,6 +2721,163 @@ export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   creditNotes?: Prisma.CreditNoteUncheckedUpdateManyWithoutOrderNestedInput
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderCreateWithoutBatchAllocationsInput = {
+  id?: string
+  orderNumber: string
+  checkoutRequestKey?: string | null
+  dispatchDueAt?: Date | string | null
+  customerName: string
+  customerEmail?: string | null
+  customerPhone: string
+  shippingAddress: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingZoneName?: string | null
+  deliveryEstimate?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.OrderStatus
+  paymentMethod: $Enums.PaymentMethod
+  couponCode?: string | null
+  automaticPromotionName?: string | null
+  automaticDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user?: Prisma.UserCreateNestedOneWithoutOrdersInput
+  items?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryCreateNestedManyWithoutOrderInput
+  shipment?: Prisma.ShipmentCreateNestedOneWithoutOrderInput
+  checkoutSession?: Prisma.CheckoutSessionCreateNestedOneWithoutOrderInput
+  invoice?: Prisma.InvoiceCreateNestedOneWithoutOrderInput
+  creditNotes?: Prisma.CreditNoteCreateNestedManyWithoutOrderInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutOrderInput
+  cancellationRequest?: Prisma.OrderCancellationRequestCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutBatchAllocationsInput = {
+  id?: string
+  orderNumber: string
+  checkoutRequestKey?: string | null
+  dispatchDueAt?: Date | string | null
+  userId?: string | null
+  customerName: string
+  customerEmail?: string | null
+  customerPhone: string
+  shippingAddress: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingZoneName?: string | null
+  deliveryEstimate?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  status?: $Enums.OrderStatus
+  paymentMethod: $Enums.PaymentMethod
+  couponCode?: string | null
+  automaticPromotionName?: string | null
+  automaticDiscountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  subtotal: runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  items?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+  shipment?: Prisma.ShipmentUncheckedCreateNestedOneWithoutOrderInput
+  checkoutSession?: Prisma.CheckoutSessionUncheckedCreateNestedOneWithoutOrderInput
+  invoice?: Prisma.InvoiceUncheckedCreateNestedOneWithoutOrderInput
+  creditNotes?: Prisma.CreditNoteUncheckedCreateNestedManyWithoutOrderInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutOrderInput
+  cancellationRequest?: Prisma.OrderCancellationRequestUncheckedCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutBatchAllocationsInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutBatchAllocationsInput, Prisma.OrderUncheckedCreateWithoutBatchAllocationsInput>
+}
+
+export type OrderUpsertWithoutBatchAllocationsInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutBatchAllocationsInput, Prisma.OrderUncheckedUpdateWithoutBatchAllocationsInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutBatchAllocationsInput, Prisma.OrderUncheckedCreateWithoutBatchAllocationsInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutBatchAllocationsInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutBatchAllocationsInput, Prisma.OrderUncheckedUpdateWithoutBatchAllocationsInput>
+}
+
+export type OrderUpdateWithoutBatchAllocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutRequestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingAddress?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingZoneName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryEstimate?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  automaticPromotionName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  automaticDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneWithoutOrdersNestedInput
+  items?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+  shipment?: Prisma.ShipmentUpdateOneWithoutOrderNestedInput
+  checkoutSession?: Prisma.CheckoutSessionUpdateOneWithoutOrderNestedInput
+  invoice?: Prisma.InvoiceUpdateOneWithoutOrderNestedInput
+  creditNotes?: Prisma.CreditNoteUpdateManyWithoutOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
+  cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutBatchAllocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  orderNumber?: Prisma.StringFieldUpdateOperationsInput | string
+  checkoutRequestKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  dispatchDueAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerName?: Prisma.StringFieldUpdateOperationsInput | string
+  customerEmail?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customerPhone?: Prisma.StringFieldUpdateOperationsInput | string
+  shippingAddress?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  shippingZoneName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryEstimate?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  paymentMethod?: Prisma.EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+  couponCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  automaticPromotionName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  automaticDiscountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  subtotal?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  shippingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  items?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
+  shipment?: Prisma.ShipmentUncheckedUpdateOneWithoutOrderNestedInput
+  checkoutSession?: Prisma.CheckoutSessionUncheckedUpdateOneWithoutOrderNestedInput
+  invoice?: Prisma.InvoiceUncheckedUpdateOneWithoutOrderNestedInput
+  creditNotes?: Prisma.CreditNoteUncheckedUpdateManyWithoutOrderNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
+  cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateManyUserInput = {
@@ -2717,6 +2936,7 @@ export type OrderUpdateWithoutUserInput = {
   returnRequests?: Prisma.ReturnRequestUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutUserInput = {
@@ -2751,6 +2971,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutOrderNestedInput
   cancellationRequest?: Prisma.OrderCancellationRequestUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  batchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutUserInput = {
@@ -2787,6 +3008,7 @@ export type OrderCountOutputType = {
   statusHistory: number
   creditNotes: number
   returnRequests: number
+  batchAllocations: number
 }
 
 export type OrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2794,6 +3016,7 @@ export type OrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   statusHistory?: boolean | OrderCountOutputTypeCountStatusHistoryArgs
   creditNotes?: boolean | OrderCountOutputTypeCountCreditNotesArgs
   returnRequests?: boolean | OrderCountOutputTypeCountReturnRequestsArgs
+  batchAllocations?: boolean | OrderCountOutputTypeCountBatchAllocationsArgs
 }
 
 /**
@@ -2834,6 +3057,13 @@ export type OrderCountOutputTypeCountReturnRequestsArgs<ExtArgs extends runtime.
   where?: Prisma.ReturnRequestWhereInput
 }
 
+/**
+ * OrderCountOutputType without action
+ */
+export type OrderCountOutputTypeCountBatchAllocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderBatchAllocationWhereInput
+}
+
 
 export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2869,6 +3099,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   returnRequests?: boolean | Prisma.Order$returnRequestsArgs<ExtArgs>
   cancellationRequest?: boolean | Prisma.Order$cancellationRequestArgs<ExtArgs>
   couponRedemption?: boolean | Prisma.Order$couponRedemptionArgs<ExtArgs>
+  batchAllocations?: boolean | Prisma.Order$batchAllocationsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
@@ -2962,6 +3193,7 @@ export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   returnRequests?: boolean | Prisma.Order$returnRequestsArgs<ExtArgs>
   cancellationRequest?: boolean | Prisma.Order$cancellationRequestArgs<ExtArgs>
   couponRedemption?: boolean | Prisma.Order$couponRedemptionArgs<ExtArgs>
+  batchAllocations?: boolean | Prisma.Order$batchAllocationsArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2985,6 +3217,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     returnRequests: Prisma.$ReturnRequestPayload<ExtArgs>[]
     cancellationRequest: Prisma.$OrderCancellationRequestPayload<ExtArgs> | null
     couponRedemption: Prisma.$CouponRedemptionPayload<ExtArgs> | null
+    batchAllocations: Prisma.$OrderBatchAllocationPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -3414,6 +3647,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   returnRequests<T extends Prisma.Order$returnRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$returnRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReturnRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cancellationRequest<T extends Prisma.Order$cancellationRequestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$cancellationRequestArgs<ExtArgs>>): Prisma.Prisma__OrderCancellationRequestClient<runtime.Types.Result.GetResult<Prisma.$OrderCancellationRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   couponRedemption<T extends Prisma.Order$couponRedemptionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$couponRedemptionArgs<ExtArgs>>): Prisma.Prisma__CouponRedemptionClient<runtime.Types.Result.GetResult<Prisma.$CouponRedemptionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  batchAllocations<T extends Prisma.Order$batchAllocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$batchAllocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderBatchAllocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4092,6 +4326,30 @@ export type Order$couponRedemptionArgs<ExtArgs extends runtime.Types.Extensions.
    */
   include?: Prisma.CouponRedemptionInclude<ExtArgs> | null
   where?: Prisma.CouponRedemptionWhereInput
+}
+
+/**
+ * Order.batchAllocations
+ */
+export type Order$batchAllocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the OrderBatchAllocation
+   */
+  select?: Prisma.OrderBatchAllocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the OrderBatchAllocation
+   */
+  omit?: Prisma.OrderBatchAllocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderBatchAllocationInclude<ExtArgs> | null
+  where?: Prisma.OrderBatchAllocationWhereInput
+  orderBy?: Prisma.OrderBatchAllocationOrderByWithRelationInput | Prisma.OrderBatchAllocationOrderByWithRelationInput[]
+  cursor?: Prisma.OrderBatchAllocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderBatchAllocationScalarFieldEnum | Prisma.OrderBatchAllocationScalarFieldEnum[]
 }
 
 /**

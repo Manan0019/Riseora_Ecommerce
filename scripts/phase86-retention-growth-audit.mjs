@@ -22,7 +22,8 @@ ok("customer journey surface",customerUi.includes("MY RISEORA JOURNEY")&&custome
 ok("Phase 86 styles",css.includes("phase86-growth-center")&&css.includes("phase86-customer-journey"));
 ok("retention-growth:doctor command",Boolean(pkg.scripts?.["retention-growth:doctor"]));
 ok("verify:phase86 command",Boolean(pkg.scripts?.["verify:phase86"]));
-ok("prelaunch advances to phase86",/npm run verify:phase8[6-9]/.test(String(pkg.scripts?.["prelaunch:check"]||"")));
-ok("production release advances to phase86",/verify:phase8[6-9]/.test(prepare));
-ok("production audit recognizes phase86",/verify:phase8[6-9]/.test(prodAudit));
+const verifyPhases=Object.keys(pkg.scripts||{}).map((key)=>/^verify:phase(\d+)$/.exec(key)).filter(Boolean).map((m)=>Number(m[1]));const latestVerify=`verify:phase${Math.max(...verifyPhases)}`;
+ok("prelaunch retains Phase 86 and advances",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase86")&&String(pkg.scripts?.["prelaunch:check"]||"").includes(`npm run ${latestVerify}`));
+ok("production release retains Phase 86 and advances",prepare.includes("verify:phase86")&&prepare.includes(latestVerify));
+ok("production audit recognizes phase86",prodAudit.includes("verify:phase86"));
 if(failed){console.error(`\nPhase 86 retention growth audit: FAIL (${failed})`);process.exit(1)} console.log("\nPhase 86 retention growth audit: PASS");

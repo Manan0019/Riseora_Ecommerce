@@ -1,6 +1,6 @@
-# Riseora Production Deployment — Phase 89 cumulative release
+# Riseora Production Deployment — Phase 90 cumulative release
 
-Current production verification target: `verify:phase89`. Phase 89 adds the committed procurement/PO/goods-receipt migration and must be deployed with `db:backup` → `db:deploy` → `db:generate` before release verification.
+Current production verification target: `verify:phase90`. Phase 90 adds the committed warehouse/batch/expiry/cycle-count/recall migration and must be deployed with `db:backup` → `db:deploy` → `db:generate` before release verification.
 
 Riseora remains a standalone e-commerce application. ERP synchronization stays deferred until the standalone web release is verified in production.
 
@@ -231,3 +231,8 @@ Retention Intelligence, Lifecycle Campaigns & Growth Control Center V2. Latest v
 
 ## Phase 87 · Growth Attribution, Campaign ROI & Experimentation V2
 Lifecycle campaigns now support deterministic holdout/A-B experiments, attribution windows, direct coupon and last-touch conversion attribution, incremental lift, incentive-cost/ROI reporting, customer benefit redemption visibility, and an explicit source-map-js lockfile repair. Latest verification gate: `npm run verify:phase87`. Expected migration head: `20261007203000_phase87_growth_attribution_experimentation_v2`.
+
+
+## Phase 90 · Warehouse batch / expiry / cycle count / recall acceptance
+
+Phase 90 adds migration `20261008003000_phase90_warehouse_batch_expiry_recall_v2`. Expected migration count becomes 43. Before public traffic, confirm `npm run warehouse-control:doctor` and `npm run verify:phase90` both pass. Existing sellable stock is backfilled into synthetic legacy batches so aggregate stock is preserved. New Phase 89 goods receipts must create batch lineage for accepted units. Checkout reservations and releases must remain synchronized with the batch ledger; shipment must commit the actual reserved batch and must fail when that reserved batch is recalled, expired or unavailable. Quarantine, expiry hold, write-off and recall actions must never make blocked stock sellable accidentally. Cycle-count approval is review-only; only explicit posting may adjust inventory and stale snapshots must be rejected. Recall activation blocks remaining free stock immediately, customer notice publication is a separate explicit action, and recall completion must never silently release stock. Historical shipped/delivered orders without real batch evidence must remain visible as legacy trace gaps rather than fabricated lineage.

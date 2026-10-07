@@ -1,4 +1,5 @@
 import type { Prisma } from "../generated/prisma/client";
+import { phase90ApplyInventoryMutation } from "./warehouse-inventory.service";
 
 export type InventoryMovementTypeName =
   | "OPENING_STOCK"
@@ -10,10 +11,14 @@ export type InventoryMovementTypeName =
   | "RETURN_REPLACEMENT"
   | "REFUND_RESTOCK"
   | "PURCHASE_RECEIPT"
+  | "WAREHOUSE_QUARANTINE"
+  | "WAREHOUSE_RELEASE"
+  | "WAREHOUSE_WRITE_OFF"
+  | "WAREHOUSE_COUNT_ADJUSTMENT"
   | "ERP_SYNC"
   | "CORRECTION";
 
-export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "PURCHASE" | "ERP" | "SYSTEM";
+export type InventoryMovementSourceName = "ADMIN" | "CHECKOUT" | "ORDER" | "RETURN" | "PURCHASE" | "WAREHOUSE" | "ERP" | "SYSTEM";
 
 export function availableToSell(variant: { stockQuantity?: number | null; safetyStock?: number | null }) {
   return Math.max(0, Number(variant.stockQuantity || 0) - Math.max(0, Number(variant.safetyStock || 0)));
@@ -42,6 +47,10 @@ type MutationInput = {
   referenceId?: string | null;
   actorUserId?: string | null;
   enforceSafetyStock?: boolean;
+  batchCode?: string | null;
+  expiryDate?: Date | null;
+  unitCost?: number | null;
+  goodsReceiptItemId?: string | null;
 };
 
 export async function adjustInventory(tx: Prisma.TransactionClient, input: MutationInput) {
@@ -58,11 +67,27 @@ export async function adjustInventory(tx: Prisma.TransactionClient, input: Mutat
   });
   if (!before) throw new Error("VARIANT_NOT_FOUND");
 
-  const stockAfter = Number(before.stockQuantity) + input.delta;
-  if (stockAfter < 0) throw new Error(`OUT_OF_STOCK:${before.sku}`);
-  if (input.enforceSafetyStock && stockAfter < Math.max(0, Number(before.safetyStock || 0))) {
+  const provisionalStockAfter = Number(before.stockQuantity) + input.delta;
+  if (provisionalStockAfter < 0) throw new Error(`OUT_OF_STOCK:${before.sku}`);
+  if (input.enforceSafetyStock && provisionalStockAfter < Math.max(0, Number(before.safetyStock || 0))) {
     throw new Error(`OUT_OF_STOCK:${before.sku}`);
   }
+
+  const phase90Mutation = await phase90ApplyInventoryMutation(tx, {
+    variantId: input.variantId,
+    delta: input.delta,
+    inventoryType: input.type,
+    referenceType: input.referenceType,
+    referenceId: input.referenceId,
+    actorUserId: input.actorUserId,
+    reason: input.reason,
+    batchCode: input.batchCode,
+    expiryDate: input.expiryDate,
+    unitCost: input.unitCost,
+    goodsReceiptItemId: input.goodsReceiptItemId,
+  });
+  const effectiveDelta = phase90Mutation?.effectiveDelta ?? input.delta;
+  const stockAfter = Number(before.stockQuantity) + effectiveDelta;
 
   const updated = await tx.productVariant.update({
     where: { id: input.variantId },
@@ -74,7 +99,7 @@ export async function adjustInventory(tx: Prisma.TransactionClient, input: Mutat
       variantId: input.variantId,
       type: input.type as any,
       source: input.source as any,
-      quantityChange: input.delta,
+      quantityChange: effectiveDelta,
       stockBefore: Number(before.stockQuantity),
       stockAfter,
       safetyStockSnapshot: Math.max(0, Number(before.safetyStock || 0)),
@@ -99,6 +124,16 @@ export async function setInventoryQuantity(tx: Prisma.TransactionClient, input: 
   });
   if (!before) throw new Error("VARIANT_NOT_FOUND");
   if (before.stockQuantity === input.nextQuantity) return tx.productVariant.findUniqueOrThrow({ where: { id: input.variantId } });
+
+  await phase90ApplyInventoryMutation(tx, {
+    variantId: input.variantId,
+    delta: input.nextQuantity - Number(before.stockQuantity),
+    inventoryType: input.type,
+    referenceType: input.referenceType,
+    referenceId: input.referenceId,
+    actorUserId: input.actorUserId,
+    reason: input.reason,
+  });
 
   const updated = await tx.productVariant.update({
     where: { id: input.variantId },

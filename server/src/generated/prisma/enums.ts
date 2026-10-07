@@ -453,6 +453,75 @@ export const PurchaseVarianceStatus = {
 export type PurchaseVarianceStatus = (typeof PurchaseVarianceStatus)[keyof typeof PurchaseVarianceStatus]
 
 
+export const WarehouseStatus = {
+  ACTIVE: 'ACTIVE',
+  HOLD: 'HOLD',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type WarehouseStatus = (typeof WarehouseStatus)[keyof typeof WarehouseStatus]
+
+
+export const WarehouseBinKind = {
+  PICK: 'PICK',
+  BULK: 'BULK',
+  QUARANTINE: 'QUARANTINE',
+  RETURNS: 'RETURNS'
+} as const
+
+export type WarehouseBinKind = (typeof WarehouseBinKind)[keyof typeof WarehouseBinKind]
+
+
+export const InventoryBatchStatus = {
+  AVAILABLE: 'AVAILABLE',
+  QUARANTINED: 'QUARANTINED',
+  RECALLED: 'RECALLED',
+  EXPIRED: 'EXPIRED',
+  DEPLETED: 'DEPLETED'
+} as const
+
+export type InventoryBatchStatus = (typeof InventoryBatchStatus)[keyof typeof InventoryBatchStatus]
+
+
+export const InventoryBatchMovementType = {
+  RECEIPT: 'RECEIPT',
+  RESERVATION: 'RESERVATION',
+  RELEASE: 'RELEASE',
+  SHIPMENT: 'SHIPMENT',
+  RETURN_RESTOCK: 'RETURN_RESTOCK',
+  ADJUSTMENT: 'ADJUSTMENT',
+  QUARANTINE: 'QUARANTINE',
+  RELEASE_QUARANTINE: 'RELEASE_QUARANTINE',
+  WRITE_OFF: 'WRITE_OFF',
+  CYCLE_COUNT: 'CYCLE_COUNT',
+  RECALL: 'RECALL',
+  EXPIRY_HOLD: 'EXPIRY_HOLD'
+} as const
+
+export type InventoryBatchMovementType = (typeof InventoryBatchMovementType)[keyof typeof InventoryBatchMovementType]
+
+
+export const CycleCountStatus = {
+  DRAFT: 'DRAFT',
+  REVIEW_REQUIRED: 'REVIEW_REQUIRED',
+  APPROVED: 'APPROVED',
+  POSTED: 'POSTED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type CycleCountStatus = (typeof CycleCountStatus)[keyof typeof CycleCountStatus]
+
+
+export const InventoryRecallStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type InventoryRecallStatus = (typeof InventoryRecallStatus)[keyof typeof InventoryRecallStatus]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'
@@ -607,6 +676,10 @@ export const InventoryMovementType = {
   RETURN_REPLACEMENT: 'RETURN_REPLACEMENT',
   REFUND_RESTOCK: 'REFUND_RESTOCK',
   PURCHASE_RECEIPT: 'PURCHASE_RECEIPT',
+  WAREHOUSE_QUARANTINE: 'WAREHOUSE_QUARANTINE',
+  WAREHOUSE_RELEASE: 'WAREHOUSE_RELEASE',
+  WAREHOUSE_WRITE_OFF: 'WAREHOUSE_WRITE_OFF',
+  WAREHOUSE_COUNT_ADJUSTMENT: 'WAREHOUSE_COUNT_ADJUSTMENT',
   ERP_SYNC: 'ERP_SYNC',
   CORRECTION: 'CORRECTION'
 } as const
@@ -620,6 +693,7 @@ export const InventoryMovementSource = {
   ORDER: 'ORDER',
   RETURN: 'RETURN',
   PURCHASE: 'PURCHASE',
+  WAREHOUSE: 'WAREHOUSE',
   ERP: 'ERP',
   SYSTEM: 'SYSTEM'
 } as const

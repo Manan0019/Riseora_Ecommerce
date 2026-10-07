@@ -24,6 +24,7 @@ import { assertOrderIntegrityForFulfilment, getOrderIntegrity } from "../service
 import { assertDispatchReadinessForTransition, getDispatchReadiness } from "../services/dispatch-readiness.service";
 import { assertShipmentEventTransition, assertShipmentTrackingCanDeliver, getShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
 import { assertCodRtoCanClose, assertPrepaidRtoCanRefund, getRtoRecoveryHealth } from "../services/rto-recovery.service";
+import { phase90CommitOrderReservations } from "../services/warehouse-inventory.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -297,6 +298,7 @@ router.get(
         items: true,
         payment: true,
         shipment: true,
+        batchAllocations: { include: { batch: { include: { warehouse: { select: { code: true, name: true } }, bin: { select: { code: true, name: true } } } }, variant: { select: { sku: true, name: true } } }, orderBy: { shippedAt: "asc" } },
         statusHistory: { orderBy: { createdAt: "asc" } },
       },
     });
@@ -395,6 +397,7 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
 
     if (payload.status === "SHIPPED") {
+      if (!isSameStatus) await phase90CommitOrderReservations(tx, order.id);
       const estimate = order.deliveryEstimate && typeof order.deliveryEstimate === "object" && !Array.isArray(order.deliveryEstimate)
         ? order.deliveryEstimate as Record<string, unknown>
         : null;
@@ -679,6 +682,7 @@ router.patch(
       if (message.startsWith("DISPATCH_READINESS_BLOCKED:")) return res.status(409).json({ success: false, code: "DISPATCH_READINESS_BLOCKED", message: "Dispatch readiness checks found a blocking courier, tracking, address or parcel issue. Review the Phase 80 dispatch panel before marking the order shipped." });
       if (message.startsWith("DELIVERY_EVIDENCE_BLOCKED:")) return res.status(409).json({ success: false, code: "DELIVERY_EVIDENCE_BLOCKED", message: "Shipment evidence is incomplete or contradictory. Review the Phase 80 dispatch panel before marking the order delivered." });
       if (message.startsWith("SHIPMENT_TRACKING_BLOCKED:")) return res.status(409).json({ success: false, code: "SHIPMENT_TRACKING_BLOCKED", message: "Shipment tracking has an active RTO or contradictory lifecycle state. Review the Phase 81 tracking panel before marking the order delivered." });
+      if (message === "BATCH_RESERVATION_INTEGRITY_BLOCKED" || message.startsWith("BATCH_STOCK_INSUFFICIENT:")) return res.status(409).json({ success: false, code: "WAREHOUSE_BATCH_BLOCKED", message: "Warehouse batch trace cannot satisfy this shipment. Review Phase 90 batch availability before dispatch." });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }

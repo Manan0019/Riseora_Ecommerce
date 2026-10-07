@@ -352,6 +352,51 @@ export type GoodsReceipt = Prisma.GoodsReceiptModel
  */
 export type GoodsReceiptItem = Prisma.GoodsReceiptItemModel
 /**
+ * Model Warehouse
+ * 
+ */
+export type Warehouse = Prisma.WarehouseModel
+/**
+ * Model WarehouseBin
+ * 
+ */
+export type WarehouseBin = Prisma.WarehouseBinModel
+/**
+ * Model InventoryBatch
+ * 
+ */
+export type InventoryBatch = Prisma.InventoryBatchModel
+/**
+ * Model InventoryBatchMovement
+ * 
+ */
+export type InventoryBatchMovement = Prisma.InventoryBatchMovementModel
+/**
+ * Model OrderBatchAllocation
+ * 
+ */
+export type OrderBatchAllocation = Prisma.OrderBatchAllocationModel
+/**
+ * Model CycleCount
+ * 
+ */
+export type CycleCount = Prisma.CycleCountModel
+/**
+ * Model CycleCountItem
+ * 
+ */
+export type CycleCountItem = Prisma.CycleCountItemModel
+/**
+ * Model InventoryRecall
+ * 
+ */
+export type InventoryRecall = Prisma.InventoryRecallModel
+/**
+ * Model InventoryRecallBatch
+ * 
+ */
+export type InventoryRecallBatch = Prisma.InventoryRecallBatchModel
+/**
  * Model EmailDeliveryLog
  * 
  */

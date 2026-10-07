@@ -353,6 +353,13 @@ export type UserWhereInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
   createdGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
   postedGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
+  createdCycleCounts?: Prisma.CycleCountListRelationFilter
+  approvedCycleCounts?: Prisma.CycleCountListRelationFilter
+  postedCycleCounts?: Prisma.CycleCountListRelationFilter
+  createdInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  activatedInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  completedInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -411,6 +418,13 @@ export type UserOrderByWithRelationInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderOrderByRelationAggregateInput
   createdGoodsReceipts?: Prisma.GoodsReceiptOrderByRelationAggregateInput
   postedGoodsReceipts?: Prisma.GoodsReceiptOrderByRelationAggregateInput
+  createdCycleCounts?: Prisma.CycleCountOrderByRelationAggregateInput
+  approvedCycleCounts?: Prisma.CycleCountOrderByRelationAggregateInput
+  postedCycleCounts?: Prisma.CycleCountOrderByRelationAggregateInput
+  createdInventoryRecalls?: Prisma.InventoryRecallOrderByRelationAggregateInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallOrderByRelationAggregateInput
+  completedInventoryRecalls?: Prisma.InventoryRecallOrderByRelationAggregateInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementOrderByRelationAggregateInput
   refillReminders?: Prisma.RefillReminderOrderByRelationAggregateInput
   inventoryMovements?: Prisma.InventoryMovementOrderByRelationAggregateInput
   authSessions?: Prisma.AuthSessionOrderByRelationAggregateInput
@@ -472,6 +486,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   sentPurchaseOrders?: Prisma.PurchaseOrderListRelationFilter
   createdGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
   postedGoodsReceipts?: Prisma.GoodsReceiptListRelationFilter
+  createdCycleCounts?: Prisma.CycleCountListRelationFilter
+  approvedCycleCounts?: Prisma.CycleCountListRelationFilter
+  postedCycleCounts?: Prisma.CycleCountListRelationFilter
+  createdInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  activatedInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  completedInventoryRecalls?: Prisma.InventoryRecallListRelationFilter
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -579,6 +600,13 @@ export type UserCreateInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -636,6 +664,13 @@ export type UserUncheckedCreateInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -693,6 +728,13 @@ export type UserUpdateInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -750,6 +792,13 @@ export type UserUncheckedUpdateInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1479,6 +1528,118 @@ export type UserUpdateOneWithoutPostedGoodsReceiptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostedGoodsReceiptsInput, Prisma.UserUpdateWithoutPostedGoodsReceiptsInput>, Prisma.UserUncheckedUpdateWithoutPostedGoodsReceiptsInput>
 }
 
+export type UserCreateNestedOneWithoutInventoryBatchMovementsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedCreateWithoutInventoryBatchMovementsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInventoryBatchMovementsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutInventoryBatchMovementsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedCreateWithoutInventoryBatchMovementsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutInventoryBatchMovementsInput
+  upsert?: Prisma.UserUpsertWithoutInventoryBatchMovementsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutInventoryBatchMovementsInput, Prisma.UserUpdateWithoutInventoryBatchMovementsInput>, Prisma.UserUncheckedUpdateWithoutInventoryBatchMovementsInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedCycleCountsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedCreateWithoutCreatedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedCycleCountsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutApprovedCycleCountsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedCreateWithoutApprovedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedCycleCountsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutPostedCycleCountsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPostedCycleCountsInput, Prisma.UserUncheckedCreateWithoutPostedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostedCycleCountsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedCycleCountsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedCreateWithoutCreatedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedCycleCountsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedCycleCountsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedCycleCountsInput, Prisma.UserUpdateWithoutCreatedCycleCountsInput>, Prisma.UserUncheckedUpdateWithoutCreatedCycleCountsInput>
+}
+
+export type UserUpdateOneWithoutApprovedCycleCountsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedCreateWithoutApprovedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedCycleCountsInput
+  upsert?: Prisma.UserUpsertWithoutApprovedCycleCountsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovedCycleCountsInput, Prisma.UserUpdateWithoutApprovedCycleCountsInput>, Prisma.UserUncheckedUpdateWithoutApprovedCycleCountsInput>
+}
+
+export type UserUpdateOneWithoutPostedCycleCountsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPostedCycleCountsInput, Prisma.UserUncheckedCreateWithoutPostedCycleCountsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPostedCycleCountsInput
+  upsert?: Prisma.UserUpsertWithoutPostedCycleCountsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPostedCycleCountsInput, Prisma.UserUpdateWithoutPostedCycleCountsInput>, Prisma.UserUncheckedUpdateWithoutPostedCycleCountsInput>
+}
+
+export type UserCreateNestedOneWithoutCreatedInventoryRecallsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCreatedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedInventoryRecallsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutActivatedInventoryRecallsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutActivatedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivatedInventoryRecallsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutCompletedInventoryRecallsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCompletedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompletedInventoryRecallsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutCreatedInventoryRecallsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCreatedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCreatedInventoryRecallsInput
+  upsert?: Prisma.UserUpsertWithoutCreatedInventoryRecallsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCreatedInventoryRecallsInput, Prisma.UserUpdateWithoutCreatedInventoryRecallsInput>, Prisma.UserUncheckedUpdateWithoutCreatedInventoryRecallsInput>
+}
+
+export type UserUpdateOneWithoutActivatedInventoryRecallsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutActivatedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivatedInventoryRecallsInput
+  upsert?: Prisma.UserUpsertWithoutActivatedInventoryRecallsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutActivatedInventoryRecallsInput, Prisma.UserUpdateWithoutActivatedInventoryRecallsInput>, Prisma.UserUncheckedUpdateWithoutActivatedInventoryRecallsInput>
+}
+
+export type UserUpdateOneWithoutCompletedInventoryRecallsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCompletedInventoryRecallsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCompletedInventoryRecallsInput
+  upsert?: Prisma.UserUpsertWithoutCompletedInventoryRecallsInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCompletedInventoryRecallsInput, Prisma.UserUpdateWithoutCompletedInventoryRecallsInput>, Prisma.UserUncheckedUpdateWithoutCompletedInventoryRecallsInput>
+}
+
 export type UserCreateNestedOneWithoutMarketingPreferenceInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMarketingPreferenceInput, Prisma.UserUncheckedCreateWithoutMarketingPreferenceInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMarketingPreferenceInput
@@ -1583,6 +1744,13 @@ export type UserCreateWithoutReferralsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1639,6 +1807,13 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1700,6 +1875,13 @@ export type UserCreateWithoutReferredByInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1756,6 +1938,13 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1833,6 +2022,13 @@ export type UserUpdateWithoutReferralsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -1889,6 +2085,13 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1986,6 +2189,13 @@ export type UserCreateWithoutAccountCartInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2042,6 +2252,13 @@ export type UserUncheckedCreateWithoutAccountCartInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2114,6 +2331,13 @@ export type UserUpdateWithoutAccountCartInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2170,6 +2394,13 @@ export type UserUncheckedUpdateWithoutAccountCartInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2226,6 +2457,13 @@ export type UserCreateWithoutAuthSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -2282,6 +2520,13 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -2354,6 +2599,13 @@ export type UserUpdateWithoutAuthSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -2410,6 +2662,13 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2466,6 +2725,13 @@ export type UserCreateWithoutAuthSecurityEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2522,6 +2788,13 @@ export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2594,6 +2867,13 @@ export type UserUpdateWithoutAuthSecurityEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2650,6 +2930,13 @@ export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2705,6 +2992,13 @@ export type UserCreateWithoutRewardAccountInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2761,6 +3055,13 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2833,6 +3134,13 @@ export type UserUpdateWithoutRewardAccountInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2889,6 +3197,13 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2945,6 +3260,13 @@ export type UserCreateWithoutRewardTransactionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3001,6 +3323,13 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3073,6 +3402,13 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3129,6 +3465,13 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3185,6 +3528,13 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3241,6 +3591,13 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3313,6 +3670,13 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3369,6 +3733,13 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3425,6 +3796,13 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3481,6 +3859,13 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3553,6 +3938,13 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3609,6 +4001,13 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3665,6 +4064,13 @@ export type UserCreateWithoutAddressesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3721,6 +4127,13 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3793,6 +4206,13 @@ export type UserUpdateWithoutAddressesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3849,6 +4269,13 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3906,6 +4333,13 @@ export type UserCreateWithoutInventoryMovementsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -3962,6 +4396,13 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -4034,6 +4475,13 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -4090,6 +4538,13 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -4145,6 +4600,13 @@ export type UserCreateWithoutOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4201,6 +4663,13 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4273,6 +4742,13 @@ export type UserUpdateWithoutOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4329,6 +4805,13 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4385,6 +4868,13 @@ export type UserCreateWithoutCancellationRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4441,6 +4931,13 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4513,6 +5010,13 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4569,6 +5073,13 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4625,6 +5136,13 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4681,6 +5199,13 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4753,6 +5278,13 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4809,6 +5341,13 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4865,6 +5404,13 @@ export type UserCreateWithoutNotificationsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4921,6 +5467,13 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4993,6 +5546,13 @@ export type UserUpdateWithoutNotificationsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5049,6 +5609,13 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5105,6 +5672,13 @@ export type UserCreateWithoutWishlistItemsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5161,6 +5735,13 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5233,6 +5814,13 @@ export type UserUpdateWithoutWishlistItemsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5289,6 +5877,13 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5345,6 +5940,13 @@ export type UserCreateWithoutReturnRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5401,6 +6003,13 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5473,6 +6082,13 @@ export type UserUpdateWithoutReturnRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5529,6 +6145,13 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5585,6 +6208,13 @@ export type UserCreateWithoutRewardCouponsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5641,6 +6271,13 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5713,6 +6350,13 @@ export type UserUpdateWithoutRewardCouponsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5769,6 +6413,13 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5825,6 +6476,13 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5881,6 +6539,13 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5953,6 +6618,13 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6009,6 +6681,13 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6065,6 +6744,13 @@ export type UserCreateWithoutReviewsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6121,6 +6807,13 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6193,6 +6886,13 @@ export type UserUpdateWithoutReviewsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6249,6 +6949,13 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6305,6 +7012,13 @@ export type UserCreateWithoutProductQuestionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6361,6 +7075,13 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6433,6 +7154,13 @@ export type UserUpdateWithoutProductQuestionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6489,6 +7217,13 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6545,6 +7280,13 @@ export type UserCreateWithoutSupportTicketsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6601,6 +7343,13 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6673,6 +7422,13 @@ export type UserUpdateWithoutSupportTicketsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6729,6 +7485,13 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6785,6 +7548,13 @@ export type UserCreateWithoutSupportRecoveryGrantsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6841,6 +7611,13 @@ export type UserUncheckedCreateWithoutSupportRecoveryGrantsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6902,6 +7679,13 @@ export type UserCreateWithoutGrantedSupportRecoveriesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6958,6 +7742,13 @@ export type UserUncheckedCreateWithoutGrantedSupportRecoveriesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7030,6 +7821,13 @@ export type UserUpdateWithoutSupportRecoveryGrantsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7086,6 +7884,13 @@ export type UserUncheckedUpdateWithoutSupportRecoveryGrantsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7153,6 +7958,13 @@ export type UserUpdateWithoutGrantedSupportRecoveriesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7209,6 +8021,13 @@ export type UserUncheckedUpdateWithoutGrantedSupportRecoveriesInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7265,6 +8084,13 @@ export type UserCreateWithoutCreatedRetentionCampaignsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7321,6 +8147,13 @@ export type UserUncheckedCreateWithoutCreatedRetentionCampaignsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7393,6 +8226,13 @@ export type UserUpdateWithoutCreatedRetentionCampaignsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7449,6 +8289,13 @@ export type UserUncheckedUpdateWithoutCreatedRetentionCampaignsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7505,6 +8352,13 @@ export type UserCreateWithoutRetentionEnrollmentsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7561,6 +8415,13 @@ export type UserUncheckedCreateWithoutRetentionEnrollmentsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7633,6 +8494,13 @@ export type UserUpdateWithoutRetentionEnrollmentsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7689,6 +8557,13 @@ export type UserUncheckedUpdateWithoutRetentionEnrollmentsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7745,6 +8620,13 @@ export type UserCreateWithoutGeneratedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7801,6 +8683,13 @@ export type UserUncheckedCreateWithoutGeneratedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7862,6 +8751,13 @@ export type UserCreateWithoutApprovedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7918,6 +8814,13 @@ export type UserUncheckedCreateWithoutApprovedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7990,6 +8893,13 @@ export type UserUpdateWithoutGeneratedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8046,6 +8956,13 @@ export type UserUncheckedUpdateWithoutGeneratedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8113,6 +9030,13 @@ export type UserUpdateWithoutApprovedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8169,6 +9093,13 @@ export type UserUncheckedUpdateWithoutApprovedDemandPlansInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8225,6 +9156,13 @@ export type UserCreateWithoutCreatedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -8281,6 +9219,13 @@ export type UserUncheckedCreateWithoutCreatedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -8342,6 +9287,13 @@ export type UserCreateWithoutApprovedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -8398,6 +9350,13 @@ export type UserUncheckedCreateWithoutApprovedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -8459,6 +9418,13 @@ export type UserCreateWithoutSentPurchaseOrdersInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -8515,6 +9481,13 @@ export type UserUncheckedCreateWithoutSentPurchaseOrdersInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -8587,6 +9560,13 @@ export type UserUpdateWithoutCreatedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8643,6 +9623,13 @@ export type UserUncheckedUpdateWithoutCreatedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8710,6 +9697,13 @@ export type UserUpdateWithoutApprovedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8766,6 +9760,13 @@ export type UserUncheckedUpdateWithoutApprovedPurchaseOrdersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8833,6 +9834,13 @@ export type UserUpdateWithoutSentPurchaseOrdersInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -8889,6 +9897,13 @@ export type UserUncheckedUpdateWithoutSentPurchaseOrdersInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -8945,6 +9960,13 @@ export type UserCreateWithoutCreatedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -9001,6 +10023,13 @@ export type UserUncheckedCreateWithoutCreatedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -9062,6 +10091,13 @@ export type UserCreateWithoutPostedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -9118,6 +10154,13 @@ export type UserUncheckedCreateWithoutPostedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -9190,6 +10233,13 @@ export type UserUpdateWithoutCreatedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -9246,6 +10296,13 @@ export type UserUncheckedUpdateWithoutCreatedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -9313,6 +10370,13 @@ export type UserUpdateWithoutPostedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -9369,6 +10433,1889 @@ export type UserUncheckedUpdateWithoutPostedGoodsReceiptsInput = {
   approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutInventoryBatchMovementsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutInventoryBatchMovementsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutInventoryBatchMovementsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedCreateWithoutInventoryBatchMovementsInput>
+}
+
+export type UserUpsertWithoutInventoryBatchMovementsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedUpdateWithoutInventoryBatchMovementsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedCreateWithoutInventoryBatchMovementsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutInventoryBatchMovementsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutInventoryBatchMovementsInput, Prisma.UserUncheckedUpdateWithoutInventoryBatchMovementsInput>
+}
+
+export type UserUpdateWithoutInventoryBatchMovementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutInventoryBatchMovementsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreatedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedCycleCountsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedCreateWithoutCreatedCycleCountsInput>
+}
+
+export type UserCreateWithoutApprovedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApprovedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApprovedCycleCountsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedCreateWithoutApprovedCycleCountsInput>
+}
+
+export type UserCreateWithoutPostedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPostedCycleCountsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPostedCycleCountsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPostedCycleCountsInput, Prisma.UserUncheckedCreateWithoutPostedCycleCountsInput>
+}
+
+export type UserUpsertWithoutCreatedCycleCountsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutCreatedCycleCountsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedCreateWithoutCreatedCycleCountsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedCycleCountsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutCreatedCycleCountsInput>
+}
+
+export type UserUpdateWithoutCreatedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutApprovedCycleCountsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutApprovedCycleCountsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedCreateWithoutApprovedCycleCountsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApprovedCycleCountsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApprovedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutApprovedCycleCountsInput>
+}
+
+export type UserUpdateWithoutApprovedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApprovedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutPostedCycleCountsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPostedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutPostedCycleCountsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPostedCycleCountsInput, Prisma.UserUncheckedCreateWithoutPostedCycleCountsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPostedCycleCountsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPostedCycleCountsInput, Prisma.UserUncheckedUpdateWithoutPostedCycleCountsInput>
+}
+
+export type UserUpdateWithoutPostedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPostedCycleCountsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutCreatedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCreatedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCreatedInventoryRecallsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCreatedInventoryRecallsInput>
+}
+
+export type UserCreateWithoutActivatedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutActivatedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutActivatedInventoryRecallsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutActivatedInventoryRecallsInput>
+}
+
+export type UserCreateWithoutCompletedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutCompletedInventoryRecallsInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutApprovedByInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCompletedInventoryRecallsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCompletedInventoryRecallsInput>
+}
+
+export type UserUpsertWithoutCreatedInventoryRecallsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutCreatedInventoryRecallsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCreatedInventoryRecallsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCreatedInventoryRecallsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCreatedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutCreatedInventoryRecallsInput>
+}
+
+export type UserUpdateWithoutCreatedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCreatedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutActivatedInventoryRecallsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutActivatedInventoryRecallsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutActivatedInventoryRecallsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutActivatedInventoryRecallsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutActivatedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutActivatedInventoryRecallsInput>
+}
+
+export type UserUpdateWithoutActivatedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutActivatedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutCompletedInventoryRecallsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutCompletedInventoryRecallsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedCreateWithoutCompletedInventoryRecallsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCompletedInventoryRecallsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCompletedInventoryRecallsInput, Prisma.UserUncheckedUpdateWithoutCompletedInventoryRecallsInput>
+}
+
+export type UserUpdateWithoutCompletedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCompletedInventoryRecallsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  createdPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutApprovedByNestedInput
+  sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
+  createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
+  postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -9426,6 +12373,13 @@ export type UserCreateWithoutMarketingPreferenceInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -9482,6 +12436,13 @@ export type UserUncheckedCreateWithoutMarketingPreferenceInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -9554,6 +12515,13 @@ export type UserUpdateWithoutMarketingPreferenceInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -9610,6 +12578,13 @@ export type UserUncheckedUpdateWithoutMarketingPreferenceInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -9666,6 +12641,13 @@ export type UserCreateWithoutConsentEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -9722,6 +12704,13 @@ export type UserUncheckedCreateWithoutConsentEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -9794,6 +12783,13 @@ export type UserUpdateWithoutConsentEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -9850,6 +12846,13 @@ export type UserUncheckedUpdateWithoutConsentEventsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -9906,6 +12909,13 @@ export type UserCreateWithoutPrivacyRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -9962,6 +12972,13 @@ export type UserUncheckedCreateWithoutPrivacyRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -10034,6 +13051,13 @@ export type UserUpdateWithoutPrivacyRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -10090,6 +13114,13 @@ export type UserUncheckedUpdateWithoutPrivacyRequestsInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -10146,6 +13177,13 @@ export type UserCreateWithoutRefillRemindersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutActorUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -10202,6 +13240,13 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedCreateNestedManyWithoutSentByInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutCreatedByInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedCreateNestedManyWithoutPostedByInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutApprovedByInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedCreateNestedManyWithoutPostedByInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCreatedByInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutActivatedByInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedCreateNestedManyWithoutCompletedByInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutActorUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -10274,6 +13319,13 @@ export type UserUpdateWithoutRefillRemindersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -10330,6 +13382,13 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -10405,6 +13464,13 @@ export type UserUpdateWithoutReferredByInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -10461,6 +13527,13 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   sentPurchaseOrders?: Prisma.PurchaseOrderUncheckedUpdateManyWithoutSentByNestedInput
   createdGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutCreatedByNestedInput
   postedGoodsReceipts?: Prisma.GoodsReceiptUncheckedUpdateManyWithoutPostedByNestedInput
+  createdCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutApprovedByNestedInput
+  postedCycleCounts?: Prisma.CycleCountUncheckedUpdateManyWithoutPostedByNestedInput
+  createdInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCreatedByNestedInput
+  activatedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutActivatedByNestedInput
+  completedInventoryRecalls?: Prisma.InventoryRecallUncheckedUpdateManyWithoutCompletedByNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutActorUserNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -10524,6 +13597,13 @@ export type UserCountOutputType = {
   sentPurchaseOrders: number
   createdGoodsReceipts: number
   postedGoodsReceipts: number
+  createdCycleCounts: number
+  approvedCycleCounts: number
+  postedCycleCounts: number
+  createdInventoryRecalls: number
+  activatedInventoryRecalls: number
+  completedInventoryRecalls: number
+  inventoryBatchMovements: number
   refillReminders: number
   inventoryMovements: number
   authSessions: number
@@ -10560,6 +13640,13 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   sentPurchaseOrders?: boolean | UserCountOutputTypeCountSentPurchaseOrdersArgs
   createdGoodsReceipts?: boolean | UserCountOutputTypeCountCreatedGoodsReceiptsArgs
   postedGoodsReceipts?: boolean | UserCountOutputTypeCountPostedGoodsReceiptsArgs
+  createdCycleCounts?: boolean | UserCountOutputTypeCountCreatedCycleCountsArgs
+  approvedCycleCounts?: boolean | UserCountOutputTypeCountApprovedCycleCountsArgs
+  postedCycleCounts?: boolean | UserCountOutputTypeCountPostedCycleCountsArgs
+  createdInventoryRecalls?: boolean | UserCountOutputTypeCountCreatedInventoryRecallsArgs
+  activatedInventoryRecalls?: boolean | UserCountOutputTypeCountActivatedInventoryRecallsArgs
+  completedInventoryRecalls?: boolean | UserCountOutputTypeCountCompletedInventoryRecallsArgs
+  inventoryBatchMovements?: boolean | UserCountOutputTypeCountInventoryBatchMovementsArgs
   refillReminders?: boolean | UserCountOutputTypeCountRefillRemindersArgs
   inventoryMovements?: boolean | UserCountOutputTypeCountInventoryMovementsArgs
   authSessions?: boolean | UserCountOutputTypeCountAuthSessionsArgs
@@ -10770,6 +13857,55 @@ export type UserCountOutputTypeCountPostedGoodsReceiptsArgs<ExtArgs extends runt
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountCreatedCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CycleCountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApprovedCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CycleCountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPostedCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CycleCountWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCreatedInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryRecallWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountActivatedInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryRecallWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountCompletedInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryRecallWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountInventoryBatchMovementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.InventoryBatchMovementWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountRefillRemindersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefillReminderWhereInput
 }
@@ -10858,6 +13994,13 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sentPurchaseOrders?: boolean | Prisma.User$sentPurchaseOrdersArgs<ExtArgs>
   createdGoodsReceipts?: boolean | Prisma.User$createdGoodsReceiptsArgs<ExtArgs>
   postedGoodsReceipts?: boolean | Prisma.User$postedGoodsReceiptsArgs<ExtArgs>
+  createdCycleCounts?: boolean | Prisma.User$createdCycleCountsArgs<ExtArgs>
+  approvedCycleCounts?: boolean | Prisma.User$approvedCycleCountsArgs<ExtArgs>
+  postedCycleCounts?: boolean | Prisma.User$postedCycleCountsArgs<ExtArgs>
+  createdInventoryRecalls?: boolean | Prisma.User$createdInventoryRecallsArgs<ExtArgs>
+  activatedInventoryRecalls?: boolean | Prisma.User$activatedInventoryRecallsArgs<ExtArgs>
+  completedInventoryRecalls?: boolean | Prisma.User$completedInventoryRecallsArgs<ExtArgs>
+  inventoryBatchMovements?: boolean | Prisma.User$inventoryBatchMovementsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -10965,6 +14108,13 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   sentPurchaseOrders?: boolean | Prisma.User$sentPurchaseOrdersArgs<ExtArgs>
   createdGoodsReceipts?: boolean | Prisma.User$createdGoodsReceiptsArgs<ExtArgs>
   postedGoodsReceipts?: boolean | Prisma.User$postedGoodsReceiptsArgs<ExtArgs>
+  createdCycleCounts?: boolean | Prisma.User$createdCycleCountsArgs<ExtArgs>
+  approvedCycleCounts?: boolean | Prisma.User$approvedCycleCountsArgs<ExtArgs>
+  postedCycleCounts?: boolean | Prisma.User$postedCycleCountsArgs<ExtArgs>
+  createdInventoryRecalls?: boolean | Prisma.User$createdInventoryRecallsArgs<ExtArgs>
+  activatedInventoryRecalls?: boolean | Prisma.User$activatedInventoryRecallsArgs<ExtArgs>
+  completedInventoryRecalls?: boolean | Prisma.User$completedInventoryRecallsArgs<ExtArgs>
+  inventoryBatchMovements?: boolean | Prisma.User$inventoryBatchMovementsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -11014,6 +14164,13 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     sentPurchaseOrders: Prisma.$PurchaseOrderPayload<ExtArgs>[]
     createdGoodsReceipts: Prisma.$GoodsReceiptPayload<ExtArgs>[]
     postedGoodsReceipts: Prisma.$GoodsReceiptPayload<ExtArgs>[]
+    createdCycleCounts: Prisma.$CycleCountPayload<ExtArgs>[]
+    approvedCycleCounts: Prisma.$CycleCountPayload<ExtArgs>[]
+    postedCycleCounts: Prisma.$CycleCountPayload<ExtArgs>[]
+    createdInventoryRecalls: Prisma.$InventoryRecallPayload<ExtArgs>[]
+    activatedInventoryRecalls: Prisma.$InventoryRecallPayload<ExtArgs>[]
+    completedInventoryRecalls: Prisma.$InventoryRecallPayload<ExtArgs>[]
+    inventoryBatchMovements: Prisma.$InventoryBatchMovementPayload<ExtArgs>[]
     refillReminders: Prisma.$RefillReminderPayload<ExtArgs>[]
     inventoryMovements: Prisma.$InventoryMovementPayload<ExtArgs>[]
     authSessions: Prisma.$AuthSessionPayload<ExtArgs>[]
@@ -11465,6 +14622,13 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   sentPurchaseOrders<T extends Prisma.User$sentPurchaseOrdersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sentPurchaseOrdersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PurchaseOrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdGoodsReceipts<T extends Prisma.User$createdGoodsReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdGoodsReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoodsReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   postedGoodsReceipts<T extends Prisma.User$postedGoodsReceiptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postedGoodsReceiptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GoodsReceiptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdCycleCounts<T extends Prisma.User$createdCycleCountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdCycleCountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CycleCountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvedCycleCounts<T extends Prisma.User$approvedCycleCountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedCycleCountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CycleCountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  postedCycleCounts<T extends Prisma.User$postedCycleCountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$postedCycleCountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CycleCountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  createdInventoryRecalls<T extends Prisma.User$createdInventoryRecallsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdInventoryRecallsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryRecallPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  activatedInventoryRecalls<T extends Prisma.User$activatedInventoryRecallsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$activatedInventoryRecallsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryRecallPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  completedInventoryRecalls<T extends Prisma.User$completedInventoryRecallsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$completedInventoryRecallsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryRecallPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  inventoryBatchMovements<T extends Prisma.User$inventoryBatchMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryBatchMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryBatchMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refillReminders<T extends Prisma.User$refillRemindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refillRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefillReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryMovements<T extends Prisma.User$inventoryMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   authSessions<T extends Prisma.User$authSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -12604,6 +15768,174 @@ export type User$postedGoodsReceiptsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.GoodsReceiptScalarFieldEnum | Prisma.GoodsReceiptScalarFieldEnum[]
+}
+
+/**
+ * User.createdCycleCounts
+ */
+export type User$createdCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CycleCount
+   */
+  select?: Prisma.CycleCountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CycleCount
+   */
+  omit?: Prisma.CycleCountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CycleCountInclude<ExtArgs> | null
+  where?: Prisma.CycleCountWhereInput
+  orderBy?: Prisma.CycleCountOrderByWithRelationInput | Prisma.CycleCountOrderByWithRelationInput[]
+  cursor?: Prisma.CycleCountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CycleCountScalarFieldEnum | Prisma.CycleCountScalarFieldEnum[]
+}
+
+/**
+ * User.approvedCycleCounts
+ */
+export type User$approvedCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CycleCount
+   */
+  select?: Prisma.CycleCountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CycleCount
+   */
+  omit?: Prisma.CycleCountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CycleCountInclude<ExtArgs> | null
+  where?: Prisma.CycleCountWhereInput
+  orderBy?: Prisma.CycleCountOrderByWithRelationInput | Prisma.CycleCountOrderByWithRelationInput[]
+  cursor?: Prisma.CycleCountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CycleCountScalarFieldEnum | Prisma.CycleCountScalarFieldEnum[]
+}
+
+/**
+ * User.postedCycleCounts
+ */
+export type User$postedCycleCountsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CycleCount
+   */
+  select?: Prisma.CycleCountSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CycleCount
+   */
+  omit?: Prisma.CycleCountOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CycleCountInclude<ExtArgs> | null
+  where?: Prisma.CycleCountWhereInput
+  orderBy?: Prisma.CycleCountOrderByWithRelationInput | Prisma.CycleCountOrderByWithRelationInput[]
+  cursor?: Prisma.CycleCountWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CycleCountScalarFieldEnum | Prisma.CycleCountScalarFieldEnum[]
+}
+
+/**
+ * User.createdInventoryRecalls
+ */
+export type User$createdInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryRecall
+   */
+  select?: Prisma.InventoryRecallSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryRecall
+   */
+  omit?: Prisma.InventoryRecallOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryRecallInclude<ExtArgs> | null
+  where?: Prisma.InventoryRecallWhereInput
+  orderBy?: Prisma.InventoryRecallOrderByWithRelationInput | Prisma.InventoryRecallOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryRecallWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryRecallScalarFieldEnum | Prisma.InventoryRecallScalarFieldEnum[]
+}
+
+/**
+ * User.activatedInventoryRecalls
+ */
+export type User$activatedInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryRecall
+   */
+  select?: Prisma.InventoryRecallSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryRecall
+   */
+  omit?: Prisma.InventoryRecallOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryRecallInclude<ExtArgs> | null
+  where?: Prisma.InventoryRecallWhereInput
+  orderBy?: Prisma.InventoryRecallOrderByWithRelationInput | Prisma.InventoryRecallOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryRecallWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryRecallScalarFieldEnum | Prisma.InventoryRecallScalarFieldEnum[]
+}
+
+/**
+ * User.completedInventoryRecalls
+ */
+export type User$completedInventoryRecallsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryRecall
+   */
+  select?: Prisma.InventoryRecallSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryRecall
+   */
+  omit?: Prisma.InventoryRecallOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryRecallInclude<ExtArgs> | null
+  where?: Prisma.InventoryRecallWhereInput
+  orderBy?: Prisma.InventoryRecallOrderByWithRelationInput | Prisma.InventoryRecallOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryRecallWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryRecallScalarFieldEnum | Prisma.InventoryRecallScalarFieldEnum[]
+}
+
+/**
+ * User.inventoryBatchMovements
+ */
+export type User$inventoryBatchMovementsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the InventoryBatchMovement
+   */
+  select?: Prisma.InventoryBatchMovementSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the InventoryBatchMovement
+   */
+  omit?: Prisma.InventoryBatchMovementOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.InventoryBatchMovementInclude<ExtArgs> | null
+  where?: Prisma.InventoryBatchMovementWhereInput
+  orderBy?: Prisma.InventoryBatchMovementOrderByWithRelationInput | Prisma.InventoryBatchMovementOrderByWithRelationInput[]
+  cursor?: Prisma.InventoryBatchMovementWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.InventoryBatchMovementScalarFieldEnum | Prisma.InventoryBatchMovementScalarFieldEnum[]
 }
 
 /**
