@@ -20,6 +20,7 @@ import { ingredientCatalogHealth } from "../services/ingredient-library.service"
 import { shopDiscoveryHealth } from "../services/shop-discovery.service";
 import { savedShoppingHealth } from "../services/saved-shopping.service";
 import { cartQuantityHealth } from "../services/cart-quantity-intelligence.service";
+import { assertOrderIntegrityForFulfilment, getOrderIntegrity } from "../services/order-integrity.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -297,7 +298,8 @@ router.get(
       },
     });
     if (!order) return res.status(404).json({ success: false, message: "Order not found" });
-    res.json({ success: true, data: order });
+    const integrity = await getOrderIntegrity(order.id);
+    res.json({ success: true, data: { ...order, integrity } });
   }),
 );
 
@@ -331,6 +333,9 @@ async function updateFulfilment(orderId: string, payload: z.infer<typeof fulfilm
     }
 
     const isSameStatus = order.status === payload.status;
+    if (!isSameStatus && payload.status !== "CANCELLED") {
+      await assertOrderIntegrityForFulfilment(order.id, tx);
+    }
     if (!isSameStatus && !allowedTransitions[order.status].includes(payload.status)) {
       throw new Error(`INVALID_TRANSITION:${order.status}:${payload.status}`);
     }
@@ -590,6 +595,7 @@ router.patch(
       if (message === "COURIER_WEIGHT_EXCEEDED") return res.status(400).json({ success: false, message: "The selected courier cannot carry this order weight. Choose another courier or adjust its weight limit in Shipping settings." });
       if (message === "PREPAID_REFUND_REQUIRED") return res.status(400).json({ success: false, message: "Refund the online payment before cancelling this order" });
       if (message === "CANCELLATION_REQUEST_PENDING") return res.status(409).json({ success: false, message: "Resolve the pending customer cancellation request before moving this order forward" });
+      if (message.startsWith("ORDER_INTEGRITY_BLOCKED:")) return res.status(409).json({ success: false, code: "ORDER_INTEGRITY_BLOCKED", message: "Order integrity checks found a critical mismatch. Review the Phase 79 integrity panel before moving fulfilment forward." });
       if (message.startsWith("INVALID_TRANSITION:")) return res.status(400).json({ success: false, message: "That order status change is not allowed" });
       throw error;
     }
