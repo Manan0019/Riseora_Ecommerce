@@ -451,6 +451,8 @@ export const ModelName = {
   SupportRecoveryGrant: 'SupportRecoveryGrant',
   RetentionCampaign: 'RetentionCampaign',
   RetentionEnrollment: 'RetentionEnrollment',
+  DemandPlan: 'DemandPlan',
+  DemandPlanItem: 'DemandPlanItem',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -477,7 +479,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "supportRecoveryGrant" | "retentionCampaign" | "retentionEnrollment" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "supportRecoveryGrant" | "retentionCampaign" | "retentionEnrollment" | "demandPlan" | "demandPlanItem" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4477,6 +4479,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DemandPlan: {
+      payload: Prisma.$DemandPlanPayload<ExtArgs>
+      fields: Prisma.DemandPlanFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DemandPlanFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DemandPlanFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        findFirst: {
+          args: Prisma.DemandPlanFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DemandPlanFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        findMany: {
+          args: Prisma.DemandPlanFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>[]
+        }
+        create: {
+          args: Prisma.DemandPlanCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        createMany: {
+          args: Prisma.DemandPlanCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DemandPlanCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>[]
+        }
+        delete: {
+          args: Prisma.DemandPlanDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        update: {
+          args: Prisma.DemandPlanUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        deleteMany: {
+          args: Prisma.DemandPlanDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DemandPlanUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DemandPlanUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>[]
+        }
+        upsert: {
+          args: Prisma.DemandPlanUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanPayload>
+        }
+        aggregate: {
+          args: Prisma.DemandPlanAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDemandPlan>
+        }
+        groupBy: {
+          args: Prisma.DemandPlanGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DemandPlanGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DemandPlanCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DemandPlanCountAggregateOutputType> | number
+        }
+      }
+    }
+    DemandPlanItem: {
+      payload: Prisma.$DemandPlanItemPayload<ExtArgs>
+      fields: Prisma.DemandPlanItemFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DemandPlanItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DemandPlanItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        findFirst: {
+          args: Prisma.DemandPlanItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DemandPlanItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        findMany: {
+          args: Prisma.DemandPlanItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>[]
+        }
+        create: {
+          args: Prisma.DemandPlanItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        createMany: {
+          args: Prisma.DemandPlanItemCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DemandPlanItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>[]
+        }
+        delete: {
+          args: Prisma.DemandPlanItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        update: {
+          args: Prisma.DemandPlanItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        deleteMany: {
+          args: Prisma.DemandPlanItemDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DemandPlanItemUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DemandPlanItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>[]
+        }
+        upsert: {
+          args: Prisma.DemandPlanItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DemandPlanItemPayload>
+        }
+        aggregate: {
+          args: Prisma.DemandPlanItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDemandPlanItem>
+        }
+        groupBy: {
+          args: Prisma.DemandPlanItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DemandPlanItemGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DemandPlanItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DemandPlanItemCountAggregateOutputType> | number
+        }
+      }
+    }
     EmailDeliveryLog: {
       payload: Prisma.$EmailDeliveryLogPayload<ExtArgs>
       fields: Prisma.EmailDeliveryLogFieldRefs
@@ -6433,6 +6583,67 @@ export const RetentionEnrollmentScalarFieldEnum = {
 export type RetentionEnrollmentScalarFieldEnum = (typeof RetentionEnrollmentScalarFieldEnum)[keyof typeof RetentionEnrollmentScalarFieldEnum]
 
 
+export const DemandPlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  status: 'status',
+  horizonDays: 'horizonDays',
+  leadTimeDays: 'leadTimeDays',
+  bufferDays: 'bufferDays',
+  recentCampaignCount: 'recentCampaignCount',
+  itemCount: 'itemCount',
+  projectedUnits: 'projectedUnits',
+  recommendedUnits: 'recommendedUnits',
+  recommendedPurchaseValue: 'recommendedPurchaseValue',
+  stockoutRiskCount: 'stockoutRiskCount',
+  criticalRiskCount: 'criticalRiskCount',
+  overstockCount: 'overstockCount',
+  dormantCount: 'dormantCount',
+  inventoryValue: 'inventoryValue',
+  potentialLostRevenue: 'potentialLostRevenue',
+  overstockCapital: 'overstockCapital',
+  generatedByUserId: 'generatedByUserId',
+  approvedByUserId: 'approvedByUserId',
+  generatedAt: 'generatedAt',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DemandPlanScalarFieldEnum = (typeof DemandPlanScalarFieldEnum)[keyof typeof DemandPlanScalarFieldEnum]
+
+
+export const DemandPlanItemScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  variantId: 'variantId',
+  risk: 'risk',
+  action: 'action',
+  currentStock: 'currentStock',
+  safetyStock: 'safetyStock',
+  lowStockThreshold: 'lowStockThreshold',
+  availableToSell: 'availableToSell',
+  sold7d: 'sold7d',
+  sold30d: 'sold30d',
+  dueRefillQty: 'dueRefillQty',
+  pendingStockAlerts: 'pendingStockAlerts',
+  dailyVelocity: 'dailyVelocity',
+  campaignBufferPercent: 'campaignBufferPercent',
+  projectedDemand: 'projectedDemand',
+  targetStock: 'targetStock',
+  recommendedReorderQty: 'recommendedReorderQty',
+  recommendedPurchaseValue: 'recommendedPurchaseValue',
+  coverDays: 'coverDays',
+  inventoryValue: 'inventoryValue',
+  potentialLostRevenue: 'potentialLostRevenue',
+  overstockCapital: 'overstockCapital',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type DemandPlanItemScalarFieldEnum = (typeof DemandPlanItemScalarFieldEnum)[keyof typeof DemandPlanItemScalarFieldEnum]
+
+
 export const EmailDeliveryLogScalarFieldEnum = {
   id: 'id',
   toEmail: 'toEmail',
@@ -7320,6 +7531,48 @@ export type ListEnumRetentionExperimentGroupFieldRefInput<$PrismaModel> = FieldR
 
 
 /**
+ * Reference to a field of type 'DemandPlanStatus'
+ */
+export type EnumDemandPlanStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DemandPlanStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'DemandPlanStatus[]'
+ */
+export type ListEnumDemandPlanStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DemandPlanStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'DemandRisk'
+ */
+export type EnumDemandRiskFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DemandRisk'>
+    
+
+
+/**
+ * Reference to a field of type 'DemandRisk[]'
+ */
+export type ListEnumDemandRiskFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DemandRisk[]'>
+    
+
+
+/**
+ * Reference to a field of type 'MerchandisingAction'
+ */
+export type EnumMerchandisingActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MerchandisingAction'>
+    
+
+
+/**
+ * Reference to a field of type 'MerchandisingAction[]'
+ */
+export type ListEnumMerchandisingActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MerchandisingAction[]'>
+    
+
+
+/**
  * Reference to a field of type 'EmailDeliveryStatus'
  */
 export type EnumEmailDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailDeliveryStatus'>
@@ -7691,6 +7944,8 @@ export type GlobalOmitConfig = {
   supportRecoveryGrant?: Prisma.SupportRecoveryGrantOmit
   retentionCampaign?: Prisma.RetentionCampaignOmit
   retentionEnrollment?: Prisma.RetentionEnrollmentOmit
+  demandPlan?: Prisma.DemandPlanOmit
+  demandPlanItem?: Prisma.DemandPlanItemOmit
   emailDeliveryLog?: Prisma.EmailDeliveryLogOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
   marketingPreference?: Prisma.MarketingPreferenceOmit

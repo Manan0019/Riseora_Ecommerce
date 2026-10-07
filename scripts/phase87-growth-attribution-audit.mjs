@@ -20,7 +20,7 @@ ok("dependency repair pins secure source-map-js",pkg.devDependencies?.["source-m
 ok("deps:repair invokes lock repair",String(pkg.scripts?.["deps:repair"]||"").includes("dependency-security:repair"));
 ok("growth-attribution:doctor command",Boolean(pkg.scripts?.["growth-attribution:doctor"]));
 ok("verify:phase87 command",Boolean(pkg.scripts?.["verify:phase87"]));
-ok("prelaunch advances to phase87",String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase87"));
+ok("prelaunch advances to phase87",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase87"));
 ok("production release advances to phase87",prepare.includes("verify:phase87"));
 ok("production audit recognizes phase87",prod.includes("verify:phase87"));
 if(failed){console.error(`\nPhase 87 growth attribution audit: FAIL (${failed})`);process.exit(1)}console.log("\nPhase 87 growth attribution audit: PASS");

@@ -346,6 +346,8 @@ export type UserWhereInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantListRelationFilter
   retentionEnrollments?: Prisma.RetentionEnrollmentListRelationFilter
   createdRetentionCampaigns?: Prisma.RetentionCampaignListRelationFilter
+  generatedDemandPlans?: Prisma.DemandPlanListRelationFilter
+  approvedDemandPlans?: Prisma.DemandPlanListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -397,6 +399,8 @@ export type UserOrderByWithRelationInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantOrderByRelationAggregateInput
   retentionEnrollments?: Prisma.RetentionEnrollmentOrderByRelationAggregateInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignOrderByRelationAggregateInput
+  generatedDemandPlans?: Prisma.DemandPlanOrderByRelationAggregateInput
+  approvedDemandPlans?: Prisma.DemandPlanOrderByRelationAggregateInput
   refillReminders?: Prisma.RefillReminderOrderByRelationAggregateInput
   inventoryMovements?: Prisma.InventoryMovementOrderByRelationAggregateInput
   authSessions?: Prisma.AuthSessionOrderByRelationAggregateInput
@@ -451,6 +455,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantListRelationFilter
   retentionEnrollments?: Prisma.RetentionEnrollmentListRelationFilter
   createdRetentionCampaigns?: Prisma.RetentionCampaignListRelationFilter
+  generatedDemandPlans?: Prisma.DemandPlanListRelationFilter
+  approvedDemandPlans?: Prisma.DemandPlanListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
   authSessions?: Prisma.AuthSessionListRelationFilter
@@ -551,6 +557,8 @@ export type UserCreateInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -601,6 +609,8 @@ export type UserUncheckedCreateInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -651,6 +661,8 @@ export type UserUpdateInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -701,6 +713,8 @@ export type UserUncheckedUpdateInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1318,6 +1332,38 @@ export type UserUpdateOneRequiredWithoutRetentionEnrollmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutRetentionEnrollmentsInput, Prisma.UserUpdateWithoutRetentionEnrollmentsInput>, Prisma.UserUncheckedUpdateWithoutRetentionEnrollmentsInput>
 }
 
+export type UserCreateNestedOneWithoutGeneratedDemandPlansInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedCreateWithoutGeneratedDemandPlansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedDemandPlansInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserCreateNestedOneWithoutApprovedDemandPlansInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedCreateWithoutApprovedDemandPlansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedDemandPlansInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneWithoutGeneratedDemandPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedCreateWithoutGeneratedDemandPlansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutGeneratedDemandPlansInput
+  upsert?: Prisma.UserUpsertWithoutGeneratedDemandPlansInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutGeneratedDemandPlansInput, Prisma.UserUpdateWithoutGeneratedDemandPlansInput>, Prisma.UserUncheckedUpdateWithoutGeneratedDemandPlansInput>
+}
+
+export type UserUpdateOneWithoutApprovedDemandPlansNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedCreateWithoutApprovedDemandPlansInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutApprovedDemandPlansInput
+  upsert?: Prisma.UserUpsertWithoutApprovedDemandPlansInput
+  disconnect?: Prisma.UserWhereInput | boolean
+  delete?: Prisma.UserWhereInput | boolean
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutApprovedDemandPlansInput, Prisma.UserUpdateWithoutApprovedDemandPlansInput>, Prisma.UserUncheckedUpdateWithoutApprovedDemandPlansInput>
+}
+
 export type UserCreateNestedOneWithoutMarketingPreferenceInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutMarketingPreferenceInput, Prisma.UserUncheckedCreateWithoutMarketingPreferenceInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutMarketingPreferenceInput
@@ -1415,6 +1461,8 @@ export type UserCreateWithoutReferralsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1464,6 +1512,8 @@ export type UserUncheckedCreateWithoutReferralsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1518,6 +1568,8 @@ export type UserCreateWithoutReferredByInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1567,6 +1619,8 @@ export type UserUncheckedCreateWithoutReferredByInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1637,6 +1691,8 @@ export type UserUpdateWithoutReferralsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -1686,6 +1742,8 @@ export type UserUncheckedUpdateWithoutReferralsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1776,6 +1834,8 @@ export type UserCreateWithoutAccountCartInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -1825,6 +1885,8 @@ export type UserUncheckedCreateWithoutAccountCartInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -1890,6 +1952,8 @@ export type UserUpdateWithoutAccountCartInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -1939,6 +2003,8 @@ export type UserUncheckedUpdateWithoutAccountCartInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -1988,6 +2054,8 @@ export type UserCreateWithoutAuthSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -2037,6 +2105,8 @@ export type UserUncheckedCreateWithoutAuthSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -2102,6 +2172,8 @@ export type UserUpdateWithoutAuthSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -2151,6 +2223,8 @@ export type UserUncheckedUpdateWithoutAuthSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -2200,6 +2274,8 @@ export type UserCreateWithoutAuthSecurityEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2249,6 +2325,8 @@ export type UserUncheckedCreateWithoutAuthSecurityEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2314,6 +2392,8 @@ export type UserUpdateWithoutAuthSecurityEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2363,6 +2443,8 @@ export type UserUncheckedUpdateWithoutAuthSecurityEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2411,6 +2493,8 @@ export type UserCreateWithoutRewardAccountInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2460,6 +2544,8 @@ export type UserUncheckedCreateWithoutRewardAccountInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2525,6 +2611,8 @@ export type UserUpdateWithoutRewardAccountInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2574,6 +2662,8 @@ export type UserUncheckedUpdateWithoutRewardAccountInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2623,6 +2713,8 @@ export type UserCreateWithoutRewardTransactionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2672,6 +2764,8 @@ export type UserUncheckedCreateWithoutRewardTransactionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2737,6 +2831,8 @@ export type UserUpdateWithoutRewardTransactionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2786,6 +2882,8 @@ export type UserUncheckedUpdateWithoutRewardTransactionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -2835,6 +2933,8 @@ export type UserCreateWithoutAdminAuditLogsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -2884,6 +2984,8 @@ export type UserUncheckedCreateWithoutAdminAuditLogsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -2949,6 +3051,8 @@ export type UserUpdateWithoutAdminAuditLogsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -2998,6 +3102,8 @@ export type UserUncheckedUpdateWithoutAdminAuditLogsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3047,6 +3153,8 @@ export type UserCreateWithoutPasswordResetTokensInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3096,6 +3204,8 @@ export type UserUncheckedCreateWithoutPasswordResetTokensInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3161,6 +3271,8 @@ export type UserUpdateWithoutPasswordResetTokensInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3210,6 +3322,8 @@ export type UserUncheckedUpdateWithoutPasswordResetTokensInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3259,6 +3373,8 @@ export type UserCreateWithoutAddressesInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3308,6 +3424,8 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3373,6 +3491,8 @@ export type UserUpdateWithoutAddressesInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3422,6 +3542,8 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3472,6 +3594,8 @@ export type UserCreateWithoutInventoryMovementsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -3521,6 +3645,8 @@ export type UserUncheckedCreateWithoutInventoryMovementsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -3586,6 +3712,8 @@ export type UserUpdateWithoutInventoryMovementsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -3635,6 +3763,8 @@ export type UserUncheckedUpdateWithoutInventoryMovementsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -3683,6 +3813,8 @@ export type UserCreateWithoutOrdersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3732,6 +3864,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -3797,6 +3931,8 @@ export type UserUpdateWithoutOrdersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -3846,6 +3982,8 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -3895,6 +4033,8 @@ export type UserCreateWithoutCancellationRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -3944,6 +4084,8 @@ export type UserUncheckedCreateWithoutCancellationRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4009,6 +4151,8 @@ export type UserUpdateWithoutCancellationRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4058,6 +4202,8 @@ export type UserUncheckedUpdateWithoutCancellationRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4107,6 +4253,8 @@ export type UserCreateWithoutCheckoutSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4156,6 +4304,8 @@ export type UserUncheckedCreateWithoutCheckoutSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4221,6 +4371,8 @@ export type UserUpdateWithoutCheckoutSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4270,6 +4422,8 @@ export type UserUncheckedUpdateWithoutCheckoutSessionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4319,6 +4473,8 @@ export type UserCreateWithoutNotificationsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4368,6 +4524,8 @@ export type UserUncheckedCreateWithoutNotificationsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4433,6 +4591,8 @@ export type UserUpdateWithoutNotificationsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4482,6 +4642,8 @@ export type UserUncheckedUpdateWithoutNotificationsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4531,6 +4693,8 @@ export type UserCreateWithoutWishlistItemsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4580,6 +4744,8 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4645,6 +4811,8 @@ export type UserUpdateWithoutWishlistItemsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4694,6 +4862,8 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4743,6 +4913,8 @@ export type UserCreateWithoutReturnRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -4792,6 +4964,8 @@ export type UserUncheckedCreateWithoutReturnRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -4857,6 +5031,8 @@ export type UserUpdateWithoutReturnRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -4906,6 +5082,8 @@ export type UserUncheckedUpdateWithoutReturnRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -4955,6 +5133,8 @@ export type UserCreateWithoutRewardCouponsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5004,6 +5184,8 @@ export type UserUncheckedCreateWithoutRewardCouponsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5069,6 +5251,8 @@ export type UserUpdateWithoutRewardCouponsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5118,6 +5302,8 @@ export type UserUncheckedUpdateWithoutRewardCouponsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5167,6 +5353,8 @@ export type UserCreateWithoutCouponRedemptionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5216,6 +5404,8 @@ export type UserUncheckedCreateWithoutCouponRedemptionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5281,6 +5471,8 @@ export type UserUpdateWithoutCouponRedemptionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5330,6 +5522,8 @@ export type UserUncheckedUpdateWithoutCouponRedemptionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5379,6 +5573,8 @@ export type UserCreateWithoutReviewsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5428,6 +5624,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5493,6 +5691,8 @@ export type UserUpdateWithoutReviewsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5542,6 +5742,8 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5591,6 +5793,8 @@ export type UserCreateWithoutProductQuestionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5640,6 +5844,8 @@ export type UserUncheckedCreateWithoutProductQuestionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5705,6 +5911,8 @@ export type UserUpdateWithoutProductQuestionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5754,6 +5962,8 @@ export type UserUncheckedUpdateWithoutProductQuestionsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -5803,6 +6013,8 @@ export type UserCreateWithoutSupportTicketsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -5852,6 +6064,8 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -5917,6 +6131,8 @@ export type UserUpdateWithoutSupportTicketsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -5966,6 +6182,8 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6015,6 +6233,8 @@ export type UserCreateWithoutSupportRecoveryGrantsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6064,6 +6284,8 @@ export type UserUncheckedCreateWithoutSupportRecoveryGrantsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6118,6 +6340,8 @@ export type UserCreateWithoutGrantedSupportRecoveriesInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6167,6 +6391,8 @@ export type UserUncheckedCreateWithoutGrantedSupportRecoveriesInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6232,6 +6458,8 @@ export type UserUpdateWithoutSupportRecoveryGrantsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6281,6 +6509,8 @@ export type UserUncheckedUpdateWithoutSupportRecoveryGrantsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6341,6 +6571,8 @@ export type UserUpdateWithoutGrantedSupportRecoveriesInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6390,6 +6622,8 @@ export type UserUncheckedUpdateWithoutGrantedSupportRecoveriesInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6439,6 +6673,8 @@ export type UserCreateWithoutCreatedRetentionCampaignsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6488,6 +6724,8 @@ export type UserUncheckedCreateWithoutCreatedRetentionCampaignsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6553,6 +6791,8 @@ export type UserUpdateWithoutCreatedRetentionCampaignsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6602,6 +6842,8 @@ export type UserUncheckedUpdateWithoutCreatedRetentionCampaignsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6651,6 +6893,8 @@ export type UserCreateWithoutRetentionEnrollmentsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6700,6 +6944,8 @@ export type UserUncheckedCreateWithoutRetentionEnrollmentsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6765,6 +7011,8 @@ export type UserUpdateWithoutRetentionEnrollmentsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -6814,6 +7062,448 @@ export type UserUncheckedUpdateWithoutRetentionEnrollmentsInput = {
   supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserCreateWithoutGeneratedDemandPlansInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutGeneratedDemandPlansInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutGeneratedDemandPlansInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedCreateWithoutGeneratedDemandPlansInput>
+}
+
+export type UserCreateWithoutApprovedDemandPlansInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referredBy?: Prisma.UserCreateNestedOneWithoutReferralsInput
+  referrals?: Prisma.UserCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutApprovedDemandPlansInput = {
+  id?: string
+  firstName: string
+  lastName?: string | null
+  email: string
+  phone?: string | null
+  passwordHash: string
+  role?: $Enums.UserRole
+  adminRole?: $Enums.AdminRole | null
+  isActive?: boolean
+  tokenVersion?: number
+  failedLoginCount?: number
+  lockedUntil?: Date | string | null
+  lastLoginAt?: Date | string | null
+  lastPasswordChangedAt?: Date | string | null
+  referralCode: string
+  referredByUserId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  referrals?: Prisma.UserUncheckedCreateNestedManyWithoutReferredByInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  productQuestions?: Prisma.ProductQuestionUncheckedCreateNestedManyWithoutUserInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedCreateNestedManyWithoutUserInput
+  returnRequests?: Prisma.ReturnRequestUncheckedCreateNestedManyWithoutUserInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedCreateNestedManyWithoutUserInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedCreateNestedManyWithoutUserInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedCreateNestedManyWithoutUserInput
+  notifications?: Prisma.NotificationUncheckedCreateNestedManyWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  rewardAccount?: Prisma.RewardAccountUncheckedCreateNestedOneWithoutUserInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedCreateNestedManyWithoutUserInput
+  rewardCoupons?: Prisma.CouponUncheckedCreateNestedManyWithoutRewardOwnerInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedCreateNestedManyWithoutActorInput
+  supportTickets?: Prisma.ContactMessageUncheckedCreateNestedManyWithoutUserInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutUserInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
+  authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedCreateNestedOneWithoutUserInput
+  consentEvents?: Prisma.ConsentEventUncheckedCreateNestedManyWithoutUserInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedCreateNestedManyWithoutUserInput
+  accountCart?: Prisma.AccountCartUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutApprovedDemandPlansInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedCreateWithoutApprovedDemandPlansInput>
+}
+
+export type UserUpsertWithoutGeneratedDemandPlansInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedUpdateWithoutGeneratedDemandPlansInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedCreateWithoutGeneratedDemandPlansInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutGeneratedDemandPlansInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutGeneratedDemandPlansInput, Prisma.UserUncheckedUpdateWithoutGeneratedDemandPlansInput>
+}
+
+export type UserUpdateWithoutGeneratedDemandPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutGeneratedDemandPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUncheckedUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUncheckedUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUncheckedUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUncheckedUpdateOneWithoutUserNestedInput
+}
+
+export type UserUpsertWithoutApprovedDemandPlansInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedUpdateWithoutApprovedDemandPlansInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedCreateWithoutApprovedDemandPlansInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutApprovedDemandPlansInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutApprovedDemandPlansInput, Prisma.UserUncheckedUpdateWithoutApprovedDemandPlansInput>
+}
+
+export type UserUpdateWithoutApprovedDemandPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referredBy?: Prisma.UserUpdateOneWithoutReferralsNestedInput
+  referrals?: Prisma.UserUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
+  authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
+  authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
+  marketingPreference?: Prisma.MarketingPreferenceUpdateOneWithoutUserNestedInput
+  consentEvents?: Prisma.ConsentEventUpdateManyWithoutUserNestedInput
+  privacyRequests?: Prisma.PrivacyRequestUpdateManyWithoutUserNestedInput
+  accountCart?: Prisma.AccountCartUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutApprovedDemandPlansInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  passwordHash?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+  adminRole?: Prisma.NullableEnumAdminRoleFieldUpdateOperationsInput | $Enums.AdminRole | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  tokenVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  failedLoginCount?: Prisma.IntFieldUpdateOperationsInput | number
+  lockedUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastLoginAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastPasswordChangedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  referralCode?: Prisma.StringFieldUpdateOperationsInput | string
+  referredByUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  referrals?: Prisma.UserUncheckedUpdateManyWithoutReferredByNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  productQuestions?: Prisma.ProductQuestionUncheckedUpdateManyWithoutUserNestedInput
+  checkoutSessions?: Prisma.CheckoutSessionUncheckedUpdateManyWithoutUserNestedInput
+  returnRequests?: Prisma.ReturnRequestUncheckedUpdateManyWithoutUserNestedInput
+  cancellationRequests?: Prisma.OrderCancellationRequestUncheckedUpdateManyWithoutUserNestedInput
+  passwordResetTokens?: Prisma.PasswordResetTokenUncheckedUpdateManyWithoutUserNestedInput
+  couponRedemptions?: Prisma.CouponRedemptionUncheckedUpdateManyWithoutUserNestedInput
+  notifications?: Prisma.NotificationUncheckedUpdateManyWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  rewardAccount?: Prisma.RewardAccountUncheckedUpdateOneWithoutUserNestedInput
+  rewardTransactions?: Prisma.RewardTransactionUncheckedUpdateManyWithoutUserNestedInput
+  rewardCoupons?: Prisma.CouponUncheckedUpdateManyWithoutRewardOwnerNestedInput
+  adminAuditLogs?: Prisma.AdminAuditLogUncheckedUpdateManyWithoutActorNestedInput
+  supportTickets?: Prisma.ContactMessageUncheckedUpdateManyWithoutUserNestedInput
+  supportRecoveryGrants?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutUserNestedInput
+  grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
+  retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
+  createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -6864,6 +7554,8 @@ export type UserCreateWithoutMarketingPreferenceInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -6913,6 +7605,8 @@ export type UserUncheckedCreateWithoutMarketingPreferenceInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -6978,6 +7672,8 @@ export type UserUpdateWithoutMarketingPreferenceInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7027,6 +7723,8 @@ export type UserUncheckedUpdateWithoutMarketingPreferenceInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7076,6 +7774,8 @@ export type UserCreateWithoutConsentEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7125,6 +7825,8 @@ export type UserUncheckedCreateWithoutConsentEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7190,6 +7892,8 @@ export type UserUpdateWithoutConsentEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7239,6 +7943,8 @@ export type UserUncheckedUpdateWithoutConsentEventsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7288,6 +7994,8 @@ export type UserCreateWithoutPrivacyRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
@@ -7337,6 +8045,8 @@ export type UserUncheckedCreateWithoutPrivacyRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutUserInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
@@ -7402,6 +8112,8 @@ export type UserUpdateWithoutPrivacyRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7451,6 +8163,8 @@ export type UserUncheckedUpdateWithoutPrivacyRequestsInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7500,6 +8214,8 @@ export type UserCreateWithoutRefillRemindersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanCreateNestedManyWithoutApprovedByInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventCreateNestedManyWithoutUserInput
@@ -7549,6 +8265,8 @@ export type UserUncheckedCreateWithoutRefillRemindersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedCreateNestedManyWithoutGrantedByInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedCreateNestedManyWithoutUserInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedCreateNestedManyWithoutCreatedByInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutGeneratedByInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedCreateNestedManyWithoutApprovedByInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutActorUserInput
   authSessions?: Prisma.AuthSessionUncheckedCreateNestedManyWithoutUserInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedCreateNestedManyWithoutUserInput
@@ -7614,6 +8332,8 @@ export type UserUpdateWithoutRefillRemindersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUpdateManyWithoutUserNestedInput
@@ -7663,6 +8383,8 @@ export type UserUncheckedUpdateWithoutRefillRemindersInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
   authSecurityEvents?: Prisma.AuthSecurityEventUncheckedUpdateManyWithoutUserNestedInput
@@ -7731,6 +8453,8 @@ export type UserUpdateWithoutReferredByInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUpdateManyWithoutUserNestedInput
@@ -7780,6 +8504,8 @@ export type UserUncheckedUpdateWithoutReferredByInput = {
   grantedSupportRecoveries?: Prisma.SupportRecoveryGrantUncheckedUpdateManyWithoutGrantedByNestedInput
   retentionEnrollments?: Prisma.RetentionEnrollmentUncheckedUpdateManyWithoutUserNestedInput
   createdRetentionCampaigns?: Prisma.RetentionCampaignUncheckedUpdateManyWithoutCreatedByNestedInput
+  generatedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutGeneratedByNestedInput
+  approvedDemandPlans?: Prisma.DemandPlanUncheckedUpdateManyWithoutApprovedByNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutUserNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutActorUserNestedInput
   authSessions?: Prisma.AuthSessionUncheckedUpdateManyWithoutUserNestedInput
@@ -7836,6 +8562,8 @@ export type UserCountOutputType = {
   grantedSupportRecoveries: number
   retentionEnrollments: number
   createdRetentionCampaigns: number
+  generatedDemandPlans: number
+  approvedDemandPlans: number
   refillReminders: number
   inventoryMovements: number
   authSessions: number
@@ -7865,6 +8593,8 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   grantedSupportRecoveries?: boolean | UserCountOutputTypeCountGrantedSupportRecoveriesArgs
   retentionEnrollments?: boolean | UserCountOutputTypeCountRetentionEnrollmentsArgs
   createdRetentionCampaigns?: boolean | UserCountOutputTypeCountCreatedRetentionCampaignsArgs
+  generatedDemandPlans?: boolean | UserCountOutputTypeCountGeneratedDemandPlansArgs
+  approvedDemandPlans?: boolean | UserCountOutputTypeCountApprovedDemandPlansArgs
   refillReminders?: boolean | UserCountOutputTypeCountRefillRemindersArgs
   inventoryMovements?: boolean | UserCountOutputTypeCountInventoryMovementsArgs
   authSessions?: boolean | UserCountOutputTypeCountAuthSessionsArgs
@@ -8026,6 +8756,20 @@ export type UserCountOutputTypeCountCreatedRetentionCampaignsArgs<ExtArgs extend
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountGeneratedDemandPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DemandPlanWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountApprovedDemandPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DemandPlanWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountRefillRemindersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.RefillReminderWhereInput
 }
@@ -8107,6 +8851,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   grantedSupportRecoveries?: boolean | Prisma.User$grantedSupportRecoveriesArgs<ExtArgs>
   retentionEnrollments?: boolean | Prisma.User$retentionEnrollmentsArgs<ExtArgs>
   createdRetentionCampaigns?: boolean | Prisma.User$createdRetentionCampaignsArgs<ExtArgs>
+  generatedDemandPlans?: boolean | Prisma.User$generatedDemandPlansArgs<ExtArgs>
+  approvedDemandPlans?: boolean | Prisma.User$approvedDemandPlansArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -8207,6 +8953,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   grantedSupportRecoveries?: boolean | Prisma.User$grantedSupportRecoveriesArgs<ExtArgs>
   retentionEnrollments?: boolean | Prisma.User$retentionEnrollmentsArgs<ExtArgs>
   createdRetentionCampaigns?: boolean | Prisma.User$createdRetentionCampaignsArgs<ExtArgs>
+  generatedDemandPlans?: boolean | Prisma.User$generatedDemandPlansArgs<ExtArgs>
+  approvedDemandPlans?: boolean | Prisma.User$approvedDemandPlansArgs<ExtArgs>
   refillReminders?: boolean | Prisma.User$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.User$inventoryMovementsArgs<ExtArgs>
   authSessions?: boolean | Prisma.User$authSessionsArgs<ExtArgs>
@@ -8249,6 +8997,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     grantedSupportRecoveries: Prisma.$SupportRecoveryGrantPayload<ExtArgs>[]
     retentionEnrollments: Prisma.$RetentionEnrollmentPayload<ExtArgs>[]
     createdRetentionCampaigns: Prisma.$RetentionCampaignPayload<ExtArgs>[]
+    generatedDemandPlans: Prisma.$DemandPlanPayload<ExtArgs>[]
+    approvedDemandPlans: Prisma.$DemandPlanPayload<ExtArgs>[]
     refillReminders: Prisma.$RefillReminderPayload<ExtArgs>[]
     inventoryMovements: Prisma.$InventoryMovementPayload<ExtArgs>[]
     authSessions: Prisma.$AuthSessionPayload<ExtArgs>[]
@@ -8693,6 +9443,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   grantedSupportRecoveries<T extends Prisma.User$grantedSupportRecoveriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$grantedSupportRecoveriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportRecoveryGrantPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   retentionEnrollments<T extends Prisma.User$retentionEnrollmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$retentionEnrollmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RetentionEnrollmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdRetentionCampaigns<T extends Prisma.User$createdRetentionCampaignsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$createdRetentionCampaignsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RetentionCampaignPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  generatedDemandPlans<T extends Prisma.User$generatedDemandPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$generatedDemandPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DemandPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  approvedDemandPlans<T extends Prisma.User$approvedDemandPlansArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$approvedDemandPlansArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DemandPlanPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refillReminders<T extends Prisma.User$refillRemindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$refillRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefillReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryMovements<T extends Prisma.User$inventoryMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$inventoryMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   authSessions<T extends Prisma.User$authSessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$authSessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuthSessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9664,6 +10416,54 @@ export type User$createdRetentionCampaignsArgs<ExtArgs extends runtime.Types.Ext
   take?: number
   skip?: number
   distinct?: Prisma.RetentionCampaignScalarFieldEnum | Prisma.RetentionCampaignScalarFieldEnum[]
+}
+
+/**
+ * User.generatedDemandPlans
+ */
+export type User$generatedDemandPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DemandPlan
+   */
+  select?: Prisma.DemandPlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DemandPlan
+   */
+  omit?: Prisma.DemandPlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DemandPlanInclude<ExtArgs> | null
+  where?: Prisma.DemandPlanWhereInput
+  orderBy?: Prisma.DemandPlanOrderByWithRelationInput | Prisma.DemandPlanOrderByWithRelationInput[]
+  cursor?: Prisma.DemandPlanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DemandPlanScalarFieldEnum | Prisma.DemandPlanScalarFieldEnum[]
+}
+
+/**
+ * User.approvedDemandPlans
+ */
+export type User$approvedDemandPlansArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DemandPlan
+   */
+  select?: Prisma.DemandPlanSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DemandPlan
+   */
+  omit?: Prisma.DemandPlanOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DemandPlanInclude<ExtArgs> | null
+  where?: Prisma.DemandPlanWhereInput
+  orderBy?: Prisma.DemandPlanOrderByWithRelationInput | Prisma.DemandPlanOrderByWithRelationInput[]
+  cursor?: Prisma.DemandPlanWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DemandPlanScalarFieldEnum | Prisma.DemandPlanScalarFieldEnum[]
 }
 
 /**

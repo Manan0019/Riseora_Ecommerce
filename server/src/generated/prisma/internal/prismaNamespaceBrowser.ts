@@ -105,6 +105,8 @@ export const ModelName = {
   SupportRecoveryGrant: 'SupportRecoveryGrant',
   RetentionCampaign: 'RetentionCampaign',
   RetentionEnrollment: 'RetentionEnrollment',
+  DemandPlan: 'DemandPlan',
+  DemandPlanItem: 'DemandPlanItem',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -1235,6 +1237,67 @@ export const RetentionEnrollmentScalarFieldEnum = {
 } as const
 
 export type RetentionEnrollmentScalarFieldEnum = (typeof RetentionEnrollmentScalarFieldEnum)[keyof typeof RetentionEnrollmentScalarFieldEnum]
+
+
+export const DemandPlanScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  status: 'status',
+  horizonDays: 'horizonDays',
+  leadTimeDays: 'leadTimeDays',
+  bufferDays: 'bufferDays',
+  recentCampaignCount: 'recentCampaignCount',
+  itemCount: 'itemCount',
+  projectedUnits: 'projectedUnits',
+  recommendedUnits: 'recommendedUnits',
+  recommendedPurchaseValue: 'recommendedPurchaseValue',
+  stockoutRiskCount: 'stockoutRiskCount',
+  criticalRiskCount: 'criticalRiskCount',
+  overstockCount: 'overstockCount',
+  dormantCount: 'dormantCount',
+  inventoryValue: 'inventoryValue',
+  potentialLostRevenue: 'potentialLostRevenue',
+  overstockCapital: 'overstockCapital',
+  generatedByUserId: 'generatedByUserId',
+  approvedByUserId: 'approvedByUserId',
+  generatedAt: 'generatedAt',
+  approvedAt: 'approvedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type DemandPlanScalarFieldEnum = (typeof DemandPlanScalarFieldEnum)[keyof typeof DemandPlanScalarFieldEnum]
+
+
+export const DemandPlanItemScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  variantId: 'variantId',
+  risk: 'risk',
+  action: 'action',
+  currentStock: 'currentStock',
+  safetyStock: 'safetyStock',
+  lowStockThreshold: 'lowStockThreshold',
+  availableToSell: 'availableToSell',
+  sold7d: 'sold7d',
+  sold30d: 'sold30d',
+  dueRefillQty: 'dueRefillQty',
+  pendingStockAlerts: 'pendingStockAlerts',
+  dailyVelocity: 'dailyVelocity',
+  campaignBufferPercent: 'campaignBufferPercent',
+  projectedDemand: 'projectedDemand',
+  targetStock: 'targetStock',
+  recommendedReorderQty: 'recommendedReorderQty',
+  recommendedPurchaseValue: 'recommendedPurchaseValue',
+  coverDays: 'coverDays',
+  inventoryValue: 'inventoryValue',
+  potentialLostRevenue: 'potentialLostRevenue',
+  overstockCapital: 'overstockCapital',
+  reason: 'reason',
+  createdAt: 'createdAt'
+} as const
+
+export type DemandPlanItemScalarFieldEnum = (typeof DemandPlanItemScalarFieldEnum)[keyof typeof DemandPlanItemScalarFieldEnum]
 
 
 export const EmailDeliveryLogScalarFieldEnum = {

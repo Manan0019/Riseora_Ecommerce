@@ -276,6 +276,29 @@ enum RetentionExperimentGroup {
   VARIANT_B
 }
 
+enum DemandRisk {
+  OUT_OF_STOCK
+  CRITICAL
+  LOW
+  HEALTHY
+  OVERSTOCK
+  DORMANT
+}
+
+enum DemandPlanStatus {
+  DRAFT
+  APPROVED
+  ARCHIVED
+}
+
+enum MerchandisingAction {
+  REORDER
+  PROTECT_STOCK
+  MONITOR
+  PROMOTE_OVERSTOCK
+  DORMANT_REVIEW
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -416,6 +439,8 @@ model User {
   grantedSupportRecoveries SupportRecoveryGrant[] @relation("SupportRecoveryAdmin")
   retentionEnrollments RetentionEnrollment[] @relation("RetentionEnrollmentCustomer")
   createdRetentionCampaigns RetentionCampaign[] @relation("RetentionCampaignCreator")
+  generatedDemandPlans DemandPlan[] @relation("DemandPlanGeneratedBy")
+  approvedDemandPlans DemandPlan[] @relation("DemandPlanApprovedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -686,6 +711,7 @@ model ProductVariant {
   priceAlerts PriceAlert[]
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[]
+  demandPlanItems DemandPlanItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -1826,6 +1852,74 @@ model RetentionEnrollment {
   @@index([segmentSnapshot, status, createdAt])
   @@index([campaignId, experimentGroup, status])
   @@index([userId, exposedAt])
+}
+
+model DemandPlan {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  status DemandPlanStatus @default(DRAFT)
+  horizonDays Int
+  leadTimeDays Int
+  bufferDays Int
+  recentCampaignCount Int @default(0)
+  itemCount Int @default(0)
+  projectedUnits Int @default(0)
+  recommendedUnits Int @default(0)
+  recommendedPurchaseValue Decimal @default(0) @db.Decimal(14,2)
+  stockoutRiskCount Int @default(0)
+  criticalRiskCount Int @default(0)
+  overstockCount Int @default(0)
+  dormantCount Int @default(0)
+  inventoryValue Decimal @default(0) @db.Decimal(14,2)
+  potentialLostRevenue Decimal @default(0) @db.Decimal(14,2)
+  overstockCapital Decimal @default(0) @db.Decimal(14,2)
+  generatedByUserId String? @db.Uuid
+  generatedBy User? @relation("DemandPlanGeneratedBy", fields: [generatedByUserId], references: [id], onDelete: SetNull)
+  approvedByUserId String? @db.Uuid
+  approvedBy User? @relation("DemandPlanApprovedBy", fields: [approvedByUserId], references: [id], onDelete: SetNull)
+  generatedAt DateTime @default(now())
+  approvedAt DateTime?
+  items DemandPlanItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([generatedByUserId, createdAt])
+}
+
+model DemandPlanItem {
+  id String @id @default(uuid()) @db.Uuid
+  planId String @db.Uuid
+  plan DemandPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  risk DemandRisk
+  action MerchandisingAction
+  currentStock Int
+  safetyStock Int
+  lowStockThreshold Int
+  availableToSell Int
+  sold7d Int
+  sold30d Int
+  dueRefillQty Int
+  pendingStockAlerts Int
+  dailyVelocity Decimal @default(0) @db.Decimal(14,4)
+  campaignBufferPercent Decimal @default(0) @db.Decimal(6,2)
+  projectedDemand Int
+  targetStock Int
+  recommendedReorderQty Int
+  recommendedPurchaseValue Decimal @default(0) @db.Decimal(14,2)
+  coverDays Decimal? @db.Decimal(10,2)
+  inventoryValue Decimal @default(0) @db.Decimal(14,2)
+  potentialLostRevenue Decimal @default(0) @db.Decimal(14,2)
+  overstockCapital Decimal @default(0) @db.Decimal(14,2)
+  reason String?
+  createdAt DateTime @default(now())
+
+  @@unique([planId, variantId])
+  @@index([variantId, createdAt])
+  @@index([planId, risk])
+  @@index([risk, action])
 }
 
 model EmailDeliveryLog {

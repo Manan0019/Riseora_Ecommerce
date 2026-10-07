@@ -1126,6 +1126,57 @@ export type EnumRetentionExperimentGroupWithAggregatesFilter<$PrismaModel = neve
   _max?: Prisma.NestedEnumRetentionExperimentGroupFilter<$PrismaModel>
 }
 
+export type EnumDemandPlanStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandPlanStatus | Prisma.EnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel> | $Enums.DemandPlanStatus
+}
+
+export type EnumDemandPlanStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandPlanStatus | Prisma.EnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandPlanStatusWithAggregatesFilter<$PrismaModel> | $Enums.DemandPlanStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel>
+}
+
+export type EnumDemandRiskFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandRisk | Prisma.EnumDemandRiskFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel> | $Enums.DemandRisk
+}
+
+export type EnumMerchandisingActionFilter<$PrismaModel = never> = {
+  equals?: $Enums.MerchandisingAction | Prisma.EnumMerchandisingActionFieldRefInput<$PrismaModel>
+  in?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel> | $Enums.MerchandisingAction
+}
+
+export type EnumDemandRiskWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandRisk | Prisma.EnumDemandRiskFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandRiskWithAggregatesFilter<$PrismaModel> | $Enums.DemandRisk
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel>
+}
+
+export type EnumMerchandisingActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MerchandisingAction | Prisma.EnumMerchandisingActionFieldRefInput<$PrismaModel>
+  in?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMerchandisingActionWithAggregatesFilter<$PrismaModel> | $Enums.MerchandisingAction
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel>
+}
+
 export type EnumEmailDeliveryStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.EmailDeliveryStatus | Prisma.EnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
   in?: $Enums.EmailDeliveryStatus[] | Prisma.ListEnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
@@ -2378,6 +2429,57 @@ export type NestedEnumRetentionExperimentGroupWithAggregatesFilter<$PrismaModel 
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumRetentionExperimentGroupFilter<$PrismaModel>
   _max?: Prisma.NestedEnumRetentionExperimentGroupFilter<$PrismaModel>
+}
+
+export type NestedEnumDemandPlanStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandPlanStatus | Prisma.EnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel> | $Enums.DemandPlanStatus
+}
+
+export type NestedEnumDemandPlanStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandPlanStatus | Prisma.EnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandPlanStatus[] | Prisma.ListEnumDemandPlanStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandPlanStatusWithAggregatesFilter<$PrismaModel> | $Enums.DemandPlanStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDemandPlanStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumDemandRiskFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandRisk | Prisma.EnumDemandRiskFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel> | $Enums.DemandRisk
+}
+
+export type NestedEnumMerchandisingActionFilter<$PrismaModel = never> = {
+  equals?: $Enums.MerchandisingAction | Prisma.EnumMerchandisingActionFieldRefInput<$PrismaModel>
+  in?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel> | $Enums.MerchandisingAction
+}
+
+export type NestedEnumDemandRiskWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.DemandRisk | Prisma.EnumDemandRiskFieldRefInput<$PrismaModel>
+  in?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  notIn?: $Enums.DemandRisk[] | Prisma.ListEnumDemandRiskFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumDemandRiskWithAggregatesFilter<$PrismaModel> | $Enums.DemandRisk
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumDemandRiskFilter<$PrismaModel>
+}
+
+export type NestedEnumMerchandisingActionWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.MerchandisingAction | Prisma.EnumMerchandisingActionFieldRefInput<$PrismaModel>
+  in?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  notIn?: $Enums.MerchandisingAction[] | Prisma.ListEnumMerchandisingActionFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumMerchandisingActionWithAggregatesFilter<$PrismaModel> | $Enums.MerchandisingAction
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumMerchandisingActionFilter<$PrismaModel>
 }
 
 export type NestedEnumEmailDeliveryStatusFilter<$PrismaModel = never> = {

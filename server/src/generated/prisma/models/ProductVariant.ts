@@ -370,6 +370,7 @@ export type ProductVariantWhereInput = {
   priceAlerts?: Prisma.PriceAlertListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
+  demandPlanItems?: Prisma.DemandPlanItemListRelationFilter
 }
 
 export type ProductVariantOrderByWithRelationInput = {
@@ -399,6 +400,7 @@ export type ProductVariantOrderByWithRelationInput = {
   priceAlerts?: Prisma.PriceAlertOrderByRelationAggregateInput
   refillReminders?: Prisma.RefillReminderOrderByRelationAggregateInput
   inventoryMovements?: Prisma.InventoryMovementOrderByRelationAggregateInput
+  demandPlanItems?: Prisma.DemandPlanItemOrderByRelationAggregateInput
 }
 
 export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -431,6 +433,7 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   priceAlerts?: Prisma.PriceAlertListRelationFilter
   refillReminders?: Prisma.RefillReminderListRelationFilter
   inventoryMovements?: Prisma.InventoryMovementListRelationFilter
+  demandPlanItems?: Prisma.DemandPlanItemListRelationFilter
 }, "id" | "sku" | "erpId">
 
 export type ProductVariantOrderByWithAggregationInput = {
@@ -513,6 +516,7 @@ export type ProductVariantCreateInput = {
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateInput = {
@@ -541,6 +545,7 @@ export type ProductVariantUncheckedCreateInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUpdateInput = {
@@ -569,6 +574,7 @@ export type ProductVariantUpdateInput = {
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateInput = {
@@ -597,6 +603,7 @@ export type ProductVariantUncheckedUpdateInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateManyInput = {
@@ -866,6 +873,20 @@ export type ProductVariantUpdateOneWithoutOrderItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutOrderItemsInput, Prisma.ProductVariantUpdateWithoutOrderItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutOrderItemsInput>
 }
 
+export type ProductVariantCreateNestedOneWithoutDemandPlanItemsInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedCreateWithoutDemandPlanItemsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutDemandPlanItemsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutDemandPlanItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedCreateWithoutDemandPlanItemsInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutDemandPlanItemsInput
+  upsert?: Prisma.ProductVariantUpsertWithoutDemandPlanItemsInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutDemandPlanItemsInput, Prisma.ProductVariantUpdateWithoutDemandPlanItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput>
+}
+
 export type ProductVariantCreateNestedOneWithoutStockAlertsInput = {
   create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutStockAlertsInput, Prisma.ProductVariantUncheckedCreateWithoutStockAlertsInput>
   connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutStockAlertsInput
@@ -933,6 +954,7 @@ export type ProductVariantCreateWithoutProductInput = {
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -960,6 +982,7 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -1039,6 +1062,7 @@ export type ProductVariantCreateWithoutInventoryMovementsInput = {
   stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
@@ -1066,6 +1090,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
   stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryMovementsInput = {
@@ -1109,6 +1134,7 @@ export type ProductVariantUpdateWithoutInventoryMovementsInput = {
   stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
@@ -1136,6 +1162,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
   stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutOrderItemsInput = {
@@ -1163,6 +1190,7 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
@@ -1190,6 +1218,7 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutOrderItemsInput = {
@@ -1233,6 +1262,7 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
@@ -1256,6 +1286,135 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutDemandPlanItemsInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutDemandPlanItemsInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedCreateWithoutDemandPlanItemsInput>
+}
+
+export type ProductVariantUpsertWithoutDemandPlanItemsInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedCreateWithoutDemandPlanItemsInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutDemandPlanItemsInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutDemandPlanItemsInput, Prisma.ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput>
+}
+
+export type ProductVariantUpdateWithoutDemandPlanItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
   stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
@@ -1287,6 +1446,7 @@ export type ProductVariantCreateWithoutStockAlertsInput = {
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
@@ -1314,6 +1474,7 @@ export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockAlertsInput = {
@@ -1357,6 +1518,7 @@ export type ProductVariantUpdateWithoutStockAlertsInput = {
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
@@ -1384,6 +1546,7 @@ export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutPriceAlertsInput = {
@@ -1411,6 +1574,7 @@ export type ProductVariantCreateWithoutPriceAlertsInput = {
   stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
@@ -1438,6 +1602,7 @@ export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
   stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
   refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPriceAlertsInput = {
@@ -1481,6 +1646,7 @@ export type ProductVariantUpdateWithoutPriceAlertsInput = {
   stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
@@ -1508,6 +1674,7 @@ export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
   stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutRefillRemindersInput = {
@@ -1535,6 +1702,7 @@ export type ProductVariantCreateWithoutRefillRemindersInput = {
   stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
   priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
@@ -1562,6 +1730,7 @@ export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
   stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
   priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutRefillRemindersInput = {
@@ -1605,6 +1774,7 @@ export type ProductVariantUpdateWithoutRefillRemindersInput = {
   stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
@@ -1632,6 +1802,7 @@ export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
   stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateManyProductInput = {
@@ -1681,6 +1852,7 @@ export type ProductVariantUpdateWithoutProductInput = {
   priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -1708,6 +1880,7 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
   refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
   inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -1743,6 +1916,7 @@ export type ProductVariantCountOutputType = {
   priceAlerts: number
   refillReminders: number
   inventoryMovements: number
+  demandPlanItems: number
 }
 
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1751,6 +1925,7 @@ export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   priceAlerts?: boolean | ProductVariantCountOutputTypeCountPriceAlertsArgs
   refillReminders?: boolean | ProductVariantCountOutputTypeCountRefillRemindersArgs
   inventoryMovements?: boolean | ProductVariantCountOutputTypeCountInventoryMovementsArgs
+  demandPlanItems?: boolean | ProductVariantCountOutputTypeCountDemandPlanItemsArgs
 }
 
 /**
@@ -1798,6 +1973,13 @@ export type ProductVariantCountOutputTypeCountInventoryMovementsArgs<ExtArgs ext
   where?: Prisma.InventoryMovementWhereInput
 }
 
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountDemandPlanItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DemandPlanItemWhereInput
+}
+
 
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1826,6 +2008,7 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   priceAlerts?: boolean | Prisma.ProductVariant$priceAlertsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.ProductVariant$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.ProductVariant$inventoryMovementsArgs<ExtArgs>
+  demandPlanItems?: boolean | Prisma.ProductVariant$demandPlanItemsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
 
@@ -1908,6 +2091,7 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   priceAlerts?: boolean | Prisma.ProductVariant$priceAlertsArgs<ExtArgs>
   refillReminders?: boolean | Prisma.ProductVariant$refillRemindersArgs<ExtArgs>
   inventoryMovements?: boolean | Prisma.ProductVariant$inventoryMovementsArgs<ExtArgs>
+  demandPlanItems?: boolean | Prisma.ProductVariant$demandPlanItemsArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1926,6 +2110,7 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     priceAlerts: Prisma.$PriceAlertPayload<ExtArgs>[]
     refillReminders: Prisma.$RefillReminderPayload<ExtArgs>[]
     inventoryMovements: Prisma.$InventoryMovementPayload<ExtArgs>[]
+    demandPlanItems: Prisma.$DemandPlanItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2348,6 +2533,7 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
   priceAlerts<T extends Prisma.ProductVariant$priceAlertsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$priceAlertsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PriceAlertPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refillReminders<T extends Prisma.ProductVariant$refillRemindersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$refillRemindersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefillReminderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   inventoryMovements<T extends Prisma.ProductVariant$inventoryMovementsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$inventoryMovementsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InventoryMovementPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  demandPlanItems<T extends Prisma.ProductVariant$demandPlanItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$demandPlanItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DemandPlanItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2915,6 +3101,30 @@ export type ProductVariant$inventoryMovementsArgs<ExtArgs extends runtime.Types.
   take?: number
   skip?: number
   distinct?: Prisma.InventoryMovementScalarFieldEnum | Prisma.InventoryMovementScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.demandPlanItems
+ */
+export type ProductVariant$demandPlanItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DemandPlanItem
+   */
+  select?: Prisma.DemandPlanItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DemandPlanItem
+   */
+  omit?: Prisma.DemandPlanItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DemandPlanItemInclude<ExtArgs> | null
+  where?: Prisma.DemandPlanItemWhereInput
+  orderBy?: Prisma.DemandPlanItemOrderByWithRelationInput | Prisma.DemandPlanItemOrderByWithRelationInput[]
+  cursor?: Prisma.DemandPlanItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DemandPlanItemScalarFieldEnum | Prisma.DemandPlanItemScalarFieldEnum[]
 }
 
 /**

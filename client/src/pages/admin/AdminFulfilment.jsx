@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiFetch } from "../../api/http";
+import AdminDemandIntelligenceCenter from "../../components/AdminDemandIntelligenceCenter";
 
 function relativeDeadline(value) {
   if (!value) return "No SLA";
@@ -41,6 +42,8 @@ export default function AdminFulfilment() {
   return <>
     <div className="admin-page-heading"><div><p className="eyebrow">OPERATIONS CONTROL</p><h1>Fulfilment</h1><p>Dispatch SLA, courier preference, shipment exceptions and orders that need attention.</p></div><button type="button" className="button button-secondary" onClick={() => load().catch((e) => setError(e.message))}>Refresh</button></div>
     {error && <p className="alert error">{error}</p>}
+
+    <AdminDemandIntelligenceCenter />
 
     <section className="phase44-kpi-grid">
       <button type="button" onClick={() => setFilter("confirmed")}><small>AWAITING PROCESSING</small><strong>{counts.awaiting || 0}</strong><span>Confirmed orders</span></button>

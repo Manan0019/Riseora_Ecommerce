@@ -1,3 +1,9 @@
+# Riseora E-commerce · Phase 88 cumulative overlay
+
+Latest milestone: **Demand Intelligence, Replenishment Planning & Merchandising Control V2**.
+
+Apply this overlay over the existing Riseora e-commerce checkout, then follow `PHASE_88_RELEASE.md`.
+
 # 🌿 Riseora E-Commerce
 
 Standalone full-stack e-commerce platform for **Riseora Herbals**.

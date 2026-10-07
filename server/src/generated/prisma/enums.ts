@@ -382,6 +382,38 @@ export const RetentionExperimentGroup = {
 export type RetentionExperimentGroup = (typeof RetentionExperimentGroup)[keyof typeof RetentionExperimentGroup]
 
 
+export const DemandRisk = {
+  OUT_OF_STOCK: 'OUT_OF_STOCK',
+  CRITICAL: 'CRITICAL',
+  LOW: 'LOW',
+  HEALTHY: 'HEALTHY',
+  OVERSTOCK: 'OVERSTOCK',
+  DORMANT: 'DORMANT'
+} as const
+
+export type DemandRisk = (typeof DemandRisk)[keyof typeof DemandRisk]
+
+
+export const DemandPlanStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type DemandPlanStatus = (typeof DemandPlanStatus)[keyof typeof DemandPlanStatus]
+
+
+export const MerchandisingAction = {
+  REORDER: 'REORDER',
+  PROTECT_STOCK: 'PROTECT_STOCK',
+  MONITOR: 'MONITOR',
+  PROMOTE_OVERSTOCK: 'PROMOTE_OVERSTOCK',
+  DORMANT_REVIEW: 'DORMANT_REVIEW'
+} as const
+
+export type MerchandisingAction = (typeof MerchandisingAction)[keyof typeof MerchandisingAction]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'

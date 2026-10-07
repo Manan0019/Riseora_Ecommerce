@@ -25,6 +25,7 @@ import { nextEscalationLevel, phase84SupportHealth, phase84SupportSlaDueAt, phas
 import { PHASE85_RECOVERY_POLICY, phase85Customer360Profile, phase85RecoveryEligibility } from "../services/support-recovery.service";
 import { PHASE86_RETENTION_POLICY, phase86GrowthSummary, phase86LifecycleProfile, phase86Suppression } from "../services/retention-growth.service";
 import { PHASE87_ATTRIBUTION_POLICY, phase87BuildAttribution, phase87CampaignMetrics, phase87ExperimentGroup } from "../services/retention-attribution.service";
+import { PHASE88_DEMAND_POLICY, phase88DemandRow, phase88DemandSummary } from "../services/demand-intelligence.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1170,6 +1171,89 @@ router.get("/phase87-growth/campaigns/:id", asyncHandler(async (req, res) => {
   const metrics = phase87CampaignMetrics(campaign, enrollments as any, attributed as any);
   const conversions = attributed.filter((a:any)=>a.enrollment.campaignId===campaign.id).slice(-100).reverse().map((a:any)=>({ orderNumber:a.order.orderNumber, revenue:a.order.totalAmount, kind:a.kind, group:a.enrollment.experimentGroup, variantLabel:a.enrollment.variantLabel }));
   res.json({ success:true, data:{ ...metrics, attributionWindowDays:campaign.attributionWindowDays, conversions } });
+}));
+
+
+const phase88DemandPlanSchema = z.object({
+  name: z.string().trim().min(3).max(120),
+  horizonDays: z.number().int().min(PHASE88_DEMAND_POLICY.minHorizonDays).max(PHASE88_DEMAND_POLICY.maxHorizonDays).default(30),
+  leadTimeDays: z.number().int().min(PHASE88_DEMAND_POLICY.minLeadTimeDays).max(PHASE88_DEMAND_POLICY.maxLeadTimeDays).default(14),
+  bufferDays: z.number().int().min(0).max(PHASE88_DEMAND_POLICY.maxBufferDays).default(7),
+});
+
+async function phase88LiveDemand(options:{horizonDays:number;leadTimeDays:number;bufferDays:number}) {
+  const now=new Date(), since30=new Date(now.getTime()-30*86400000), since7=new Date(now.getTime()-7*86400000), horizonEnd=new Date(now.getTime()+options.horizonDays*86400000);
+  const campaignSince=new Date(now.getTime()-PHASE88_DEMAND_POLICY.recentCampaignWindowDays*86400000);
+  const [variants,recentCampaignCount]=await Promise.all([
+    prisma.productVariant.findMany({
+      where:{isActive:true,product:{isActive:true}},
+      select:{
+        id:true,sku:true,name:true,stockQuantity:true,safetyStock:true,lowStockThreshold:true,sellingPrice:true,costPrice:true,
+        product:{select:{name:true}},
+        orderItems:{where:{order:{status:{in:["CONFIRMED","PROCESSING","SHIPPED","DELIVERED"]},createdAt:{gte:since30}}},select:{quantity:true,order:{select:{createdAt:true}}}},
+        refillReminders:{where:{status:"ACTIVE",nextReminderAt:{lte:horizonEnd}},select:{quantity:true,nextReminderAt:true}},
+        stockAlerts:{where:{status:"PENDING"},select:{id:true}},
+      },
+      orderBy:[{product:{name:"asc"}},{name:"asc"}],
+      take:500,
+    }),
+    prisma.retentionCampaign.count({where:{status:"COMPLETED",completedAt:{gte:campaignSince}}}),
+  ]);
+  const rows=variants.map((variant:any)=>{
+    const sold30d=variant.orderItems.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0);
+    const sold7d=variant.orderItems.filter((item:any)=>new Date(item.order.createdAt)>=since7).reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0);
+    const dueRefillQty=variant.refillReminders.reduce((sum:number,item:any)=>sum+Number(item.quantity||0),0);
+    return phase88DemandRow({variantId:variant.id,sku:variant.sku,productName:variant.product.name,variantName:variant.name,stockQuantity:variant.stockQuantity,safetyStock:variant.safetyStock,lowStockThreshold:variant.lowStockThreshold,sellingPrice:variant.sellingPrice,costPrice:variant.costPrice,sold7d,sold30d,dueRefillQty,pendingStockAlerts:variant.stockAlerts.length},{...options,recentCampaignCount});
+  });
+  const riskRank:any={OUT_OF_STOCK:0,CRITICAL:1,LOW:2,OVERSTOCK:3,DORMANT:4,HEALTHY:5};
+  rows.sort((a:any,b:any)=>(riskRank[a.risk]-riskRank[b.risk])||(b.potentialLostRevenue-a.potentialLostRevenue)||(b.recommendedReorderQty-a.recommendedReorderQty));
+  return {options:{...options,recentCampaignCount},summary:phase88DemandSummary(rows),rows};
+}
+
+router.get("/phase88-demand/summary", asyncHandler(async (req,res)=>{
+  const parsed=z.object({horizonDays:z.coerce.number().int().min(7).max(90).default(30),leadTimeDays:z.coerce.number().int().min(1).max(60).default(14),bufferDays:z.coerce.number().int().min(0).max(30).default(7)}).safeParse(req.query);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid demand planning window"});
+  const data=await phase88LiveDemand(parsed.data);
+  res.json({success:true,data});
+}));
+
+router.get("/phase88-demand/plans", asyncHandler(async (_req,res)=>{
+  const rows=await prisma.demandPlan.findMany({orderBy:{createdAt:"desc"},take:50,include:{_count:{select:{items:true}}}});
+  res.json({success:true,data:rows});
+}));
+
+router.get("/phase88-demand/plans/:id", asyncHandler(async (req,res)=>{
+  const plan=await prisma.demandPlan.findUnique({where:{id:String(req.params.id)},include:{items:{include:{variant:{select:{sku:true,name:true,product:{select:{name:true}}}}},orderBy:[{risk:"asc"},{recommendedReorderQty:"desc"}]}}});
+  if(!plan)return res.status(404).json({success:false,message:"Demand plan not found"});
+  res.json({success:true,data:plan});
+}));
+
+router.post("/phase88-demand/plans", asyncHandler(async (req,res)=>{
+  const parsed=phase88DemandPlanSchema.safeParse(req.body);
+  if(!parsed.success)return res.status(400).json({success:false,message:"Invalid replenishment plan",errors:parsed.error.flatten()});
+  const live=await phase88LiveDemand(parsed.data);
+  const summary=live.summary;
+  const plan=await prisma.$transaction(async(tx)=>{
+    const created=await tx.demandPlan.create({data:{name:parsed.data.name,status:"DRAFT",horizonDays:parsed.data.horizonDays,leadTimeDays:parsed.data.leadTimeDays,bufferDays:parsed.data.bufferDays,recentCampaignCount:live.options.recentCampaignCount,itemCount:summary.variants,projectedUnits:summary.projectedUnits,recommendedUnits:summary.recommendedUnits,stockoutRiskCount:summary.stockoutRisk,criticalRiskCount:summary.criticalRisk,overstockCount:summary.overstock,dormantCount:summary.dormant,inventoryValue:summary.inventoryValue,recommendedPurchaseValue:summary.recommendedPurchaseValue,potentialLostRevenue:summary.potentialLostRevenue,overstockCapital:summary.overstockCapital,generatedByUserId:req.user!.id}});
+    if(live.rows.length)await tx.demandPlanItem.createMany({data:live.rows.map((row:any)=>({planId:created.id,variantId:row.variantId,risk:row.risk,action:row.action,currentStock:row.currentStock,safetyStock:row.safetyStock,lowStockThreshold:row.lowStockThreshold,availableToSell:row.availableToSell,sold7d:row.sold7d,sold30d:row.sold30d,dueRefillQty:row.dueRefillQty,pendingStockAlerts:row.pendingStockAlerts,dailyVelocity:row.dailyVelocity,campaignBufferPercent:row.campaignBufferPercent,projectedDemand:row.projectedDemand,targetStock:row.targetStock,recommendedReorderQty:row.recommendedReorderQty,recommendedPurchaseValue:row.recommendedPurchaseValue,coverDays:row.coverDays,inventoryValue:row.inventoryValue,potentialLostRevenue:row.potentialLostRevenue,overstockCapital:row.overstockCapital,reason:row.reason}))});
+    return created;
+  });
+  res.status(201).json({success:true,data:plan});
+}));
+
+router.post("/phase88-demand/plans/:id/approve", asyncHandler(async (req,res)=>{
+  const current=await prisma.demandPlan.findUnique({where:{id:String(req.params.id)}});
+  if(!current)return res.status(404).json({success:false,message:"Demand plan not found"});
+  if(current.status!=="DRAFT")return res.status(409).json({success:false,message:"Only a draft demand plan can be approved"});
+  const plan=await prisma.demandPlan.update({where:{id:current.id},data:{status:"APPROVED",approvedAt:new Date(),approvedByUserId:req.user!.id}});
+  res.json({success:true,data:plan,message:"Plan approved as a planning record. Inventory quantities were not changed."});
+}));
+
+router.post("/phase88-demand/plans/:id/archive", asyncHandler(async (req,res)=>{
+  const current=await prisma.demandPlan.findUnique({where:{id:String(req.params.id)}});
+  if(!current)return res.status(404).json({success:false,message:"Demand plan not found"});
+  const plan=await prisma.demandPlan.update({where:{id:current.id},data:{status:"ARCHIVED"}});
+  res.json({success:true,data:plan});
 }));
 
 

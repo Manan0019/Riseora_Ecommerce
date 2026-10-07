@@ -312,6 +312,16 @@ export type RetentionCampaign = Prisma.RetentionCampaignModel
  */
 export type RetentionEnrollment = Prisma.RetentionEnrollmentModel
 /**
+ * Model DemandPlan
+ * 
+ */
+export type DemandPlan = Prisma.DemandPlanModel
+/**
+ * Model DemandPlanItem
+ * 
+ */
+export type DemandPlanItem = Prisma.DemandPlanItemModel
+/**
  * Model EmailDeliveryLog
  * 
  */
