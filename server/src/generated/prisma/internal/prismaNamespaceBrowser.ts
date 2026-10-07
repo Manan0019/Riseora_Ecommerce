@@ -103,6 +103,8 @@ export const ModelName = {
   ContactMessage: 'ContactMessage',
   SupportMessage: 'SupportMessage',
   SupportRecoveryGrant: 'SupportRecoveryGrant',
+  RetentionCampaign: 'RetentionCampaign',
+  RetentionEnrollment: 'RetentionEnrollment',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -1179,6 +1181,49 @@ export const SupportRecoveryGrantScalarFieldEnum = {
 } as const
 
 export type SupportRecoveryGrantScalarFieldEnum = (typeof SupportRecoveryGrantScalarFieldEnum)[keyof typeof SupportRecoveryGrantScalarFieldEnum]
+
+
+export const RetentionCampaignScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  segment: 'segment',
+  status: 'status',
+  benefitKind: 'benefitKind',
+  audiencePolicy: 'audiencePolicy',
+  couponAmount: 'couponAmount',
+  rewardPoints: 'rewardPoints',
+  validDays: 'validDays',
+  createdByUserId: 'createdByUserId',
+  previewEligible: 'previewEligible',
+  previewSuppressed: 'previewSuppressed',
+  activatedAt: 'activatedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RetentionCampaignScalarFieldEnum = (typeof RetentionCampaignScalarFieldEnum)[keyof typeof RetentionCampaignScalarFieldEnum]
+
+
+export const RetentionEnrollmentScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  userId: 'userId',
+  segmentSnapshot: 'segmentSnapshot',
+  riskScoreSnapshot: 'riskScoreSnapshot',
+  lifetimeSpendSnapshot: 'lifetimeSpendSnapshot',
+  status: 'status',
+  suppressionReason: 'suppressionReason',
+  couponId: 'couponId',
+  couponCodeSnapshot: 'couponCodeSnapshot',
+  rewardTransactionId: 'rewardTransactionId',
+  expiresAt: 'expiresAt',
+  notifiedAt: 'notifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RetentionEnrollmentScalarFieldEnum = (typeof RetentionEnrollmentScalarFieldEnum)[keyof typeof RetentionEnrollmentScalarFieldEnum]
 
 
 export const EmailDeliveryLogScalarFieldEnum = {

@@ -314,6 +314,54 @@ export const SupportRecoveryKind = {
 export type SupportRecoveryKind = (typeof SupportRecoveryKind)[keyof typeof SupportRecoveryKind]
 
 
+export const RetentionSegment = {
+  NEW: 'NEW',
+  ACTIVE: 'ACTIVE',
+  LOYAL: 'LOYAL',
+  VIP: 'VIP',
+  AT_RISK: 'AT_RISK',
+  LAPSED: 'LAPSED'
+} as const
+
+export type RetentionSegment = (typeof RetentionSegment)[keyof typeof RetentionSegment]
+
+
+export const RetentionCampaignStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED'
+} as const
+
+export type RetentionCampaignStatus = (typeof RetentionCampaignStatus)[keyof typeof RetentionCampaignStatus]
+
+
+export const RetentionBenefitKind = {
+  COUPON: 'COUPON',
+  REWARD_POINTS: 'REWARD_POINTS'
+} as const
+
+export type RetentionBenefitKind = (typeof RetentionBenefitKind)[keyof typeof RetentionBenefitKind]
+
+
+export const RetentionAudiencePolicy = {
+  ACCOUNT_PERSONALIZATION: 'ACCOUNT_PERSONALIZATION',
+  MARKETING_OPT_IN_ONLY: 'MARKETING_OPT_IN_ONLY'
+} as const
+
+export type RetentionAudiencePolicy = (typeof RetentionAudiencePolicy)[keyof typeof RetentionAudiencePolicy]
+
+
+export const RetentionEnrollmentStatus = {
+  ELIGIBLE: 'ELIGIBLE',
+  SUPPRESSED: 'SUPPRESSED',
+  ISSUED: 'ISSUED',
+  EXPIRED: 'EXPIRED'
+} as const
+
+export type RetentionEnrollmentStatus = (typeof RetentionEnrollmentStatus)[keyof typeof RetentionEnrollmentStatus]
+
+
 export const EmailDeliveryStatus = {
   SENT: 'SENT',
   FAILED: 'FAILED'

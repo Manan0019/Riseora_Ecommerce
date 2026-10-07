@@ -449,6 +449,8 @@ export const ModelName = {
   ContactMessage: 'ContactMessage',
   SupportMessage: 'SupportMessage',
   SupportRecoveryGrant: 'SupportRecoveryGrant',
+  RetentionCampaign: 'RetentionCampaign',
+  RetentionEnrollment: 'RetentionEnrollment',
   EmailDeliveryLog: 'EmailDeliveryLog',
   NewsletterSubscriber: 'NewsletterSubscriber',
   MarketingPreference: 'MarketingPreference',
@@ -475,7 +477,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "supportRecoveryGrant" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
+    modelProps: "user" | "accountCart" | "authSession" | "authSecurityEvent" | "rewardAccount" | "rewardTransaction" | "adminAuditLog" | "passwordResetToken" | "address" | "category" | "product" | "productVariant" | "inventoryMovement" | "productImage" | "order" | "orderStatusHistory" | "shipment" | "shipmentEvent" | "orderCancellationRequest" | "orderItem" | "payment" | "checkoutSession" | "paymentWebhookEvent" | "storeSetting" | "notification" | "wishlistItem" | "wishlistShare" | "shippingZone" | "shippingPartner" | "invoice" | "creditNote" | "returnRequest" | "returnRequestItem" | "returnEvidence" | "returnStatusHistory" | "coupon" | "couponProduct" | "couponCategory" | "couponRedemption" | "suitabilityOption" | "offer" | "merchandisingDeal" | "review" | "productQuestion" | "banner" | "campaign" | "campaignProduct" | "mediaAsset" | "cartRecoverySession" | "contactMessage" | "supportMessage" | "supportRecoveryGrant" | "retentionCampaign" | "retentionEnrollment" | "emailDeliveryLog" | "newsletterSubscriber" | "marketingPreference" | "consentEvent" | "privacyRequest" | "stockAlert" | "priceAlert" | "refillReminder" | "systemJobState" | "erpSyncState" | "erpSyncLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4327,6 +4329,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    RetentionCampaign: {
+      payload: Prisma.$RetentionCampaignPayload<ExtArgs>
+      fields: Prisma.RetentionCampaignFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RetentionCampaignFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RetentionCampaignFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        findFirst: {
+          args: Prisma.RetentionCampaignFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RetentionCampaignFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        findMany: {
+          args: Prisma.RetentionCampaignFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>[]
+        }
+        create: {
+          args: Prisma.RetentionCampaignCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        createMany: {
+          args: Prisma.RetentionCampaignCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RetentionCampaignCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>[]
+        }
+        delete: {
+          args: Prisma.RetentionCampaignDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        update: {
+          args: Prisma.RetentionCampaignUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        deleteMany: {
+          args: Prisma.RetentionCampaignDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RetentionCampaignUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RetentionCampaignUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>[]
+        }
+        upsert: {
+          args: Prisma.RetentionCampaignUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionCampaignPayload>
+        }
+        aggregate: {
+          args: Prisma.RetentionCampaignAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRetentionCampaign>
+        }
+        groupBy: {
+          args: Prisma.RetentionCampaignGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RetentionCampaignGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RetentionCampaignCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RetentionCampaignCountAggregateOutputType> | number
+        }
+      }
+    }
+    RetentionEnrollment: {
+      payload: Prisma.$RetentionEnrollmentPayload<ExtArgs>
+      fields: Prisma.RetentionEnrollmentFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.RetentionEnrollmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.RetentionEnrollmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        findFirst: {
+          args: Prisma.RetentionEnrollmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.RetentionEnrollmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        findMany: {
+          args: Prisma.RetentionEnrollmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>[]
+        }
+        create: {
+          args: Prisma.RetentionEnrollmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        createMany: {
+          args: Prisma.RetentionEnrollmentCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.RetentionEnrollmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>[]
+        }
+        delete: {
+          args: Prisma.RetentionEnrollmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        update: {
+          args: Prisma.RetentionEnrollmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        deleteMany: {
+          args: Prisma.RetentionEnrollmentDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.RetentionEnrollmentUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.RetentionEnrollmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>[]
+        }
+        upsert: {
+          args: Prisma.RetentionEnrollmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$RetentionEnrollmentPayload>
+        }
+        aggregate: {
+          args: Prisma.RetentionEnrollmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateRetentionEnrollment>
+        }
+        groupBy: {
+          args: Prisma.RetentionEnrollmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RetentionEnrollmentGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.RetentionEnrollmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.RetentionEnrollmentCountAggregateOutputType> | number
+        }
+      }
+    }
     EmailDeliveryLog: {
       payload: Prisma.$EmailDeliveryLogPayload<ExtArgs>
       fields: Prisma.EmailDeliveryLogFieldRefs
@@ -6229,6 +6379,49 @@ export const SupportRecoveryGrantScalarFieldEnum = {
 export type SupportRecoveryGrantScalarFieldEnum = (typeof SupportRecoveryGrantScalarFieldEnum)[keyof typeof SupportRecoveryGrantScalarFieldEnum]
 
 
+export const RetentionCampaignScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  segment: 'segment',
+  status: 'status',
+  benefitKind: 'benefitKind',
+  audiencePolicy: 'audiencePolicy',
+  couponAmount: 'couponAmount',
+  rewardPoints: 'rewardPoints',
+  validDays: 'validDays',
+  createdByUserId: 'createdByUserId',
+  previewEligible: 'previewEligible',
+  previewSuppressed: 'previewSuppressed',
+  activatedAt: 'activatedAt',
+  completedAt: 'completedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RetentionCampaignScalarFieldEnum = (typeof RetentionCampaignScalarFieldEnum)[keyof typeof RetentionCampaignScalarFieldEnum]
+
+
+export const RetentionEnrollmentScalarFieldEnum = {
+  id: 'id',
+  campaignId: 'campaignId',
+  userId: 'userId',
+  segmentSnapshot: 'segmentSnapshot',
+  riskScoreSnapshot: 'riskScoreSnapshot',
+  lifetimeSpendSnapshot: 'lifetimeSpendSnapshot',
+  status: 'status',
+  suppressionReason: 'suppressionReason',
+  couponId: 'couponId',
+  couponCodeSnapshot: 'couponCodeSnapshot',
+  rewardTransactionId: 'rewardTransactionId',
+  expiresAt: 'expiresAt',
+  notifiedAt: 'notifiedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RetentionEnrollmentScalarFieldEnum = (typeof RetentionEnrollmentScalarFieldEnum)[keyof typeof RetentionEnrollmentScalarFieldEnum]
+
+
 export const EmailDeliveryLogScalarFieldEnum = {
   id: 'id',
   toEmail: 'toEmail',
@@ -7018,6 +7211,76 @@ export type ListEnumSupportRecoveryKindFieldRefInput<$PrismaModel> = FieldRefInp
 
 
 /**
+ * Reference to a field of type 'RetentionSegment'
+ */
+export type EnumRetentionSegmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionSegment'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionSegment[]'
+ */
+export type ListEnumRetentionSegmentFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionSegment[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionCampaignStatus'
+ */
+export type EnumRetentionCampaignStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionCampaignStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionCampaignStatus[]'
+ */
+export type ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionCampaignStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionBenefitKind'
+ */
+export type EnumRetentionBenefitKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionBenefitKind'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionBenefitKind[]'
+ */
+export type ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionBenefitKind[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionAudiencePolicy'
+ */
+export type EnumRetentionAudiencePolicyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionAudiencePolicy'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionAudiencePolicy[]'
+ */
+export type ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionAudiencePolicy[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionEnrollmentStatus'
+ */
+export type EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionEnrollmentStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RetentionEnrollmentStatus[]'
+ */
+export type ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RetentionEnrollmentStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'EmailDeliveryStatus'
  */
 export type EnumEmailDeliveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'EmailDeliveryStatus'>
@@ -7387,6 +7650,8 @@ export type GlobalOmitConfig = {
   contactMessage?: Prisma.ContactMessageOmit
   supportMessage?: Prisma.SupportMessageOmit
   supportRecoveryGrant?: Prisma.SupportRecoveryGrantOmit
+  retentionCampaign?: Prisma.RetentionCampaignOmit
+  retentionEnrollment?: Prisma.RetentionEnrollmentOmit
   emailDeliveryLog?: Prisma.EmailDeliveryLogOmit
   newsletterSubscriber?: Prisma.NewsletterSubscriberOmit
   marketingPreference?: Prisma.MarketingPreferenceOmit

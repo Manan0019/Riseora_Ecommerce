@@ -33,7 +33,7 @@ ok("customer sees issued benefit", customerUi.includes("PHASE 85 · RISEORA CARE
 ok("Phase 85 styles", css.includes("phase85-customer360-panel") && css.includes("phase85-customer-benefit"));
 ok("service-recovery:doctor command", Boolean(pkg.scripts?.["service-recovery:doctor"]));
 ok("verify:phase85 command", Boolean(pkg.scripts?.["verify:phase85"]));
-ok("prelaunch advances to phase85", String(pkg.scripts?.["prelaunch:check"] || "").includes("npm run verify:phase85"));
+ok("prelaunch retains Phase 85 and advances", String(pkg.scripts?.["prelaunch:check"] || "").includes("verify:phase85") && String(pkg.scripts?.["prelaunch:check"] || "").includes("npm run verify:phase86"));
 ok("dependency pins repair terminal audit findings", pkg.devDependencies?.concurrently === "10.0.5" && pkg.overrides?.["shell-quote"] === "1.12.0" && pkg.overrides?.["source-map-js"] === "1.2.2");
 
 if (failed) { console.error(`\nPhase 85 service recovery audit: FAIL (${failed})`); process.exit(1); }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { apiFetch, mediaUrl } from "../../api/http";
 import ReturnTimeline from "../../components/ReturnTimeline";
 import AdminSupportOperations from "../../components/AdminSupportOperations";
+import AdminRetentionGrowthCenter from "../../components/AdminRetentionGrowthCenter";
 
 const transitions = { REQUESTED: ["APPROVED", "REJECTED", "CANCELLED"], APPROVED: ["PICKUP_PENDING", "IN_TRANSIT", "RECEIVED", "CANCELLED"], PICKUP_PENDING: ["IN_TRANSIT", "RECEIVED"], IN_TRANSIT: ["RECEIVED"], RECEIVED: [], RESOLUTION_PENDING: ["REFUNDED"], REPLACEMENT_PENDING: [], REPLACEMENT_SHIPPED: [], REFUNDED: [], REPLACED: [], REJECTED: [], CANCELLED: [] };
 const grades = ["SEALED", "RESELLABLE", "OPENED", "DAMAGED", "DEFECTIVE", "WRONG_ITEM", "UNSAFE"];
@@ -44,6 +45,7 @@ export default function AdminReturns() {
   return <>
     <div className="admin-page-heading phase83-admin-return-head"><div><p className="eyebrow">PHASE 84 · RETURNS + SERVICE OPERATIONS</p><h1>Return Resolution Center</h1><p>Review customer evidence, control reverse logistics, inspect every returned unit, protect sellable stock, and close refunds or replacements with auditable evidence.</p></div></div>
     {message && <p className="alert success">{message}</p>}{error && <p className="alert error">{error}</p>}
+    <AdminRetentionGrowthCenter />
     <AdminSupportOperations />
     <div className="phase83-admin-kpis"><article><span>ACTIVE</span><strong>{summary.active || 0}</strong></article><article className={(summary.overdue || 0) ? "warn" : ""}><span>SLA OVERDUE</span><strong>{summary.overdue || 0}</strong></article><article><span>NEEDS INSPECTION</span><strong>{summary.inspection || 0}</strong></article><article><span>REFUND TRACK</span><strong>{summary.refund || 0}</strong></article><article><span>REPLACEMENT TRACK</span><strong>{summary.replacement || 0}</strong></article><article className={(summary.urgent || 0) ? "danger" : ""}><span>URGENT</span><strong>{summary.urgent || 0}</strong></article></div>
     <div className="admin-return-filters phase83-return-filters">{["ALL","ATTENTION","REQUESTED","APPROVED","PICKUP_PENDING","IN_TRANSIT","RECEIVED","RESOLUTION_PENDING","REPLACEMENT_PENDING","REPLACEMENT_SHIPPED","REFUNDED","REPLACED","REJECTED"].map((status) => <button key={status} className={filter === status ? "state-toggle active" : "state-toggle"} onClick={() => setFilter(status)}>{status.replaceAll("_", " ")}</button>)}</div>

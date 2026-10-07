@@ -302,6 +302,16 @@ export type SupportMessage = Prisma.SupportMessageModel
  */
 export type SupportRecoveryGrant = Prisma.SupportRecoveryGrantModel
 /**
+ * Model RetentionCampaign
+ * 
+ */
+export type RetentionCampaign = Prisma.RetentionCampaignModel
+/**
+ * Model RetentionEnrollment
+ * 
+ */
+export type RetentionEnrollment = Prisma.RetentionEnrollmentModel
+/**
  * Model EmailDeliveryLog
  * 
  */

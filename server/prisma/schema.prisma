@@ -229,6 +229,39 @@ enum SupportRecoveryKind {
   REWARD_POINTS
 }
 
+enum RetentionSegment {
+  NEW
+  ACTIVE
+  LOYAL
+  VIP
+  AT_RISK
+  LAPSED
+}
+
+enum RetentionCampaignStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+enum RetentionBenefitKind {
+  COUPON
+  REWARD_POINTS
+}
+
+enum RetentionAudiencePolicy {
+  ACCOUNT_PERSONALIZATION
+  MARKETING_OPT_IN_ONLY
+}
+
+enum RetentionEnrollmentStatus {
+  ELIGIBLE
+  SUPPRESSED
+  ISSUED
+  EXPIRED
+}
+
 enum EmailDeliveryStatus {
   SENT
   FAILED
@@ -367,6 +400,8 @@ model User {
   supportTickets ContactMessage[]
   supportRecoveryGrants SupportRecoveryGrant[] @relation("SupportRecoveryCustomer")
   grantedSupportRecoveries SupportRecoveryGrant[] @relation("SupportRecoveryAdmin")
+  retentionEnrollments RetentionEnrollment[] @relation("RetentionEnrollmentCustomer")
+  createdRetentionCampaigns RetentionCampaign[] @relation("RetentionCampaignCreator")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -1325,6 +1360,7 @@ model Coupon {
   categories   CouponCategory[]
   redemptions  CouponRedemption[]
   supportRecoveryGrant SupportRecoveryGrant?
+  retentionEnrollment RetentionEnrollment?
 
   startsAt DateTime?
   endsAt   DateTime?
@@ -1711,6 +1747,58 @@ model SupportRecoveryGrant {
   @@index([userId, createdAt])
   @@index([kind, createdAt])
   @@index([grantedByUserId, createdAt])
+}
+
+
+model RetentionCampaign {
+  id String @id @default(uuid()) @db.Uuid
+  name String
+  segment RetentionSegment
+  status RetentionCampaignStatus @default(DRAFT)
+  benefitKind RetentionBenefitKind
+  audiencePolicy RetentionAudiencePolicy @default(ACCOUNT_PERSONALIZATION)
+  couponAmount Decimal? @db.Decimal(12, 2)
+  rewardPoints Int?
+  validDays Int @default(30)
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("RetentionCampaignCreator", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  previewEligible Int @default(0)
+  previewSuppressed Int @default(0)
+  activatedAt DateTime?
+  completedAt DateTime?
+  enrollments RetentionEnrollment[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+  @@index([segment, status, createdAt])
+  @@index([createdByUserId, createdAt])
+}
+
+model RetentionEnrollment {
+  id String @id @default(uuid()) @db.Uuid
+  campaignId String @db.Uuid
+  campaign RetentionCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  userId String @db.Uuid
+  user User @relation("RetentionEnrollmentCustomer", fields: [userId], references: [id], onDelete: Cascade)
+  segmentSnapshot RetentionSegment
+  riskScoreSnapshot Int
+  lifetimeSpendSnapshot Decimal @db.Decimal(12, 2)
+  status RetentionEnrollmentStatus
+  suppressionReason String?
+  couponId String? @unique @db.Uuid
+  coupon Coupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  couponCodeSnapshot String?
+  rewardTransactionId String? @unique @db.Uuid
+  expiresAt DateTime?
+  notifiedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([campaignId, userId])
+  @@index([userId, status, createdAt])
+  @@index([campaignId, status])
+  @@index([segmentSnapshot, status, createdAt])
 }
 
 model EmailDeliveryLog {

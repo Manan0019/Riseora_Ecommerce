@@ -1007,6 +1007,91 @@ export type EnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel = never> = 
   _max?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
 }
 
+export type EnumRetentionSegmentFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionSegment | Prisma.EnumRetentionSegmentFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel> | $Enums.RetentionSegment
+}
+
+export type EnumRetentionCampaignStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionCampaignStatus | Prisma.EnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel> | $Enums.RetentionCampaignStatus
+}
+
+export type EnumRetentionBenefitKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionBenefitKind | Prisma.EnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel> | $Enums.RetentionBenefitKind
+}
+
+export type EnumRetentionAudiencePolicyFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionAudiencePolicy | Prisma.EnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel> | $Enums.RetentionAudiencePolicy
+}
+
+export type EnumRetentionSegmentWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionSegment | Prisma.EnumRetentionSegmentFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionSegmentWithAggregatesFilter<$PrismaModel> | $Enums.RetentionSegment
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel>
+}
+
+export type EnumRetentionCampaignStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionCampaignStatus | Prisma.EnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionCampaignStatusWithAggregatesFilter<$PrismaModel> | $Enums.RetentionCampaignStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel>
+}
+
+export type EnumRetentionBenefitKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionBenefitKind | Prisma.EnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionBenefitKindWithAggregatesFilter<$PrismaModel> | $Enums.RetentionBenefitKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel>
+}
+
+export type EnumRetentionAudiencePolicyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionAudiencePolicy | Prisma.EnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionAudiencePolicyWithAggregatesFilter<$PrismaModel> | $Enums.RetentionAudiencePolicy
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel>
+}
+
+export type EnumRetentionEnrollmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionEnrollmentStatus | Prisma.EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel> | $Enums.RetentionEnrollmentStatus
+}
+
+export type EnumRetentionEnrollmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionEnrollmentStatus | Prisma.EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionEnrollmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.RetentionEnrollmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel>
+}
+
 export type EnumEmailDeliveryStatusFilter<$PrismaModel = never> = {
   equals?: $Enums.EmailDeliveryStatus | Prisma.EnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
   in?: $Enums.EmailDeliveryStatus[] | Prisma.ListEnumEmailDeliveryStatusFieldRefInput<$PrismaModel>
@@ -2140,6 +2225,91 @@ export type NestedEnumSupportRecoveryKindWithAggregatesFilter<$PrismaModel = nev
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
   _max?: Prisma.NestedEnumSupportRecoveryKindFilter<$PrismaModel>
+}
+
+export type NestedEnumRetentionSegmentFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionSegment | Prisma.EnumRetentionSegmentFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel> | $Enums.RetentionSegment
+}
+
+export type NestedEnumRetentionCampaignStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionCampaignStatus | Prisma.EnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel> | $Enums.RetentionCampaignStatus
+}
+
+export type NestedEnumRetentionBenefitKindFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionBenefitKind | Prisma.EnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel> | $Enums.RetentionBenefitKind
+}
+
+export type NestedEnumRetentionAudiencePolicyFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionAudiencePolicy | Prisma.EnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel> | $Enums.RetentionAudiencePolicy
+}
+
+export type NestedEnumRetentionSegmentWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionSegment | Prisma.EnumRetentionSegmentFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionSegment[] | Prisma.ListEnumRetentionSegmentFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionSegmentWithAggregatesFilter<$PrismaModel> | $Enums.RetentionSegment
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionSegmentFilter<$PrismaModel>
+}
+
+export type NestedEnumRetentionCampaignStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionCampaignStatus | Prisma.EnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionCampaignStatus[] | Prisma.ListEnumRetentionCampaignStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionCampaignStatusWithAggregatesFilter<$PrismaModel> | $Enums.RetentionCampaignStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionCampaignStatusFilter<$PrismaModel>
+}
+
+export type NestedEnumRetentionBenefitKindWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionBenefitKind | Prisma.EnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionBenefitKind[] | Prisma.ListEnumRetentionBenefitKindFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionBenefitKindWithAggregatesFilter<$PrismaModel> | $Enums.RetentionBenefitKind
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionBenefitKindFilter<$PrismaModel>
+}
+
+export type NestedEnumRetentionAudiencePolicyWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionAudiencePolicy | Prisma.EnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionAudiencePolicy[] | Prisma.ListEnumRetentionAudiencePolicyFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionAudiencePolicyWithAggregatesFilter<$PrismaModel> | $Enums.RetentionAudiencePolicy
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionAudiencePolicyFilter<$PrismaModel>
+}
+
+export type NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionEnrollmentStatus | Prisma.EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel> | $Enums.RetentionEnrollmentStatus
+}
+
+export type NestedEnumRetentionEnrollmentStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.RetentionEnrollmentStatus | Prisma.EnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.RetentionEnrollmentStatus[] | Prisma.ListEnumRetentionEnrollmentStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumRetentionEnrollmentStatusWithAggregatesFilter<$PrismaModel> | $Enums.RetentionEnrollmentStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumRetentionEnrollmentStatusFilter<$PrismaModel>
 }
 
 export type NestedEnumEmailDeliveryStatusFilter<$PrismaModel = never> = {

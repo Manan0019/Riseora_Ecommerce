@@ -7,6 +7,7 @@ import { asyncHandler } from "../utils/async-handler";
 import { getStoreSettings } from "../services/store.service";
 import { phase83Priority, phase83SlaDueAt, returnResolutionHealth } from "../services/return-resolution.service";
 import { phase84SupportHealth, phase84SupportPriority, phase84SupportSlaDueAt } from "../services/support-operations.service";
+import { phase86LifecycleProfile } from "../services/retention-growth.service";
 
 const router = Router();
 router.use(requireAuth);
@@ -219,6 +220,24 @@ router.post("/support-cases/:id/rating", asyncHandler(async (req, res) => {
   if (current.satisfactionSubmittedAt) return res.status(409).json({ success: false, message: "Feedback has already been submitted for this case" });
   await prisma.contactMessage.update({ where: { id: current.id }, data: { satisfactionScore: parsed.data.score, satisfactionComment: parsed.data.comment || null, satisfactionSubmittedAt: new Date() } });
   res.json({ success: true });
+}));
+
+
+
+router.get("/phase86-lifecycle", asyncHandler(async (req, res) => {
+  const [orders, returns, tickets, reminders, marketingPreference, rewardAccount, enrollments] = await Promise.all([
+    prisma.order.findMany({ where: { userId: req.user!.id }, select: { status: true, totalAmount: true, createdAt: true, shipment: { select: { deliveredAt: true } } }, orderBy: { createdAt: "desc" } }),
+    prisma.returnRequest.findMany({ where: { userId: req.user!.id }, select: { status: true } }),
+    prisma.contactMessage.findMany({ where: { userId: req.user!.id }, select: { status: true, satisfactionScore: true } }),
+    prisma.refillReminder.findMany({ where: { userId: req.user!.id }, select: { status: true, nextReminderAt: true } }),
+    prisma.marketingPreference.findUnique({ where: { userId: req.user!.id } }),
+    prisma.rewardAccount.findUnique({ where: { userId: req.user!.id }, select: { balance: true } }),
+    prisma.retentionEnrollment.findMany({ where: { userId: req.user!.id, status: "ISSUED" }, include: { campaign: true, coupon: { select: { code: true, endsAt: true, isActive: true, usageCount: true, usageLimit: true } } }, orderBy: { createdAt: "desc" }, take: 20 }),
+  ]);
+  const profile = phase86LifecycleProfile({ orders, returns, tickets, reminders });
+  const now = Date.now();
+  const benefits = enrollments.filter((row: any) => row.campaign.benefitKind === "COUPON" ? Boolean(row.coupon?.isActive) && (!row.coupon?.usageLimit || row.coupon.usageCount < row.coupon.usageLimit) && (!row.expiresAt || new Date(row.expiresAt).getTime() > now) : new Date(row.createdAt).getTime() > now - 90 * 86400000).map((row: any) => ({ id: row.id, campaignName: row.campaign.name, benefitKind: row.campaign.benefitKind, couponAmount: row.campaign.couponAmount, rewardPoints: row.campaign.rewardPoints, couponCode: row.couponCodeSnapshot, expiresAt: row.expiresAt, createdAt: row.createdAt }));
+  res.json({ success: true, data: { profile, rewardBalance: rewardAccount?.balance || 0, marketingPreference, benefits } });
 }));
 
 router.get("/:id", asyncHandler(async (req, res) => {

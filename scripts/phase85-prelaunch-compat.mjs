@@ -3,7 +3,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const pkg = JSON.parse(fs.readFileSync(path.join(root, "package.json"), "utf8"));
-const expected = Array.from({ length: 34 }, (_, index) => `verify:phase${index + 51}`);
+const expected = Array.from({ length: 35 }, (_, index) => `verify:phase${index + 51}`);
 const supplied = new Set(process.argv.slice(2));
 const missing = expected.filter((token) => !supplied.has(token));
 if (missing.length) {
@@ -11,9 +11,9 @@ if (missing.length) {
   process.exit(1);
 }
 const command = String(pkg.scripts?.["prelaunch:check"] || "");
-if (!command.includes("verify:phase85")) {
-  console.error("FAIL  prelaunch does not execute verify:phase85");
+if (!command.includes("verify:phase86")) {
+  console.error("FAIL  prelaunch does not execute verify:phase86");
   process.exit(1);
 }
 console.log(`PASS  forward audit compatibility tokens · ${expected[0]} through ${expected.at(-1)}`);
-console.log("PASS  prelaunch executes verify:phase85");
+console.log("PASS  prelaunch executes verify:phase86");

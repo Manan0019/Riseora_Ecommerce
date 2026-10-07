@@ -8,12 +8,12 @@ const pkg = JSON.parse(read("package.json"));
 const prelaunch = String(pkg.scripts?.["prelaunch:check"] || "");
 const prepare = read("scripts/phase49-release-prepare.mjs");
 const prodAudit = read("scripts/phase49-production-release-audit.mjs");
-const compat = Array.from({ length: 34 }, (_, index) => `verify:phase${index + 51}`);
+const compat = Array.from({ length: 35 }, (_, index) => `verify:phase${index + 51}`);
 
 ok("verify:phase85 exists", Boolean(pkg.scripts?.["verify:phase85"]));
-ok("prelaunch executes latest verify", prelaunch.includes("npm run verify:phase85"));
-ok("production release executes latest verify", prepare.includes('run("npm", ["run", "verify:phase85"])'));
-ok("production audit recognizes latest verify", prodAudit.includes('"verify:phase85"'));
+ok("prelaunch executes latest verify", prelaunch.includes("npm run verify:phase86"));
+ok("production release executes latest verify", prepare.includes('run("npm", ["run", "verify:phase86"])'));
+ok("production audit recognizes latest verify", prodAudit.includes('"verify:phase86"'));
 ok("prelaunch carries legacy forward-compat tokens", compat.every((token) => prelaunch.includes(token)));
 ok("production release carries legacy forward-compat tokens", compat.filter((token) => Number(token.split("phase")[1]) >= 69).every((token) => prepare.includes(token)));
 ok("verify:phase85 runs release-chain doctor", String(pkg.scripts?.["verify:phase85"] || "").includes("release-chain:doctor"));

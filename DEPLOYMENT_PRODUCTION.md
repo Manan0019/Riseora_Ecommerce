@@ -221,3 +221,7 @@ Phase 84 adds migration `20261007143000_phase84_customer_care_service_ops_v2`. P
 Phase 85 adds migration `20261007163000_phase85_service_recovery_customer360_v2`. Expected migration count after deployment is 38 and expected head is the Phase 85 migration. Phase 85 also replaces exact-phase prelaunch assumptions with a forward-compatible verification bridge so retained Phase 51/79/80/81 audits do not fail merely because prelaunch moved to a newer verified phase. Production release order remains backup → db:deploy → db:generate → db:status → verify:phase85 → production security audit.
 
 Dependency security policy now pins `concurrently` 10.0.5 and overrides `shell-quote` 1.12.0 / `source-map-js` 1.2.2. Run `npm install` before `npm run dependency-security:doctor` so the existing lockfile is refreshed and checked.
+
+
+## Phase 86
+Retention Intelligence, Lifecycle Campaigns & Growth Control Center V2. Latest verification gate: `npm run verify:phase86`. Expected migration head: `20261007183000_phase86_retention_lifecycle_growth_v2`.

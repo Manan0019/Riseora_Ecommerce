@@ -535,3 +535,7 @@ Phase 84 upgrades the existing ContactMessage/SupportMessage foundation into SLA
 ## Phase 85 — Production Reliability & Customer Recovery V2
 
 Phase 85 repairs the forward-verification regression exposed after Phase 84, hardens the dependency policy against the reported `shell-quote` and `source-map-js` advisories, and adds a major Customer 360 + controlled service-recovery workflow to Customer Care. Admins can see relationship/friction context and issue one auditable customer-owned coupon or reward-points benefit under strict 30-day caps. Run `npm run release-chain:doctor`, `npm run dependency-security:doctor`, `npm run service-recovery:doctor`, and `npm run verify:phase85`.
+
+
+## Phase 86
+Retention Intelligence, Lifecycle Campaigns & Growth Control Center V2. Latest verification gate: `npm run verify:phase86`. Expected migration head: `20261007183000_phase86_retention_lifecycle_growth_v2`.
