@@ -7,6 +7,7 @@ export type InventoryMovementTypeName =
   | "ORDER_RELEASE"
   | "ORDER_CANCELLATION"
   | "RETURN_RESTOCK"
+  | "RETURN_REPLACEMENT"
   | "REFUND_RESTOCK"
   | "ERP_SYNC"
   | "CORRECTION";

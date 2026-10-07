@@ -155,12 +155,46 @@ export const ReturnStatus = {
   PICKUP_PENDING: 'PICKUP_PENDING',
   IN_TRANSIT: 'IN_TRANSIT',
   RECEIVED: 'RECEIVED',
+  RESOLUTION_PENDING: 'RESOLUTION_PENDING',
   REFUNDING: 'REFUNDING',
   REFUNDED: 'REFUNDED',
+  REPLACEMENT_PENDING: 'REPLACEMENT_PENDING',
+  REPLACEMENT_SHIPPED: 'REPLACEMENT_SHIPPED',
+  REPLACED: 'REPLACED',
   CANCELLED: 'CANCELLED'
 } as const
 
 export type ReturnStatus = (typeof ReturnStatus)[keyof typeof ReturnStatus]
+
+
+export const ReturnResolution = {
+  REFUND: 'REFUND',
+  REPLACEMENT: 'REPLACEMENT'
+} as const
+
+export type ReturnResolution = (typeof ReturnResolution)[keyof typeof ReturnResolution]
+
+
+export const ReturnPriority = {
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type ReturnPriority = (typeof ReturnPriority)[keyof typeof ReturnPriority]
+
+
+export const ReturnInspectionGrade = {
+  SEALED: 'SEALED',
+  RESELLABLE: 'RESELLABLE',
+  OPENED: 'OPENED',
+  DAMAGED: 'DAMAGED',
+  DEFECTIVE: 'DEFECTIVE',
+  WRONG_ITEM: 'WRONG_ITEM',
+  UNSAFE: 'UNSAFE'
+} as const
+
+export type ReturnInspectionGrade = (typeof ReturnInspectionGrade)[keyof typeof ReturnInspectionGrade]
 
 
 export const CancellationRequestStatus = {
@@ -396,6 +430,7 @@ export const InventoryMovementType = {
   ORDER_RELEASE: 'ORDER_RELEASE',
   ORDER_CANCELLATION: 'ORDER_CANCELLATION',
   RETURN_RESTOCK: 'RETURN_RESTOCK',
+  RETURN_REPLACEMENT: 'RETURN_REPLACEMENT',
   REFUND_RESTOCK: 'REFUND_RESTOCK',
   ERP_SYNC: 'ERP_SYNC',
   CORRECTION: 'CORRECTION'

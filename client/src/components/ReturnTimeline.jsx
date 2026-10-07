@@ -1,11 +1,6 @@
+const labels = { REQUESTED: "Return requested", APPROVED: "Return approved", PICKUP_PENDING: "Pickup being arranged", IN_TRANSIT: "Return travelling to Riseora", RECEIVED: "Return received", RESOLUTION_PENDING: "Refund approved", REFUNDING: "Refund processing", REFUNDED: "Refund completed", REPLACEMENT_PENDING: "Replacement approved", REPLACEMENT_SHIPPED: "Replacement dispatched", REPLACED: "Replacement delivered", REJECTED: "Return declined", CANCELLED: "Return cancelled" };
 export default function ReturnTimeline({ item }) {
   const history = [...(item?.statusHistory || [])].sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   const fallback = history.length ? history : item ? [{ id: "current", status: item.status, createdAt: item.requestedAt, note: item.details || item.reason }] : [];
-  return <div className="return-timeline">
-    {fallback.map((entry, index) => <div className="return-timeline-row" key={entry.id || `${entry.status}-${index}`}>
-      <span className="return-timeline-dot" />
-      {index < fallback.length - 1 && <span className="return-timeline-line" />}
-      <div><small>{new Date(entry.createdAt).toLocaleString()}</small><strong>{String(entry.status || "").replaceAll("_", " ")}</strong>{entry.note && <p>{entry.note}</p>}</div>
-    </div>)}
-  </div>;
+  return <div className="return-timeline">{fallback.map((entry, index) => <div className="return-timeline-row" key={entry.id || `${entry.status}-${index}`}><span className="return-timeline-dot" />{index < fallback.length - 1 && <span className="return-timeline-line" />}<div><small>{new Date(entry.createdAt).toLocaleString()}</small><strong>{labels[entry.status] || String(entry.status || "").replaceAll("_", " ")}</strong>{entry.note && <p>{entry.note}</p>}</div></div>)}</div>;
 }

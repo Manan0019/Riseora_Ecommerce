@@ -12,13 +12,14 @@ import { sendOrderStatusNotification, sendReturnStatusNotification } from "../se
 import { createOrderStatusInAppNotification, createReturnStatusInAppNotification, createUserNotification } from "../services/notification-center.service";
 import { approveOrderCancellationRequest } from "../services/order-cancellation.service";
 import { reverseRefundedOrderRewards } from "../services/rewards.service";
-import { adjustInventory } from "../services/inventory.service";
+import { adjustInventory, availableToSell } from "../services/inventory.service";
 import { deliveryPromiseHealth } from "../services/delivery-promise.service";
 import { addressReadinessHealth } from "../services/address-readiness.service";
 import { fulfilmentIntegrityHealth } from "../services/order-integrity.service";
 import { fulfilmentDispatchReadinessHealth } from "../services/dispatch-readiness.service";
 import { fulfilmentShipmentTrackingHealth } from "../services/shipment-tracking-health.service";
 import { fulfilmentRtoRecoveryHealth } from "../services/rto-recovery.service";
+import { adminReturnResolutionSnapshot, returnResolutionHealth } from "../services/return-resolution.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -435,10 +436,17 @@ router.patch(
 );
 
 router.get(
+  "/returns/phase83-summary",
+  asyncHandler(async (_req, res) => {
+    res.json({ success: true, data: await adminReturnResolutionSnapshot() });
+  }),
+);
+
+router.get(
   "/returns",
   asyncHandler(async (req, res) => {
     const status = typeof req.query.status === "string" ? req.query.status : "";
-    const returns = await prisma.returnRequest.findMany({
+    const rows = await prisma.returnRequest.findMany({
       where: status ? { status: status as any } : undefined,
       include: {
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
@@ -447,10 +455,10 @@ router.get(
         evidence: true,
         statusHistory: { orderBy: { createdAt: "asc" } },
       },
-      orderBy: { requestedAt: "desc" },
+      orderBy: [{ priority: "desc" }, { requestedAt: "desc" }],
       take: 300,
     });
-    res.json({ success: true, data: returns });
+    res.json({ success: true, data: rows.map((item: any) => ({ ...item, resolutionHealth: returnResolutionHealth(item) })) });
   }),
 );
 
@@ -462,33 +470,38 @@ router.get(
       include: {
         user: { select: { id: true, firstName: true, lastName: true, email: true, phone: true } },
         order: { include: { payment: true, shipment: true } },
-        items: { include: { orderItem: true } },
+        items: { include: { orderItem: { include: { variant: { select: { productId: true } } } } } },
         evidence: true,
         statusHistory: { orderBy: { createdAt: "asc" } },
       },
     });
     if (!item) return res.status(404).json({ success: false, message: "Return request not found" });
-    res.json({ success: true, data: item });
+    const productVariants = await prisma.productVariant.findMany({
+      where: { isActive: true },
+      select: { id: true, name: true, sku: true, size: true, unit: true, stockQuantity: true, safetyStock: true, product: { select: { id: true, name: true } } },
+      orderBy: { sellingPrice: "asc" },
+    });
+    res.json({ success: true, data: { ...item, resolutionHealth: returnResolutionHealth(item), replacementCatalog: productVariants.map((v: any) => ({ ...v, available: availableToSell(v) })) } });
   }),
 );
 
-const returnStatuses = ["REQUESTED", "APPROVED", "REJECTED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED", "REFUNDED", "CANCELLED"] as const;
+const returnStatuses = ["REQUESTED", "APPROVED", "REJECTED", "PICKUP_PENDING", "IN_TRANSIT", "RECEIVED", "RESOLUTION_PENDING", "REFUNDED", "REPLACEMENT_PENDING", "REPLACEMENT_SHIPPED", "REPLACED", "CANCELLED"] as const;
 const allowedReturnTransitions: Record<string, string[]> = {
   REQUESTED: ["APPROVED", "REJECTED", "CANCELLED"],
   APPROVED: ["PICKUP_PENDING", "IN_TRANSIT", "RECEIVED", "CANCELLED"],
   PICKUP_PENDING: ["IN_TRANSIT", "RECEIVED"],
   IN_TRANSIT: ["RECEIVED"],
-  RECEIVED: ["REFUNDED"],
-  REFUNDING: [],
-  REFUNDED: [],
-  REJECTED: [],
-  CANCELLED: [],
+  RECEIVED: [],
+  RESOLUTION_PENDING: ["REFUNDED"],
+  REPLACEMENT_PENDING: [],
+  REPLACEMENT_SHIPPED: [],
+  REFUNDED: [], REPLACED: [], REFUNDING: [], REJECTED: [], CANCELLED: [],
 };
 
 const returnUpdateSchema = z.object({
   status: z.enum(returnStatuses),
-  adminNote: z.string().trim().max(1000).optional().or(z.literal("")),
-  customerVisibleNote: z.string().trim().max(1000).optional().or(z.literal("")),
+  adminNote: z.string().trim().max(1600).optional().or(z.literal("")),
+  customerVisibleNote: z.string().trim().max(1600).optional().or(z.literal("")),
   refundMethod: z.enum(["ORIGINAL_PAYMENT", "BANK_TRANSFER", "UPI", "STORE_CREDIT", "OTHER"]).optional(),
   refundReference: z.string().trim().max(200).optional().or(z.literal("")),
   reverseCarrier: z.string().trim().max(100).optional().or(z.literal("")),
@@ -501,142 +514,201 @@ router.patch(
   asyncHandler(async (req, res) => {
     const parsed = returnUpdateSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid return update", errors: parsed.error.flatten() });
-
     const current = await prisma.returnRequest.findUnique({
       where: { id: String(req.params.id) },
       include: { items: true, evidence: true, statusHistory: true, order: { include: { payment: true } }, user: true },
     });
     if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
+
     if (current.status === parsed.data.status) {
       const updated = await prisma.$transaction(async (tx) => {
         const item = await tx.returnRequest.update({
           where: { id: current.id },
-          data: {
-            adminNote: parsed.data.adminNote || null,
-            reverseCarrier: parsed.data.reverseCarrier || null,
-            reverseTrackingNumber: parsed.data.reverseTrackingNumber || null,
-            reverseTrackingUrl: parsed.data.reverseTrackingUrl || null,
-          },
+          data: { adminNote: parsed.data.adminNote || null, reverseCarrier: parsed.data.reverseCarrier || null, reverseTrackingNumber: parsed.data.reverseTrackingNumber || null, reverseTrackingUrl: parsed.data.reverseTrackingUrl || null },
           include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
         });
-        if (parsed.data.customerVisibleNote) {
-          await tx.returnStatusHistory.create({
-            data: { returnRequestId: current.id, status: current.status, note: parsed.data.customerVisibleNote, source: "ADMIN", customerVisible: true },
-          });
-        }
+        if (parsed.data.customerVisibleNote) await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: current.status, note: parsed.data.customerVisibleNote, source: "ADMIN", customerVisible: true } });
         return item;
       });
-      return res.json({ success: true, data: updated });
+      return res.json({ success: true, data: { ...updated, resolutionHealth: returnResolutionHealth(updated) } });
     }
-    if (!(allowedReturnTransitions[current.status] || []).includes(parsed.data.status)) {
-      return res.status(400).json({ success: false, message: `Return cannot move from ${current.status} to ${parsed.data.status}` });
-    }
+    if (!(allowedReturnTransitions[current.status] || []).includes(parsed.data.status)) return res.status(400).json({ success: false, message: `Return cannot move from ${current.status} to ${parsed.data.status}` });
 
     if (parsed.data.status === "REFUNDED") {
-      if (current.status !== "RECEIVED" || current.refundedAt) return res.status(409).json({ success: false, message: "Return is not ready for refund" });
+      if (current.status !== "RESOLUTION_PENDING" || current.approvedResolution !== "REFUND" || !current.inspectionCompletedAt || current.refundedAt) {
+        return res.status(409).json({ success: false, message: "Complete Phase 83 inspection and refund approval before refunding this return" });
+      }
+      const approvedAmount = Number(current.approvedRefundAmount ?? current.refundAmount);
+      if (!(approvedAmount > 0) || approvedAmount - Number(current.refundAmount) > 0.009) return res.status(409).json({ success: false, message: "Approved refund amount is invalid" });
 
       let providerRefundId: string | null = null;
-      let refundMethod = parsed.data.refundMethod ?? (current.order.paymentMethod === "ONLINE" ? "ORIGINAL_PAYMENT" : undefined);
+      const refundMethod = parsed.data.refundMethod ?? (current.order.paymentMethod === "ONLINE" ? "ORIGINAL_PAYMENT" : undefined);
       if (!refundMethod) return res.status(400).json({ success: false, message: "Choose how the customer was refunded" });
-
       if (current.order.paymentMethod === "ONLINE") {
         if (refundMethod !== "ORIGINAL_PAYMENT") return res.status(400).json({ success: false, message: "Online orders must be refunded to the original payment method" });
-        if (!current.order.payment?.providerPaymentId || !["PAID", "PARTIALLY_REFUNDED"].includes(current.order.payment.status)) {
-          return res.status(400).json({ success: false, message: "The original online payment is not refundable" });
-        }
-        const locked = await prisma.returnRequest.updateMany({ where: { id: current.id, status: "RECEIVED", refundedAt: null }, data: { status: "REFUNDING" } });
+        if (!current.order.payment?.providerPaymentId || !["PAID", "PARTIALLY_REFUNDED"].includes(current.order.payment.status)) return res.status(400).json({ success: false, message: "The original online payment is not refundable" });
+        const locked = await prisma.returnRequest.updateMany({ where: { id: current.id, status: "RESOLUTION_PENDING", refundedAt: null }, data: { status: "REFUNDING" } });
         if (locked.count !== 1) return res.status(409).json({ success: false, message: "Refund is already being processed" });
-        try {
-          const refund = await refundRazorpayPayment(current.order.payment.providerPaymentId, Math.round(Number(current.refundAmount) * 100));
-          providerRefundId = refund.id;
-        } catch (error) {
-          await prisma.returnRequest.updateMany({ where: { id: current.id, status: "REFUNDING" }, data: { status: "RECEIVED" } });
-          throw error;
-        }
+        try { const refund = await refundRazorpayPayment(current.order.payment.providerPaymentId, Math.round(approvedAmount * 100)); providerRefundId = refund.id; }
+        catch (error) { await prisma.returnRequest.updateMany({ where: { id: current.id, status: "REFUNDING" }, data: { status: "RESOLUTION_PENDING" } }); throw error; }
       } else if (!parsed.data.refundReference && ["BANK_TRANSFER", "UPI", "OTHER"].includes(refundMethod)) {
-        return res.status(400).json({ success: false, message: "Add a refund reference before marking this COD return refunded" });
+        return res.status(400).json({ success: false, message: "Add a refund reference before completing this COD return" });
       }
 
       const updated = await prisma.$transaction(async (tx) => {
         if (current.order.payment) {
-          const newRefunded = Number(current.order.payment.refundedAmount || 0) + Number(current.refundAmount);
+          const newRefunded = Number(current.order.payment.refundedAmount || 0) + approvedAmount;
           const paymentTotal = Number(current.order.payment.amount);
-          await tx.payment.update({
-            where: { orderId: current.order.id },
-            data: {
-              refundedAmount: newRefunded,
-              refundedAt: new Date(),
-              status: newRefunded + 0.009 >= paymentTotal ? "REFUNDED" : "PARTIALLY_REFUNDED",
-              reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null,
-            },
-          });
+          await tx.payment.update({ where: { orderId: current.order.id }, data: { refundedAmount: newRefunded, refundedAt: new Date(), status: newRefunded + 0.009 >= paymentTotal ? "REFUNDED" : "PARTIALLY_REFUNDED", reconciliationStatus: "UNCHECKED", reconciledAt: null, reconciliationNote: null } });
         }
         const item = await tx.returnRequest.update({
           where: { id: current.id },
-          data: {
-            status: "REFUNDED",
-            refundMethod,
-            refundReference: parsed.data.refundReference || null,
-            providerRefundId,
-            refundedAt: new Date(),
-            adminNote: parsed.data.adminNote || null,
-          },
+          data: { status: "REFUNDED", refundMethod, refundReference: parsed.data.refundReference || null, providerRefundId, refundedAt: new Date(), resolutionCompletedAt: new Date(), adminNote: parsed.data.adminNote || null },
           include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
         });
-        await tx.returnStatusHistory.create({
-          data: { returnRequestId: current.id, status: "REFUNDED", note: parsed.data.customerVisibleNote || "Refund completed", source: "ADMIN", customerVisible: true },
-        });
+        await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: "REFUNDED", note: parsed.data.customerVisibleNote || `Refund of ₹${approvedAmount.toFixed(2)} completed`, source: "ADMIN", customerVisible: true } });
         return item;
       });
       void sendReturnStatusNotification(updated).catch((error) => console.error("Return refund email failed", error));
       void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return refund in-app notification failed", error));
       void reverseRefundedOrderRewards(updated.id).catch((error) => console.error("Reward refund reversal failed", error));
       try { await ensureCreditNoteForReturn(updated.id); } catch (error) { console.error("Credit note issuance failed", error); }
-      return res.json({ success: true, data: updated });
+      return res.json({ success: true, data: { ...updated, resolutionHealth: returnResolutionHealth(updated) } });
     }
 
     const updated = await prisma.$transaction(async (tx) => {
-      const data: any = {
-        status: parsed.data.status,
-        adminNote: parsed.data.adminNote || null,
-        reverseCarrier: parsed.data.reverseCarrier || null,
-        reverseTrackingNumber: parsed.data.reverseTrackingNumber || null,
-        reverseTrackingUrl: parsed.data.reverseTrackingUrl || null,
-      };
+      const data: any = { status: parsed.data.status, adminNote: parsed.data.adminNote || null, reverseCarrier: parsed.data.reverseCarrier || null, reverseTrackingNumber: parsed.data.reverseTrackingNumber || null, reverseTrackingUrl: parsed.data.reverseTrackingUrl || null };
       if (parsed.data.status === "APPROVED") data.approvedAt = new Date();
-      if (parsed.data.status === "RECEIVED") {
-        data.receivedAt = new Date();
-        if (!current.restockedAt) {
-          for (const item of current.items) {
-            const orderItem = await tx.orderItem.findUnique({ where: { id: item.orderItemId }, select: { variantId: true } });
-            if (orderItem?.variantId) await adjustInventory(tx, {
-              variantId: orderItem.variantId,
-              delta: item.quantity,
-              type: "RETURN_RESTOCK",
-              source: "RETURN",
-              reason: "Returned item received and restocked",
-              referenceType: "RETURN",
-              referenceId: current.id,
-              actorUserId: req.user!.id,
-            });
-          }
-          data.restockedAt = new Date();
-        }
-      }
-      const item = await tx.returnRequest.update({
-        where: { id: current.id },
-        data,
-        include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
-      });
-      await tx.returnStatusHistory.create({
-        data: { returnRequestId: current.id, status: parsed.data.status, note: parsed.data.customerVisibleNote || null, source: "ADMIN", customerVisible: true },
-      });
+      if (parsed.data.status === "RECEIVED") data.receivedAt = new Date();
+      if (["REJECTED", "CANCELLED"].includes(parsed.data.status)) data.resolutionCompletedAt = new Date();
+      const item = await tx.returnRequest.update({ where: { id: current.id }, data, include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true } });
+      await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: parsed.data.status, note: parsed.data.customerVisibleNote || (parsed.data.status === "RECEIVED" ? "Return received by Riseora. Inspection is now required before refund or replacement." : null), source: "ADMIN", customerVisible: true } });
       return item;
     });
     void sendReturnStatusNotification(updated).catch((error) => console.error("Return status email failed", error));
     void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return status in-app notification failed", error));
-    res.json({ success: true, data: updated });
+    res.json({ success: true, data: { ...updated, resolutionHealth: returnResolutionHealth(updated) } });
   }),
 );
+
+const inspectionSchema = z.object({
+  approvedResolution: z.enum(["REFUND", "REPLACEMENT"]),
+  approvedRefundAmount: z.number().min(0).optional(),
+  refundAdjustmentReason: z.string().trim().max(1000).optional().or(z.literal("")),
+  customerVisibleNote: z.string().trim().max(1600).optional().or(z.literal("")),
+  items: z.array(z.object({
+    id: z.string().uuid(),
+    receivedQuantity: z.number().int().min(0),
+    restockQuantity: z.number().int().min(0),
+    quarantineQuantity: z.number().int().min(0),
+    writeOffQuantity: z.number().int().min(0),
+    inspectionGrade: z.enum(["SEALED", "RESELLABLE", "OPENED", "DAMAGED", "DEFECTIVE", "WRONG_ITEM", "UNSAFE"]),
+    inspectionNote: z.string().trim().max(1000).optional().or(z.literal("")),
+    replacementVariantId: z.string().uuid().optional().nullable(),
+  })).min(1),
+});
+
+router.post("/returns/:id/inspection", asyncHandler(async (req, res) => {
+  const parsed = inspectionSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid inspection", errors: parsed.error.flatten() });
+  const current = await prisma.returnRequest.findUnique({ where: { id: String(req.params.id) }, include: { items: { include: { orderItem: true } }, order: true } });
+  if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
+  if (current.status !== "RECEIVED" || current.inspectionCompletedAt) return res.status(409).json({ success: false, message: "This return is not waiting for inspection" });
+  if (new Set(parsed.data.items.map((x) => x.id)).size !== current.items.length || parsed.data.items.length !== current.items.length) return res.status(400).json({ success: false, message: "Inspect every return line exactly once" });
+
+  const byId = new Map(current.items.map((item: any) => [item.id, item]));
+  let eligibleRefund = 0;
+  for (const row of parsed.data.items) {
+    const item: any = byId.get(row.id);
+    if (!item) return res.status(400).json({ success: false, message: "Inspection contains an invalid return line" });
+    if (row.receivedQuantity > item.quantity) return res.status(400).json({ success: false, message: `Received quantity exceeds requested quantity for ${item.orderItem.productName}` });
+    if (row.restockQuantity + row.quarantineQuantity + row.writeOffQuantity !== row.receivedQuantity) return res.status(400).json({ success: false, message: `Disposition quantities must equal received quantity for ${item.orderItem.productName}` });
+    if (row.restockQuantity > 0 && !["SEALED", "RESELLABLE"].includes(row.inspectionGrade)) return res.status(400).json({ success: false, message: `${item.orderItem.productName} can be restocked only when graded SEALED or RESELLABLE` });
+    if (parsed.data.approvedResolution === "REPLACEMENT" && row.receivedQuantity > 0 && !row.replacementVariantId) return res.status(400).json({ success: false, message: `Choose a replacement variant for ${item.orderItem.productName}` });
+    eligibleRefund += Number(item.unitRefundAmount) * row.receivedQuantity;
+  }
+  eligibleRefund = Math.round((eligibleRefund + Number.EPSILON) * 100) / 100;
+  const approvedRefund = parsed.data.approvedResolution === "REFUND" ? Number(parsed.data.approvedRefundAmount ?? eligibleRefund) : 0;
+  if (approvedRefund < 0 || approvedRefund - eligibleRefund > 0.009) return res.status(400).json({ success: false, message: "Approved refund cannot exceed the value of physically received units" });
+  if (parsed.data.approvedResolution === "REFUND" && approvedRefund + 0.009 < eligibleRefund && !parsed.data.refundAdjustmentReason) return res.status(400).json({ success: false, message: "Explain any reduction from the eligible refund amount" });
+
+  const updated = await prisma.$transaction(async (tx) => {
+    let totalRestocked = 0;
+    for (const row of parsed.data.items) {
+      const item: any = byId.get(row.id);
+      if (row.replacementVariantId) {
+        const replacement = await tx.productVariant.findUnique({ where: { id: row.replacementVariantId }, include: { product: true } });
+        const original = item.orderItem.variantId ? await tx.productVariant.findUnique({ where: { id: item.orderItem.variantId }, select: { productId: true } }) : null;
+        if (!replacement?.isActive || !original || replacement.productId !== original.productId) throw new Error("INVALID_REPLACEMENT_VARIANT");
+      }
+      await tx.returnRequestItem.update({ where: { id: row.id }, data: { receivedQuantity: row.receivedQuantity, restockQuantity: row.restockQuantity, quarantineQuantity: row.quarantineQuantity, writeOffQuantity: row.writeOffQuantity, inspectionGrade: row.inspectionGrade as any, inspectionNote: row.inspectionNote || null, replacementVariantId: parsed.data.approvedResolution === "REPLACEMENT" ? row.replacementVariantId || null : null } });
+      if (row.restockQuantity > 0 && item.orderItem.variantId) {
+        await adjustInventory(tx, { variantId: item.orderItem.variantId, delta: row.restockQuantity, type: "RETURN_RESTOCK", source: "RETURN", reason: `Phase 83 inspected return ${current.returnNumber}: sellable units restored`, referenceType: "RETURN_INSPECTION", referenceId: current.id, actorUserId: req.user!.id });
+        totalRestocked += row.restockQuantity;
+      }
+    }
+    const status = parsed.data.approvedResolution === "REFUND" ? "RESOLUTION_PENDING" : "REPLACEMENT_PENDING";
+    const item = await tx.returnRequest.update({
+      where: { id: current.id },
+      data: { status: status as any, approvedResolution: parsed.data.approvedResolution as any, approvedRefundAmount: parsed.data.approvedResolution === "REFUND" ? approvedRefund : null, refundAdjustmentReason: parsed.data.refundAdjustmentReason || null, inspectionCompletedAt: new Date(), restockedAt: totalRestocked > 0 ? new Date() : current.restockedAt },
+      include: { items: { include: { orderItem: true } }, evidence: true, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true },
+    });
+    await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: status as any, note: parsed.data.customerVisibleNote || (parsed.data.approvedResolution === "REFUND" ? `Inspection completed. Refund approved for ₹${approvedRefund.toFixed(2)}.` : "Inspection completed. Replacement approved and awaiting dispatch."), source: "ADMIN", customerVisible: true } });
+    return item;
+  });
+  void sendReturnStatusNotification(updated).catch((error) => console.error("Return inspection email failed", error));
+  void createReturnStatusInAppNotification(updated).catch((error) => console.error("Return inspection in-app notification failed", error));
+  res.json({ success: true, data: { ...updated, resolutionHealth: returnResolutionHealth(updated) } });
+}));
+
+const replacementDispatchSchema = z.object({
+  carrier: z.string().trim().min(2).max(100), trackingNumber: z.string().trim().min(3).max(150), trackingUrl: z.string().trim().url().optional().or(z.literal("")), customerVisibleNote: z.string().trim().max(1600).optional().or(z.literal("")),
+});
+
+router.post("/returns/:id/replacement-dispatch", asyncHandler(async (req, res) => {
+  const parsed = replacementDispatchSchema.safeParse(req.body);
+  if (!parsed.success) return res.status(400).json({ success: false, message: "Invalid replacement dispatch", errors: parsed.error.flatten() });
+  const current = await prisma.returnRequest.findUnique({ where: { id: String(req.params.id) }, include: { items: { include: { orderItem: true } }, order: true } });
+  if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
+  if (current.status !== "REPLACEMENT_PENDING" || current.approvedResolution !== "REPLACEMENT" || !current.inspectionCompletedAt) return res.status(409).json({ success: false, message: "Replacement is not approved and ready to dispatch" });
+  const duplicate = await prisma.returnRequest.findFirst({ where: { replacementTrackingNumber: parsed.data.trackingNumber, id: { not: current.id } }, select: { id: true } });
+  if (duplicate) return res.status(409).json({ success: false, message: "This replacement tracking number is already used by another return" });
+
+  try {
+    const updated = await prisma.$transaction(async (tx) => {
+      for (const row of current.items) {
+        if (row.receivedQuantity <= 0) continue;
+        if (!row.replacementVariantId) throw new Error("REPLACEMENT_VARIANT_MISSING");
+        const variant = await tx.productVariant.findUnique({ where: { id: row.replacementVariantId }, select: { id: true, sku: true, stockQuantity: true, safetyStock: true, isActive: true } });
+        if (!variant?.isActive || availableToSell(variant) < row.receivedQuantity) throw new Error(`REPLACEMENT_OUT_OF_STOCK:${variant?.sku || row.replacementVariantId}`);
+        await adjustInventory(tx, { variantId: row.replacementVariantId, delta: -row.receivedQuantity, type: "RETURN_REPLACEMENT", source: "RETURN", reason: `Replacement dispatched for ${current.returnNumber}`, referenceType: "RETURN_REPLACEMENT", referenceId: current.id, actorUserId: req.user!.id, enforceSafetyStock: true });
+      }
+      const item = await tx.returnRequest.update({ where: { id: current.id }, data: { status: "REPLACEMENT_SHIPPED", replacementCarrier: parsed.data.carrier, replacementTrackingNumber: parsed.data.trackingNumber, replacementTrackingUrl: parsed.data.trackingUrl || null, replacementShippedAt: new Date() }, include: { items: { include: { orderItem: true } }, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true } });
+      await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: "REPLACEMENT_SHIPPED", note: parsed.data.customerVisibleNote || `Replacement dispatched via ${parsed.data.carrier}. Tracking: ${parsed.data.trackingNumber}`, source: "ADMIN", customerVisible: true } });
+      return item;
+    });
+    void sendReturnStatusNotification(updated).catch((error) => console.error("Replacement dispatch email failed", error));
+    void createReturnStatusInAppNotification(updated).catch((error) => console.error("Replacement dispatch notification failed", error));
+    res.json({ success: true, data: updated });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "REPLACEMENT_DISPATCH_FAILED";
+    if (message.startsWith("REPLACEMENT_OUT_OF_STOCK")) return res.status(409).json({ success: false, message: "Replacement stock is no longer available. Choose another active variant or resolve as a refund." });
+    throw error;
+  }
+}));
+
+router.post("/returns/:id/replacement-delivered", asyncHandler(async (req, res) => {
+  const current = await prisma.returnRequest.findUnique({ where: { id: String(req.params.id) } });
+  if (!current) return res.status(404).json({ success: false, message: "Return request not found" });
+  if (current.status !== "REPLACEMENT_SHIPPED") return res.status(409).json({ success: false, message: "Replacement has not been dispatched" });
+  const updated = await prisma.$transaction(async (tx) => {
+    const item = await tx.returnRequest.update({ where: { id: current.id }, data: { status: "REPLACED", replacementDeliveredAt: new Date(), resolutionCompletedAt: new Date() }, include: { items: { include: { orderItem: true } }, statusHistory: { orderBy: { createdAt: "asc" } }, order: true, user: true } });
+    await tx.returnStatusHistory.create({ data: { returnRequestId: current.id, status: "REPLACED", note: "Replacement delivered. Return case completed.", source: "ADMIN", customerVisible: true } });
+    return item;
+  });
+  void sendReturnStatusNotification(updated).catch((error) => console.error("Replacement delivered email failed", error));
+  void createReturnStatusInAppNotification(updated).catch((error) => console.error("Replacement delivered notification failed", error));
+  res.json({ success: true, data: updated });
+}));
 
 export default router;

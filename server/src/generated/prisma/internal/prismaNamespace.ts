@@ -5755,18 +5755,31 @@ export const ReturnRequestScalarFieldEnum = {
   details: 'details',
   customerNote: 'customerNote',
   adminNote: 'adminNote',
+  preferredResolution: 'preferredResolution',
+  approvedResolution: 'approvedResolution',
+  priority: 'priority',
+  slaDueAt: 'slaDueAt',
   refundMethod: 'refundMethod',
   refundAmount: 'refundAmount',
+  approvedRefundAmount: 'approvedRefundAmount',
+  refundAdjustmentReason: 'refundAdjustmentReason',
   providerRefundId: 'providerRefundId',
   refundReference: 'refundReference',
   reverseCarrier: 'reverseCarrier',
   reverseTrackingNumber: 'reverseTrackingNumber',
   reverseTrackingUrl: 'reverseTrackingUrl',
+  replacementCarrier: 'replacementCarrier',
+  replacementTrackingNumber: 'replacementTrackingNumber',
+  replacementTrackingUrl: 'replacementTrackingUrl',
   requestedAt: 'requestedAt',
   approvedAt: 'approvedAt',
   receivedAt: 'receivedAt',
+  inspectionCompletedAt: 'inspectionCompletedAt',
   restockedAt: 'restockedAt',
   refundedAt: 'refundedAt',
+  replacementShippedAt: 'replacementShippedAt',
+  replacementDeliveredAt: 'replacementDeliveredAt',
+  resolutionCompletedAt: 'resolutionCompletedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -5780,6 +5793,13 @@ export const ReturnRequestItemScalarFieldEnum = {
   orderItemId: 'orderItemId',
   quantity: 'quantity',
   unitRefundAmount: 'unitRefundAmount',
+  replacementVariantId: 'replacementVariantId',
+  receivedQuantity: 'receivedQuantity',
+  restockQuantity: 'restockQuantity',
+  quarantineQuantity: 'quarantineQuantity',
+  writeOffQuantity: 'writeOffQuantity',
+  inspectionGrade: 'inspectionGrade',
+  inspectionNote: 'inspectionNote',
   createdAt: 'createdAt'
 } as const
 
@@ -6638,6 +6658,34 @@ export type ListEnumReturnStatusFieldRefInput<$PrismaModel> = FieldRefInputType<
 
 
 /**
+ * Reference to a field of type 'ReturnResolution'
+ */
+export type EnumReturnResolutionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnResolution'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnResolution[]'
+ */
+export type ListEnumReturnResolutionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnResolution[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnPriority'
+ */
+export type EnumReturnPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnPriority'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnPriority[]'
+ */
+export type ListEnumReturnPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnPriority[]'>
+    
+
+
+/**
  * Reference to a field of type 'RefundMethod'
  */
 export type EnumRefundMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundMethod'>
@@ -6648,6 +6696,20 @@ export type EnumRefundMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$Pri
  * Reference to a field of type 'RefundMethod[]'
  */
 export type ListEnumRefundMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundMethod[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnInspectionGrade'
+ */
+export type EnumReturnInspectionGradeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnInspectionGrade'>
+    
+
+
+/**
+ * Reference to a field of type 'ReturnInspectionGrade[]'
+ */
+export type ListEnumReturnInspectionGradeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReturnInspectionGrade[]'>
     
 
 

@@ -2,31 +2,21 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiFetch, mediaUrl } from "../api/http";
 import ReturnTimeline from "../components/ReturnTimeline";
-
-function money(value) { return `₹${Number(value || 0).toFixed(0)}`; }
-
+const money = (value) => `₹${Number(value || 0).toFixed(0)}`;
 export default function ReturnDetail() {
-  const { id } = useParams();
-  const [item, setItem] = useState(null);
-  const [error, setError] = useState("");
-
+  const { id } = useParams(); const [item, setItem] = useState(null); const [error, setError] = useState("");
   useEffect(() => { apiFetch(`/returns/${id}`).then((r) => setItem(r.data)).catch((e) => setError(e.message)); }, [id]);
-
   if (error && !item) return <div className="container page-space"><p className="alert error">{error}</p><Link to="/returns">← Returns</Link></div>;
   if (!item) return <div className="container page-space"><div className="skeleton-card tall" /></div>;
-
-  return <div className="container page-space return-detail-page">
-    <div className="page-heading-row"><div><Link className="back-link" to="/returns">← Returns & refunds</Link><p className="eyebrow">{item.returnNumber}</p><h1>Return journey</h1><p>Order {item.order?.orderNumber}</p></div><span className={`return-pill return-${item.status.toLowerCase().replaceAll("_", "-")}`}>{item.status.replaceAll("_", " ")}</span></div>
-
-    <div className="postpurchase-grid">
-      <section className="order-detail-card"><h2>Status history</h2><ReturnTimeline item={item} /></section>
-      <section className="order-detail-card"><h2>Refund</h2><div className="postpurchase-stat"><span>Expected value</span><strong>{money(item.refundAmount)}</strong></div>{item.refundMethod && <div className="postpurchase-stat"><span>Method</span><strong>{item.refundMethod.replaceAll("_", " ")}</strong></div>}{item.refundReference && <div className="postpurchase-stat"><span>Reference</span><strong>{item.refundReference}</strong></div>}{item.refundedAt && <><p className="muted">Refunded {new Date(item.refundedAt).toLocaleString()}</p><Link className="button button-secondary phase45-credit-link" to={`/credit-note/${item.returnNumber}`}>View credit note</Link></>}</section>
-    </div>
-
-    <section className="order-detail-card"><h2>Items</h2>{item.items.map((line) => <div className="summary-row" key={line.id}><span>{line.orderItem.productName} {line.orderItem.variantName ? `/ ${line.orderItem.variantName}` : ""} × {line.quantity}</span><strong>{money(Number(line.unitRefundAmount) * line.quantity)}</strong></div>)}</section>
-
+  const h = item.resolutionHealth || {};
+  return <div className="container page-space return-detail-page phase83-return-detail">
+    <div className="page-heading-row"><div><Link className="back-link" to="/returns">← Returns & resolutions</Link><p className="eyebrow">PHASE 83 · {item.returnNumber}</p><h1>{item.approvedResolution === "REPLACEMENT" || item.preferredResolution === "REPLACEMENT" ? "Replacement journey" : "Refund journey"}</h1><p>Order {item.order?.orderNumber}</p></div><span className={`return-pill return-${item.status.toLowerCase().replaceAll("_", "-")}`}>{item.status.replaceAll("_", " ")}</span></div>
+    <section className="phase83-resolution-hero"><div><small>REQUESTED RESOLUTION</small><strong>{item.preferredResolution?.replaceAll("_", " ")}</strong></div><div><small>APPROVED RESOLUTION</small><strong>{item.approvedResolution?.replaceAll("_", " ") || "Pending review"}</strong></div><div><small>OPERATIONS HEALTH</small><strong>{h.status || "HEALTHY"}</strong></div><div><small>REVIEW SLA</small><strong>{item.slaDueAt ? new Date(item.slaDueAt).toLocaleString() : "—"}</strong></div></section>
+    {h.overdue && <p className="alert warning">This case is beyond its operational review SLA and has been highlighted to Riseora.</p>}
+    <div className="postpurchase-grid"><section className="order-detail-card"><h2>Return timeline</h2><ReturnTimeline item={item} /></section><section className="order-detail-card"><h2>Resolution</h2><div className="postpurchase-stat"><span>Original eligible value</span><strong>{money(item.refundAmount)}</strong></div>{item.approvedRefundAmount != null && <div className="postpurchase-stat"><span>Approved refund</span><strong>{money(item.approvedRefundAmount)}</strong></div>}{item.refundAdjustmentReason && <p className="muted">Adjustment: {item.refundAdjustmentReason}</p>}{item.refundMethod && <div className="postpurchase-stat"><span>Refund method</span><strong>{item.refundMethod.replaceAll("_", " ")}</strong></div>}{item.refundReference && <div className="postpurchase-stat"><span>Reference</span><strong>{item.refundReference}</strong></div>}{item.refundedAt && <><p className="muted">Refunded {new Date(item.refundedAt).toLocaleString()}</p><Link className="button button-secondary phase45-credit-link" to={`/credit-note/${item.returnNumber}`}>View credit note</Link></>}</section></div>
+    <section className="order-detail-card"><div className="phase83-card-head"><div><h2>Items & inspection</h2><p>Sellable inventory is restored only after Riseora physically inspects each returned unit.</p></div>{item.inspectionCompletedAt && <span className="phase83-safe-badge">INSPECTED</span>}</div>{item.items.map((line) => <div className="phase83-customer-inspection" key={line.id}><div><strong>{line.orderItem.productName}</strong><span>{line.orderItem.variantName || line.orderItem.sku} × {line.quantity}</span></div><div><span>Received <b>{line.receivedQuantity || 0}</b></span>{line.inspectionGrade && <span>Grade <b>{line.inspectionGrade.replaceAll("_", " ")}</b></span>}{line.replacementVariant && <span>Replacement <b>{line.replacementVariant.name}</b></span>}</div></div>)}</section>
     {(item.evidence || []).length > 0 && <section className="order-detail-card"><h2>Evidence shared</h2><div className="return-evidence-grid">{item.evidence.map((image) => <a href={mediaUrl(image.url)} target="_blank" rel="noreferrer" key={image.id}><img src={mediaUrl(image.url)} alt={image.originalName || "Return evidence"} /></a>)}</div></section>}
-
     {item.reverseTrackingNumber && <section className="order-detail-card"><h2>Return pickup</h2><div className="shipment-box"><span>{item.reverseCarrier || "Return courier"}</span><strong>{item.reverseTrackingNumber}</strong>{item.reverseTrackingUrl && <a href={item.reverseTrackingUrl} target="_blank" rel="noreferrer">Track return ↗</a>}</div></section>}
+    {item.replacementTrackingNumber && <section className="order-detail-card phase83-replacement-card"><h2>Replacement shipment</h2><div className="shipment-box"><span>{item.replacementCarrier || "Replacement courier"}</span><strong>{item.replacementTrackingNumber}</strong>{item.replacementTrackingUrl && <a href={item.replacementTrackingUrl} target="_blank" rel="noreferrer">Track replacement ↗</a>}</div>{item.replacementDeliveredAt && <p className="alert success">Replacement delivered {new Date(item.replacementDeliveredAt).toLocaleString()}.</p>}</section>}
   </div>;
 }
