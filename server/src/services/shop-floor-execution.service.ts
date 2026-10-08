@@ -1,5 +1,6 @@
 import type { Prisma } from "../generated/prisma/client";
 import { phase93OperationMinutes } from "./mrp-capacity.service";
+import { phase95AccrueAssetRuntime, phase95AssignAssetForExecution, phase95AssertBreakdownResolved, phase95CreateCorrectiveFromBreakdown } from "./maintenance-reliability.service";
 
 export const PHASE94_EXECUTION_POLICY = {
   defaultOeeWindowDays: 7,
@@ -95,15 +96,16 @@ export async function phase94DispatchOrder(tx: Prisma.TransactionClient, product
     shopFloorDispatchedAt: order.shopFloorDispatchedAt || new Date(),
     shopFloorDispatchedByUserId: order.shopFloorDispatchedByUserId || actorUserId || null,
   }});
-  return db.productionOrder.findUnique({ where: { id: order.id }, include: { outputVariant: { include: { product: true } }, warehouse: true, routing: true, operationExecutions: { include: { workCenter: true, routingOperation: true, downtimeEvents: true, labourEntries: true }, orderBy: { sequence: "asc" } } } });
+  return db.productionOrder.findUnique({ where: { id: order.id }, include: { outputVariant: { include: { product: true } }, warehouse: true, routing: true, operationExecutions: { include: { workCenter: true, equipmentAsset: true, routingOperation: true, downtimeEvents: true, labourEntries: true }, orderBy: { sequence: "asc" } } } });
 }
 
 export async function phase94StartOperation(tx: Prisma.TransactionClient, executionId: string, actorUserId?: string | null) {
   const db: any = tx;
-  const row = await db.productionOperationExecution.findUnique({ where: { id: executionId }, include: { productionOrder: true } });
+  const row = await db.productionOperationExecution.findUnique({ where: { id: executionId }, include: { productionOrder: true, routingOperation: true } });
   if (!row) throw new Error("SHOP_FLOOR_OPERATION_NOT_FOUND");
   if (row.productionOrder.status !== "IN_PRODUCTION") throw new Error("SHOP_FLOOR_ORDER_NOT_RUNNING");
   if (row.status !== "READY") throw new Error("SHOP_FLOOR_OPERATION_NOT_READY");
+  await phase95AssignAssetForExecution(tx, row);
   const now = new Date();
   const updated = await db.productionOperationExecution.update({ where: { id: row.id }, data: { status: "IN_PROGRESS", actualStartAt: row.actualStartAt || now, startedByUserId: row.startedByUserId || actorUserId || null } });
   if (row.scheduleSlotId) await db.productionScheduleSlot.update({ where: { id: row.scheduleSlotId }, data: { status: "IN_PROGRESS" } });
@@ -118,7 +120,8 @@ export async function phase94PauseOperation(tx: Prisma.TransactionClient, execut
   const open = await db.productionDowntimeEvent.findFirst({ where: { executionId: row.id, endedAt: null } });
   if (open) throw new Error("SHOP_FLOOR_DOWNTIME_ALREADY_OPEN");
   const now = new Date();
-  await db.productionDowntimeEvent.create({ data: { executionId: row.id, productionOrderId: row.productionOrderId, workCenterId: row.workCenterId, category: input.category, reason: input.reason.trim(), startedAt: now, createdByUserId: input.actorUserId || null } });
+  const downtime = await db.productionDowntimeEvent.create({ data: { executionId: row.id, productionOrderId: row.productionOrderId, workCenterId: row.workCenterId, equipmentAssetId: row.equipmentAssetId || null, category: input.category, reason: input.reason.trim(), startedAt: now, createdByUserId: input.actorUserId || null } });
+  if (input.category === "BREAKDOWN") await phase95CreateCorrectiveFromBreakdown(tx, { downtimeEventId: downtime.id, assetId: row.equipmentAssetId || null, reason: input.reason, actorUserId: input.actorUserId || null });
   return db.productionOperationExecution.update({ where: { id: row.id }, data: { status: "PAUSED", pausedAt: now } });
 }
 
@@ -129,6 +132,7 @@ export async function phase94ResumeOperation(tx: Prisma.TransactionClient, execu
   if (row.status !== "PAUSED") throw new Error("SHOP_FLOOR_RESUME_STATUS_BLOCKED");
   const open = await db.productionDowntimeEvent.findFirst({ where: { executionId: row.id, endedAt: null }, orderBy: { startedAt: "desc" } });
   if (!open) throw new Error("SHOP_FLOOR_DOWNTIME_NOT_FOUND");
+  await phase95AssertBreakdownResolved(tx, open);
   const now = new Date();
   const minutes = minuteDiff(open.startedAt, now);
   await db.productionDowntimeEvent.update({ where: { id: open.id }, data: { endedAt: now, minutes } });
@@ -149,6 +153,7 @@ export async function phase94CompleteOperation(tx: Prisma.TransactionClient, exe
   const elapsed = Math.max(1, minuteDiff(row.actualStartAt, now));
   const runtimeMinutes = Math.max(1, elapsed - i(row.downtimeMinutes));
   const updated = await db.productionOperationExecution.update({ where: { id: row.id }, data: { status: "COMPLETED", actualEndAt: now, runtimeMinutes, actualSetupMinutes: i(input.actualSetupMinutes), goodQty, rejectQty, reworkQty, notes: input.notes?.trim() || null, completedByUserId: input.actorUserId || null } });
+  await phase95AccrueAssetRuntime(tx, row.equipmentAssetId, runtimeMinutes);
   if (row.scheduleSlotId) await db.productionScheduleSlot.update({ where: { id: row.scheduleSlotId }, data: { status: "COMPLETED" } });
   const next = await db.productionOperationExecution.findFirst({ where: { productionOrderId: row.productionOrderId, sequence: { gt: row.sequence }, status: "QUEUED" }, orderBy: { sequence: "asc" } });
   if (next) await db.productionOperationExecution.update({ where: { id: next.id }, data: { status: "READY" } });
@@ -184,8 +189,8 @@ export async function phase94Overview(db: any, days = PHASE94_EXECUTION_POLICY.d
   const from = new Date(Date.now() - safeDays * 86400000);
   const [workCenters, orders, executions, recentDowntime, shifts] = await Promise.all([
     db.workCenter.findMany({ include: { warehouse: true }, orderBy: { code: "asc" } }),
-    db.productionOrder.findMany({ where: { status: { in: ["MATERIAL_ISSUED", "IN_PRODUCTION"] } }, include: { outputVariant: { include: { product: true } }, warehouse: true, routing: true, operationExecutions: { include: { workCenter: true, routingOperation: true, downtimeEvents: true, labourEntries: true }, orderBy: { sequence: "asc" } } }, orderBy: [{ priority: "desc" }, { dueAt: "asc" }], take: 150 }),
-    db.productionOperationExecution.findMany({ where: { OR: [{ actualEndAt: { gte: from } }, { status: { in: ["READY", "IN_PROGRESS", "PAUSED"] } }] }, include: { workCenter: true, routingOperation: true, productionOrder: { include: { outputVariant: { include: { product: true } }, warehouse: true } }, downtimeEvents: true, labourEntries: true }, orderBy: { updatedAt: "desc" }, take: 1000 }),
+    db.productionOrder.findMany({ where: { status: { in: ["MATERIAL_ISSUED", "IN_PRODUCTION"] } }, include: { outputVariant: { include: { product: true } }, warehouse: true, routing: true, operationExecutions: { include: { workCenter: true, equipmentAsset: true, routingOperation: true, downtimeEvents: true, labourEntries: true }, orderBy: { sequence: "asc" } } }, orderBy: [{ priority: "desc" }, { dueAt: "asc" }], take: 150 }),
+    db.productionOperationExecution.findMany({ where: { OR: [{ actualEndAt: { gte: from } }, { status: { in: ["READY", "IN_PROGRESS", "PAUSED"] } }] }, include: { workCenter: true, equipmentAsset: true, routingOperation: true, productionOrder: { include: { outputVariant: { include: { product: true } }, warehouse: true } }, downtimeEvents: true, labourEntries: true }, orderBy: { updatedAt: "desc" }, take: 1000 }),
     db.productionDowntimeEvent.findMany({ where: { startedAt: { gte: from } }, include: { workCenter: true, productionOrder: { include: { outputVariant: { include: { product: true } } } } }, orderBy: { startedAt: "desc" }, take: 250 }),
     db.workCenterShift.findMany({ where: { isActive: true }, include: { workCenter: true }, orderBy: [{ workCenterId: "asc" }, { dayOfWeek: "asc" }, { startMinuteOfDay: "asc" }] }),
   ]);

@@ -110,12 +110,12 @@ export function phase93ScheduleSlots(input:{orders:any[];workCenters:any[];start
 export async function phase93Overview(db:any){
   const [warehouses,workCenters,routings,mrpPlans,schedules,demandPlans,orders,finishedVariants]=await Promise.all([
     db.warehouse.findMany({where:{status:"ACTIVE"},orderBy:{name:"asc"}}),
-    db.workCenter.findMany({include:{warehouse:true},orderBy:{code:"asc"}}),
-    db.productionRouting.findMany({include:{warehouse:true,outputVariant:{include:{product:true}},operations:{include:{workCenter:true},orderBy:{sequence:"asc"}}},orderBy:[{outputVariantId:"asc"},{version:"desc"}]}),
+    db.workCenter.findMany({include:{warehouse:true,equipmentAssets:{where:{status:{not:"RETIRED"}},orderBy:{assetCode:"asc"}}},orderBy:{code:"asc"}}),
+    db.productionRouting.findMany({include:{warehouse:true,outputVariant:{include:{product:true}},operations:{include:{workCenter:true,equipmentAsset:true},orderBy:{sequence:"asc"}}},orderBy:[{outputVariantId:"asc"},{version:"desc"}]}),
     db.mrpPlan.findMany({include:{warehouse:true,demandPlan:true,items:{include:{variant:{include:{product:true}},productionOrder:true,bom:true}}},orderBy:{createdAt:"desc"},take:20}),
     db.productionSchedule.findMany({include:{warehouse:true,slots:{include:{productionOrder:{include:{outputVariant:{include:{product:true}}}},workCenter:true},orderBy:{plannedStartAt:"asc"}}},orderBy:{createdAt:"desc"},take:12}),
     db.demandPlan.findMany({where:{status:"APPROVED"},orderBy:{createdAt:"desc"},take:30}),
-    db.productionOrder.findMany({where:{status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]}},include:{outputVariant:{include:{product:true}},routing:{include:{operations:{include:{workCenter:true},orderBy:{sequence:"asc"}}}},bom:true},orderBy:[{priority:"desc"},{dueAt:"asc"}],take:100}),
+    db.productionOrder.findMany({where:{status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]}},include:{outputVariant:{include:{product:true}},routing:{include:{operations:{include:{workCenter:true,equipmentAsset:true},orderBy:{sequence:"asc"}}}},bom:true},orderBy:[{priority:"desc"},{dueAt:"asc"}],take:100}),
     db.productVariant.findMany({where:{inventoryRole:"FINISHED_GOOD",isActive:true},include:{product:true},orderBy:{sku:"asc"},take:250}),
   ]);
   const unscheduled=orders.filter((o:any)=>!o.routing||!o.routing.operations?.length).length;

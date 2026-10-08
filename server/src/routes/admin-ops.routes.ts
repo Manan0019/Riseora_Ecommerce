@@ -32,6 +32,7 @@ import { PHASE91_QUALITY_POLICY, phase91CreateInboundQaHold, phase91InspectionDe
 import { PHASE92_MANUFACTURING_POLICY, phase92CompleteProduction, phase92IssueProductionMaterials, phase92ManufacturingOverview, phase92MaterialAvailability, phase92MaterialRequirement, phase92ProductionTrace } from "../services/manufacturing-control.service";
 import { PHASE93_MRP_POLICY, phase93BuildMrpPreview, phase93OperationMinutes, phase93Overview, phase93PlannedRuns, phase93ScheduleSlots } from "../services/mrp-capacity.service";
 import { PHASE94_EXECUTION_POLICY, phase94AddLabour, phase94CompleteOperation, phase94CompletionGate, phase94DispatchOrder, phase94Overview, phase94PauseOperation, phase94ResumeOperation, phase94StartOperation } from "../services/shop-floor-execution.service";
+import { PHASE95_MAINTENANCE_POLICY, phase95CompleteWorkOrder, phase95GenerateDueWorkOrders, phase95IssueSpare, phase95MaintenanceOverview, phase95MaintenanceWorkOrderNumber, phase95NextDue } from "../services/maintenance-reliability.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1463,7 +1464,7 @@ router.post("/phase91-quality/incidents/:id/close",asyncHandler(async(req,res)=>
 
 
 // Phase 92 · Manufacturing BOM, Production Control & Traceability V2
-const phase92RoleSchema=z.object({inventoryRole:z.enum(["FINISHED_GOOD","RAW_MATERIAL","PACKAGING","CONSUMABLE"])});
+const phase92RoleSchema=z.object({inventoryRole:z.enum(["FINISHED_GOOD","RAW_MATERIAL","PACKAGING","CONSUMABLE","SPARE_PART"])});
 const phase92BomSchema=z.object({
   name:z.string().trim().min(2).max(140),
   outputVariantId:z.string().uuid(),
@@ -1527,7 +1528,7 @@ router.post("/phase92-manufacturing/boms",asyncHandler(async(req,res)=>{
   if(output.inventoryRole!=="FINISHED_GOOD")return res.status(409).json({success:false,message:"BOM_OUTPUT_MUST_BE_FINISHED_GOOD"});
   const components:any[]=await (prisma as any).productVariant.findMany({where:{id:{in:[...uniqueIds]}}});
   if(components.length!==uniqueIds.size)return res.status(404).json({success:false,message:"One or more BOM components were not found"});
-  const invalid=components.filter(x=>x.inventoryRole==="FINISHED_GOOD");
+  const invalid=components.filter(x=>["FINISHED_GOOD","SPARE_PART"].includes(x.inventoryRole));
   if(invalid.length)return res.status(409).json({success:false,message:"BOM_COMPONENT_ROLE_BLOCKED",data:invalid.map(x=>x.sku)});
   const latest:any=await (prisma as any).manufacturingBom.findFirst({where:{outputVariantId:output.id},orderBy:{version:"desc"}});
   const version=Number(latest?.version||0)+1;
@@ -1616,7 +1617,7 @@ router.get("/phase92-manufacturing/production-orders/:id/trace",asyncHandler(asy
 
 // Phase 93 · MRP, Production Scheduling & Capacity Control V2
 const phase93WorkCenterSchema=z.object({code:z.string().trim().min(2).max(30),name:z.string().trim().min(2).max(120),warehouseId:z.string().uuid(),dailyCapacityMinutes:z.number().int().min(60).max(1440),defaultSetupMinutes:z.number().int().min(0).max(480).default(15),efficiencyPercent:z.number().min(25).max(200).default(100),notes:z.string().trim().max(1000).nullable().optional()});
-const phase93RoutingSchema=z.object({name:z.string().trim().min(2).max(120),outputVariantId:z.string().uuid(),notes:z.string().trim().max(1000).nullable().optional(),operations:z.array(z.object({workCenterId:z.string().uuid(),name:z.string().trim().min(2).max(120),setupMinutes:z.number().int().min(0).max(480),runMinutesPerUnit:z.number().min(0).max(1440),queueMinutes:z.number().int().min(0).max(1440).default(0)})).min(1).max(30)});
+const phase93RoutingSchema=z.object({name:z.string().trim().min(2).max(120),outputVariantId:z.string().uuid(),notes:z.string().trim().max(1000).nullable().optional(),operations:z.array(z.object({workCenterId:z.string().uuid(),name:z.string().trim().min(2).max(120),setupMinutes:z.number().int().min(0).max(480),runMinutesPerUnit:z.number().min(0).max(1440),queueMinutes:z.number().int().min(0).max(1440).default(0),equipmentAssetId:z.string().uuid().nullable().optional()})).min(1).max(30)});
 const phase93MrpPreviewSchema=z.object({warehouseId:z.string().uuid(),demandPlanId:z.string().uuid(),horizonDays:z.number().int().min(PHASE93_MRP_POLICY.minHorizonDays).max(PHASE93_MRP_POLICY.maxHorizonDays).default(30)});
 const phase93ScheduleSchema=z.object({warehouseId:z.string().uuid(),startDate:z.coerce.date(),days:z.number().int().min(1).max(PHASE93_MRP_POLICY.maxScheduleDays).default(14),name:z.string().trim().min(2).max(120).optional()});
 
@@ -1633,8 +1634,9 @@ router.post("/phase93-planning/routings",asyncHandler(async(req,res)=>{
   const output:any=await (prisma as any).productVariant.findUnique({where:{id:parsed.data.outputVariantId}});if(!output||output.inventoryRole!=="FINISHED_GOOD")return res.status(409).json({success:false,message:"ROUTING_FINISHED_GOOD_REQUIRED"});
   const centers:any[]=await (prisma as any).workCenter.findMany({where:{id:{in:parsed.data.operations.map(x=>x.workCenterId)},status:"ACTIVE"}});if(centers.length!==new Set(parsed.data.operations.map(x=>x.workCenterId)).size)return res.status(409).json({success:false,message:"ROUTING_ACTIVE_WORK_CENTER_REQUIRED"});
   const warehouses=[...new Set(centers.map((x:any)=>x.warehouseId))];if(warehouses.length!==1)return res.status(409).json({success:false,message:"ROUTING_SINGLE_WAREHOUSE_REQUIRED"});const warehouseId=String(warehouses[0]);
+  const preferredIds=parsed.data.operations.map(x=>x.equipmentAssetId).filter(Boolean) as string[];if(preferredIds.length){const assets:any[]=await (prisma as any).equipmentAsset.findMany({where:{id:{in:preferredIds},status:"ACTIVE"}});const byId=new Map(assets.map((x:any)=>[x.id,x]));const mismatch=parsed.data.operations.find(x=>x.equipmentAssetId&&byId.get(x.equipmentAssetId)?.workCenterId!==x.workCenterId);if(assets.length!==new Set(preferredIds).size||mismatch)return res.status(409).json({success:false,message:"ROUTING_EQUIPMENT_WORK_CENTER_MISMATCH"});}
   const latest:any=await (prisma as any).productionRouting.findFirst({where:{outputVariantId:output.id,warehouseId},orderBy:{version:"desc"}});const version=Number(latest?.version||0)+1;
-  const row=await (prisma as any).productionRouting.create({data:{routingCode:phase92Code("ROUTE"),name:parsed.data.name,outputVariantId:output.id,warehouseId,version,status:"DRAFT",notes:parsed.data.notes||null,createdByUserId:req.user!.id,operations:{create:parsed.data.operations.map((x,i)=>({...x,sequence:i+1}))}},include:{warehouse:true,operations:{include:{workCenter:true}},outputVariant:{include:{product:true}}}});res.status(201).json({success:true,data:row});
+  const row=await (prisma as any).productionRouting.create({data:{routingCode:phase92Code("ROUTE"),name:parsed.data.name,outputVariantId:output.id,warehouseId,version,status:"DRAFT",notes:parsed.data.notes||null,createdByUserId:req.user!.id,operations:{create:parsed.data.operations.map((x,i)=>({...x,sequence:i+1}))}},include:{warehouse:true,operations:{include:{workCenter:true,equipmentAsset:true}},outputVariant:{include:{product:true}}}});res.status(201).json({success:true,data:row});
 }));
 
 router.post("/phase93-planning/routings/:id/activate",asyncHandler(async(req,res)=>{
@@ -1706,30 +1708,58 @@ router.post("/phase94-execution/orders/:id/dispatch",asyncHandler(async(req,res)
 
 router.post("/phase94-execution/operations/:id/start",asyncHandler(async(req,res)=>{
   try{const row=await prisma.$transaction(tx=>phase94StartOperation(tx,String(req.params.id),req.user!.id));res.json({success:true,data:row});}
-  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("EQUIPMENT_")||message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase94-execution/operations/:id/pause",asyncHandler(async(req,res)=>{
   const parsed=phase94PauseSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid downtime event",errors:parsed.error.flatten()});
   try{const row=await prisma.$transaction(tx=>phase94PauseOperation(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
-  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("EQUIPMENT_")||message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase94-execution/operations/:id/resume",asyncHandler(async(req,res)=>{
   try{const row=await prisma.$transaction(tx=>phase94ResumeOperation(tx,String(req.params.id)));res.json({success:true,data:row});}
-  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("EQUIPMENT_")||message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase94-execution/operations/:id/complete",asyncHandler(async(req,res)=>{
   const parsed=phase94OperationCompleteSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid operation completion",errors:parsed.error.flatten()});
   try{const row=await prisma.$transaction(tx=>phase94CompleteOperation(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
-  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("EQUIPMENT_")||message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase94-execution/operations/:id/labour",asyncHandler(async(req,res)=>{
   const parsed=phase94LabourSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid labour entry",errors:parsed.error.flatten()});
   try{const row=await prisma.$transaction(tx=>phase94AddLabour(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.status(201).json({success:true,data:row});}
-  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("EQUIPMENT_")||message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}
 }));
+
+// Phase 95 · Preventive Maintenance, Reliability & Spare-Parts Control V2
+const phase95AssetSchema=z.object({assetCode:z.string().trim().min(2).max(40),name:z.string().trim().min(2).max(140),workCenterId:z.string().uuid(),manufacturer:z.string().trim().max(120).nullable().optional(),modelNumber:z.string().trim().max(120).nullable().optional(),serialNumber:z.string().trim().max(120).nullable().optional(),commissionedAt:z.coerce.date().nullable().optional(),notes:z.string().trim().max(1200).nullable().optional()});
+const phase95PlanSchema=z.object({assetId:z.string().uuid(),name:z.string().trim().min(2).max(160),type:z.enum(["PREVENTIVE","INSPECTION","CALIBRATION"]).default("PREVENTIVE"),priority:z.enum(["LOW","NORMAL","HIGH","CRITICAL"]).default("NORMAL"),intervalDays:z.number().int().min(1).max(3650).nullable().optional(),intervalRuntimeMinutes:z.number().int().min(1).max(10000000).nullable().optional(),estimatedMinutes:z.number().int().min(1).max(10080).default(60),instructions:z.string().trim().max(4000).nullable().optional()}).refine(x=>!!x.intervalDays||!!x.intervalRuntimeMinutes,{message:"At least one maintenance interval is required"});
+const phase95WorkOrderSchema=z.object({assetId:z.string().uuid(),type:z.enum(["PREVENTIVE","CORRECTIVE","INSPECTION","CALIBRATION"]),priority:z.enum(["LOW","NORMAL","HIGH","CRITICAL"]).default("NORMAL"),title:z.string().trim().min(2).max(180),description:z.string().trim().max(4000).nullable().optional(),scheduledStartAt:z.coerce.date().nullable().optional(),dueAt:z.coerce.date().nullable().optional()});
+const phase95SpareSchema=z.object({variantId:z.string().uuid(),quantity:z.number().int().min(1).max(PHASE95_MAINTENANCE_POLICY.maxSpareIssueQty)});
+const phase95CompleteSchema=z.object({labourMinutes:z.number().int().min(0).max(PHASE95_MAINTENANCE_POLICY.maxLabourMinutes).default(0),hourlyCost:z.number().min(0).max(PHASE95_MAINTENANCE_POLICY.maxHourlyCost).default(0),rootCause:z.string().trim().max(4000).nullable().optional(),correctiveAction:z.string().trim().max(4000).nullable().optional(),technician:z.string().trim().max(160).nullable().optional()});
+
+router.get("/phase95-maintenance/overview",asyncHandler(async(req,res)=>{const days=Math.max(1,Math.min(PHASE95_MAINTENANCE_POLICY.maxWindowDays,Number(req.query.days||PHASE95_MAINTENANCE_POLICY.defaultWindowDays)));res.json({success:true,data:await phase95MaintenanceOverview(prisma,days)});}));
+
+router.post("/phase95-maintenance/assets",asyncHandler(async(req,res)=>{const parsed=phase95AssetSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid equipment asset",errors:parsed.error.flatten()});const center:any=await (prisma as any).workCenter.findUnique({where:{id:parsed.data.workCenterId}});if(!center)return res.status(404).json({success:false,message:"Work center not found"});const row=await (prisma as any).equipmentAsset.create({data:{...parsed.data,status:"ACTIVE"}});res.status(201).json({success:true,data:row});}));
+
+router.patch("/phase95-maintenance/assets/:id/status",asyncHandler(async(req,res)=>{const parsed=z.object({status:z.enum(["ACTIVE","MAINTENANCE","BREAKDOWN","HOLD","RETIRED"])}).safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid asset status"});const current:any=await (prisma as any).equipmentAsset.findUnique({where:{id:String(req.params.id)}});if(!current)return res.status(404).json({success:false,message:"Equipment asset not found"});if(parsed.data.status==="ACTIVE"&&["MAINTENANCE","BREAKDOWN"].includes(current.status)){const open=await (prisma as any).maintenanceWorkOrder.count({where:{assetId:current.id,status:{in:["APPROVED","IN_PROGRESS"]}}});if(open)return res.status(409).json({success:false,message:"MAINTENANCE_RELEASE_REQUIRED"});}if(parsed.data.status==="RETIRED"){const running=await (prisma as any).productionOperationExecution.count({where:{equipmentAssetId:current.id,status:{in:["READY","IN_PROGRESS","PAUSED"]}}});if(running)return res.status(409).json({success:false,message:"MAINTENANCE_ASSET_IN_PRODUCTION"});}const row=await (prisma as any).equipmentAsset.update({where:{id:current.id},data:{status:parsed.data.status}});res.json({success:true,data:row});}));
+
+router.post("/phase95-maintenance/plans",asyncHandler(async(req,res)=>{const parsed=phase95PlanSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid maintenance plan",errors:parsed.error.flatten()});const asset:any=await (prisma as any).equipmentAsset.findUnique({where:{id:parsed.data.assetId}});if(!asset)return res.status(404).json({success:false,message:"Equipment asset not found"});const due=phase95NextDue({completedAt:new Date(),runtimeMinutes:Number(asset.cumulativeRuntimeMinutes||0),intervalDays:parsed.data.intervalDays,intervalRuntimeMinutes:parsed.data.intervalRuntimeMinutes});const row=await (prisma as any).maintenancePlan.create({data:{...parsed.data,nextDueAt:due.nextDueAt,nextDueRuntimeMinutes:due.nextDueRuntimeMinutes}});res.status(201).json({success:true,data:row});}));
+
+router.post("/phase95-maintenance/work-orders/generate-due",asyncHandler(async(req,res)=>{const rows=await prisma.$transaction(tx=>phase95GenerateDueWorkOrders(tx,req.user!.id));res.status(201).json({success:true,data:rows,message:`Created ${rows.length} due maintenance work order(s).`});}));
+
+router.post("/phase95-maintenance/work-orders",asyncHandler(async(req,res)=>{const parsed=phase95WorkOrderSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid maintenance work order",errors:parsed.error.flatten()});const asset:any=await (prisma as any).equipmentAsset.findUnique({where:{id:parsed.data.assetId}});if(!asset)return res.status(404).json({success:false,message:"Equipment asset not found"});const open=await (prisma as any).maintenanceWorkOrder.count({where:{assetId:asset.id,status:{in:["DRAFT","APPROVED","IN_PROGRESS"]}}});if(open>=PHASE95_MAINTENANCE_POLICY.maxOpenWorkOrdersPerAsset)return res.status(409).json({success:false,message:"MAINTENANCE_OPEN_WORK_ORDER_LIMIT"});const row=await (prisma as any).maintenanceWorkOrder.create({data:{workOrderNumber:phase95MaintenanceWorkOrderNumber(),...parsed.data,status:"DRAFT",createdByUserId:req.user!.id}});res.status(201).json({success:true,data:row});}));
+
+router.post("/phase95-maintenance/work-orders/:id/approve",asyncHandler(async(req,res)=>{const current:any=await (prisma as any).maintenanceWorkOrder.findUnique({where:{id:String(req.params.id)}});if(!current)return res.status(404).json({success:false,message:"Maintenance work order not found"});if(current.status!=="DRAFT")return res.status(409).json({success:false,message:"MAINTENANCE_APPROVE_STATUS_BLOCKED"});const row=await (prisma as any).maintenanceWorkOrder.update({where:{id:current.id},data:{status:"APPROVED",approvedByUserId:req.user!.id}});res.json({success:true,data:row});}));
+
+router.post("/phase95-maintenance/work-orders/:id/start",asyncHandler(async(req,res)=>{try{const row=await prisma.$transaction(async tx=>{const db:any=tx;const wo=await db.maintenanceWorkOrder.findUnique({where:{id:String(req.params.id)}});if(!wo)throw new Error("MAINTENANCE_WORK_ORDER_NOT_FOUND");if(wo.status!=="APPROVED")throw new Error("MAINTENANCE_START_STATUS_BLOCKED");const running=await db.productionOperationExecution.count({where:{equipmentAssetId:wo.assetId,status:"IN_PROGRESS"}});if(running)throw new Error("MAINTENANCE_ASSET_IN_PRODUCTION");await db.equipmentAsset.update({where:{id:wo.assetId},data:{status:wo.type==="CORRECTIVE"?"BREAKDOWN":"MAINTENANCE"}});return db.maintenanceWorkOrder.update({where:{id:wo.id},data:{status:"IN_PROGRESS",startedAt:wo.startedAt||new Date(),approvedByUserId:wo.approvedByUserId||req.user!.id}})});res.json({success:true,data:row});}catch(error:any){const message=String(error?.message||"");if(message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}}));
+
+router.post("/phase95-maintenance/work-orders/:id/spares",asyncHandler(async(req,res)=>{const parsed=phase95SpareSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid spare issue",errors:parsed.error.flatten()});try{const row=await prisma.$transaction(tx=>phase95IssueSpare(tx,{workOrderId:String(req.params.id),...parsed.data,actorUserId:req.user!.id}));res.status(201).json({success:true,data:row});}catch(error:any){const message=String(error?.message||"");if(message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}}));
+
+router.post("/phase95-maintenance/work-orders/:id/complete",asyncHandler(async(req,res)=>{const parsed=phase95CompleteSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid maintenance completion",errors:parsed.error.flatten()});try{const row=await prisma.$transaction(tx=>phase95CompleteWorkOrder(tx,{workOrderId:String(req.params.id),...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}catch(error:any){const message=String(error?.message||"");if(message.startsWith("MAINTENANCE_"))return res.status(message.endsWith("NOT_FOUND")?404:409).json({success:false,message});throw error;}}));
+
 
 export default router;

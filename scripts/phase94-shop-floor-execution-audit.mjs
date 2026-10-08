@@ -27,8 +27,8 @@ check("Fulfilment renders Phase 94 center",ful.includes("AdminShopFloorExecution
 check("Phase 94 responsive styling",styles.includes("phase94-shopfloor-center")&&styles.includes("phase94-kpis")&&styles.includes("phase94-executions"));
 check("shop-floor:doctor command",String(pkg.scripts?.["shop-floor:doctor"]||"").includes("phase94-shop-floor-execution-audit"));
 check("verify:phase94 command",String(pkg.scripts?.["verify:phase94"]||"").includes("shop-floor:doctor")&&String(pkg.scripts?.["verify:phase94"]||"").includes("npm run db:generate")&&String(pkg.scripts?.["verify:phase94"]||"").includes("npm run build"));
-check("prelaunch advances to phase94",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase94")&&String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase94"));
-check("production release advances to phase94",prepare.includes("verify:phase94")&&prodAudit.includes("verify:phase94"));
+check("prelaunch retains Phase 94 and advances",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase94")&&(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase94")||String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase95")));
+check("production release retains Phase 94 and advances",prepare.includes("verify:phase94")&&prodAudit.includes("verify:phase94")&&(prepare.includes("verify:phase95")||!fs.existsSync(path.join(root,"PHASE_95_RELEASE.md"))));
 const oee=(runtime,downtime,ideal,good,total)=>{const a=runtime+downtime?runtime/(runtime+downtime)*100:0,p=runtime?Math.min(100,ideal/runtime*100):0,q=total?good/total*100:0;return Number((a*p*q/10000).toFixed(2))};
 check("behavior · OEE multiplies availability/performance/quality",oee(80,20,72,95,100)===68.4);
 const labour=(minutes,hourly)=>Number(((minutes/60)*hourly).toFixed(2));check("behavior · labour cost uses actual minutes",labour(90,200)===300);

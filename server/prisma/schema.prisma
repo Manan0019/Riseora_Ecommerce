@@ -331,6 +331,7 @@ enum InventoryRole {
   RAW_MATERIAL
   PACKAGING
   CONSUMABLE
+  SPARE_PART
 }
 
 enum ManufacturingBomStatus {
@@ -424,6 +425,36 @@ enum ProductionLabourRole {
   QUALITY
   MAINTENANCE
   OTHER
+}
+
+enum EquipmentAssetStatus {
+  ACTIVE
+  MAINTENANCE
+  BREAKDOWN
+  HOLD
+  RETIRED
+}
+
+enum MaintenanceWorkOrderType {
+  PREVENTIVE
+  CORRECTIVE
+  INSPECTION
+  CALIBRATION
+}
+
+enum MaintenancePriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum MaintenanceWorkOrderStatus {
+  DRAFT
+  APPROVED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
 enum WarehouseStatus {
@@ -912,6 +943,7 @@ enum InventoryMovementType {
   QA_REJECT
   PRODUCTION_ISSUE
   PRODUCTION_RETURN
+  MAINTENANCE_ISSUE
   ERP_SYNC
   CORRECTION
 }
@@ -925,6 +957,7 @@ enum InventoryMovementSource {
   WAREHOUSE
   QUALITY
   MANUFACTURING
+  MAINTENANCE
   ERP
   SYSTEM
 }
@@ -1016,6 +1049,7 @@ model ProductVariant {
   productionMaterialLines ProductionOrderMaterial[] @relation("ProductionMaterialVariant")
   productionRoutings ProductionRouting[] @relation("ProductionRoutingOutput")
   mrpPlanItems MrpPlanItem[]
+  maintenanceSpareUsages MaintenanceSpareUsage[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -2615,6 +2649,7 @@ model ManufacturingBom {
   items ManufacturingBomItem[]
   productionOrders ProductionOrder[]
   mrpPlanItems MrpPlanItem[]
+  maintenanceSpareUsages MaintenanceSpareUsage[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2677,6 +2712,7 @@ model ProductionOrder {
   shopFloorDispatchedAt DateTime?
   shopFloorDispatchedByUserId String? @db.Uuid
   shopFloorDispatchedBy User? @relation("ProductionOrderShopFloorDispatchedBy", fields: [shopFloorDispatchedByUserId], references: [id], onDelete: SetNull)
+  routingOperations ProductionRoutingOperation[]
   operationExecutions ProductionOperationExecution[]
   downtimeEvents ProductionDowntimeEvent[]
   labourEntries ProductionLabourEntry[]
@@ -2758,6 +2794,7 @@ model WorkCenter {
   operationExecutions ProductionOperationExecution[]
   downtimeEvents ProductionDowntimeEvent[]
   shifts WorkCenterShift[]
+  equipmentAssets EquipmentAsset[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2792,6 +2829,8 @@ model ProductionRoutingOperation {
   routing ProductionRouting @relation(fields: [routingId], references: [id], onDelete: Cascade)
   workCenterId String @db.Uuid
   workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  equipmentAssetId String? @db.Uuid
+  equipmentAsset EquipmentAsset? @relation(fields: [equipmentAssetId], references: [id], onDelete: SetNull)
   sequence Int
   name String
   setupMinutes Int @default(0)
@@ -2946,6 +2985,8 @@ model ProductionOperationExecution {
   scheduleSlot ProductionScheduleSlot? @relation(fields: [scheduleSlotId], references: [id], onDelete: SetNull)
   workCenterId String @db.Uuid
   workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  equipmentAssetId String? @db.Uuid
+  equipmentAsset EquipmentAsset? @relation(fields: [equipmentAssetId], references: [id], onDelete: SetNull)
   sequence Int
   operationName String
   status ShopFloorExecutionStatus @default(QUEUED)
@@ -2974,6 +3015,7 @@ model ProductionOperationExecution {
   @@unique([productionOrderId, sequence])
   @@index([productionOrderId, status, sequence])
   @@index([workCenterId, status, plannedStartAt])
+  @@index([equipmentAssetId, status, actualStartAt])
 }
 
 model ProductionDowntimeEvent {
@@ -2984,6 +3026,8 @@ model ProductionDowntimeEvent {
   productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
   workCenterId String @db.Uuid
   workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  equipmentAssetId String? @db.Uuid
+  equipmentAsset EquipmentAsset? @relation(fields: [equipmentAssetId], references: [id], onDelete: SetNull)
   category ProductionDowntimeCategory
   reason String
   startedAt DateTime @default(now())
@@ -2993,10 +3037,111 @@ model ProductionDowntimeEvent {
   createdBy User? @relation("ProductionDowntimeEventCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  maintenanceWorkOrder MaintenanceWorkOrder?
 
   @@index([executionId, endedAt])
   @@index([productionOrderId, startedAt])
   @@index([workCenterId, startedAt])
+  @@index([equipmentAssetId, startedAt])
+}
+
+model EquipmentAsset {
+  id String @id @default(uuid()) @db.Uuid
+  assetCode String @unique
+  name String
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  status EquipmentAssetStatus @default(ACTIVE)
+  manufacturer String?
+  modelNumber String?
+  serialNumber String? @unique
+  commissionedAt DateTime?
+  cumulativeRuntimeMinutes Int @default(0)
+  notes String?
+  routingOperations ProductionRoutingOperation[]
+  operationExecutions ProductionOperationExecution[]
+  downtimeEvents ProductionDowntimeEvent[]
+  maintenancePlans MaintenancePlan[]
+  maintenanceWorkOrders MaintenanceWorkOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([workCenterId, status])
+}
+
+model MaintenancePlan {
+  id String @id @default(uuid()) @db.Uuid
+  assetId String @db.Uuid
+  asset EquipmentAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+  name String
+  type MaintenanceWorkOrderType @default(PREVENTIVE)
+  priority MaintenancePriority @default(NORMAL)
+  intervalDays Int?
+  intervalRuntimeMinutes Int?
+  estimatedMinutes Int @default(60)
+  instructions String?
+  isActive Boolean @default(true)
+  lastCompletedAt DateTime?
+  lastCompletedRuntimeMinutes Int?
+  nextDueAt DateTime?
+  nextDueRuntimeMinutes Int?
+  workOrders MaintenanceWorkOrder[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId, isActive, nextDueAt])
+}
+
+model MaintenanceWorkOrder {
+  id String @id @default(uuid()) @db.Uuid
+  workOrderNumber String @unique
+  assetId String @db.Uuid
+  asset EquipmentAsset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  planId String? @db.Uuid
+  plan MaintenancePlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  sourceDowntimeEventId String? @unique @db.Uuid
+  sourceDowntimeEvent ProductionDowntimeEvent? @relation(fields: [sourceDowntimeEventId], references: [id], onDelete: SetNull)
+  type MaintenanceWorkOrderType
+  priority MaintenancePriority @default(NORMAL)
+  status MaintenanceWorkOrderStatus @default(DRAFT)
+  title String
+  description String?
+  scheduledStartAt DateTime?
+  dueAt DateTime?
+  startedAt DateTime?
+  completedAt DateTime?
+  technician String?
+  rootCause String?
+  correctiveAction String?
+  labourMinutes Int @default(0)
+  labourCost Decimal @default(0) @db.Decimal(14,2)
+  spareCost Decimal @default(0) @db.Decimal(14,2)
+  totalCost Decimal @default(0) @db.Decimal(14,2)
+  createdByUserId String? @db.Uuid
+  approvedByUserId String? @db.Uuid
+  completedByUserId String? @db.Uuid
+  spareUsages MaintenanceSpareUsage[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([assetId, status, dueAt])
+  @@index([planId, status])
+}
+
+model MaintenanceSpareUsage {
+  id String @id @default(uuid()) @db.Uuid
+  workOrderId String @db.Uuid
+  workOrder MaintenanceWorkOrder @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  variantId String @db.Uuid
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  quantity Int
+  unitCostSnapshot Decimal @default(0) @db.Decimal(14,4)
+  totalCost Decimal @default(0) @db.Decimal(14,2)
+  issuedAt DateTime @default(now())
+  issuedByUserId String? @db.Uuid
+
+  @@index([workOrderId, issuedAt])
+  @@index([variantId, issuedAt])
 }
 
 model ProductionLabourEntry {

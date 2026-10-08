@@ -1,9 +1,9 @@
-# Riseora Ecommerce Phase 94
+# Riseora E-commerce — Phase 95 cumulative overlay
 
-Cumulative overlay through **Phase 94 — Shop-Floor Execution, Downtime & OEE Control V2**.
+**Phase 95 — Preventive Maintenance, Equipment Reliability & Spare-Parts Control V2**
 
-Phase 94 repairs the Phase 93 Prisma `ManufacturingBom.warehouseId` index regression and the historical Phase 71 migration-head audit regression, then adds executable routed shop-floor operations, downtime capture, labour costing, OEE, work-center shifts, schedule adherence and a strict Phase 92 production-completion gate.
+Copy the contents of this folder over the existing Riseora E-commerce project. Do not delete the existing project first; this is a cumulative overlay.
 
-Inventory ownership remains unchanged: Phase 92 controls manufacturing material/output, Phase 90 controls warehouse batches and Phase 91 controls finished-goods commercial QA release.
+Read `PHASE_95_RELEASE.md` for scope and `PHASE_95_VERIFICATION.txt` for the exact Windows verification sequence.
 
-See `PHASE_94_RELEASE.md` and `PHASE_94_VERIFICATION.txt`.
+Database target after deploy: **48 migrations**, latest `20261008094000_phase95_maintenance_reliability_spares_v2`.

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { apiFetch } from "../api/http";
 
-const roleLabels={FINISHED_GOOD:"Finished good",RAW_MATERIAL:"Raw material",PACKAGING:"Packaging",CONSUMABLE:"Consumable"};
+const roleLabels={FINISHED_GOOD:"Finished good",RAW_MATERIAL:"Raw material",PACKAGING:"Packaging",CONSUMABLE:"Consumable",SPARE_PART:"Spare part"};
 const money=(v)=>`₹${Number(v||0).toLocaleString("en-IN",{maximumFractionDigits:2})}`;
 const blankBom=()=>({name:"",outputVariantId:"",outputQuantity:1,yieldTolerancePercent:5,items:[{componentVariantId:"",quantityPerRun:1,wastagePercent:0,isCritical:true}]});
 
