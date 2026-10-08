@@ -1,9 +1,9 @@
-# Riseora Ecommerce Phase 93
+# Riseora Ecommerce Phase 94
 
-Cumulative overlay through **Phase 93 — MRP, Production Scheduling & Capacity Control V2**.
+Cumulative overlay through **Phase 94 — Shop-Floor Execution, Downtime & OEE Control V2**.
 
-Phase 93 converts approved Phase 88 demand into warehouse-specific MRP, nets released stock/safety/open production/open supplier supply, explodes active Phase 92 BOMs, separates MAKE and BUY requirements, converts those requirements into Phase 92 production drafts and Phase 89 supplier PO drafts, and builds finite work-center schedules using warehouse-scoped routings, operation times, efficiency and daily capacity.
+Phase 94 repairs the Phase 93 Prisma `ManufacturingBom.warehouseId` index regression and the historical Phase 71 migration-head audit regression, then adds executable routed shop-floor operations, downtime capture, labour costing, OEE, work-center shifts, schedule adherence and a strict Phase 92 production-completion gate.
 
-Planning and schedule publication do not mutate inventory. Material issue/production remains Phase 92 controlled, purchased receipt/QA remains Phase 89/91 controlled, and finished-goods sellable release remains Phase 91 controlled.
+Inventory ownership remains unchanged: Phase 92 controls manufacturing material/output, Phase 90 controls warehouse batches and Phase 91 controls finished-goods commercial QA release.
 
-See `PHASE_93_RELEASE.md` and `PHASE_93_VERIFICATION.txt`.
+See `PHASE_94_RELEASE.md` and `PHASE_94_VERIFICATION.txt`.

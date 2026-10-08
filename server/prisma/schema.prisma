@@ -398,6 +398,34 @@ enum ProductionScheduleSlotStatus {
   CANCELLED
 }
 
+enum ShopFloorExecutionStatus {
+  QUEUED
+  READY
+  IN_PROGRESS
+  PAUSED
+  COMPLETED
+  SKIPPED
+}
+
+enum ProductionDowntimeCategory {
+  BREAKDOWN
+  MATERIAL_SHORTAGE
+  QUALITY_HOLD
+  CHANGEOVER
+  STAFFING
+  UTILITIES
+  PLANNED_STOP
+  OTHER
+}
+
+enum ProductionLabourRole {
+  OPERATOR
+  SUPERVISOR
+  QUALITY
+  MAINTENANCE
+  OTHER
+}
+
 enum WarehouseStatus {
   ACTIVE
   HOLD
@@ -681,6 +709,13 @@ model User {
   approvedMrpPlans MrpPlan[] @relation("MrpPlanApprovedBy")
   createdProductionSchedules ProductionSchedule[] @relation("ProductionScheduleCreatedBy")
   publishedProductionSchedules ProductionSchedule[] @relation("ProductionSchedulePublishedBy")
+  shopFloorDispatchedProductionOrders ProductionOrder[] @relation("ProductionOrderShopFloorDispatchedBy")
+  startedProductionOperations ProductionOperationExecution[] @relation("ProductionOperationExecutionStartedBy")
+  completedProductionOperations ProductionOperationExecution[] @relation("ProductionOperationExecutionCompletedBy")
+  createdProductionDowntimeEvents ProductionDowntimeEvent[] @relation("ProductionDowntimeEventCreatedBy")
+  productionLabourEntries ProductionLabourEntry[] @relation("ProductionLabourOperator")
+  enteredProductionLabourEntries ProductionLabourEntry[] @relation("ProductionLabourEnteredBy")
+  createdWorkCenterShifts WorkCenterShift[] @relation("WorkCenterShiftCreatedBy")
   refillReminders RefillReminder[]
   inventoryMovements InventoryMovement[] @relation("InventoryMovementActor")
   authSessions AuthSession[]
@@ -2583,8 +2618,8 @@ model ManufacturingBom {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@unique([outputVariantId, warehouseId, version])
-  @@index([status, outputVariantId, warehouseId])
+  @@unique([outputVariantId, version])
+  @@index([status, outputVariantId])
 }
 
 model ManufacturingBomItem {
@@ -2639,6 +2674,12 @@ model ProductionOrder {
   routing ProductionRouting? @relation(fields: [routingId], references: [id], onDelete: SetNull)
   priority Int @default(50)
   scheduleSlots ProductionScheduleSlot[]
+  shopFloorDispatchedAt DateTime?
+  shopFloorDispatchedByUserId String? @db.Uuid
+  shopFloorDispatchedBy User? @relation("ProductionOrderShopFloorDispatchedBy", fields: [shopFloorDispatchedByUserId], references: [id], onDelete: SetNull)
+  operationExecutions ProductionOperationExecution[]
+  downtimeEvents ProductionDowntimeEvent[]
+  labourEntries ProductionLabourEntry[]
   notes String?
   createdByUserId String? @db.Uuid
   createdBy User? @relation("ProductionOrderCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
@@ -2658,6 +2699,7 @@ model ProductionOrder {
   @@index([outputVariantId, createdAt])
   @@index([routingId, status, dueAt])
   @@index([priority, dueAt])
+  @@index([shopFloorDispatchedAt, status])
 }
 
 model ProductionOrderMaterial {
@@ -2713,6 +2755,9 @@ model WorkCenter {
   createdBy User? @relation("WorkCenterCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
   routingOperations ProductionRoutingOperation[]
   scheduleSlots ProductionScheduleSlot[]
+  operationExecutions ProductionOperationExecution[]
+  downtimeEvents ProductionDowntimeEvent[]
+  shifts WorkCenterShift[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2754,6 +2799,7 @@ model ProductionRoutingOperation {
   queueMinutes Int @default(0)
   notes String?
   scheduleSlots ProductionScheduleSlot[]
+  executions ProductionOperationExecution[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2862,12 +2908,117 @@ model ProductionScheduleSlot {
   plannedMinutes Int
   status ProductionScheduleSlotStatus @default(PLANNED)
   lateRisk Boolean @default(false)
+  execution ProductionOperationExecution?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@unique([scheduleId, productionOrderId, sequence])
   @@index([workCenterId, plannedStartAt, plannedEndAt])
   @@index([productionOrderId, sequence])
+}
+
+model WorkCenterShift {
+  id String @id @default(uuid()) @db.Uuid
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Cascade)
+  name String
+  dayOfWeek Int
+  startMinuteOfDay Int
+  durationMinutes Int
+  breakMinutes Int @default(0)
+  isActive Boolean @default(true)
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("WorkCenterShiftCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([workCenterId, dayOfWeek, name])
+  @@index([workCenterId, isActive, dayOfWeek])
+}
+
+model ProductionOperationExecution {
+  id String @id @default(uuid()) @db.Uuid
+  productionOrderId String @db.Uuid
+  productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  routingOperationId String? @db.Uuid
+  routingOperation ProductionRoutingOperation? @relation(fields: [routingOperationId], references: [id], onDelete: SetNull)
+  scheduleSlotId String? @unique @db.Uuid
+  scheduleSlot ProductionScheduleSlot? @relation(fields: [scheduleSlotId], references: [id], onDelete: SetNull)
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  sequence Int
+  operationName String
+  status ShopFloorExecutionStatus @default(QUEUED)
+  plannedStartAt DateTime?
+  plannedEndAt DateTime?
+  plannedMinutes Int @default(0)
+  actualStartAt DateTime?
+  actualEndAt DateTime?
+  pausedAt DateTime?
+  actualSetupMinutes Int @default(0)
+  runtimeMinutes Int @default(0)
+  downtimeMinutes Int @default(0)
+  goodQty Int @default(0)
+  rejectQty Int @default(0)
+  reworkQty Int @default(0)
+  notes String?
+  startedByUserId String? @db.Uuid
+  startedBy User? @relation("ProductionOperationExecutionStartedBy", fields: [startedByUserId], references: [id], onDelete: SetNull)
+  completedByUserId String? @db.Uuid
+  completedBy User? @relation("ProductionOperationExecutionCompletedBy", fields: [completedByUserId], references: [id], onDelete: SetNull)
+  downtimeEvents ProductionDowntimeEvent[]
+  labourEntries ProductionLabourEntry[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productionOrderId, sequence])
+  @@index([productionOrderId, status, sequence])
+  @@index([workCenterId, status, plannedStartAt])
+}
+
+model ProductionDowntimeEvent {
+  id String @id @default(uuid()) @db.Uuid
+  executionId String @db.Uuid
+  execution ProductionOperationExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  productionOrderId String @db.Uuid
+  productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  workCenterId String @db.Uuid
+  workCenter WorkCenter @relation(fields: [workCenterId], references: [id], onDelete: Restrict)
+  category ProductionDowntimeCategory
+  reason String
+  startedAt DateTime @default(now())
+  endedAt DateTime?
+  minutes Int @default(0)
+  createdByUserId String? @db.Uuid
+  createdBy User? @relation("ProductionDowntimeEventCreatedBy", fields: [createdByUserId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([executionId, endedAt])
+  @@index([productionOrderId, startedAt])
+  @@index([workCenterId, startedAt])
+}
+
+model ProductionLabourEntry {
+  id String @id @default(uuid()) @db.Uuid
+  executionId String @db.Uuid
+  execution ProductionOperationExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  productionOrderId String @db.Uuid
+  productionOrder ProductionOrder @relation(fields: [productionOrderId], references: [id], onDelete: Cascade)
+  operatorUserId String? @db.Uuid
+  operator User? @relation("ProductionLabourOperator", fields: [operatorUserId], references: [id], onDelete: SetNull)
+  role ProductionLabourRole @default(OPERATOR)
+  minutes Int
+  hourlyCost Decimal @default(0) @db.Decimal(12,2)
+  labourCost Decimal @default(0) @db.Decimal(14,2)
+  note String?
+  enteredByUserId String? @db.Uuid
+  enteredBy User? @relation("ProductionLabourEnteredBy", fields: [enteredByUserId], references: [id], onDelete: SetNull)
+  createdAt DateTime @default(now())
+
+  @@index([executionId, createdAt])
+  @@index([productionOrderId, createdAt])
+  @@index([operatorUserId, createdAt])
 }
 
 model QualitySpecification {

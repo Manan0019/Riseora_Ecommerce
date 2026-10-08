@@ -31,6 +31,7 @@ import { PHASE90_WAREHOUSE_POLICY, phase90BlockBatch, phase90CycleCountVariance,
 import { PHASE91_QUALITY_POLICY, phase91CreateInboundQaHold, phase91InspectionDecision, phase91QualityOverview, phase91RejectBatch, phase91ReleaseBatch, phase91SupplierScorecard } from "../services/quality-assurance.service";
 import { PHASE92_MANUFACTURING_POLICY, phase92CompleteProduction, phase92IssueProductionMaterials, phase92ManufacturingOverview, phase92MaterialAvailability, phase92MaterialRequirement, phase92ProductionTrace } from "../services/manufacturing-control.service";
 import { PHASE93_MRP_POLICY, phase93BuildMrpPreview, phase93OperationMinutes, phase93Overview, phase93PlannedRuns, phase93ScheduleSlots } from "../services/mrp-capacity.service";
+import { PHASE94_EXECUTION_POLICY, phase94AddLabour, phase94CompleteOperation, phase94CompletionGate, phase94DispatchOrder, phase94Overview, phase94PauseOperation, phase94ResumeOperation, phase94StartOperation } from "../services/shop-floor-execution.service";
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
@@ -1583,19 +1584,20 @@ router.post("/phase92-manufacturing/production-orders/:id/issue-materials",async
 }));
 
 router.post("/phase92-manufacturing/production-orders/:id/start",asyncHandler(async(req,res)=>{
-  const row:any=await (prisma as any).productionOrder.findUnique({where:{id:String(req.params.id)}});
-  if(!row)return res.status(404).json({success:false,message:"Production order not found"});
-  if(row.status!=="MATERIAL_ISSUED")return res.status(409).json({success:false,message:"PRODUCTION_START_STATUS_BLOCKED"});
-  const updated=await (prisma as any).productionOrder.update({where:{id:row.id},data:{status:"IN_PRODUCTION",startedAt:new Date(),startedByUserId:req.user!.id}});
-  res.json({success:true,data:updated});
+  try{const updated=await prisma.$transaction(tx=>phase94DispatchOrder(tx,String(req.params.id),req.user!.id));res.json({success:true,data:updated});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("PRODUCTION_"))return res.status(message==="PRODUCTION_ORDER_NOT_FOUND"?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase92-manufacturing/production-orders/:id/complete",asyncHandler(async(req,res)=>{
   const parsed=phase92CompleteSchema.safeParse(req.body);
   if(!parsed.success)return res.status(400).json({success:false,message:"Invalid production completion",errors:parsed.error.flatten()});
   if(parsed.data.expiryDate&&parsed.data.manufacturedAt&&parsed.data.expiryDate<=parsed.data.manufacturedAt)return res.status(400).json({success:false,message:"Expiry date must be after manufacture date"});
-  try{const row=await prisma.$transaction(tx=>phase92CompleteProduction(tx,{productionOrderId:String(req.params.id),...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
-  catch(error:any){if(String(error?.message||"").startsWith("PRODUCTION_"))return res.status(409).json({success:false,message:error.message});throw error;}
+  try{
+    const gate=await phase94CompletionGate(prisma,String(req.params.id),parsed.data.actualOutputQty);
+    const labourCost=gate.required&&gate.labourCost>0?gate.labourCost:parsed.data.labourCost;
+    const row=await prisma.$transaction(tx=>phase92CompleteProduction(tx,{productionOrderId:String(req.params.id),...parsed.data,labourCost,actorUserId:req.user!.id}));
+    res.json({success:true,data:row,shopFloor:{...gate,labourCostApplied:labourCost}});
+  }catch(error:any){const message=String(error?.message||"");if(message.startsWith("PRODUCTION_")||message.startsWith("SHOP_FLOOR_"))return res.status(message==="PRODUCTION_ORDER_NOT_FOUND"?404:409).json({success:false,message});throw error;}
 }));
 
 router.post("/phase92-manufacturing/production-orders/:id/cancel",asyncHandler(async(req,res)=>{
@@ -1676,10 +1678,58 @@ router.post("/phase93-planning/mrp/:id/convert-procurement",asyncHandler(async(r
   const created=await prisma.$transaction(async tx=>{const result=[] as any[];for(const group of rec.supplierGroups){const supplier:any=await (tx as any).supplier.findUnique({where:{id:group.supplierId}});if(!supplier||supplier.status!=="ACTIVE")throw new Error("PROCUREMENT_SUPPLIER_INACTIVE");if(group.rows.length>PHASE89_PROCUREMENT_POLICY.maxItemsPerPurchaseOrder)throw new Error("PROCUREMENT_PO_ITEM_LIMIT");const totals=phase89PurchaseTotals(group.rows.map((x:any)=>({qty:x.recommended.orderQty,unitCost:x.recommended.unitCost,gstRate:x.gstRate})));const maxLead=Math.max(supplier.defaultLeadTimeDays,...group.rows.map((x:any)=>x.recommended.leadTimeDays));const expectedAt=new Date(Date.now()+maxLead*86400000);const po:any=await (tx as any).purchaseOrder.create({data:{poNumber:phase89PoNumber(),supplierId:supplier.id,demandPlanId:rec.plan.demandPlanId||null,status:"DRAFT",expectedAt,paymentTermsDays:supplier.paymentTermsDays,subtotal:totals.subtotal,taxAmount:totals.taxAmount,totalAmount:totals.totalAmount,createdByUserId:req.user!.id,notes:`Generated from MRP ${rec.plan.planNumber}`}});for(const row of group.rows){const q=row.recommended.orderQty,c=row.recommended.unitCost,sub=Math.round(q*c*100)/100,tax=Math.round(sub*row.gstRate)/100;await (tx as any).purchaseOrderItem.create({data:{purchaseOrderId:po.id,variantId:row.variantId,supplierVariantId:row.recommended.id,mrpPlanItemId:row.mrpPlanItemId,orderedQty:q,unitCost:c,gstRate:row.gstRate,lineSubtotal:sub,taxAmount:tax,lineTotal:Math.round((sub+tax)*100)/100,supplierSkuSnapshot:row.recommended.supplierSku,leadTimeDaysSnapshot:row.recommended.leadTimeDays,notes:`MRP requirement ${row.netRequirementQty}`}})}result.push(po)}const makeCount=await (tx as any).mrpPlanItem.count({where:{planId:rec.plan.id,supplyAction:"MAKE",netRequirementQty:{gt:0}}});const now=new Date();await (tx as any).mrpPlan.update({where:{id:rec.plan.id},data:{procurementConvertedAt:now,...(makeCount===0||rec.plan.productionConvertedAt?{status:"CONVERTED",convertedAt:now}:{})}});return result;},{timeout:30000});res.status(201).json({success:true,data:created,message:`Created ${created.length} MRP supplier PO draft(s). Inventory was not changed.`});
 }));
 
-router.post("/phase93-planning/schedule/preview",asyncHandler(async(req,res)=>{const parsed=phase93ScheduleSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid schedule preview",errors:parsed.error.flatten()});const end=new Date(parsed.data.startDate);end.setDate(end.getDate()+parsed.data.days);const [centers,orders]=await Promise.all([(prisma as any).workCenter.findMany({where:{warehouseId:parsed.data.warehouseId,status:"ACTIVE"}}),(prisma as any).productionOrder.findMany({where:{warehouseId:parsed.data.warehouseId,status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]}},include:{routing:{include:{operations:{include:{workCenter:true},orderBy:{sequence:"asc"}}}}}})]);res.json({success:true,data:phase93ScheduleSlots({orders:orders.filter((x:any)=>x.routing?.operations?.length),workCenters:centers,startAt:parsed.data.startDate,horizonEnd:end})});}));
+router.post("/phase93-planning/schedule/preview",asyncHandler(async(req,res)=>{const parsed=phase93ScheduleSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid schedule preview",errors:parsed.error.flatten()});const end=new Date(parsed.data.startDate);end.setDate(end.getDate()+parsed.data.days);const [centers,orders]=await Promise.all([(prisma as any).workCenter.findMany({where:{warehouseId:parsed.data.warehouseId,status:"ACTIVE"}}),(prisma as any).productionOrder.findMany({where:{warehouseId:parsed.data.warehouseId,status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]},shopFloorDispatchedAt:null},include:{routing:{include:{operations:{include:{workCenter:true},orderBy:{sequence:"asc"}}}}}})]);res.json({success:true,data:phase93ScheduleSlots({orders:orders.filter((x:any)=>x.routing?.operations?.length),workCenters:centers,startAt:parsed.data.startDate,horizonEnd:end})});}));
 
-router.post("/phase93-planning/schedules",asyncHandler(async(req,res)=>{const parsed=phase93ScheduleSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid production schedule",errors:parsed.error.flatten()});const end=new Date(parsed.data.startDate);end.setDate(end.getDate()+parsed.data.days);const [centers,orders]=await Promise.all([(prisma as any).workCenter.findMany({where:{warehouseId:parsed.data.warehouseId,status:"ACTIVE"}}),(prisma as any).productionOrder.findMany({where:{warehouseId:parsed.data.warehouseId,status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]}},include:{routing:{include:{operations:{orderBy:{sequence:"asc"}}}}}})]);const preview=phase93ScheduleSlots({orders:orders.filter((x:any)=>x.routing?.operations?.length),workCenters:centers,startAt:parsed.data.startDate,horizonEnd:end});const row=await (prisma as any).productionSchedule.create({data:{scheduleNumber:phase92Code("SCH"),name:parsed.data.name||`Production schedule ${parsed.data.startDate.toISOString().slice(0,10)}`,warehouseId:parsed.data.warehouseId,status:"DRAFT",horizonStart:parsed.data.startDate,horizonEnd:end,totalMinutes:preview.totalMinutes,lateRiskCount:preview.lateRiskCount,overloadCount:preview.overloadCount,createdByUserId:req.user!.id,slots:{create:preview.slots.map((x:any)=>({productionOrderId:x.productionOrderId,workCenterId:x.workCenterId,routingOperationId:x.routingOperationId,sequence:x.sequence,operationName:x.operationName,plannedStartAt:x.plannedStartAt,plannedEndAt:x.plannedEndAt,plannedMinutes:x.plannedMinutes,lateRisk:x.lateRisk}))}},include:{slots:{include:{workCenter:true,productionOrder:true},orderBy:{plannedStartAt:"asc"}},warehouse:true}});res.status(201).json({success:true,data:row,capacity:preview.capacity});}));
+router.post("/phase93-planning/schedules",asyncHandler(async(req,res)=>{const parsed=phase93ScheduleSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid production schedule",errors:parsed.error.flatten()});const end=new Date(parsed.data.startDate);end.setDate(end.getDate()+parsed.data.days);const [centers,orders]=await Promise.all([(prisma as any).workCenter.findMany({where:{warehouseId:parsed.data.warehouseId,status:"ACTIVE"}}),(prisma as any).productionOrder.findMany({where:{warehouseId:parsed.data.warehouseId,status:{in:["DRAFT","APPROVED","MATERIAL_ISSUED","IN_PRODUCTION"]},shopFloorDispatchedAt:null},include:{routing:{include:{operations:{orderBy:{sequence:"asc"}}}}}})]);const preview=phase93ScheduleSlots({orders:orders.filter((x:any)=>x.routing?.operations?.length),workCenters:centers,startAt:parsed.data.startDate,horizonEnd:end});const row=await (prisma as any).productionSchedule.create({data:{scheduleNumber:phase92Code("SCH"),name:parsed.data.name||`Production schedule ${parsed.data.startDate.toISOString().slice(0,10)}`,warehouseId:parsed.data.warehouseId,status:"DRAFT",horizonStart:parsed.data.startDate,horizonEnd:end,totalMinutes:preview.totalMinutes,lateRiskCount:preview.lateRiskCount,overloadCount:preview.overloadCount,createdByUserId:req.user!.id,slots:{create:preview.slots.map((x:any)=>({productionOrderId:x.productionOrderId,workCenterId:x.workCenterId,routingOperationId:x.routingOperationId,sequence:x.sequence,operationName:x.operationName,plannedStartAt:x.plannedStartAt,plannedEndAt:x.plannedEndAt,plannedMinutes:x.plannedMinutes,lateRisk:x.lateRisk}))}},include:{slots:{include:{workCenter:true,productionOrder:true},orderBy:{plannedStartAt:"asc"}},warehouse:true}});res.status(201).json({success:true,data:row,capacity:preview.capacity});}));
 
 router.post("/phase93-planning/schedules/:id/publish",asyncHandler(async(req,res)=>{const sch:any=await (prisma as any).productionSchedule.findUnique({where:{id:String(req.params.id)},include:{slots:true}});if(!sch)return res.status(404).json({success:false,message:"Schedule not found"});if(sch.status!=="DRAFT")return res.status(409).json({success:false,message:"SCHEDULE_PUBLISH_STATUS_BLOCKED"});const holdCount=await (prisma as any).workCenter.count({where:{id:{in:[...new Set(sch.slots.map((x:any)=>x.workCenterId))]},status:{not:"ACTIVE"}}});if(holdCount)return res.status(409).json({success:false,message:"SCHEDULE_WORK_CENTER_HOLD"});const row=await prisma.$transaction(async tx=>{for(const slot of sch.slots){if(slot.sequence!==1)continue;await (tx as any).productionOrder.update({where:{id:slot.productionOrderId},data:{plannedStartAt:slot.plannedStartAt}})}return (tx as any).productionSchedule.update({where:{id:sch.id},data:{status:"PUBLISHED",publishedAt:new Date(),publishedByUserId:req.user!.id}})});res.json({success:true,data:row});}));
+
+
+// Phase 94 · Shop-Floor Execution, Downtime & OEE Control V2
+const phase94ShiftSchema=z.object({workCenterId:z.string().uuid(),name:z.string().trim().min(2).max(80),dayOfWeek:z.number().int().min(0).max(6),startMinuteOfDay:z.number().int().min(0).max(1439),durationMinutes:z.number().int().min(1).max(1440),breakMinutes:z.number().int().min(0).max(1439).default(0)}).refine(x=>x.breakMinutes<x.durationMinutes,{message:"Break must be shorter than shift"});
+const phase94PauseSchema=z.object({category:z.enum(["BREAKDOWN","MATERIAL_SHORTAGE","QUALITY_HOLD","CHANGEOVER","STAFFING","UTILITIES","PLANNED_STOP","OTHER"]),reason:z.string().trim().min(2).max(500)});
+const phase94OperationCompleteSchema=z.object({goodQty:z.number().int().min(0).max(PHASE94_EXECUTION_POLICY.maxReportedUnits),rejectQty:z.number().int().min(0).max(PHASE94_EXECUTION_POLICY.maxReportedUnits).default(0),reworkQty:z.number().int().min(0).max(PHASE94_EXECUTION_POLICY.maxReportedUnits).default(0),actualSetupMinutes:z.number().int().min(0).max(1440).default(0),notes:z.string().trim().max(2000).nullable().optional()});
+const phase94LabourSchema=z.object({operatorUserId:z.string().uuid().nullable().optional(),role:z.enum(["OPERATOR","SUPERVISOR","QUALITY","MAINTENANCE","OTHER"]).default("OPERATOR"),minutes:z.number().int().min(1).max(PHASE94_EXECUTION_POLICY.maxLabourMinutesPerEntry),hourlyCost:z.number().min(0).max(PHASE94_EXECUTION_POLICY.maxHourlyCost).default(0),note:z.string().trim().max(500).nullable().optional()});
+
+router.get("/phase94-execution/overview",asyncHandler(async(req,res)=>{const days=Math.max(1,Math.min(PHASE94_EXECUTION_POLICY.maxOeeWindowDays,Number(req.query.days||PHASE94_EXECUTION_POLICY.defaultOeeWindowDays)));res.json({success:true,data:await phase94Overview(prisma,days)});}));
+
+router.post("/phase94-execution/shifts",asyncHandler(async(req,res)=>{
+  const parsed=phase94ShiftSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid work-center shift",errors:parsed.error.flatten()});
+  const center:any=await (prisma as any).workCenter.findUnique({where:{id:parsed.data.workCenterId}});if(!center||center.status!=="ACTIVE")return res.status(409).json({success:false,message:"SHOP_FLOOR_ACTIVE_WORK_CENTER_REQUIRED"});
+  const row=await (prisma as any).workCenterShift.create({data:{...parsed.data,createdByUserId:req.user!.id}});res.status(201).json({success:true,data:row});
+}));
+
+router.post("/phase94-execution/orders/:id/dispatch",asyncHandler(async(req,res)=>{
+  try{const row=await prisma.$transaction(tx=>phase94DispatchOrder(tx,String(req.params.id),req.user!.id));res.json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_")||message.startsWith("PRODUCTION_"))return res.status(message==="PRODUCTION_ORDER_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
+
+router.post("/phase94-execution/operations/:id/start",asyncHandler(async(req,res)=>{
+  try{const row=await prisma.$transaction(tx=>phase94StartOperation(tx,String(req.params.id),req.user!.id));res.json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
+
+router.post("/phase94-execution/operations/:id/pause",asyncHandler(async(req,res)=>{
+  const parsed=phase94PauseSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid downtime event",errors:parsed.error.flatten()});
+  try{const row=await prisma.$transaction(tx=>phase94PauseOperation(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
+
+router.post("/phase94-execution/operations/:id/resume",asyncHandler(async(req,res)=>{
+  try{const row=await prisma.$transaction(tx=>phase94ResumeOperation(tx,String(req.params.id)));res.json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
+
+router.post("/phase94-execution/operations/:id/complete",asyncHandler(async(req,res)=>{
+  const parsed=phase94OperationCompleteSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid operation completion",errors:parsed.error.flatten()});
+  try{const row=await prisma.$transaction(tx=>phase94CompleteOperation(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
+
+router.post("/phase94-execution/operations/:id/labour",asyncHandler(async(req,res)=>{
+  const parsed=phase94LabourSchema.safeParse(req.body);if(!parsed.success)return res.status(400).json({success:false,message:"Invalid labour entry",errors:parsed.error.flatten()});
+  try{const row=await prisma.$transaction(tx=>phase94AddLabour(tx,String(req.params.id),{...parsed.data,actorUserId:req.user!.id}));res.status(201).json({success:true,data:row});}
+  catch(error:any){const message=String(error?.message||"");if(message.startsWith("SHOP_FLOOR_"))return res.status(message==="SHOP_FLOOR_OPERATION_NOT_FOUND"?404:409).json({success:false,message});throw error;}
+}));
 
 export default router;

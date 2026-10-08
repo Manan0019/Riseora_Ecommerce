@@ -422,6 +422,61 @@ export type ProductionOrderMaterial = Prisma.ProductionOrderMaterialModel
  */
 export type ProductionMaterialAllocation = Prisma.ProductionMaterialAllocationModel
 /**
+ * Model WorkCenter
+ * 
+ */
+export type WorkCenter = Prisma.WorkCenterModel
+/**
+ * Model ProductionRouting
+ * 
+ */
+export type ProductionRouting = Prisma.ProductionRoutingModel
+/**
+ * Model ProductionRoutingOperation
+ * 
+ */
+export type ProductionRoutingOperation = Prisma.ProductionRoutingOperationModel
+/**
+ * Model MrpPlan
+ * 
+ */
+export type MrpPlan = Prisma.MrpPlanModel
+/**
+ * Model MrpPlanItem
+ * 
+ */
+export type MrpPlanItem = Prisma.MrpPlanItemModel
+/**
+ * Model ProductionSchedule
+ * 
+ */
+export type ProductionSchedule = Prisma.ProductionScheduleModel
+/**
+ * Model ProductionScheduleSlot
+ * 
+ */
+export type ProductionScheduleSlot = Prisma.ProductionScheduleSlotModel
+/**
+ * Model WorkCenterShift
+ * 
+ */
+export type WorkCenterShift = Prisma.WorkCenterShiftModel
+/**
+ * Model ProductionOperationExecution
+ * 
+ */
+export type ProductionOperationExecution = Prisma.ProductionOperationExecutionModel
+/**
+ * Model ProductionDowntimeEvent
+ * 
+ */
+export type ProductionDowntimeEvent = Prisma.ProductionDowntimeEventModel
+/**
+ * Model ProductionLabourEntry
+ * 
+ */
+export type ProductionLabourEntry = Prisma.ProductionLabourEntryModel
+/**
  * Model QualitySpecification
  * 
  */

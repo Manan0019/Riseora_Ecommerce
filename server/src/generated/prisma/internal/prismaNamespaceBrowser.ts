@@ -127,6 +127,17 @@ export const ModelName = {
   ProductionOrder: 'ProductionOrder',
   ProductionOrderMaterial: 'ProductionOrderMaterial',
   ProductionMaterialAllocation: 'ProductionMaterialAllocation',
+  WorkCenter: 'WorkCenter',
+  ProductionRouting: 'ProductionRouting',
+  ProductionRoutingOperation: 'ProductionRoutingOperation',
+  MrpPlan: 'MrpPlan',
+  MrpPlanItem: 'MrpPlanItem',
+  ProductionSchedule: 'ProductionSchedule',
+  ProductionScheduleSlot: 'ProductionScheduleSlot',
+  WorkCenterShift: 'WorkCenterShift',
+  ProductionOperationExecution: 'ProductionOperationExecution',
+  ProductionDowntimeEvent: 'ProductionDowntimeEvent',
+  ProductionLabourEntry: 'ProductionLabourEntry',
   QualitySpecification: 'QualitySpecification',
   QualityInspection: 'QualityInspection',
   QualityInspectionTest: 'QualityInspectionTest',
@@ -1401,6 +1412,7 @@ export const PurchaseOrderItemScalarFieldEnum = {
   variantId: 'variantId',
   supplierVariantId: 'supplierVariantId',
   demandPlanItemId: 'demandPlanItemId',
+  mrpPlanItemId: 'mrpPlanItemId',
   orderedQty: 'orderedQty',
   receivedQty: 'receivedQty',
   rejectedQty: 'rejectedQty',
@@ -1674,6 +1686,11 @@ export const ProductionOrderScalarFieldEnum = {
   outputBatchCode: 'outputBatchCode',
   outputBatchId: 'outputBatchId',
   expiryDate: 'expiryDate',
+  mrpPlanItemId: 'mrpPlanItemId',
+  routingId: 'routingId',
+  priority: 'priority',
+  shopFloorDispatchedAt: 'shopFloorDispatchedAt',
+  shopFloorDispatchedByUserId: 'shopFloorDispatchedByUserId',
   notes: 'notes',
   createdByUserId: 'createdByUserId',
   approvedByUserId: 'approvedByUserId',
@@ -1718,6 +1735,231 @@ export const ProductionMaterialAllocationScalarFieldEnum = {
 } as const
 
 export type ProductionMaterialAllocationScalarFieldEnum = (typeof ProductionMaterialAllocationScalarFieldEnum)[keyof typeof ProductionMaterialAllocationScalarFieldEnum]
+
+
+export const WorkCenterScalarFieldEnum = {
+  id: 'id',
+  code: 'code',
+  name: 'name',
+  warehouseId: 'warehouseId',
+  status: 'status',
+  dailyCapacityMinutes: 'dailyCapacityMinutes',
+  defaultSetupMinutes: 'defaultSetupMinutes',
+  efficiencyPercent: 'efficiencyPercent',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkCenterScalarFieldEnum = (typeof WorkCenterScalarFieldEnum)[keyof typeof WorkCenterScalarFieldEnum]
+
+
+export const ProductionRoutingScalarFieldEnum = {
+  id: 'id',
+  routingCode: 'routingCode',
+  name: 'name',
+  outputVariantId: 'outputVariantId',
+  warehouseId: 'warehouseId',
+  version: 'version',
+  status: 'status',
+  notes: 'notes',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionRoutingScalarFieldEnum = (typeof ProductionRoutingScalarFieldEnum)[keyof typeof ProductionRoutingScalarFieldEnum]
+
+
+export const ProductionRoutingOperationScalarFieldEnum = {
+  id: 'id',
+  routingId: 'routingId',
+  workCenterId: 'workCenterId',
+  sequence: 'sequence',
+  name: 'name',
+  setupMinutes: 'setupMinutes',
+  runMinutesPerUnit: 'runMinutesPerUnit',
+  queueMinutes: 'queueMinutes',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionRoutingOperationScalarFieldEnum = (typeof ProductionRoutingOperationScalarFieldEnum)[keyof typeof ProductionRoutingOperationScalarFieldEnum]
+
+
+export const MrpPlanScalarFieldEnum = {
+  id: 'id',
+  planNumber: 'planNumber',
+  name: 'name',
+  warehouseId: 'warehouseId',
+  demandPlanId: 'demandPlanId',
+  status: 'status',
+  horizonStart: 'horizonStart',
+  horizonEnd: 'horizonEnd',
+  itemCount: 'itemCount',
+  makeUnits: 'makeUnits',
+  buyUnits: 'buyUnits',
+  shortageCount: 'shortageCount',
+  notes: 'notes',
+  generatedByUserId: 'generatedByUserId',
+  approvedByUserId: 'approvedByUserId',
+  approvedAt: 'approvedAt',
+  productionConvertedAt: 'productionConvertedAt',
+  procurementConvertedAt: 'procurementConvertedAt',
+  convertedAt: 'convertedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MrpPlanScalarFieldEnum = (typeof MrpPlanScalarFieldEnum)[keyof typeof MrpPlanScalarFieldEnum]
+
+
+export const MrpPlanItemScalarFieldEnum = {
+  id: 'id',
+  planId: 'planId',
+  variantId: 'variantId',
+  inventoryRole: 'inventoryRole',
+  supplyAction: 'supplyAction',
+  grossRequirementQty: 'grossRequirementQty',
+  availableStockQty: 'availableStockQty',
+  safetyStockQty: 'safetyStockQty',
+  scheduledReceiptQty: 'scheduledReceiptQty',
+  netRequirementQty: 'netRequirementQty',
+  plannedSupplyQty: 'plannedSupplyQty',
+  requiredBy: 'requiredBy',
+  bomId: 'bomId',
+  sourceReason: 'sourceReason',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MrpPlanItemScalarFieldEnum = (typeof MrpPlanItemScalarFieldEnum)[keyof typeof MrpPlanItemScalarFieldEnum]
+
+
+export const ProductionScheduleScalarFieldEnum = {
+  id: 'id',
+  scheduleNumber: 'scheduleNumber',
+  name: 'name',
+  warehouseId: 'warehouseId',
+  status: 'status',
+  horizonStart: 'horizonStart',
+  horizonEnd: 'horizonEnd',
+  totalMinutes: 'totalMinutes',
+  lateRiskCount: 'lateRiskCount',
+  overloadCount: 'overloadCount',
+  createdByUserId: 'createdByUserId',
+  publishedByUserId: 'publishedByUserId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionScheduleScalarFieldEnum = (typeof ProductionScheduleScalarFieldEnum)[keyof typeof ProductionScheduleScalarFieldEnum]
+
+
+export const ProductionScheduleSlotScalarFieldEnum = {
+  id: 'id',
+  scheduleId: 'scheduleId',
+  productionOrderId: 'productionOrderId',
+  workCenterId: 'workCenterId',
+  routingOperationId: 'routingOperationId',
+  sequence: 'sequence',
+  operationName: 'operationName',
+  plannedStartAt: 'plannedStartAt',
+  plannedEndAt: 'plannedEndAt',
+  plannedMinutes: 'plannedMinutes',
+  status: 'status',
+  lateRisk: 'lateRisk',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionScheduleSlotScalarFieldEnum = (typeof ProductionScheduleSlotScalarFieldEnum)[keyof typeof ProductionScheduleSlotScalarFieldEnum]
+
+
+export const WorkCenterShiftScalarFieldEnum = {
+  id: 'id',
+  workCenterId: 'workCenterId',
+  name: 'name',
+  dayOfWeek: 'dayOfWeek',
+  startMinuteOfDay: 'startMinuteOfDay',
+  durationMinutes: 'durationMinutes',
+  breakMinutes: 'breakMinutes',
+  isActive: 'isActive',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type WorkCenterShiftScalarFieldEnum = (typeof WorkCenterShiftScalarFieldEnum)[keyof typeof WorkCenterShiftScalarFieldEnum]
+
+
+export const ProductionOperationExecutionScalarFieldEnum = {
+  id: 'id',
+  productionOrderId: 'productionOrderId',
+  routingOperationId: 'routingOperationId',
+  scheduleSlotId: 'scheduleSlotId',
+  workCenterId: 'workCenterId',
+  sequence: 'sequence',
+  operationName: 'operationName',
+  status: 'status',
+  plannedStartAt: 'plannedStartAt',
+  plannedEndAt: 'plannedEndAt',
+  plannedMinutes: 'plannedMinutes',
+  actualStartAt: 'actualStartAt',
+  actualEndAt: 'actualEndAt',
+  pausedAt: 'pausedAt',
+  actualSetupMinutes: 'actualSetupMinutes',
+  runtimeMinutes: 'runtimeMinutes',
+  downtimeMinutes: 'downtimeMinutes',
+  goodQty: 'goodQty',
+  rejectQty: 'rejectQty',
+  reworkQty: 'reworkQty',
+  notes: 'notes',
+  startedByUserId: 'startedByUserId',
+  completedByUserId: 'completedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionOperationExecutionScalarFieldEnum = (typeof ProductionOperationExecutionScalarFieldEnum)[keyof typeof ProductionOperationExecutionScalarFieldEnum]
+
+
+export const ProductionDowntimeEventScalarFieldEnum = {
+  id: 'id',
+  executionId: 'executionId',
+  productionOrderId: 'productionOrderId',
+  workCenterId: 'workCenterId',
+  category: 'category',
+  reason: 'reason',
+  startedAt: 'startedAt',
+  endedAt: 'endedAt',
+  minutes: 'minutes',
+  createdByUserId: 'createdByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ProductionDowntimeEventScalarFieldEnum = (typeof ProductionDowntimeEventScalarFieldEnum)[keyof typeof ProductionDowntimeEventScalarFieldEnum]
+
+
+export const ProductionLabourEntryScalarFieldEnum = {
+  id: 'id',
+  executionId: 'executionId',
+  productionOrderId: 'productionOrderId',
+  operatorUserId: 'operatorUserId',
+  role: 'role',
+  minutes: 'minutes',
+  hourlyCost: 'hourlyCost',
+  labourCost: 'labourCost',
+  note: 'note',
+  enteredByUserId: 'enteredByUserId',
+  createdAt: 'createdAt'
+} as const
+
+export type ProductionLabourEntryScalarFieldEnum = (typeof ProductionLabourEntryScalarFieldEnum)[keyof typeof ProductionLabourEntryScalarFieldEnum]
 
 
 export const QualitySpecificationScalarFieldEnum = {

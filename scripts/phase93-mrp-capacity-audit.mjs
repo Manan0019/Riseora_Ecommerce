@@ -26,7 +26,7 @@ check("admin MRP/capacity cockpit",ui.includes("PHASE 93 · MRP & CAPACITY CONTR
 check("Fulfilment renders Phase 93 center",ful.includes("AdminMrpCapacityCenter"));
 check("mrp-capacity:doctor command",pkg.scripts?.["mrp-capacity:doctor"]?.includes("phase93-mrp-capacity-audit"));
 check("verify:phase93 command",String(pkg.scripts?.["verify:phase93"]||"").includes("mrp-capacity:doctor")&&String(pkg.scripts?.["verify:phase93"]||"").includes("manufacturing:doctor")&&String(pkg.scripts?.["verify:phase93"]||"").includes("npm run build"));
-check("prelaunch advances to phase93",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase93")&&String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase93"));
+check("prelaunch retains Phase 93 and advances",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase93")&&/npm run verify:phase(?:9[3-9]|\d{3,})/.test(String(pkg.scripts?.["prelaunch:check"]||"")));
 const net=(gross,stock,safety,scheduled)=>Math.max(0,Math.trunc(gross)+Math.trunc(safety)-Math.trunc(stock)-Math.trunc(scheduled));
 check("behavior · MRP replenishes safety-stock deficit",net(100,70,20,10)===40&&net(100,10,20,0)===110);
 const runs=(net,out)=>Math.max(0,Math.ceil(Math.trunc(net)/Math.max(1,Math.trunc(out))));check("behavior · MAKE rounds to whole BOM runs",runs(205,100)===3);

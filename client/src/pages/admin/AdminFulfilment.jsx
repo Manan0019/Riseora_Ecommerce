@@ -7,6 +7,7 @@ import AdminWarehouseControlCenter from "../../components/AdminWarehouseControlC
 import AdminQualityControlCenter from "../../components/AdminQualityControlCenter";
 import AdminManufacturingControlCenter from "../../components/AdminManufacturingControlCenter";
 import AdminMrpCapacityCenter from "../../components/AdminMrpCapacityCenter";
+import AdminShopFloorExecutionCenter from "../../components/AdminShopFloorExecutionCenter";
 
 function relativeDeadline(value) {
   if (!value) return "No SLA";
@@ -48,6 +49,7 @@ export default function AdminFulfilment() {
     <div className="admin-page-heading"><div><p className="eyebrow">OPERATIONS CONTROL</p><h1>Fulfilment</h1><p>Dispatch SLA, courier preference, shipment exceptions and orders that need attention.</p></div><button type="button" className="button button-secondary" onClick={() => load().catch((e) => setError(e.message))}>Refresh</button></div>
     {error && <p className="alert error">{error}</p>}
 
+    <AdminShopFloorExecutionCenter />
     <AdminMrpCapacityCenter />
     <AdminManufacturingControlCenter />
     <AdminQualityControlCenter />

@@ -497,6 +497,101 @@ export const ProductionVarianceStatus = {
 export type ProductionVarianceStatus = (typeof ProductionVarianceStatus)[keyof typeof ProductionVarianceStatus]
 
 
+export const WorkCenterStatus = {
+  ACTIVE: 'ACTIVE',
+  HOLD: 'HOLD',
+  INACTIVE: 'INACTIVE'
+} as const
+
+export type WorkCenterStatus = (typeof WorkCenterStatus)[keyof typeof WorkCenterStatus]
+
+
+export const ProductionRoutingStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProductionRoutingStatus = (typeof ProductionRoutingStatus)[keyof typeof ProductionRoutingStatus]
+
+
+export const MrpPlanStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  CONVERTED: 'CONVERTED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type MrpPlanStatus = (typeof MrpPlanStatus)[keyof typeof MrpPlanStatus]
+
+
+export const MrpSupplyAction = {
+  MAKE: 'MAKE',
+  BUY: 'BUY',
+  NONE: 'NONE'
+} as const
+
+export type MrpSupplyAction = (typeof MrpSupplyAction)[keyof typeof MrpSupplyAction]
+
+
+export const ProductionScheduleStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  LOCKED: 'LOCKED',
+  ARCHIVED: 'ARCHIVED'
+} as const
+
+export type ProductionScheduleStatus = (typeof ProductionScheduleStatus)[keyof typeof ProductionScheduleStatus]
+
+
+export const ProductionScheduleSlotStatus = {
+  PLANNED: 'PLANNED',
+  RELEASED: 'RELEASED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type ProductionScheduleSlotStatus = (typeof ProductionScheduleSlotStatus)[keyof typeof ProductionScheduleSlotStatus]
+
+
+export const ShopFloorExecutionStatus = {
+  QUEUED: 'QUEUED',
+  READY: 'READY',
+  IN_PROGRESS: 'IN_PROGRESS',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  SKIPPED: 'SKIPPED'
+} as const
+
+export type ShopFloorExecutionStatus = (typeof ShopFloorExecutionStatus)[keyof typeof ShopFloorExecutionStatus]
+
+
+export const ProductionDowntimeCategory = {
+  BREAKDOWN: 'BREAKDOWN',
+  MATERIAL_SHORTAGE: 'MATERIAL_SHORTAGE',
+  QUALITY_HOLD: 'QUALITY_HOLD',
+  CHANGEOVER: 'CHANGEOVER',
+  STAFFING: 'STAFFING',
+  UTILITIES: 'UTILITIES',
+  PLANNED_STOP: 'PLANNED_STOP',
+  OTHER: 'OTHER'
+} as const
+
+export type ProductionDowntimeCategory = (typeof ProductionDowntimeCategory)[keyof typeof ProductionDowntimeCategory]
+
+
+export const ProductionLabourRole = {
+  OPERATOR: 'OPERATOR',
+  SUPERVISOR: 'SUPERVISOR',
+  QUALITY: 'QUALITY',
+  MAINTENANCE: 'MAINTENANCE',
+  OTHER: 'OTHER'
+} as const
+
+export type ProductionLabourRole = (typeof ProductionLabourRole)[keyof typeof ProductionLabourRole]
+
+
 export const WarehouseStatus = {
   ACTIVE: 'ACTIVE',
   HOLD: 'HOLD',
