@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
-const root=path.resolve(new URL("..",import.meta.url).pathname);
+import {fileURLToPath} from "node:url";
+const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),"..");
 const read=(p)=>fs.readFileSync(path.join(root,p),"utf8");
 let failures=0;const check=(name,ok)=>{console.log(`${ok?"PASS":"FAIL"}  ${name}`);if(!ok)failures++;};
 const schema=read("server/prisma/schema.prisma"),migration=read("server/prisma/migrations/20261008094000_phase95_maintenance_reliability_spares_v2/migration.sql"),svc=read("server/src/services/maintenance-reliability.service.ts"),shop=read("server/src/services/shop-floor-execution.service.ts"),routes=read("server/src/routes/admin-ops.routes.ts"),ui=read("client/src/components/AdminMaintenanceReliabilityCenter.jsx"),ful=read("client/src/pages/admin/AdminFulfilment.jsx"),styles=read("client/src/styles.css"),pkg=JSON.parse(read("package.json")),prepare=read("scripts/phase49-release-prepare.mjs"),prodAudit=read("scripts/phase49-production-release-audit.mjs");
@@ -28,6 +29,6 @@ check("Admin Fulfilment mounts Phase 95",ful.includes("AdminMaintenanceReliabili
 check("Phase 95 responsive styling",styles.includes("phase95-maintenance-center")&&styles.includes("phase95-kpis")&&styles.includes("phase95-workorders"));
 check("maintenance:doctor command",String(pkg.scripts?.["maintenance:doctor"]||"").includes("phase95-maintenance-reliability-audit"));
 check("verify:phase95 command",String(pkg.scripts?.["verify:phase95"]||"").includes("maintenance:doctor")&&String(pkg.scripts?.["verify:phase95"]||"").includes("npm run db:generate")&&String(pkg.scripts?.["verify:phase95"]||"").includes("npm run build"));
-check("prelaunch advances to Phase 95",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase95")&&(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase95")||(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase96")||String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase97"))));
+check("prelaunch advances to Phase 95",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase95")&&(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase95")||(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase96")||String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase97")||String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase98"))));
 check("production release advances to Phase 95",prepare.includes("verify:phase95")&&prodAudit.includes("verify:phase95"));
 if(failures){console.error(`\nPhase 95 maintenance reliability audit: FAIL (${failures})`);process.exit(1);}console.log("\nPhase 95 maintenance reliability audit: PASS");

@@ -394,6 +394,7 @@ export type ProductVariantWhereInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialListRelationFilter
   productionRoutings?: Prisma.ProductionRoutingListRelationFilter
   mrpPlanItems?: Prisma.MrpPlanItemListRelationFilter
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageListRelationFilter
 }
 
 export type ProductVariantOrderByWithRelationInput = {
@@ -440,6 +441,7 @@ export type ProductVariantOrderByWithRelationInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialOrderByRelationAggregateInput
   productionRoutings?: Prisma.ProductionRoutingOrderByRelationAggregateInput
   mrpPlanItems?: Prisma.MrpPlanItemOrderByRelationAggregateInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageOrderByRelationAggregateInput
 }
 
 export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
@@ -489,6 +491,7 @@ export type ProductVariantWhereUniqueInput = Prisma.AtLeast<{
   productionMaterialLines?: Prisma.ProductionOrderMaterialListRelationFilter
   productionRoutings?: Prisma.ProductionRoutingListRelationFilter
   mrpPlanItems?: Prisma.MrpPlanItemListRelationFilter
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageListRelationFilter
 }, "id" | "sku" | "erpId">
 
 export type ProductVariantOrderByWithAggregationInput = {
@@ -590,6 +593,7 @@ export type ProductVariantCreateInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateInput = {
@@ -635,6 +639,7 @@ export type ProductVariantUncheckedCreateInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUpdateInput = {
@@ -680,6 +685,7 @@ export type ProductVariantUpdateInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateInput = {
@@ -725,6 +731,7 @@ export type ProductVariantUncheckedUpdateInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateManyInput = {
@@ -1200,6 +1207,20 @@ export type ProductVariantUpdateOneRequiredWithoutMrpPlanItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutMrpPlanItemsInput, Prisma.ProductVariantUpdateWithoutMrpPlanItemsInput>, Prisma.ProductVariantUncheckedUpdateWithoutMrpPlanItemsInput>
 }
 
+export type ProductVariantCreateNestedOneWithoutMaintenanceSpareUsagesInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedCreateWithoutMaintenanceSpareUsagesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutMaintenanceSpareUsagesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+}
+
+export type ProductVariantUpdateOneRequiredWithoutMaintenanceSpareUsagesNestedInput = {
+  create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedCreateWithoutMaintenanceSpareUsagesInput>
+  connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutMaintenanceSpareUsagesInput
+  upsert?: Prisma.ProductVariantUpsertWithoutMaintenanceSpareUsagesInput
+  connect?: Prisma.ProductVariantWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProductVariantUpdateToOneWithWhereWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUpdateWithoutMaintenanceSpareUsagesInput>, Prisma.ProductVariantUncheckedUpdateWithoutMaintenanceSpareUsagesInput>
+}
+
 export type ProductVariantCreateNestedOneWithoutQualitySpecificationInput = {
   create?: Prisma.XOR<Prisma.ProductVariantCreateWithoutQualitySpecificationInput, Prisma.ProductVariantUncheckedCreateWithoutQualitySpecificationInput>
   connectOrCreate?: Prisma.ProductVariantCreateOrConnectWithoutQualitySpecificationInput
@@ -1312,6 +1333,7 @@ export type ProductVariantCreateWithoutProductInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductInput = {
@@ -1356,6 +1378,7 @@ export type ProductVariantUncheckedCreateWithoutProductInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductInput = {
@@ -1453,6 +1476,7 @@ export type ProductVariantCreateWithoutInventoryMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
@@ -1497,6 +1521,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryMovementsInput = {
@@ -1557,6 +1582,7 @@ export type ProductVariantUpdateWithoutInventoryMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
@@ -1601,6 +1627,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutOrderItemsInput = {
@@ -1645,6 +1672,7 @@ export type ProductVariantCreateWithoutOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
@@ -1689,6 +1717,7 @@ export type ProductVariantUncheckedCreateWithoutOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutOrderItemsInput = {
@@ -1749,6 +1778,7 @@ export type ProductVariantUpdateWithoutOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
@@ -1793,6 +1823,7 @@ export type ProductVariantUncheckedUpdateWithoutOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutDemandPlanItemsInput = {
@@ -1837,6 +1868,7 @@ export type ProductVariantCreateWithoutDemandPlanItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
@@ -1881,6 +1913,7 @@ export type ProductVariantUncheckedCreateWithoutDemandPlanItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutDemandPlanItemsInput = {
@@ -1941,6 +1974,7 @@ export type ProductVariantUpdateWithoutDemandPlanItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
@@ -1985,6 +2019,7 @@ export type ProductVariantUncheckedUpdateWithoutDemandPlanItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutSupplierOffersInput = {
@@ -2029,6 +2064,7 @@ export type ProductVariantCreateWithoutSupplierOffersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutSupplierOffersInput = {
@@ -2073,6 +2109,7 @@ export type ProductVariantUncheckedCreateWithoutSupplierOffersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutSupplierOffersInput = {
@@ -2133,6 +2170,7 @@ export type ProductVariantUpdateWithoutSupplierOffersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutSupplierOffersInput = {
@@ -2177,6 +2215,7 @@ export type ProductVariantUncheckedUpdateWithoutSupplierOffersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutPurchaseOrderItemsInput = {
@@ -2221,6 +2260,7 @@ export type ProductVariantCreateWithoutPurchaseOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutPurchaseOrderItemsInput = {
@@ -2265,6 +2305,7 @@ export type ProductVariantUncheckedCreateWithoutPurchaseOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPurchaseOrderItemsInput = {
@@ -2325,6 +2366,7 @@ export type ProductVariantUpdateWithoutPurchaseOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutPurchaseOrderItemsInput = {
@@ -2369,6 +2411,7 @@ export type ProductVariantUncheckedUpdateWithoutPurchaseOrderItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutGoodsReceiptItemsInput = {
@@ -2413,6 +2456,7 @@ export type ProductVariantCreateWithoutGoodsReceiptItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutGoodsReceiptItemsInput = {
@@ -2457,6 +2501,7 @@ export type ProductVariantUncheckedCreateWithoutGoodsReceiptItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutGoodsReceiptItemsInput = {
@@ -2517,6 +2562,7 @@ export type ProductVariantUpdateWithoutGoodsReceiptItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutGoodsReceiptItemsInput = {
@@ -2561,6 +2607,7 @@ export type ProductVariantUncheckedUpdateWithoutGoodsReceiptItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutInventoryBatchesInput = {
@@ -2605,6 +2652,7 @@ export type ProductVariantCreateWithoutInventoryBatchesInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryBatchesInput = {
@@ -2649,6 +2697,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchesInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryBatchesInput = {
@@ -2709,6 +2758,7 @@ export type ProductVariantUpdateWithoutInventoryBatchesInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryBatchesInput = {
@@ -2753,6 +2803,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchesInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutInventoryBatchMovementsInput = {
@@ -2797,6 +2848,7 @@ export type ProductVariantCreateWithoutInventoryBatchMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutInventoryBatchMovementsInput = {
@@ -2841,6 +2893,7 @@ export type ProductVariantUncheckedCreateWithoutInventoryBatchMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutInventoryBatchMovementsInput = {
@@ -2901,6 +2954,7 @@ export type ProductVariantUpdateWithoutInventoryBatchMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutInventoryBatchMovementsInput = {
@@ -2945,6 +2999,7 @@ export type ProductVariantUncheckedUpdateWithoutInventoryBatchMovementsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutOrderBatchAllocationsInput = {
@@ -2989,6 +3044,7 @@ export type ProductVariantCreateWithoutOrderBatchAllocationsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutOrderBatchAllocationsInput = {
@@ -3033,6 +3089,7 @@ export type ProductVariantUncheckedCreateWithoutOrderBatchAllocationsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutOrderBatchAllocationsInput = {
@@ -3093,6 +3150,7 @@ export type ProductVariantUpdateWithoutOrderBatchAllocationsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutOrderBatchAllocationsInput = {
@@ -3137,6 +3195,7 @@ export type ProductVariantUncheckedUpdateWithoutOrderBatchAllocationsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutCycleCountItemsInput = {
@@ -3181,6 +3240,7 @@ export type ProductVariantCreateWithoutCycleCountItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutCycleCountItemsInput = {
@@ -3225,6 +3285,7 @@ export type ProductVariantUncheckedCreateWithoutCycleCountItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutCycleCountItemsInput = {
@@ -3285,6 +3346,7 @@ export type ProductVariantUpdateWithoutCycleCountItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutCycleCountItemsInput = {
@@ -3329,6 +3391,7 @@ export type ProductVariantUncheckedUpdateWithoutCycleCountItemsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutManufacturingBomOutputsInput = {
@@ -3373,6 +3436,7 @@ export type ProductVariantCreateWithoutManufacturingBomOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput = {
@@ -3417,6 +3481,7 @@ export type ProductVariantUncheckedCreateWithoutManufacturingBomOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutManufacturingBomOutputsInput = {
@@ -3477,6 +3542,7 @@ export type ProductVariantUpdateWithoutManufacturingBomOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput = {
@@ -3521,6 +3587,7 @@ export type ProductVariantUncheckedUpdateWithoutManufacturingBomOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutManufacturingBomComponentsInput = {
@@ -3565,6 +3632,7 @@ export type ProductVariantCreateWithoutManufacturingBomComponentsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput = {
@@ -3609,6 +3677,7 @@ export type ProductVariantUncheckedCreateWithoutManufacturingBomComponentsInput 
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutManufacturingBomComponentsInput = {
@@ -3669,6 +3738,7 @@ export type ProductVariantUpdateWithoutManufacturingBomComponentsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput = {
@@ -3713,6 +3783,7 @@ export type ProductVariantUncheckedUpdateWithoutManufacturingBomComponentsInput 
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutProductionOutputsInput = {
@@ -3757,6 +3828,7 @@ export type ProductVariantCreateWithoutProductionOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductionOutputsInput = {
@@ -3801,6 +3873,7 @@ export type ProductVariantUncheckedCreateWithoutProductionOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductionOutputsInput = {
@@ -3861,6 +3934,7 @@ export type ProductVariantUpdateWithoutProductionOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductionOutputsInput = {
@@ -3905,6 +3979,7 @@ export type ProductVariantUncheckedUpdateWithoutProductionOutputsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutProductionMaterialLinesInput = {
@@ -3949,6 +4024,7 @@ export type ProductVariantCreateWithoutProductionMaterialLinesInput = {
   productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput = {
@@ -3993,6 +4069,7 @@ export type ProductVariantUncheckedCreateWithoutProductionMaterialLinesInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductionMaterialLinesInput = {
@@ -4053,6 +4130,7 @@ export type ProductVariantUpdateWithoutProductionMaterialLinesInput = {
   productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput = {
@@ -4097,6 +4175,7 @@ export type ProductVariantUncheckedUpdateWithoutProductionMaterialLinesInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutProductionRoutingsInput = {
@@ -4141,6 +4220,7 @@ export type ProductVariantCreateWithoutProductionRoutingsInput = {
   productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutProductionRoutingsInput = {
@@ -4185,6 +4265,7 @@ export type ProductVariantUncheckedCreateWithoutProductionRoutingsInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutProductionRoutingsInput = {
@@ -4245,6 +4326,7 @@ export type ProductVariantUpdateWithoutProductionRoutingsInput = {
   productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductionRoutingsInput = {
@@ -4289,6 +4371,7 @@ export type ProductVariantUncheckedUpdateWithoutProductionRoutingsInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutMrpPlanItemsInput = {
@@ -4333,6 +4416,7 @@ export type ProductVariantCreateWithoutMrpPlanItemsInput = {
   productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutMrpPlanItemsInput = {
@@ -4377,6 +4461,7 @@ export type ProductVariantUncheckedCreateWithoutMrpPlanItemsInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutMrpPlanItemsInput = {
@@ -4437,6 +4522,7 @@ export type ProductVariantUpdateWithoutMrpPlanItemsInput = {
   productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutMrpPlanItemsInput = {
@@ -4481,6 +4567,203 @@ export type ProductVariantUncheckedUpdateWithoutMrpPlanItemsInput = {
   productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
+}
+
+export type ProductVariantCreateWithoutMaintenanceSpareUsagesInput = {
+  id?: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  product: Prisma.ProductCreateNestedOneWithoutVariantsInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
+  productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
+  mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+}
+
+export type ProductVariantUncheckedCreateWithoutMaintenanceSpareUsagesInput = {
+  id?: string
+  productId: string
+  name: string
+  sku: string
+  size?: string | null
+  unit?: string | null
+  mrp: runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: number
+  lowStockThreshold?: number
+  safetyStock?: number
+  weightGrams?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: string | null
+  gstRate?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: boolean
+  inventoryRole?: $Enums.InventoryRole
+  erpId?: string | null
+  erpManaged?: boolean
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutVariantInput
+  stockAlerts?: Prisma.StockAlertUncheckedCreateNestedManyWithoutVariantInput
+  priceAlerts?: Prisma.PriceAlertUncheckedCreateNestedManyWithoutVariantInput
+  refillReminders?: Prisma.RefillReminderUncheckedCreateNestedManyWithoutVariantInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedCreateNestedManyWithoutVariantInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedCreateNestedManyWithoutVariantInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedCreateNestedManyWithoutVariantInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedCreateNestedManyWithoutVariantInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedCreateNestedManyWithoutVariantInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedCreateNestedManyWithoutVariantInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedCreateNestedManyWithoutVariantInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedCreateNestedOneWithoutVariantInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedCreateNestedManyWithoutVariantInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedCreateNestedManyWithoutOutputVariantInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedCreateNestedManyWithoutOutputVariantInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
+  productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
+  mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+}
+
+export type ProductVariantCreateOrConnectWithoutMaintenanceSpareUsagesInput = {
+  where: Prisma.ProductVariantWhereUniqueInput
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedCreateWithoutMaintenanceSpareUsagesInput>
+}
+
+export type ProductVariantUpsertWithoutMaintenanceSpareUsagesInput = {
+  update: Prisma.XOR<Prisma.ProductVariantUpdateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedUpdateWithoutMaintenanceSpareUsagesInput>
+  create: Prisma.XOR<Prisma.ProductVariantCreateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedCreateWithoutMaintenanceSpareUsagesInput>
+  where?: Prisma.ProductVariantWhereInput
+}
+
+export type ProductVariantUpdateToOneWithWhereWithoutMaintenanceSpareUsagesInput = {
+  where?: Prisma.ProductVariantWhereInput
+  data: Prisma.XOR<Prisma.ProductVariantUpdateWithoutMaintenanceSpareUsagesInput, Prisma.ProductVariantUncheckedUpdateWithoutMaintenanceSpareUsagesInput>
+}
+
+export type ProductVariantUpdateWithoutMaintenanceSpareUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  product?: Prisma.ProductUpdateOneRequiredWithoutVariantsNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
+  productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
+  mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+}
+
+export type ProductVariantUncheckedUpdateWithoutMaintenanceSpareUsagesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  productId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  sku?: Prisma.StringFieldUpdateOperationsInput | string
+  size?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  unit?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mrp?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  sellingPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  costPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  stockQuantity?: Prisma.IntFieldUpdateOperationsInput | number
+  lowStockThreshold?: Prisma.IntFieldUpdateOperationsInput | number
+  safetyStock?: Prisma.IntFieldUpdateOperationsInput | number
+  weightGrams?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  hsnCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  gstRate?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  inventoryRole?: Prisma.EnumInventoryRoleFieldUpdateOperationsInput | $Enums.InventoryRole
+  erpId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  erpManaged?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  stockAlerts?: Prisma.StockAlertUncheckedUpdateManyWithoutVariantNestedInput
+  priceAlerts?: Prisma.PriceAlertUncheckedUpdateManyWithoutVariantNestedInput
+  refillReminders?: Prisma.RefillReminderUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryMovements?: Prisma.InventoryMovementUncheckedUpdateManyWithoutVariantNestedInput
+  demandPlanItems?: Prisma.DemandPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  supplierOffers?: Prisma.SupplierVariantUncheckedUpdateManyWithoutVariantNestedInput
+  purchaseOrderItems?: Prisma.PurchaseOrderItemUncheckedUpdateManyWithoutVariantNestedInput
+  goodsReceiptItems?: Prisma.GoodsReceiptItemUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatches?: Prisma.InventoryBatchUncheckedUpdateManyWithoutVariantNestedInput
+  inventoryBatchMovements?: Prisma.InventoryBatchMovementUncheckedUpdateManyWithoutVariantNestedInput
+  orderBatchAllocations?: Prisma.OrderBatchAllocationUncheckedUpdateManyWithoutVariantNestedInput
+  cycleCountItems?: Prisma.CycleCountItemUncheckedUpdateManyWithoutVariantNestedInput
+  qualitySpecification?: Prisma.QualitySpecificationUncheckedUpdateOneWithoutVariantNestedInput
+  qualityInspections?: Prisma.QualityInspectionUncheckedUpdateManyWithoutVariantNestedInput
+  manufacturingBomOutputs?: Prisma.ManufacturingBomUncheckedUpdateManyWithoutOutputVariantNestedInput
+  manufacturingBomComponents?: Prisma.ManufacturingBomItemUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionOutputs?: Prisma.ProductionOrderUncheckedUpdateManyWithoutOutputVariantNestedInput
+  productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
+  productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
+  mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutQualitySpecificationInput = {
@@ -4525,6 +4808,7 @@ export type ProductVariantCreateWithoutQualitySpecificationInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutQualitySpecificationInput = {
@@ -4569,6 +4853,7 @@ export type ProductVariantUncheckedCreateWithoutQualitySpecificationInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutQualitySpecificationInput = {
@@ -4629,6 +4914,7 @@ export type ProductVariantUpdateWithoutQualitySpecificationInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutQualitySpecificationInput = {
@@ -4673,6 +4959,7 @@ export type ProductVariantUncheckedUpdateWithoutQualitySpecificationInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutQualityInspectionsInput = {
@@ -4717,6 +5004,7 @@ export type ProductVariantCreateWithoutQualityInspectionsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutQualityInspectionsInput = {
@@ -4761,6 +5049,7 @@ export type ProductVariantUncheckedCreateWithoutQualityInspectionsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutQualityInspectionsInput = {
@@ -4821,6 +5110,7 @@ export type ProductVariantUpdateWithoutQualityInspectionsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutQualityInspectionsInput = {
@@ -4865,6 +5155,7 @@ export type ProductVariantUncheckedUpdateWithoutQualityInspectionsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutStockAlertsInput = {
@@ -4909,6 +5200,7 @@ export type ProductVariantCreateWithoutStockAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
@@ -4953,6 +5245,7 @@ export type ProductVariantUncheckedCreateWithoutStockAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutStockAlertsInput = {
@@ -5013,6 +5306,7 @@ export type ProductVariantUpdateWithoutStockAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
@@ -5057,6 +5351,7 @@ export type ProductVariantUncheckedUpdateWithoutStockAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutPriceAlertsInput = {
@@ -5101,6 +5396,7 @@ export type ProductVariantCreateWithoutPriceAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
@@ -5145,6 +5441,7 @@ export type ProductVariantUncheckedCreateWithoutPriceAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutPriceAlertsInput = {
@@ -5205,6 +5502,7 @@ export type ProductVariantUpdateWithoutPriceAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
@@ -5249,6 +5547,7 @@ export type ProductVariantUncheckedUpdateWithoutPriceAlertsInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateWithoutRefillRemindersInput = {
@@ -5293,6 +5592,7 @@ export type ProductVariantCreateWithoutRefillRemindersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
@@ -5337,6 +5637,7 @@ export type ProductVariantUncheckedCreateWithoutRefillRemindersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedCreateNestedManyWithoutComponentVariantInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedCreateNestedManyWithoutOutputVariantInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedCreateNestedManyWithoutVariantInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedCreateNestedManyWithoutVariantInput
 }
 
 export type ProductVariantCreateOrConnectWithoutRefillRemindersInput = {
@@ -5397,6 +5698,7 @@ export type ProductVariantUpdateWithoutRefillRemindersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
@@ -5441,6 +5743,7 @@ export type ProductVariantUncheckedUpdateWithoutRefillRemindersInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantCreateManyProductInput = {
@@ -5508,6 +5811,7 @@ export type ProductVariantUpdateWithoutProductInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateWithoutProductInput = {
@@ -5552,6 +5856,7 @@ export type ProductVariantUncheckedUpdateWithoutProductInput = {
   productionMaterialLines?: Prisma.ProductionOrderMaterialUncheckedUpdateManyWithoutComponentVariantNestedInput
   productionRoutings?: Prisma.ProductionRoutingUncheckedUpdateManyWithoutOutputVariantNestedInput
   mrpPlanItems?: Prisma.MrpPlanItemUncheckedUpdateManyWithoutVariantNestedInput
+  maintenanceSpareUsages?: Prisma.MaintenanceSpareUsageUncheckedUpdateManyWithoutVariantNestedInput
 }
 
 export type ProductVariantUncheckedUpdateManyWithoutProductInput = {
@@ -5603,6 +5908,7 @@ export type ProductVariantCountOutputType = {
   productionMaterialLines: number
   productionRoutings: number
   mrpPlanItems: number
+  maintenanceSpareUsages: number
 }
 
 export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5626,6 +5932,7 @@ export type ProductVariantCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   productionMaterialLines?: boolean | ProductVariantCountOutputTypeCountProductionMaterialLinesArgs
   productionRoutings?: boolean | ProductVariantCountOutputTypeCountProductionRoutingsArgs
   mrpPlanItems?: boolean | ProductVariantCountOutputTypeCountMrpPlanItemsArgs
+  maintenanceSpareUsages?: boolean | ProductVariantCountOutputTypeCountMaintenanceSpareUsagesArgs
 }
 
 /**
@@ -5778,6 +6085,13 @@ export type ProductVariantCountOutputTypeCountMrpPlanItemsArgs<ExtArgs extends r
   where?: Prisma.MrpPlanItemWhereInput
 }
 
+/**
+ * ProductVariantCountOutputType without action
+ */
+export type ProductVariantCountOutputTypeCountMaintenanceSpareUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MaintenanceSpareUsageWhereInput
+}
+
 
 export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5823,6 +6137,7 @@ export type ProductVariantSelect<ExtArgs extends runtime.Types.Extensions.Intern
   productionMaterialLines?: boolean | Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>
   productionRoutings?: boolean | Prisma.ProductVariant$productionRoutingsArgs<ExtArgs>
   mrpPlanItems?: boolean | Prisma.ProductVariant$mrpPlanItemsArgs<ExtArgs>
+  maintenanceSpareUsages?: boolean | Prisma.ProductVariant$maintenanceSpareUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productVariant"]>
 
@@ -5924,6 +6239,7 @@ export type ProductVariantInclude<ExtArgs extends runtime.Types.Extensions.Inter
   productionMaterialLines?: boolean | Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>
   productionRoutings?: boolean | Prisma.ProductVariant$productionRoutingsArgs<ExtArgs>
   mrpPlanItems?: boolean | Prisma.ProductVariant$mrpPlanItemsArgs<ExtArgs>
+  maintenanceSpareUsages?: boolean | Prisma.ProductVariant$maintenanceSpareUsagesArgs<ExtArgs>
   _count?: boolean | Prisma.ProductVariantCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ProductVariantIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5958,6 +6274,7 @@ export type $ProductVariantPayload<ExtArgs extends runtime.Types.Extensions.Inte
     productionMaterialLines: Prisma.$ProductionOrderMaterialPayload<ExtArgs>[]
     productionRoutings: Prisma.$ProductionRoutingPayload<ExtArgs>[]
     mrpPlanItems: Prisma.$MrpPlanItemPayload<ExtArgs>[]
+    maintenanceSpareUsages: Prisma.$MaintenanceSpareUsagePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6397,6 +6714,7 @@ export interface Prisma__ProductVariantClient<T, Null = never, ExtArgs extends r
   productionMaterialLines<T extends Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$productionMaterialLinesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductionOrderMaterialPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   productionRoutings<T extends Prisma.ProductVariant$productionRoutingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$productionRoutingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ProductionRoutingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   mrpPlanItems<T extends Prisma.ProductVariant$mrpPlanItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$mrpPlanItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MrpPlanItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  maintenanceSpareUsages<T extends Prisma.ProductVariant$maintenanceSpareUsagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductVariant$maintenanceSpareUsagesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MaintenanceSpareUsagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7344,6 +7662,30 @@ export type ProductVariant$mrpPlanItemsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.MrpPlanItemScalarFieldEnum | Prisma.MrpPlanItemScalarFieldEnum[]
+}
+
+/**
+ * ProductVariant.maintenanceSpareUsages
+ */
+export type ProductVariant$maintenanceSpareUsagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MaintenanceSpareUsage
+   */
+  select?: Prisma.MaintenanceSpareUsageSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MaintenanceSpareUsage
+   */
+  omit?: Prisma.MaintenanceSpareUsageOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MaintenanceSpareUsageInclude<ExtArgs> | null
+  where?: Prisma.MaintenanceSpareUsageWhereInput
+  orderBy?: Prisma.MaintenanceSpareUsageOrderByWithRelationInput | Prisma.MaintenanceSpareUsageOrderByWithRelationInput[]
+  cursor?: Prisma.MaintenanceSpareUsageWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MaintenanceSpareUsageScalarFieldEnum | Prisma.MaintenanceSpareUsageScalarFieldEnum[]
 }
 
 /**

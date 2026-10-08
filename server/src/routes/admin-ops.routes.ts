@@ -1,5 +1,6 @@
 import { phase97CommerceReadinessSnapshot } from "../services/phase97-commerce-readiness.service";
 import { randomBytes } from "node:crypto";
+import { PHASE98_DEFAULT_DOCUMENT, phase98EditableDocument, phase98ValidateDocument } from "../services/storefront-experience.service";
 import { phase96LaunchReadinessSnapshot } from "../services/phase96-launch-readiness.service";
 import { Router } from "express";
 import { z } from "zod";
@@ -38,6 +39,66 @@ import { PHASE95_MAINTENANCE_POLICY, phase95CompleteWorkOrder, phase95GenerateDu
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
+
+// Phase 98 Visual Studio: authenticated/admin-only draft, explicit publish, restore-to-draft.
+router.get("/phase98-studio", asyncHandler(async (_req,res) => {
+  res.setHeader("Cache-Control","private, no-store");
+  res.json({success:true,data:await phase98EditableDocument(prisma)});
+}));
+router.get("/phase98-studio/history", asyncHandler(async (_req,res) => {
+  res.setHeader("Cache-Control","private, no-store");
+  const history=await prisma.storefrontExperiencePublication.findMany({
+    take:25,orderBy:{publishedAt:"desc"},select:{id:true,revision:true,publishedAt:true,action:true,actorUserId:true}
+  });
+  res.json({success:true,data:history});
+}));
+const phase98DraftRequest = z.object({expectedRevision:z.number().int().positive(),document:z.unknown()}).strict();
+router.put("/phase98-studio/draft", asyncHandler(async (req,res) => {
+  const body=phase98DraftRequest.safeParse(req.body);
+  if(!body.success)return res.status(400).json({success:false,message:"Invalid draft request",errors:body.error.flatten()});
+  const doc=phase98ValidateDocument(body.data.document);
+  if(!doc.success)return res.status(400).json({success:false,message:"Invalid design configuration",errors:doc.error.flatten()});
+  await prisma.storefrontExperience.upsert({where:{id:"primary"},create:{id:"primary",draft:PHASE98_DEFAULT_DOCUMENT as any},update:{}});
+  const updated=await prisma.storefrontExperience.updateMany({
+    where:{id:"primary",revision:body.data.expectedRevision},
+    data:{draft:doc.data as any,revision:{increment:1},updatedByUserId:req.user!.id}
+  });
+  if(updated.count!==1)return res.status(409).json({success:false,message:"STUDIO_REVISION_CONFLICT: reload the latest draft"});
+  res.setHeader("Cache-Control","no-store");
+  res.json({success:true,data:await phase98EditableDocument(prisma)});
+}));
+router.post("/phase98-studio/publish", asyncHandler(async (req,res) => {
+  const input=z.object({expectedRevision:z.number().int().positive()}).strict().safeParse(req.body);
+  if(!input.success)return res.status(400).json({success:false,message:"Revision required"});
+  try{
+    const published=await prisma.$transaction(async tx=>{
+      const current=await tx.storefrontExperience.findUnique({where:{id:"primary"}});
+      if(!current||current.revision!==input.data.expectedRevision||current.publishedRevision===current.revision) throw new Error("STUDIO_REVISION_CONFLICT");
+      const doc=phase98ValidateDocument(current.draft);
+      if(!doc.success)throw new Error("STUDIO_DRAFT_INVALID");
+      const liveSections=doc.data.sections.filter(item=>item.enabled);
+      if(!liveSections.length)throw new Error("STUDIO_NO_VISIBLE_SECTIONS");
+      const now=new Date();
+      const write=await tx.storefrontExperience.updateMany({where:{id:"primary",revision:current.revision,publishedRevision:current.publishedRevision},data:{published:doc.data as any,publishedRevision:current.revision,publishedAt:now,publishedByUserId:req.user!.id}});
+      if(write.count!==1)throw new Error("STUDIO_REVISION_CONFLICT");
+      await tx.storefrontExperiencePublication.create({data:{revision:current.revision,snapshot:doc.data as any,actorUserId:req.user!.id,action:"PUBLISHED",publishedAt:now}});
+      return {publishedRevision:current.revision,publishedAt:now};
+    });
+    res.json({success:true,data:published});
+  }catch(error:any){const message=String(error?.message||"");if(message.startsWith("STUDIO_"))return res.status(409).json({success:false,message});throw error;}
+}));
+router.post("/phase98-studio/restore/:revision", asyncHandler(async (req,res) => {
+  const revision=Number(req.params.revision);
+  const expectedRevision=Number(req.body?.expectedRevision);
+  if(!Number.isSafeInteger(revision)||revision<1||!Number.isSafeInteger(expectedRevision)||expectedRevision<1)return res.status(400).json({success:false,message:"Invalid revision"});
+  const past=await prisma.storefrontExperiencePublication.findUnique({where:{revision}});
+  if(!past)return res.status(404).json({success:false,message:"Revision not found"});
+  const doc=phase98ValidateDocument(past.snapshot);
+  if(!doc.success)return res.status(409).json({success:false,message:"Archived design failed current safety validation"});
+  const changed=await prisma.storefrontExperience.updateMany({where:{id:"primary",revision:expectedRevision},data:{draft:doc.data as any,revision:{increment:1},updatedByUserId:req.user!.id}});
+  if(!changed.count)return res.status(409).json({success:false,message:"STUDIO_REVISION_CONFLICT"});
+  res.json({success:true,data:await phase98EditableDocument(prisma)});
+}));
 
 // Phase 97: administrative, GET-only, aggregated reconciliation. No customer PII.
 router.get("/phase97-launch/commerce", asyncHandler(async (_req,res)=>{

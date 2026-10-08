@@ -23,3 +23,7 @@ The goal is to **finish and deploy**, not extend feature count: live admin go/no
 5. Phase 96 adds **no database migration**.
 
 No external hosting, provider connection, paid transaction or database restore was performed in this packaging environment.
+
+
+## Phase 98 · Premium Experience MEGA
+This is a **cumulative overlay**, not a full repository. Follow `PHASE_98_RELEASE.md` and run the guarded `npm run experience:mount` command after copy to integrate without replacing your existing homepage.

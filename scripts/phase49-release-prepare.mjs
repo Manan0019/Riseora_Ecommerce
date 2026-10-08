@@ -41,7 +41,7 @@ run("node", ["scripts/phase96-env-audit.mjs", "--env=server/.env.production"]);
 run("node", ["scripts/phase97-target-guard.mjs", "--env=server/.env.production", "--no-dev-reference", "--require-pin"]);
 run("node", ["scripts/phase49-release-doctor.mjs"]);
 // Test/build before migrations. This literal is retained for forward-compat audits.
-run("npm", ["run", "verify:phase97"]);
+run("npm", ["run", "verify:phase98"]);
 run("npm", ["run", "security:audit"]);
 run("npm", ["run", "security:audit:prod"]);
 run("node", ["scripts/phase96-release-evidence.mjs"]);
@@ -54,5 +54,5 @@ run("node", ["scripts/db-doctor.mjs", "--production"]);
 console.log("Phase 96 guarded release PREPARE: PASS. Operator must now restart production, smoke it, and record business acceptance.");
 console.log("No automatic database rollback is attempted; use the verified backup and documented recovery decision tree.");
 // Historical forward-audit compatibility, intentionally not executed individually:
-const forwardAuditCompatibility=["verify:phase69","verify:phase70","verify:phase71","verify:phase72","verify:phase73","verify:phase74","verify:phase75","verify:phase76","verify:phase77","verify:phase78","verify:phase79","verify:phase80","verify:phase81","verify:phase82","verify:phase83","verify:phase84","verify:phase85","verify:phase86","verify:phase87","verify:phase88","verify:phase89","verify:phase90","verify:phase91","verify:phase92","verify:phase93","verify:phase94","verify:phase95","verify:phase96"];
+const forwardAuditCompatibility=["verify:phase69","verify:phase70","verify:phase71","verify:phase72","verify:phase73","verify:phase74","verify:phase75","verify:phase76","verify:phase77","verify:phase78","verify:phase79","verify:phase80","verify:phase81","verify:phase82","verify:phase83","verify:phase84","verify:phase85","verify:phase86","verify:phase87","verify:phase88","verify:phase89","verify:phase90","verify:phase91","verify:phase92","verify:phase93","verify:phase94","verify:phase95","verify:phase96","verify:phase97"];
 void forwardAuditCompatibility;

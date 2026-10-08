@@ -3,7 +3,7 @@ import fs from 'node:fs';import path from 'node:path';import {spawnSync} from 'n
 const args=process.argv.slice(2);const flag=k=>args.find(x=>x.startsWith(`--${k}=`))?.slice(k.length+3);
 const full=args.includes('--full'), url=flag('url');
 const commands=full
- ? [['npm',['run','verify:phase97']],['npm',['run','security:audit']]]
+ ? [['npm',['run','verify:phase98']],['npm',['run','security:audit']]]
  : [['node',['scripts/phase97-source-audit.mjs']],['node',['--test','scripts/phase97-*.test.mjs']],['node',['scripts/phase96-schema-index-audit.mjs']],['node',['scripts/phase97-layout.mjs']]];
 if(url)commands.push(['node',['scripts/phase97-public-probe.mjs',`--url=${url}`]]);
 const items=[];

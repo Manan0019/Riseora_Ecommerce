@@ -448,6 +448,26 @@ export type ProductionOperationExecution = Prisma.ProductionOperationExecutionMo
  */
 export type ProductionDowntimeEvent = Prisma.ProductionDowntimeEventModel
 /**
+ * Model EquipmentAsset
+ * 
+ */
+export type EquipmentAsset = Prisma.EquipmentAssetModel
+/**
+ * Model MaintenancePlan
+ * 
+ */
+export type MaintenancePlan = Prisma.MaintenancePlanModel
+/**
+ * Model MaintenanceWorkOrder
+ * 
+ */
+export type MaintenanceWorkOrder = Prisma.MaintenanceWorkOrderModel
+/**
+ * Model MaintenanceSpareUsage
+ * 
+ */
+export type MaintenanceSpareUsage = Prisma.MaintenanceSpareUsageModel
+/**
  * Model ProductionLabourEntry
  * 
  */
@@ -527,3 +547,13 @@ export type ErpSyncState = Prisma.ErpSyncStateModel
  * 
  */
 export type ErpSyncLog = Prisma.ErpSyncLogModel
+/**
+ * Model StorefrontExperience
+ * 
+ */
+export type StorefrontExperience = Prisma.StorefrontExperienceModel
+/**
+ * Model StorefrontExperiencePublication
+ * 
+ */
+export type StorefrontExperiencePublication = Prisma.StorefrontExperiencePublicationModel

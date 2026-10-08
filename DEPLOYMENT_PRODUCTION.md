@@ -28,3 +28,7 @@ npm run release:prepare -- --execute --confirm=RISEORA-LIVE
 No automatic rollback, payment mutation, stock correction, or automated production restart. Operator must restart and run public smoke/SEO checks.
 
 Phase 96 has **no migration**; if Phase 95 was deployed, the expected migration count remains **48**, head `20261008094000_phase95_maintenance_reliability_spares_v2`.
+
+
+## Phase 98 · Customer visual studio rollout
+Do not publish a draft until the exact full-checkout `verify:phase98` and UAT pass. The migration is additive and the homepage mounts behind a null-published fallback. Refer to `docs/PHASE98_VISUAL_STUDIO_OPERATOR_GUIDE.md`.

@@ -2649,7 +2649,6 @@ model ManufacturingBom {
   items ManufacturingBomItem[]
   productionOrders ProductionOrder[]
   mrpPlanItems MrpPlanItem[]
-  maintenanceSpareUsages MaintenanceSpareUsage[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -2712,7 +2711,6 @@ model ProductionOrder {
   shopFloorDispatchedAt DateTime?
   shopFloorDispatchedByUserId String? @db.Uuid
   shopFloorDispatchedBy User? @relation("ProductionOrderShopFloorDispatchedBy", fields: [shopFloorDispatchedByUserId], references: [id], onDelete: SetNull)
-  routingOperations ProductionRoutingOperation[]
   operationExecutions ProductionOperationExecution[]
   downtimeEvents ProductionDowntimeEvent[]
   labourEntries ProductionLabourEntry[]
@@ -3479,3 +3477,27 @@ model ErpSyncLog {
   @@index([status, createdAt])
 }
 
+
+// Phase 98: versioned, reviewed customer-facing visual storefront. DRAFT never serves publicly.
+model StorefrontExperience {
+  id String @id @default("primary")
+  draft Json
+  published Json?
+  revision Int @default(1)
+  publishedRevision Int @default(0)
+  updatedByUserId String? @db.Uuid
+  publishedByUserId String? @db.Uuid
+  publishedAt DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StorefrontExperiencePublication {
+  id String @id @default(uuid()) @db.Uuid
+  revision Int @unique
+  snapshot Json
+  actorUserId String? @db.Uuid
+  action String @default("PUBLISHED")
+  publishedAt DateTime @default(now())
+  @@index([publishedAt])
+}

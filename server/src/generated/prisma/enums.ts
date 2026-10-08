@@ -457,7 +457,8 @@ export const InventoryRole = {
   FINISHED_GOOD: 'FINISHED_GOOD',
   RAW_MATERIAL: 'RAW_MATERIAL',
   PACKAGING: 'PACKAGING',
-  CONSUMABLE: 'CONSUMABLE'
+  CONSUMABLE: 'CONSUMABLE',
+  SPARE_PART: 'SPARE_PART'
 } as const
 
 export type InventoryRole = (typeof InventoryRole)[keyof typeof InventoryRole]
@@ -590,6 +591,48 @@ export const ProductionLabourRole = {
 } as const
 
 export type ProductionLabourRole = (typeof ProductionLabourRole)[keyof typeof ProductionLabourRole]
+
+
+export const EquipmentAssetStatus = {
+  ACTIVE: 'ACTIVE',
+  MAINTENANCE: 'MAINTENANCE',
+  BREAKDOWN: 'BREAKDOWN',
+  HOLD: 'HOLD',
+  RETIRED: 'RETIRED'
+} as const
+
+export type EquipmentAssetStatus = (typeof EquipmentAssetStatus)[keyof typeof EquipmentAssetStatus]
+
+
+export const MaintenanceWorkOrderType = {
+  PREVENTIVE: 'PREVENTIVE',
+  CORRECTIVE: 'CORRECTIVE',
+  INSPECTION: 'INSPECTION',
+  CALIBRATION: 'CALIBRATION'
+} as const
+
+export type MaintenanceWorkOrderType = (typeof MaintenanceWorkOrderType)[keyof typeof MaintenanceWorkOrderType]
+
+
+export const MaintenancePriority = {
+  LOW: 'LOW',
+  NORMAL: 'NORMAL',
+  HIGH: 'HIGH',
+  CRITICAL: 'CRITICAL'
+} as const
+
+export type MaintenancePriority = (typeof MaintenancePriority)[keyof typeof MaintenancePriority]
+
+
+export const MaintenanceWorkOrderStatus = {
+  DRAFT: 'DRAFT',
+  APPROVED: 'APPROVED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  COMPLETED: 'COMPLETED',
+  CANCELLED: 'CANCELLED'
+} as const
+
+export type MaintenanceWorkOrderStatus = (typeof MaintenanceWorkOrderStatus)[keyof typeof MaintenanceWorkOrderStatus]
 
 
 export const WarehouseStatus = {
@@ -906,6 +949,7 @@ export const InventoryMovementType = {
   QA_REJECT: 'QA_REJECT',
   PRODUCTION_ISSUE: 'PRODUCTION_ISSUE',
   PRODUCTION_RETURN: 'PRODUCTION_RETURN',
+  MAINTENANCE_ISSUE: 'MAINTENANCE_ISSUE',
   ERP_SYNC: 'ERP_SYNC',
   CORRECTION: 'CORRECTION'
 } as const
@@ -922,6 +966,7 @@ export const InventoryMovementSource = {
   WAREHOUSE: 'WAREHOUSE',
   QUALITY: 'QUALITY',
   MANUFACTURING: 'MANUFACTURING',
+  MAINTENANCE: 'MAINTENANCE',
   ERP: 'ERP',
   SYSTEM: 'SYSTEM'
 } as const

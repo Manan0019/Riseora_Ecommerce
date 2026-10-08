@@ -137,6 +137,10 @@ export const ModelName = {
   WorkCenterShift: 'WorkCenterShift',
   ProductionOperationExecution: 'ProductionOperationExecution',
   ProductionDowntimeEvent: 'ProductionDowntimeEvent',
+  EquipmentAsset: 'EquipmentAsset',
+  MaintenancePlan: 'MaintenancePlan',
+  MaintenanceWorkOrder: 'MaintenanceWorkOrder',
+  MaintenanceSpareUsage: 'MaintenanceSpareUsage',
   ProductionLabourEntry: 'ProductionLabourEntry',
   QualitySpecification: 'QualitySpecification',
   QualityInspection: 'QualityInspection',
@@ -152,7 +156,9 @@ export const ModelName = {
   RefillReminder: 'RefillReminder',
   SystemJobState: 'SystemJobState',
   ErpSyncState: 'ErpSyncState',
-  ErpSyncLog: 'ErpSyncLog'
+  ErpSyncLog: 'ErpSyncLog',
+  StorefrontExperience: 'StorefrontExperience',
+  StorefrontExperiencePublication: 'StorefrontExperiencePublication'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1776,6 +1782,7 @@ export const ProductionRoutingOperationScalarFieldEnum = {
   id: 'id',
   routingId: 'routingId',
   workCenterId: 'workCenterId',
+  equipmentAssetId: 'equipmentAssetId',
   sequence: 'sequence',
   name: 'name',
   setupMinutes: 'setupMinutes',
@@ -1902,6 +1909,7 @@ export const ProductionOperationExecutionScalarFieldEnum = {
   routingOperationId: 'routingOperationId',
   scheduleSlotId: 'scheduleSlotId',
   workCenterId: 'workCenterId',
+  equipmentAssetId: 'equipmentAssetId',
   sequence: 'sequence',
   operationName: 'operationName',
   status: 'status',
@@ -1932,6 +1940,7 @@ export const ProductionDowntimeEventScalarFieldEnum = {
   executionId: 'executionId',
   productionOrderId: 'productionOrderId',
   workCenterId: 'workCenterId',
+  equipmentAssetId: 'equipmentAssetId',
   category: 'category',
   reason: 'reason',
   startedAt: 'startedAt',
@@ -1943,6 +1952,93 @@ export const ProductionDowntimeEventScalarFieldEnum = {
 } as const
 
 export type ProductionDowntimeEventScalarFieldEnum = (typeof ProductionDowntimeEventScalarFieldEnum)[keyof typeof ProductionDowntimeEventScalarFieldEnum]
+
+
+export const EquipmentAssetScalarFieldEnum = {
+  id: 'id',
+  assetCode: 'assetCode',
+  name: 'name',
+  workCenterId: 'workCenterId',
+  status: 'status',
+  manufacturer: 'manufacturer',
+  modelNumber: 'modelNumber',
+  serialNumber: 'serialNumber',
+  commissionedAt: 'commissionedAt',
+  cumulativeRuntimeMinutes: 'cumulativeRuntimeMinutes',
+  notes: 'notes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type EquipmentAssetScalarFieldEnum = (typeof EquipmentAssetScalarFieldEnum)[keyof typeof EquipmentAssetScalarFieldEnum]
+
+
+export const MaintenancePlanScalarFieldEnum = {
+  id: 'id',
+  assetId: 'assetId',
+  name: 'name',
+  type: 'type',
+  priority: 'priority',
+  intervalDays: 'intervalDays',
+  intervalRuntimeMinutes: 'intervalRuntimeMinutes',
+  estimatedMinutes: 'estimatedMinutes',
+  instructions: 'instructions',
+  isActive: 'isActive',
+  lastCompletedAt: 'lastCompletedAt',
+  lastCompletedRuntimeMinutes: 'lastCompletedRuntimeMinutes',
+  nextDueAt: 'nextDueAt',
+  nextDueRuntimeMinutes: 'nextDueRuntimeMinutes',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenancePlanScalarFieldEnum = (typeof MaintenancePlanScalarFieldEnum)[keyof typeof MaintenancePlanScalarFieldEnum]
+
+
+export const MaintenanceWorkOrderScalarFieldEnum = {
+  id: 'id',
+  workOrderNumber: 'workOrderNumber',
+  assetId: 'assetId',
+  planId: 'planId',
+  sourceDowntimeEventId: 'sourceDowntimeEventId',
+  type: 'type',
+  priority: 'priority',
+  status: 'status',
+  title: 'title',
+  description: 'description',
+  scheduledStartAt: 'scheduledStartAt',
+  dueAt: 'dueAt',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt',
+  technician: 'technician',
+  rootCause: 'rootCause',
+  correctiveAction: 'correctiveAction',
+  labourMinutes: 'labourMinutes',
+  labourCost: 'labourCost',
+  spareCost: 'spareCost',
+  totalCost: 'totalCost',
+  createdByUserId: 'createdByUserId',
+  approvedByUserId: 'approvedByUserId',
+  completedByUserId: 'completedByUserId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type MaintenanceWorkOrderScalarFieldEnum = (typeof MaintenanceWorkOrderScalarFieldEnum)[keyof typeof MaintenanceWorkOrderScalarFieldEnum]
+
+
+export const MaintenanceSpareUsageScalarFieldEnum = {
+  id: 'id',
+  workOrderId: 'workOrderId',
+  variantId: 'variantId',
+  quantity: 'quantity',
+  unitCostSnapshot: 'unitCostSnapshot',
+  totalCost: 'totalCost',
+  issuedAt: 'issuedAt',
+  issuedByUserId: 'issuedByUserId'
+} as const
+
+export type MaintenanceSpareUsageScalarFieldEnum = (typeof MaintenanceSpareUsageScalarFieldEnum)[keyof typeof MaintenanceSpareUsageScalarFieldEnum]
 
 
 export const ProductionLabourEntryScalarFieldEnum = {
@@ -2228,6 +2324,34 @@ export const ErpSyncLogScalarFieldEnum = {
 } as const
 
 export type ErpSyncLogScalarFieldEnum = (typeof ErpSyncLogScalarFieldEnum)[keyof typeof ErpSyncLogScalarFieldEnum]
+
+
+export const StorefrontExperienceScalarFieldEnum = {
+  id: 'id',
+  draft: 'draft',
+  published: 'published',
+  revision: 'revision',
+  publishedRevision: 'publishedRevision',
+  updatedByUserId: 'updatedByUserId',
+  publishedByUserId: 'publishedByUserId',
+  publishedAt: 'publishedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type StorefrontExperienceScalarFieldEnum = (typeof StorefrontExperienceScalarFieldEnum)[keyof typeof StorefrontExperienceScalarFieldEnum]
+
+
+export const StorefrontExperiencePublicationScalarFieldEnum = {
+  id: 'id',
+  revision: 'revision',
+  snapshot: 'snapshot',
+  actorUserId: 'actorUserId',
+  action: 'action',
+  publishedAt: 'publishedAt'
+} as const
+
+export type StorefrontExperiencePublicationScalarFieldEnum = (typeof StorefrontExperiencePublicationScalarFieldEnum)[keyof typeof StorefrontExperiencePublicationScalarFieldEnum]
 
 
 export const SortOrder = {

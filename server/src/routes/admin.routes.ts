@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { phase98PublishedDocument } from "../services/storefront-experience.service";
 import { z } from "zod";
 import { prisma } from "../config/prisma";
 import { requireAdmin, requireAuth } from "../middleware/auth";
@@ -27,6 +28,13 @@ import { assertCodRtoCanClose, assertPrepaidRtoCanRefund, getRtoRecoveryHealth }
 import { phase90CommitOrderReservations } from "../services/warehouse-inventory.service";
 
 const router = Router();
+// Phase98: intentionally public, published-only, before the admin authentication gate.
+// This endpoint exposes no drafts, editor identities or history.
+router.get("/experience/published", asyncHandler(async (_req, res) => {
+  res.setHeader("Cache-Control", "public, max-age=30, stale-while-revalidate=90");
+  const published = await phase98PublishedDocument(prisma);
+  res.json({success:true,data:published});
+}));
 router.use(requireAuth, requireAdmin);
 
 router.get(
