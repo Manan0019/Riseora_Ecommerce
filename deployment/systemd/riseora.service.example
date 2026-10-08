@@ -1,0 +1,22 @@
+# Example service; adapt installation path/runtime user and Node/npm executable.
+[Unit]
+Description=Riseora E-commerce Production API
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=riseora
+Group=riseora
+WorkingDirectory=/opt/riseora/app
+Environment=NODE_ENV=production
+EnvironmentFile=/opt/riseora/app/server/.env.production
+ExecStart=/usr/bin/npm run start:production --workspace server
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/riseora/app/server/uploads /opt/riseora/app/server/backups
+LimitNOFILE=65536
+[Install]
+WantedBy=multi-user.target

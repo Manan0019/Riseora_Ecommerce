@@ -1,0 +1,26 @@
+name: Phase 96 Production Launch Gate
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+jobs:
+  build-and-static-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run launch:tests
+      - run: npm run launch:doctor
+      - run: npm run dependency-security:doctor
+      - run: npm run security:audit
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run performance:budget
+      # Never run production migrations from a public CI pull request.
+      # Payment, webhook, DB restore and browser UAT require an isolated staging environment.

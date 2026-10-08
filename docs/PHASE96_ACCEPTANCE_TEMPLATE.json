@@ -1,0 +1,23 @@
+{
+  "releaseId": "NOT_SET",
+  "warning": "Manually fill owner/evidence/passed only after independently verifying. Never auto-fill or pass as shipped.",
+  "gates": [
+    {"id":"SECURITY","title":"Zero unresolved high/critical npm advisories; auth and permissions reviewed","owner":"","evidence":"","passed":false},
+    {"id":"CONFIG","title":"Real production environment, HTTPS, CORS and non-test secrets validated","owner":"","evidence":"","passed":false},
+    {"id":"BUILD","title":"Full verify:phase96 with Prisma generate, typecheck and production build PASS","owner":"","evidence":"","passed":false},
+    {"id":"DB_BACKUP","title":"Verified backup created before production migration","owner":"","evidence":"","passed":false},
+    {"id":"RESTORE_DRILL","title":"Backup restored and integrity-checked in isolated database","owner":"","evidence":"","passed":false},
+    {"id":"MIGRATION","title":"Expected migration head verified; no unfinished migration","owner":"","evidence":"","passed":false},
+    {"id":"AUTH","title":"Admin, customer, forgot-password, permissions and session revocation UAT","owner":"","evidence":"","passed":false},
+    {"id":"PAYMENTS","title":"Real provider test webhook verification, idempotency, duplicate/cancel/refund paths","owner":"","evidence":"","passed":false},
+    {"id":"CHECKOUT","title":"COD and online end-to-end cart, address, order, email, taxes and invoice","owner":"","evidence":"","passed":false},
+    {"id":"FULFILMENT","title":"Pick/dispatch/shipment tracking, delivery, cancellation and RTO checks","owner":"","evidence":"","passed":false},
+    {"id":"QUALITY","title":"Batch/expiry/FEFO/QA/recall holds correctly prevent unsafe sale","owner":"","evidence":"","passed":false},
+    {"id":"FINANCE","title":"Order totals, GST/invoices, coupon/reward and reconciliation spot-check","owner":"","evidence":"","passed":false},
+    {"id":"LEGAL","title":"Policy, GSTIN/legal identity, refund/shipping/contact and product claims reviewed","owner":"","evidence":"","passed":false},
+    {"id":"PERFORMANCE","title":"Mobile usability, bundle budget and realistic traffic/load test reviewed","owner":"","evidence":"","passed":false},
+    {"id":"MONITORING","title":"Alert escalation, logs, disk/CPU/DB/storage, on-call and uptime checks ready","owner":"","evidence":"","passed":false},
+    {"id":"LIVE_SMOKE","title":"Public HTTPS health/live, ready and release endpoints pass after restart","owner":"","evidence":"","passed":false},
+    {"id":"BUSINESS","title":"Owner authorizes release and records remaining known risks","owner":"","evidence":"","passed":false}
+  ]
+}

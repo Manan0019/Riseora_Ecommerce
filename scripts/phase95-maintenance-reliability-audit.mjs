@@ -28,6 +28,6 @@ check("Admin Fulfilment mounts Phase 95",ful.includes("AdminMaintenanceReliabili
 check("Phase 95 responsive styling",styles.includes("phase95-maintenance-center")&&styles.includes("phase95-kpis")&&styles.includes("phase95-workorders"));
 check("maintenance:doctor command",String(pkg.scripts?.["maintenance:doctor"]||"").includes("phase95-maintenance-reliability-audit"));
 check("verify:phase95 command",String(pkg.scripts?.["verify:phase95"]||"").includes("maintenance:doctor")&&String(pkg.scripts?.["verify:phase95"]||"").includes("npm run db:generate")&&String(pkg.scripts?.["verify:phase95"]||"").includes("npm run build"));
-check("prelaunch advances to Phase 95",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase95")&&String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase95"));
+check("prelaunch advances to Phase 95",String(pkg.scripts?.["prelaunch:check"]||"").includes("verify:phase95")&&(String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase95")||String(pkg.scripts?.["prelaunch:check"]||"").includes("npm run verify:phase96")));
 check("production release advances to Phase 95",prepare.includes("verify:phase95")&&prodAudit.includes("verify:phase95"));
 if(failures){console.error(`\nPhase 95 maintenance reliability audit: FAIL (${failures})`);process.exit(1);}console.log("\nPhase 95 maintenance reliability audit: PASS");
