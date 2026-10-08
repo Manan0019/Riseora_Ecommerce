@@ -10,6 +10,7 @@ import AdminMrpCapacityCenter from "../../components/AdminMrpCapacityCenter";
 import AdminShopFloorExecutionCenter from "../../components/AdminShopFloorExecutionCenter";
 import AdminMaintenanceReliabilityCenter from "../../components/AdminMaintenanceReliabilityCenter";
 import AdminLaunchReadinessCenter from "../../components/AdminLaunchReadinessCenter";
+import AdminCommerceSafetyCenter from "../../components/AdminCommerceSafetyCenter";
 
 function relativeDeadline(value) {
   if (!value) return "No SLA";
@@ -52,6 +53,7 @@ export default function AdminFulfilment() {
     {error && <p className="alert error">{error}</p>}
 
     <AdminLaunchReadinessCenter />
+    <AdminCommerceSafetyCenter />
     <AdminMaintenanceReliabilityCenter />
     <AdminShopFloorExecutionCenter />
     <AdminMrpCapacityCenter />

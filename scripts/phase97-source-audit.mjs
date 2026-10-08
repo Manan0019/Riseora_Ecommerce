@@ -1,0 +1,21 @@
+/** Phase 97 source-contract gate. Full project typecheck, schema and staging UAT remain separate. */
+import fs from 'node:fs';import path from 'node:path';
+let fail=0;const check=(label,ok)=>{console.log(`${ok?'PASS':'FAIL'}  ${label}`);if(!ok)fail++;};
+const read=p=>fs.readFileSync(p,'utf8');
+const files=['scripts/phase97-target-policy.mjs','scripts/phase97-target-guard.mjs','scripts/phase97-public-contract.mjs','scripts/phase97-public-probe.mjs','scripts/phase97-acceptance-policy.mjs','scripts/phase97-acceptance.mjs','scripts/phase97-latency.mjs','scripts/phase97-release-candidate.mjs','scripts/phase97-source-audit.mjs','server/src/services/phase97-commerce-readiness.service.ts','client/src/components/AdminCommerceSafetyCenter.jsx','docs/PHASE97_CUTOVER_ACCEPTANCE.json','docs/PHASE97_RELEASE_RUNBOOK.md','deployment/phase97/Dockerfile.example','deployment/phase97/compose.staging.example.yml'];
+for(const f of files)check(`required ${f}`,fs.existsSync(f));
+const svc=read('server/src/services/phase97-commerce-readiness.service.ts');
+check('commerce evidence is aggregates only',svc.includes('COUNT(*)')&&svc.includes('readOnly:true')&&!/\.\s*(create|upsert|update|delete|executeRaw|transaction)\s*\(/.test(svc));
+const statements=[...svc.matchAll(/sql:`([^`]+)`/g)].map(x=>x[1]);
+check('commerce SQL is only read-only COUNT queries',statements.length>=13&&statements.every(s=>/^\s*SELECT\s+COUNT\s*\(\*\)/i.test(s)&&!/\b(?:INSERT|UPDATE|DELETE|TRUNCATE|DROP|ALTER|CREATE)\s+(?:TABLE|INTO|\S)/i.test(s)));
+for(const code of ['PAYMENT_DUPLICATE_PROVIDER_ID','ONLINE_DISPATCH_UNPAID','CAPTURED_PAYMENT_NO_PROVIDER','EXPIRED_STOCK_SELLABLE','RECALLED_STOCK_SELLABLE','QA_PENDING_STOCK_SELLABLE','AGGREGATE_BATCH_DRIFT','SHIPMENT_CHRONOLOGY'])check(`commerce invariant ${code}`,svc.includes(code));
+const admin=read('server/src/routes/admin-ops.routes.ts');
+check('authenticated, no-store commerce read endpoint',admin.includes('router.use(requireAuth, requireAdmin)')&&admin.includes('router.get("/phase97-launch/commerce"')&&admin.includes('Cache-Control","no-store'));check('admin mount',read('client/src/pages/admin/AdminFulfilment.jsx').includes('<AdminCommerceSafetyCenter />'));
+const prep=read('scripts/phase49-release-prepare.mjs');const idx=x=>prep.indexOf(x);
+check('target pin gate before migration',idx('phase97-target-guard.mjs')>=0&&idx('phase97-target-guard.mjs')<idx('db:backup')&&idx('phase97-target-guard.mjs')<idx('db:deploy'));
+check('unconfirmed cutover stays plan-only',prep.includes('if(!execute)')&&prep.includes('if(!confirmed)'));
+const scripts=JSON.parse(read('package.json')).scripts;
+check('Phase97 integrated verification',scripts['verify:phase97']?.includes('candidate:doctor')&&scripts['verify:phase97']?.includes('npm run build'));
+check('release plan upgraded',prep.includes('verify:phase97')&&scripts['prelaunch:check']?.includes('verify:phase97'));
+check('no Phase97 migration',!fs.readdirSync('server/prisma/migrations').some(f=>f.includes('phase97')));
+console.log(`Phase 97 candidate source audit: ${fail?'FAIL':'PASS'} (${fail} failures)`);if(fail)process.exitCode=1;

@@ -1,3 +1,4 @@
+import { phase97CommerceReadinessSnapshot } from "../services/phase97-commerce-readiness.service";
 import { randomBytes } from "node:crypto";
 import { phase96LaunchReadinessSnapshot } from "../services/phase96-launch-readiness.service";
 import { Router } from "express";
@@ -37,6 +38,12 @@ import { PHASE95_MAINTENANCE_POLICY, phase95CompleteWorkOrder, phase95GenerateDu
 
 const router = Router();
 router.use(requireAuth, requireAdmin);
+
+// Phase 97: administrative, GET-only, aggregated reconciliation. No customer PII.
+router.get("/phase97-launch/commerce", asyncHandler(async (_req,res)=>{
+ res.setHeader("Cache-Control","no-store");
+ res.json({success:true,data:await phase97CommerceReadinessSnapshot(prisma)});
+}));
 
 // Phase 96 is strictly read-only. This router already enforces requireAuth + requireAdmin.
 router.get("/phase96-launch/readiness", asyncHandler(async (_req,res) => {

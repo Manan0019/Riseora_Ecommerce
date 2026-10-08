@@ -1,0 +1,32 @@
+name: Phase 97 Production Candidate Verification
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+jobs:
+  candidate-verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm run candidate:tests
+      - run: npm run candidate:doctor
+      - run: npm run candidate:layout
+      - run: npm run candidate:migrations
+      - run: npm run launch:tests
+      - run: npm run security:audit
+      - run: npm run db:generate
+      - run: npm run typecheck
+      - run: npm run build
+      - run: npm run candidate:bundle
+      - run: npm run performance:budget
+      # Production environment, gateway live credentials, backup, migration and release approval
+      # are intentionally NEVER run by pull-request CI.

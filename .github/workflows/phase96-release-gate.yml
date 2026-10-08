@@ -1,8 +1,6 @@
-name: Phase 96 Production Launch Gate
+name: Phase 96 Historical Gate (Manual Only)
 on:
-  pull_request:
-  push:
-    branches: [main, master]
+  workflow_dispatch:
 jobs:
   build-and-static-audit:
     runs-on: ubuntu-latest

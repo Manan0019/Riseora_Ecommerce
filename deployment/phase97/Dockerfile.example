@@ -1,0 +1,23 @@
+# Phase 97 hosting-neutral starting point, only for a FULL application checkout.
+# Review asset/upload paths, Node runtime entrypoint and supplied root .dockerignore before use.
+FROM node:24-bookworm-slim AS builder
+WORKDIR /app
+RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates openssl && rm -rf /var/lib/apt/lists/*
+COPY package.json package-lock.json ./
+COPY client/package.json ./client/package.json
+COPY server/package.json ./server/package.json
+RUN npm ci
+COPY . .
+RUN npm run db:generate && npm run typecheck && npm run build
+RUN npm prune --omit=dev
+
+FROM node:24-bookworm-slim
+ENV NODE_ENV=production
+WORKDIR /app
+RUN apt-get update && apt-get install --no-install-recommends -y ca-certificates openssl && rm -rf /var/lib/apt/lists/* \
+    && groupadd -g 10001 riseora && useradd -u 10001 -g 10001 -m riseora
+COPY --from=builder /app /app
+RUN mkdir -p /app/server/uploads && chown -R riseora:riseora /app/server/uploads
+USER riseora
+EXPOSE 5000
+CMD ["npm", "run", "start:production"]

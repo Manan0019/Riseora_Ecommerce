@@ -1,0 +1,263 @@
+{
+  "releaseId": "NOT_SET",
+  "environment": "staging",
+  "sourceTreeSha256": "NOT_SET",
+  "gates": [
+    {
+      "id": "STAGING_ISOLATED_DB",
+      "title": "Staging uses separate database and storage from production",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "SCHEMA_VALIDATED",
+      "title": "Actual Prisma schema generation and validation succeeded",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "BUILD_TYPECHECK",
+      "title": "Client/server typecheck, full production build and performance budget passed",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "DEPENDENCY_AUDIT",
+      "title": "Production dependency and full lockfile security audits passed",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "LOGIN_SECURITY",
+      "title": "Registration, sign-in, sessions, reset, role isolation and rate limits tested",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "PRODUCT_STOCK",
+      "title": "Catalog, pricing, variant role, safety stock and inventory queries correct",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "BAG_CHECKOUT",
+      "title": "Cart, saved later, guest/login transitions and checkout readiness tested",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "COD_ORDER",
+      "title": "A staging COD order completed without duplicated stock reservation",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "PAYMENT_CAPTURE",
+      "title": "Gateway sandbox payment capture and callback/webhook signed evidence checked",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "WEBHOOK_DUPLICATE",
+      "title": "Duplicate payment webhooks proved idempotent",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "PAYMENT_FAILURE",
+      "title": "Failed/abandoned payment does not mark order paid or double reserve stock",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "PAYMENT_REFUND",
+      "title": "Sandbox refund, partial refund and overrefund protections verified",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "COUPON_REWARD",
+      "title": "Coupon/points limits and cost/tax totals reconciled",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "FULFILMENT_SHIP",
+      "title": "Shipping, tracking and order status handoff tested",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "CANCEL_RESTOCK",
+      "title": "Cancellation and stock release do not resurrect expired/recalled stock",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "RETURN_RTO",
+      "title": "Return, RTO, inspection and settlement reconciled",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "INBOUND_QA",
+      "title": "PO/GRN accepted inventory held until QA release",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "FEFO_RECALL",
+      "title": "FEFO allocation, quarantine and recall shipment blockers verified",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "MANUFACTURING_EXECUTION",
+      "title": "Production material issue, output QA hold and trace verified",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "EMAIL_NOTIFICATION",
+      "title": "Transactional email/notification flows and failure handling tested",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "LEGAL_POLICY",
+      "title": "Owner approved privacy, terms, shipping, returns, contact and GST details",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "DATA_PRIVACY",
+      "title": "Access controls, exports, analytics consent and retention checked",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "BACKUP_VERIFIED",
+      "title": "Correct production database backup completed and checksum retained",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "RESTORE_DRILL",
+      "title": "Isolated PostgreSQL restore drill, row counts and readiness evidence reviewed",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "FILE_STORAGE",
+      "title": "Product uploads and runtime file persistence survive restart/deploy",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "DOMAIN_TLS",
+      "title": "DNS, HTTPS, HSTS, CORS and public URL settings tested",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "PUBLIC_PROBES",
+      "title": "Public liveness/readiness/release and admin denial probes passed",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "SENSITIVE_CONFIG",
+      "title": "Secrets isolated from client bundles, logs and repository",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "ROLLBACK_PLAN",
+      "title": "Rollback decision, data compatibility and responsible owner agreed",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "ALERTING_MONITORING",
+      "title": "Production error log, uptime, disk, DB and backup alerts configured",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "CUTOVER_APPROVAL",
+      "title": "Business owner signs off the specific release and maintenance window",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    },
+    {
+      "id": "POST_DEPLOY_SMOKE",
+      "title": "Real deployed domain and API smoke run after operator restart",
+      "passed": false,
+      "owner": "NOT_SET",
+      "evidence": "NOT_SET",
+      "verifiedAt": null
+    }
+  ]
+}
