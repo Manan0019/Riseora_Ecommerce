@@ -78,8 +78,12 @@ schema.includes("model AccountCart") && schema.includes("revision Int @default(1
   ? pass("Phase 75 leaves persistence schema unchanged") : fail("Phase 75 schema contract");
 const migrationRoot = path.join(root, "server/prisma/migrations");
 const migrationDirs = fs.readdirSync(migrationRoot).filter((name) => /^2026/.test(name)).sort();
-migrationDirs.at(-1) === "20261006121500_phase69_account_saved_bag_v2"
-  ? pass("Phase 69 migration remains schema head; Phase 75 adds no migration") : fail(`unexpected migration head: ${migrationDirs.at(-1)}`);
+// Retained Phase 75 invariant: this phase adds no migration; later phases may do so.
+const phase75LegacyMigration = "20261006121500_phase69_account_saved_bag_v2";
+const phase75UnexpectedMigrations = migrationDirs.filter((name) => /(?:^|_)phase75(?:_|$)/i.test(name));
+migrationDirs.includes(phase75LegacyMigration) && phase75UnexpectedMigrations.length === 0
+  ? pass("Phase 69 migration preserved; Phase 75 adds no migration; newer heads allowed")
+  : fail(`Phase 75 migration history invalid: missing Phase 69 or introduced: ${phase75UnexpectedMigrations.join(",")}`);
 
 const pkg = JSON.parse(read("package.json"));
 const scripts = pkg.scripts || {};

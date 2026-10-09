@@ -22,7 +22,12 @@ const payment=read("server/src/routes/payment.routes.ts");
 !payment.includes("createRazorpayOrder({ amountPaise: session.amountPaise")?pass("provider-order creation is centralized behind Phase 77 lock"):fail("provider-order creation bypasses Phase 77 lock");
 const schema=read("server/prisma/schema.prisma");
 const migrations=fs.readdirSync(path.join(root,"server/prisma/migrations")).filter(x=>/^2026/.test(x)).sort();
-migrations.at(-1)==="20261006121500_phase69_account_saved_bag_v2"?pass("Phase 69 remains migration head; Phase 77 adds no migration"):fail(`unexpected migration head ${migrations.at(-1)}`);
+// Retained Phase 77 invariant: this phase adds no migration; later phases may do so.
+const phase77LegacyMigration = "20261006121500_phase69_account_saved_bag_v2";
+const phase77UnexpectedMigrations = migrations.filter((name) => /(?:^|_)phase77(?:_|$)/i.test(name));
+migrations.includes(phase77LegacyMigration) && phase77UnexpectedMigrations.length === 0
+  ? pass("Phase 69 migration preserved; Phase 77 adds no migration; newer heads allowed")
+  : fail(`Phase 77 migration history invalid: missing Phase 69 or introduced: ${phase77UnexpectedMigrations.join(",")}`);
 const pkg=JSON.parse(read("package.json")); const scripts=pkg.scripts||{};
 String(scripts["submission-safety:doctor"]||"").includes("phase77-checkout-submission-safety-audit.mjs")?pass("submission-safety:doctor command"):fail("submission-safety:doctor command");
 String(scripts["client:doctor"]||"").includes("submission-safety:doctor")?pass("client:doctor includes Phase 77 gate"):fail("client:doctor Phase 77 gate");

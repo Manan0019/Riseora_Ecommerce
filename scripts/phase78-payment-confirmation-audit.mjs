@@ -92,8 +92,12 @@ service.includes("duplicateEvent = true") && service.includes("Re-run the idempo
 
 const schema = read("server/prisma/schema.prisma");
 const migrations = fs.readdirSync(path.join(root, "server/prisma/migrations")).filter((name) => /^2026/.test(name)).sort();
-migrations.at(-1) === "20261006121500_phase69_account_saved_bag_v2"
-  ? pass("Phase 69 remains migration head; Phase 78 adds no migration") : fail(`unexpected migration head ${migrations.at(-1)}`);
+// Retained Phase 78 invariant: this phase adds no migration; later phases may do so.
+const phase78LegacyMigration = "20261006121500_phase69_account_saved_bag_v2";
+const phase78UnexpectedMigrations = migrations.filter((name) => /(?:^|_)phase78(?:_|$)/i.test(name));
+migrations.includes(phase78LegacyMigration) && phase78UnexpectedMigrations.length === 0
+  ? pass("Phase 69 migration preserved; Phase 78 adds no migration; newer heads allowed")
+  : fail(`Phase 78 migration history invalid: missing Phase 69 or introduced: ${phase78UnexpectedMigrations.join(",")}`);
 
 const pkg = JSON.parse(read("package.json"));
 const scripts = pkg.scripts || {};
